@@ -10,6 +10,7 @@ namespace App\Services\CONCURSOS;
 
 use App\Events\Concursos\FinalizacionDeAperturaConcurso;
 use App\Events\Concursos\InicioDeAperturaConcurso;
+use App\Events\Concursos\RegistroFalloConcurso;
 use App\Models\SEGURIDAD_ERP\Concursos\Concurso;
 use App\PDF\Concurso\InformeCierre;
 use App\Repositories\SEGURIDAD_ERP\Concursos\ConcursoRepository;
@@ -83,6 +84,23 @@ class ConcursoService
             $concurso->cerrar();
             event(new FinalizacionDeAperturaConcurso($concurso));
         }
+        return $concurso;
+    }
+
+    public function setFallo(array $data,$id)
+    {
+        $concurso = $this->repository->show($id);
+        if ($concurso->estatus != 2) {
+            abort(400, "El concurso se encuentra en estado: '".$concurso->estado."', por lo tanto no se puede registrar el fallo. \n\nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
+        }
+
+        $fecha_fallo = new DateTime($data['fecha_fallo']);
+        $fecha_fallo->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha_fallo"] = $fecha_fallo->format("Y/m/d");
+        $data["estatus"] = 3;
+
+        $concurso->registrarFallo($data);
+        event(new RegistroFalloConcurso($concurso));
         return $concurso;
     }
 

@@ -23,7 +23,8 @@ class ConcursoParticipante extends Model
         'monto',
         'es_empresa_hermes',
         'lugar',
-        'estatus'
+        'estatus',
+        'es_ganador'
     ];
 
     public $timestamps = false;
@@ -46,6 +47,11 @@ class ConcursoParticipante extends Model
     }
 
     public function scopeGanador($query)
+    {
+        return $query->where("es_ganador","=",1);
+    }
+
+    public function scopePrimerLugar($query)
     {
         return $query->where("lugar","=",1);
     }
@@ -86,6 +92,28 @@ class ConcursoParticipante extends Model
     /**
       * Métodos
       */
+
+    public function setGanador()
+    {
+        DB::connection('seguridad')->beginTransaction();
+        try {
+
+            foreach ($this->concurso->participantes as $participante)
+            {
+                $participante->es_ganador = 0;
+                $participante->save();
+            }
+            $this->update([
+                'es_ganador' => 1
+            ]);
+
+            DB::connection('seguridad')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
 
     public function editar($data)
     {
