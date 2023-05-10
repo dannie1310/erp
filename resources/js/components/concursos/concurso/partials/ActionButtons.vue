@@ -3,6 +3,9 @@
         <router-link :to="{ name: 'concurso-edit', params: {id: this.value.id}}" v-if="value.edit" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
             <i class="fa fa-pencil"></i>
         </router-link>
+        <router-link :to="{ name: 'concurso-registro-fallo', params: {id: this.value.id}}" v-if="value.fallo" type="button" class="btn btn-sm btn-outline-primary" title="Registrar Fallo">
+            <i class="fa fa-trophy"></i>
+        </router-link>
         <cierre-concurso v-if="value.close" v-bind:id="value.id"></cierre-concurso>
         <formato-apertura-concurso v-bind:id="value.id" ></formato-apertura-concurso>
     </div>
