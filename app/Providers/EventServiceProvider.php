@@ -125,6 +125,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\Concursos\ActualizacionDatosAperturaConcurso' => [
             'App\Listeners\Concursos\SendActualizacionConcursoNotificationWA'
         ],
+        'App\Events\Concursos\RegistroFalloConcurso' => [
+            'App\Listeners\Concursos\SendRegistroFalloConcursoNotificationWA'
+        ],
 
             Registered::class => [
             SendEmailVerificationNotification::class,

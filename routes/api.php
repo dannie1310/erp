@@ -1969,6 +1969,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cerrar', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@cerrar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/set-fallo', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@setFallo')->where(['id' => '[0-9]+']);
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@pdf')->where(['id' => '[0-9]+']);
             $api->get('{id}/grafica-png', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@graficaPNG')->where(['id' => '[0-9]+']);
 
@@ -1977,6 +1978,7 @@ $api->version('v1', function ($api) {
                 $api->delete('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@destroyParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
                 $api->get('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@showParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
                 $api->patch('{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@updateParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+                $api->patch('{id_participante}/set-es-ganador', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@setParticipanteGanador')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
 
             });
         });

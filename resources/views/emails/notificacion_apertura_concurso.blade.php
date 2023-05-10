@@ -21,7 +21,7 @@
         <div class="col-md-12" >
             Se le informa que la apertura del concurso {{$concurso->nombre}} ha finalizado.
             <br><br>
-            Primer Lugar: <strong>{{$concurso->participanteGanador->nombre}} {{$concurso->participanteGanador->monto_format}}</strong>
+            Primer Lugar: <strong>{{$concurso->participantePrimerLugar->nombre}} {{$concurso->participantePrimerLugar->monto_format}}</strong>
             <br>
             Oferta Hermes: <strong>{{$concurso->participanteHermes->nombre}} {{$concurso->participanteHermes->monto_format}}</strong>
             <br>

@@ -33,6 +33,7 @@ class ConcursoTransformer extends TransformerAbstract
             'numero_licitacion' => (string) $model->numero_licitacion,
             'fecha_format' => $model->fecha_format,
             'fecha' => $model->fecha,
+            'fecha_fallo_format' => $model->fecha_fallo_format,
             'estatus_descripcion' => $model->estado,
             'estatus' => $model-> estatus,
             'estatus_color' => $model->estado_color

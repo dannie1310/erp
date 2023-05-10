@@ -54,7 +54,7 @@ class SendActualizacionConcursoNotificationWA
                 $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
 
                 $body = "La información de las ofertas ha sido actualizada; hasta el momento estos son los resultados:"
-                    . "\n\nPrimer Lugar: " . $event->concurso->participanteGanador->nombre . " " . $event->concurso->participanteGanador->monto_format;
+                    . "\n\nPrimer Lugar: " . $event->concurso->participantePrimerLugar->nombre . " " . $event->concurso->participanteGanador->monto_format;
                 $body .= "\nPromedio de Ofertas: " . $event->concurso->promedio_format;
                 if ($event->concurso->participanteHermes) {
                     $body .= "\nOferta Hermes: " . $event->concurso->participanteHermes->monto_format .

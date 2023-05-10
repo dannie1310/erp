@@ -5,6 +5,7 @@ export default{
         concursos: [],
         currentConcurso: null,
         currentParticipante: null,
+        actualizando:false,
         meta: {}
     },
 
@@ -23,6 +24,10 @@ export default{
 
         SET_PARTICIPANTE(state, data){
             state.currentParticipante = data
+        },
+
+        SET_ACTUALIZANDO(state, data){
+            state.actualizando = data
         },
 
         UPDATE_CONCURSOS(state, data) {
@@ -140,6 +145,47 @@ export default{
                     });
             });
         },
+        setFallo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Registrar fallo del concurso",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id+'/set-fallo', payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("El fallo del concurso se ha registrado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }else{
+                            reject();
+                        }
+                    });
+            });
+        },
         findParticipante(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -238,6 +284,20 @@ export default{
             return new Promise((resolve, reject) => {
                 axios
                     .patch(URI + payload.id +'/participante/'+payload.id_participante, payload.data,{ params: payload.params } )
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit('UPDATE_CONCURSOS',data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        setGanadorDirecto(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI + payload.id +'/participante/'+payload.id_participante+'/set-es-ganador', payload.data,{ params: payload.params } )
                     .then(r => r.data)
                     .then(data => {
                         context.commit('UPDATE_CONCURSOS',data);
@@ -348,6 +408,10 @@ export default{
 
         currentParticipante(state) {
             return state.currentParticipante
+        },
+        actualizando(state) {
+            return state.actualizando
         }
+
     }
 }
