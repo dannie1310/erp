@@ -40,14 +40,33 @@ class InformeCierre extends Rotation
         $this->AliasNbPages();
         $this->AddPage();
         $this->datosGenerales();
-        $this->partidasTitle();
-        $this->partidas();
-        $this->resumen();
+
+        if($this->concurso->estatus != 3)
+        {
+            $this->tablaSinFallo();
+        }else{
+            $this->tablaConFallo();
+        }
+
         if($this->concurso->participantes()->count()>0)
         {
             $this->generaGrafica();
             $this->muestraGrafica();
         }
+    }
+
+    function tablaSinFallo()
+    {
+        $this->partidasTitle();
+        $this->partidas();
+        $this->resumen();
+    }
+
+    function tablaConFallo()
+    {
+        $this->partidasCFTitle();
+        $this->partidasCF();
+        $this->resumenCF();
     }
 
     function SetFillColor($r, $g=null, $b=null)
@@ -212,11 +231,21 @@ class InformeCierre extends Rotation
         $this->SetFillColor(255,255,255);
         $this->SetTextColor('0', '0', '0');
 
-        $this->SetFont('Arial', 'B', 10);
-        $this->Cell(4, .7, utf8_decode('No. de Licitación: '), 0, 0, 'L');
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(7, .7, $this->concurso->numero_licitacion, 0, 0, 'L');
+        if($this->concurso->estatus == 3){
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(4, .7, utf8_decode('Fecha del Fallo: '), 0, 0, 'L');
+            $this->SetFont('Arial', '', 10);
+            $this->Cell(7, .7, $this->concurso->fecha_fallo_format, 0, 0, 'L');
 
+        }else{
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(4, .7, utf8_decode('No. de Licitación: '), 0, 0, 'L');
+            $this->SetFont('Arial', '', 10);
+            $this->Cell(7, .7, $this->concurso->numero_licitacion, 0, 0, 'L');
+        }
+
+
+        /*INICIA ESTADO DEL FALLO*/
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(5, .7, utf8_decode('Estado del Fallo: '), 0, 0, 'R');
 
@@ -234,6 +263,14 @@ class InformeCierre extends Rotation
 
         $this->SetFillColor(255,255,255);
         $this->SetTextColor('0', '0', '0');
+        /*TERMINA ESTADO DEL FALLO*/
+
+        if($this->concurso->estatus ==3){
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(4, .7, utf8_decode('No. de Licitación: '), 0, 0, 'L');
+            $this->SetFont('Arial', '', 10);
+            $this->Cell(7, .7, $this->concurso->numero_licitacion, 0, 1, 'L');
+        }
 
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(4, .7, utf8_decode('Entidad Licitante: '), 0, 0, 'L');
@@ -247,10 +284,20 @@ class InformeCierre extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->Cell(6.5, .7, $this->concurso->resultado_txt, 0, 0, 'L');
 
-        $this->SetFont('Arial', 'B', 10);
-        $this->Cell(5.5, .7, utf8_decode('Resultado del Fallo: '), 0, 0, 'R');
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(3.8, .7, $this->concurso->resultado_fallo_txt, 0, 1, 'L');
+        if($this->concurso->estatus != 3)
+        {
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(5.5, .7, utf8_decode('Resultado del Fallo: '), 0, 0, 'R');
+            $this->SetFont('Arial', '', 10);
+            $this->Cell(3.8, .7, $this->concurso->resultado_fallo_txt, 0, 1, 'C');
+
+        }else{
+            $this->ln();
+            $this->SetFont('Arial', 'B', 10);
+            $this->Cell(4, .7, utf8_decode('Resultado del Fallo: '), 0, 0, 'L');
+            $this->SetFont('Arial', '', 10);
+            $this->MultiCell(14, .7, (mb_convert_case(utf8_decode($this->concurso->resultado_fallo_txt),MB_CASE_TITLE, "ISO-8859-1")), 0, 1, 'C');
+        }
 
 
         $this->ln(0.2);
@@ -286,6 +333,38 @@ class InformeCierre extends Rotation
         $this->Row(["#", "Participante", "Sin IVA", "1er Lugar", "Promedio", "Hermes"]);
 
     }
+
+    public function partidasCFTitle()
+    {
+        $this->SetFont('Arial', '', 9);
+
+        $this->SetFillColor(180,180,180);
+        $this->SetDrawColor(100,100,100);
+        $this->SetHeights([0.5]);
+        $this->SetAligns(['C','C','C','C']);
+
+        $this->SetWidths([0.6,9.8,3,6.4]);
+        $this->SetStyles(['DF','DF','DF','DF']);
+        $this->SetRounds(['','','','']);
+        $this->SetRadius([0.2,0,0,0.2]);
+
+        $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117']);
+        $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255']);
+
+        $this->Row(["", "", "Montos", utf8_decode("% en relación a")]);
+
+        $this->SetWidths([0.6,0.5,9.3,3,1.6,1.6,1.6,1.6]);
+        $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF']);
+        $this->SetRounds(['','','','','','','','']);
+        $this->SetRadius([0.2,0,0,0,0,0,0,0.2]);
+        $this->SetAligns(['C','C','C','C','C','C','C','C']);
+
+        $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
+        $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+        $this->Row(["#", "G", "Participante", "Sin IVA", "1er Lugar", "Promedio", "Hermes","Ganador"]);
+
+    }
+
 
     public function partidas()
     {
@@ -339,6 +418,65 @@ class InformeCierre extends Rotation
 
     }
 
+    public function partidasCF()
+    {
+        $i = 1;
+        foreach($this->concurso->participantes_para_informe as $participante){
+
+            if ($participante->es_empresa_hermes == 1) {
+                $this->SetFills([
+                    "125,182,70"
+                    , "125,182,70"
+                    , "125,182,70"
+                    , "125,182,70"
+                    , "125,182,70"
+                    , "125,182,70"
+                    , "125,182,70"
+                    , "125,182,70"
+                ]);
+            }else{
+                $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+                $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+            }
+
+            $this->SetWidths([0.6,0.5,9.3,3,1.6,1.6,1.6,1.6]);
+            $this->SetDrawColor(100,100,100);
+            $this->SetFont('Arial', '', 9);
+            $this->SetAligns(['C','C','L','R','R','R','R','R']);
+
+            if($participante->nombre != "PROMEDIO")
+            {
+                $this->Row([
+                    $i,
+                    $participante->es_ganador,
+                    utf8_decode($participante->nombre),
+                    $participante->monto_format,
+                    $participante->porcentaje_vs_primer_lugar,
+                    $participante->porcentaje_vs_promedio,
+                    $participante->porcentaje_vs_hermes,
+                    $participante->porcentaje_vs_ganador,
+                ]);
+                $i++;
+            }
+            else{
+                $this->SetFills(['249,203,152','249,203,152','249,203,152','249,203,152','249,203,152','249,203,152','249,203,152','249,203,152']);
+                $this->SetAligns(['C','C','R','R','R','R','R','R']);
+                $this->Row([
+                    "",
+                    "",
+                    utf8_decode($participante->nombre),
+                    $participante->monto_format,
+                    $participante->porcentaje_vs_primer_lugar,
+                    $participante->porcentaje_vs_promedio,
+                    $participante->porcentaje_vs_hermes,
+                    $participante->porcentaje_vs_ganador,
+                ]);
+            }
+        }
+
+    }
+
+
     public function resumen()
     {
         $this->SetTextColor('0,0,0');
@@ -352,7 +490,7 @@ class InformeCierre extends Rotation
         $this->CellFitScale(3.5,.5, $this->concurso->promedio_format,0,0,"R");
         $this->cell(.2,.5);
         $this->SetFont('Arial', 'B', 12);
-        $this->cell(8.7,.5,utf8_decode("Diferencia Oferta Hermes vs Primer Lugar:"),0,0,"L");
+        $this->cell(8.7,.5,utf8_decode("Oferta Hermes vs Primer Lugar:"),0,0,"R");
         $this->SetFont('Arial', '', 12);
         if($this->concurso->participanteHermes)
         {
@@ -365,6 +503,30 @@ class InformeCierre extends Rotation
             $this->CellFitScale(5.2,.5, "No Registrada",0,0,"R");
 
         }
+
+        $this->ln();
+    }
+
+    public function resumenCF()
+    {
+        $this->ln();
+        $this->SetFont('Arial', 'B', 9);
+        $this->cell(1.8,.5,utf8_decode("Promedio:"),0,0,"L");
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(2.5,.5, $this->concurso->promedio_format,0,0,"R");
+
+        $this->cell(.1,.5);
+        $this->SetFont('Arial', 'B', 9);
+        $this->cell(5,.5,utf8_decode("Oferta Hermes vs Primer Lugar:"),0,0,"L");
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(3,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,0,"R");
+
+
+        $this->cell(.1,.5);
+        $this->SetFont('Arial', 'B', 9);
+        $this->cell(4.3,.5,utf8_decode("Oferta Hermes vs Ganador:"),0,0,"L");
+        $this->SetFont('Arial', '', 9);
+        $this->CellFitScale(3,.5, $this->concurso->participanteHermes->distancia_ganador_format ." (".$this->concurso->participanteHermes->distancia_ganador_porcentaje.")",0,0,"R");
 
         $this->ln();
     }

@@ -248,10 +248,10 @@ class Concurso extends Model
         return $arreglo;
     }
 
-    public function getDatosIndicadorHermesAttribute()
+    public function getDatosIndicadorGanadorAttribute()
     {
-        $lugar_hermes = $this->participantes()->esHermes()->pluck("lugar")->first();
-        return [$lugar_hermes-1, $lugar_hermes];
+        $lugar_ganador = $this->participantes()->ganador()->pluck("lugar")->first();
+        return [$lugar_ganador-1, $lugar_ganador];
     }
 
     public function getDatosOfertaHermesLineaAttribute()
@@ -295,16 +295,18 @@ class Concurso extends Model
 
     public function getParticipantesParaInformeAttribute()
     {
-        $participantes = $this->participantes()->select(["id","nombre","monto","es_empresa_hermes"])->get()->toArray();
+        $participantes = $this->participantes()->select(["id","nombre","monto","es_empresa_hermes","es_ganador"])->get()->toArray();
 
         $promedio =  [[
             "nombre"=>"PROMEDIO"
             , "monto_format"=>$this->promedio_format
             , "monto"=>$this->promedio
             , "es_empresa_hermes"=>0
+            , "es_ganador" => 0
             , "porcentaje_vs_primer_lugar"=>$this->porcentajePrimerLugar($this->promedio)
             , "porcentaje_vs_promedio"=>$this->porcentajePromedio($this->promedio)
             , "porcentaje_vs_hermes"=>$this->porcentajeHermes($this->promedio)
+            , "porcentaje_vs_ganador"=>$this->porcentajeGanador($this->promedio)
         ]];
 
         $participantes_completos = array_merge($participantes,$promedio);
@@ -314,6 +316,8 @@ class Concurso extends Model
             $participante_completo["porcentaje_vs_primer_lugar"] = $this->porcentajePrimerLugar($participante_completo["monto"]);
             $participante_completo["porcentaje_vs_promedio"] = $this->porcentajePromedio($participante_completo["monto"]);
             $participante_completo["porcentaje_vs_hermes"] = $this->porcentajeHermes($participante_completo["monto"]);
+            $participante_completo["porcentaje_vs_ganador"] = $this->porcentajeGanador($participante_completo["monto"]);
+            $participante_completo["es_ganador"] = $participante_completo["es_ganador"] == 1 ? "X":"";
 
             $participantesObj[] = (object) $participante_completo;
         }
@@ -336,12 +340,7 @@ class Concurso extends Model
     {
         if($this->estatus == 3)
         {
-            if($this->participanteHermes->es_ganador)
-            {
-                return "Ganador";
-            }else{
-                return "No Ganador";
-            }
+            return "Ganador ".$this->participanteGanador->nombre;
         } else{
             return "Pendiente";
         }
@@ -387,6 +386,15 @@ class Concurso extends Model
         if($monto>0 && $this->participanteHermes){
             $monto_hermes = $this->participanteHermes->monto;
             $porcentaje = (($monto / $monto_hermes)-1)  *100;
+            return number_format($porcentaje,2). " %";;
+        }
+        return "N/A";
+    }
+    private function porcentajeGanador($monto)
+    {
+        if($monto>0 && $this->participanteGanador){
+            $monto_ganador = $this->participanteGanador->monto;
+            $porcentaje = (($monto / $monto_ganador)-1)  *100;
             return number_format($porcentaje,2). " %";;
         }
         return "N/A";

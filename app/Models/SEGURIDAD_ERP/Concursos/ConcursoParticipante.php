@@ -88,6 +88,23 @@ class ConcursoParticipante extends Model
         return number_format($this->distancia_primer_lugar * 100 / $monto_primer_lugar,2) ."%";
     }
 
+    public function getDistanciaGanadorAttribute()
+    {
+        $monto_ganador = $this->concurso->participanteGanador->monto;
+        $diferencia = $this->monto-$monto_ganador;
+        return $diferencia;
+    }
+
+    public function getDistanciaGanadorFormatAttribute()
+    {
+        return number_format($this->distancia_ganador,2,".", ",");
+    }
+
+    public function getDistanciaGanadorPorcentajeAttribute()
+    {
+        $monto_ganador = $this->concurso->participanteGanador->monto;
+        return number_format($this->distancia_ganador * 100 / $monto_ganador,2) ."%";
+    }
 
     /**
       * Métodos
