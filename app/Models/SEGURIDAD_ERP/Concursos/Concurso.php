@@ -332,7 +332,35 @@ class Concurso extends Model
         }
     }
 
-     /**
+    public function getResultadoFalloTxtAttribute()
+    {
+        if($this->estatus == 3)
+        {
+            if($this->participanteHermes->es_ganador)
+            {
+                return "Ganador";
+            }else{
+                return "No Ganador";
+            }
+        } else{
+            return "Pendiente";
+        }
+
+    }
+
+    public function getEstadoFalloTxtAttribute()
+    {
+        if($this->estatus == 3)
+        {
+            return "Finalizado";
+        } else{
+            return "Pendiente";
+        }
+
+    }
+
+
+    /**
      * Métodos
     */
 
