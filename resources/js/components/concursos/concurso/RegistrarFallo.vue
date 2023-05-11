@@ -130,7 +130,7 @@
                     </div>
                     <div class="modal-footer">
                         <div class="pull-right">
-                            <button type="button" class="btn btn-secondary" v-on:click="regresar">
+                            <button type="button" class="btn btn-secondary" v-on:click="regresar" :disabled="actualizando">
                                 <i class="fa fa-angle-left"></i>
                                 Regresar</button>
                             &nbsp;
@@ -356,14 +356,13 @@
                 })
                 .then(data => {
                     this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                    this.$store.commit('concursos/concurso/SET_ACTUALIZANDO', false);
                     this.regresar();
                 })
                 .catch(error => {
                     this.$store.commit('concursos/concurso/SET_ACTUALIZANDO', false);
-                    this.regresar();
                 }).finally(() => {
-                        this.$store.commit('concursos/concurso/SET_ACTUALIZANDO', false);
-                        this.regresar();
+                    this.$store.commit('concursos/concurso/SET_ACTUALIZANDO', false);
                 });
 			},
             regresar() {
