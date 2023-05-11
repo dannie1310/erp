@@ -193,7 +193,7 @@ class InformeCierre extends Rotation
 
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(8, .7, utf8_decode('Estado de Apertura: '), 0, 0, 'R');
-        if($this->concurso->estatus == 1)
+        if($this->concurso->estatus == 0 || $this->concurso->estatus == 1)
         {
             $this->SetTextColor('255', '255', '255');
             $this->SetFillColor(255,0,0);
@@ -206,9 +206,9 @@ class InformeCierre extends Rotation
 
         if($diferencia_dias == 0)
         {
-            $this->Cell(1, .7, '', 0, 0, 'L');
+            //$this->Cell(1, .7, '', 0, 0, 'L');
             $this->SetFont('Arial', '', 10);
-            $this->Cell(2.5, .7, $this->concurso->estado_apertura, 0, 1, 'C',1);
+            $this->Cell(3.7, .7, $this->concurso->estado_apertura, 0, 1, 'C',1);
         } else if($diferencia_dias != 0 && $this->concurso->estatus == 1){
             $this->SetTextColor('255', '255', '255');
             $this->SetFillColor(245,147,28);
@@ -217,19 +217,17 @@ class InformeCierre extends Rotation
             $y = $this->getY();
 
             $this->SetFont('Arial', '', 10);
-            $this->CellFitScale(3.7, .5, 'Finalizada', 0, 1, 'C',1);
-            $this->setXY($x,$y+.5);
-            $this->CellFitScale(3.7, .5, 'Capturando Datos', 0, 1, 'C',1);
+            $this->CellFitScale(3.7, .7, 'Capturando Datos', 0, 1, 'C',1);
             $this->setY($y + 0.7);
         } else {
-            //$this->Cell(1, .5, '', 0, 0, 'L');
             $this->SetFont('Arial', '', 10);
-            $this->Cell(3.7, .7, $this->concurso->estado_apertura, 0, 1, 'C',1);
+            $this->Cell(3.7, .6, $this->concurso->estado_apertura, 0, 1, 'C',1);
         }
 
 
         $this->SetFillColor(255,255,255);
         $this->SetTextColor('0', '0', '0');
+        $this->ln(0.1);
 
         if($this->concurso->estatus == 3){
             $this->SetFont('Arial', 'B', 10);
@@ -259,7 +257,7 @@ class InformeCierre extends Rotation
         }
 
         $this->SetFont('Arial', '', 10);
-        $this->Cell(3.7, .7, $this->concurso->estado_fallo_txt, 0, 1, 'C',1);
+        $this->Cell(3.7, .6, $this->concurso->estado_fallo_txt, 0, 1, 'C',1);
 
         $this->SetFillColor(255,255,255);
         $this->SetTextColor('0', '0', '0');
@@ -434,6 +432,9 @@ class InformeCierre extends Rotation
                     , "125,182,70"
                     , "125,182,70"
                 ]);
+            }else if ($participante->es_ganador === "X") {
+                $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+                $this->SetFills(['255,255,255','238,209,39','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
             }else{
                 $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
                 $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
