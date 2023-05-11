@@ -95,6 +95,8 @@ class Concurso extends Model
 
 
         switch ($this->estatus) {
+            case 0:
+                return 'En Proceso';
             case 1:
                 return 'En Proceso';
             case 2:
@@ -111,6 +113,8 @@ class Concurso extends Model
 
 
         switch ($this->estatus) {
+            case 0:
+                return 'En Proceso';
             case 1:
                 return 'En Proceso';
             case 2:
@@ -340,7 +344,7 @@ class Concurso extends Model
     {
         if($this->estatus == 3)
         {
-            return "Ganador ".$this->participanteGanador->nombre;
+            return "Ganador '".$this->participanteGanador->nombre."'";
         } else{
             return "Pendiente";
         }
