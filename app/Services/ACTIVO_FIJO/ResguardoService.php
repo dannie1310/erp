@@ -37,11 +37,4 @@ class ResguardoService
         $pdf = new ResguardoFormato($resguardo);
         return $pdf->create();
     }
-
-    public function pdfEtiquetas($id)
-    {
-        $resguardo = $this->repository->show($id);
-        $pdf = new ImpresionEtiquetaFormato($resguardo);
-        return $pdf->create();
-    }
 }

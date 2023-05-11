@@ -17,6 +17,7 @@ import tipoOrigen from './modules/acarreos/tipo-origen';
 import tiro from './modules/acarreos/tiro';
 
 //ACTIVO FIJO
+import listaUsuario from "./modules/activoFijo/lista-usuario";
 import resguardo from "./modules/activoFijo/resguardo";
 import usuarioUbicacion from './modules/activoFijo/usuario-ubicacion';
 
@@ -281,6 +282,7 @@ export default new Vuex.Store({
         'acarreos/tipo-origen' : tipoOrigen,
         'acarreos/tiro' : tiro,
 
+        'activo-fijo/lista-usuario' : listaUsuario,
         'activo-fijo/resguardo' : resguardo,
         'activo-fijo/usuario-ubicacion' : usuarioUbicacion,
 

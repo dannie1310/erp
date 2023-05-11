@@ -57,9 +57,4 @@ class ResguardoController extends Controller
     public function pdfResguardo($id){
         return $this->service->pdfResguardo($id);
     }
-
-    public function pdfEtiqueta($id)
-    {
-        return $this->service->pdfEtiquetas($id);
-    }
 }

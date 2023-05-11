@@ -3427,7 +3427,7 @@ export const routes = [
                         component: require('./components/activo-fijo/activo/impresion-etiqueta/Index').default,
                         meta: {
                             title: 'Impresión de Etiqueta',
-                            breadcrumb: {name: 'Impresión', parent: 'activo'},
+                            breadcrumb: {name: 'IMPRESIÓN DE ETIQUETA', parent: 'activo'},
                             middleware: [auth, permission],
                             permission: 'consultar_banco'
                         }
