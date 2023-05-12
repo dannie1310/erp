@@ -41,10 +41,7 @@ class ImpresionEtiquetaFormato extends Rotation
     function logo($id_empresa, $x, $y)
     {
         $file = $this->archivo_logo($id_empresa);
-        if($id_empresa == 2)
-        {
-            //dd($file);
-        }
+
         $data = unpack("H*", file_get_contents($file));
         $data = bin2hex($data[1]);
         $data = pack('H*', hex2bin($data));
@@ -96,7 +93,7 @@ class ImpresionEtiquetaFormato extends Rotation
                 $this->SetXY($this->x_c, $this->y_c);
 
                 $this->SetFont('code39', '', 6);
-                $this->Cell(4.4, 1.15, '*' . $this->etiquetas[$i]['Codigo'] . '*', 1, 1, 'C');
+                $this->Cell(4.4, 1.15, '*' . $this->etiquetas[$i]['Codigo'] . '*', 0, 1, 'C');
 
                 $this->SetFont('Arial', '', 4);
                 $this->SetXY($this->x_c, $this->y_c);
