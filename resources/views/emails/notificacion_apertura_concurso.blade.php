@@ -23,14 +23,17 @@
             <br><br>
             Primer Lugar: <strong>{{$concurso->participantePrimerLugar->nombre}} {{$concurso->participantePrimerLugar->monto_format}}</strong>
             <br>
+            @if($concurso->participanteHermes)
             Oferta Hermes: <strong>{{$concurso->participanteHermes->nombre}} {{$concurso->participanteHermes->monto_format}}</strong>
             <br>
+            @endif
             Resultado: <strong>{{$concurso->resultado_txt}}</strong>
             <br>
             Promedio de Ofertas: <strong>{{$concurso->promedio_format}}</strong>
             <br>
+            @if($concurso->participanteHermes)
             Diferencia Oferta Hermes vs Primer Lugar: <strong>{{$concurso->participanteHermes->distancia_primer_lugar_format}} ({{$concurso->participanteHermes->distancia_primer_lugar_porcentaje}})</strong>
-
+            @endif
             <br>
             <br>
             <img src="https://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/concursos/concurso-scope/{{$concurso->id}}/grafica-png?access_token={{$token}}" class="img-responsive img-rounded" width="100%">
