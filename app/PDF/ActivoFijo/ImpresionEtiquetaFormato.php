@@ -2,13 +2,11 @@
 
 namespace App\PDF\ActivoFijo;
 
-use App\Models\ACTIVO_FIJO\Resguardo;
 use Ghidev\Fpdf\Rotation;
 
 class ImpresionEtiquetaFormato extends Rotation
 {
-    protected $resguardo;
-    protected $partidas;
+    protected $etiquetas;
     protected $encola = '';
     protected $y_c = 0;
     protected $x_c = 0;
@@ -22,11 +20,11 @@ class ImpresionEtiquetaFormato extends Rotation
     const MAX_WIDTH = 225;
     const MAX_HEIGHT = 180;
 
-    public function __construct(Resguardo $resguardo)
+    public function __construct(Array $etiquetas)
     {
         parent::__construct('P', 'cm', 'Letter');
-        $this->resguardo = $resguardo;
-        $this->partidas = $this->resguardo->partidasEmpresa;
+
+        $this->etiquetas = $etiquetas;
         $this->WidthTotal = $this->GetPageWidth();
     }
 
@@ -40,54 +38,85 @@ class ImpresionEtiquetaFormato extends Rotation
         $this->SetXY($this->x_c, $this->y_c);
     }
 
-    function logo($x, $y){
-        $file = public_path('img/logo-empresa/GLN.png');
+    function logo($id_empresa, $x, $y)
+    {
+        $file = $this->archivo_logo($id_empresa);
+        if($id_empresa == 2)
+        {
+            //dd($file);
+        }
         $data = unpack("H*", file_get_contents($file));
         $data = bin2hex($data[1]);
         $data = pack('H*', hex2bin($data));
-        $file = public_path('/img/logo_temp.png');
+        $file = public_path('/img/logo_etiqueta_temp.png');
         if (file_put_contents($file, $data) !== false) {
-            $this->Image($file, $x+3.6, $y+0.7, 0.2, 0.2);
+            $this->Image($file, $x+3.2, $y+0.6, 0.5, 0.2);
             unlink($file);
+        }
+        $file = '';
+    }
+
+    function archivo_logo($id_empresa)
+    {
+        if($id_empresa == 1) //La nacional
+        {
+            return public_path('img\logo-empresa\GLN.png');
+        }
+        else if($id_empresa == 2)//LA PENINSULAR
+        {
+            return public_path('img\logo-empresa\LA_PENINSULAR.png');
+        }
+        else if($id_empresa == 3 || $id_empresa == 4) //CODRAMSA y OATSA
+        {
+            return public_path('img\logo-empresa\CODRAMSA.png');
+        }
+        else if($id_empresa == 6)
+        {
+            return public_path('img\logo-empresa\ELA.png');
+        }
+        else
+        {
+           return public_path('img\logo-empresa\PBC.png');
         }
     }
 
     function caracteristicas(){
 
-        $cantP = count($this->partidas);
-        $part = $this->partidas;
-        $partidas = $part->toArray();
+        $cantP = count($this->etiquetas);
         $x= 4;
 
-        for($i = 0; $i < $cantP; $i++){dd($this->partidas[$i]);
-            $this->x_c = $this->GetX();//0.7
-            $this->y_c = $this->GetY();//1.1
-            $this->x_p = $this->GetX();//0.7
-            $x--;
-            $this->SetXY($this->x_c, $this->y_c);
-
-            $this->SetFont('code39', '', 6);
-           // $this->Cell(4.4, 1.2, '*'.$partidas[$i]['CodigoEquipo'].'*', 0, 1, 'C');
-            $this->Cell(4.4, 1.2, '*v7T82H6*', 0, 0, 'C');
-            $this->SetFont('Arial', '', 4);
-            $this->SetXY($this->x_c, $this->y_c);
-            $this->Cell(4.4, 1.7, 'ACTIVO FIJO', 0, 0, 'L');
-
-            $this->SetFont('Arial', '', 4);
-            $this->SetXY($this->x_c, $this->y_c);
-            $this->Cell(4.4, 1.8, 'MONITOR', 0, 0, 'C');
-            $this->logo($this->x_c, $this->y_c);
-
-            $this->SetXY($this->x_c, $this->y_c);
-            $this->Cell(4.4, 2.1, 'CN-05GND2-641806CK-04UT-A00-'.$x, 0, 0, 'C');
-
-            $this->x_c = $this->x_c+0.8;
-            $this->SetXY(($this->x_c + 4.4),$this->y_c);
-
-            if($x == 0)
+        for($i = 0; $i < $cantP; $i++)
+        {
+            for ($z=1; $z<=$this->etiquetas[$i]['CodigosImprimir']; $z++)
             {
-                $this->Ln(1.28);
-                $x = 4;
+                $this->x_c = $this->GetX();//0.7
+                $this->y_c = $this->GetY();//1.1
+                $this->x_p = $this->GetX();//0.7
+                $x--;
+                $this->SetXY($this->x_c, $this->y_c);
+
+                $this->SetFont('code39', '', 6);
+                $this->Cell(4.4, 1.15, '*' . $this->etiquetas[$i]['Codigo'] . '*', 1, 1, 'C');
+
+                $this->SetFont('Arial', '', 4);
+                $this->SetXY($this->x_c, $this->y_c);
+                $this->Cell(4.4, 1.6, 'ACTIVO FIJO', 0, 0, 'L');
+
+                $this->SetFont('Arial', '', 4);
+                $this->SetXY($this->x_c, $this->y_c);
+                $this->Cell(4.4, 1.8, $this->etiquetas[$i]['Familia'], 0, 0, 'C');
+                $this->logo($this->etiquetas[$i]['idEmpresa'], $this->x_c, $this->y_c);
+
+                $this->SetXY($this->x_c, $this->y_c);
+                $this->Cell(4.4, 2.1, $this->etiquetas[$i]['NumeroSerie'], 0, 0, 'C');
+
+                $this->x_c = $this->x_c+0.8;
+                $this->SetXY(($this->x_c + 4.4),$this->y_c);
+
+                if ($x == 0) {
+                    $this->Ln(1.28);
+                    $x = 4;
+                }
             }
         }
     }

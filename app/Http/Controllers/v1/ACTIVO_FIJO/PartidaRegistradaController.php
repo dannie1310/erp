@@ -41,8 +41,8 @@ class PartidaRegistradaController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function pdfEtiqueta($id)
+    public function pdfEtiqueta($id,$tipo)
     {
-        return $this->service->pdfEtiquetas($id);
+        return $this->service->pdfEtiquetas($id, $tipo);
     }
 }

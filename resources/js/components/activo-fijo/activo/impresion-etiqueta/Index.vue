@@ -26,16 +26,16 @@
             <div class="row">
                 <div class="col-md-12" v-if="tipo == 1">
                     <div class="form-group">
-                        <label for="id_sucursal">Usuario</label>
+                        <label for="id_usuario">Usuario: </label>
                         <select class="form-control"
                                 name="id_usuario"
                                 data-vv-as="Usuario"
                                 v-model="id_usuario"
-                                v-validate="{required: true}"
+                                v-validate="{required: tipo == 1 ? true : false}"
                                 :error="errors.has('id_usuario')"
                                 id="id_usuario">
-                            <option value>-- Seleccionar--</option>
-                            <option v-for="usuario in usuarios" :value="usuario.id" :disabled="usuario.id == 0 ? true : false">{{ usuario.nombre }}</option>
+                            <option value>-- Seleccionar --</option>
+                            <option v-for="usuario in usuarios" :value="usuario.id" :disabled="usuario.id == 0 ? true : false" :style="usuario.id == 0 ? 'font-weight: bold': ''">{{ usuario.nombre }}</option>
                         </select>
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_usuario')">{{ errors.first('id_usuario') }}</div>
                     </div>
@@ -43,18 +43,34 @@
                 <div class="col-md-6" v-if="tipo == 2">
                     <div class="form-group error-content">
                         <div class="form-group">
-                            <label for="activo">Código:</label>
+                            <label for="codigo">Código:</label>
                             <input class="form-control"
                                    style="width: 100%"
-                                   placeholder="Activo"
-                                   name="activo"
-                                   id="activo"
-                                   data-vv-as="Activo"
+                                   placeholder="Código"
+                                   name="codigo"
+                                   id="codigo"
+                                   data-vv-as="Código"
                                    v-validate="{required: tipo == 2 ? true : false}"
-                                   v-model="activo"
-                                   :class="{'is-invalid': errors.has('activo')}">
-                            <div class="invalid-feedback" v-show="errors.has('activo')">{{ errors.first('activo') }}</div>
+                                   v-model="codigo"
+                                   :class="{'is-invalid': errors.has('codigo')}">
+                            <div class="invalid-feedback" v-show="errors.has('codigo')">{{ errors.first('codigo') }}</div>
                         </div>
+                    </div>
+                </div>
+                <div class="col-md-12" v-if="tipo == 3">
+                    <div class="form-group">
+                        <label for="id_departamento">Departamento: </label>
+                        <select class="form-control"
+                                name="id_departamento"
+                                data-vv-as="Departamento"
+                                v-model="id_departamento"
+                                v-validate="{required: tipo == 3 ? true : false}"
+                                :error="errors.has('id_departamento')"
+                                id="id_departamento">
+                            <option value>-- Seleccionar --</option>
+                            <option v-for="d in departamentos" :value="d.id">{{ d.nombre }}</option>
+                        </select>
+                        <div style="display:block" class="invalid-feedback" v-show="errors.has('id_departamento')">{{ errors.first('id_departamento') }}</div>
                     </div>
                 </div>
                 <div class="col-md-6" v-if="tipo == 4">
@@ -74,46 +90,56 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-6" v-if="tipo == 5">
+                    <div class="form-group error-content">
+                        <div class="form-group">
+                            <label for="proyecto">Proyecto:</label>
+                            <select class="form-control"
+                                   placeholder="Proyecto"
+                                   name="proyecto"
+                                   id="proyecto"
+                                   data-vv-as="Proyecto"
+                                   v-validate="{required: tipo == 5 ? true : false}"
+                                   v-model="proyecto"
+                                    :error="errors.has('proyecto')"
+                                   :class="{'is-invalid': errors.has('proyecto')}">
+                                <option value>-- Seleccionar --</option>
+                                <option v-for="u in ubicaciones" :value="u.id">{{ u.nombre }}</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('proyecto')">{{ errors.first('proyecto') }}</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-times"></i>Cerrar</button>
-            <button type="submit" class="btn btn-primary" @click="imprimir" :disabled="errors.count() > 0"><i class="fa fa-barcode"></i>Imprimir </button>
+            <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-times"></i>Regresar</button>
+            <formato v-bind:id="dato" v-bind:tipo="tipo"></formato>
         </div>
     </div>
 </template>
 
 <script>
 import UsuarioSelect from "../../../igh/usuario/Select";
+import Formato from "./FormatoImpresionEtiqueta";
 export default {
     name: "Index",
-    components: {UsuarioSelect},
+    components: {UsuarioSelect, Formato},
     data() {
         return {
             tipo: '',
             id_usuario: '',
-            activo : null,
+            codigo : null,
             usuarios : [],
-            referencia: null
+            departamentos : [],
+            id_departamento : '',
+            referencia: null,
+            dato: null,
+            ubicaciones : [],
+            proyecto : ''
         }
     },
     methods: {
-        imprimir() {
-           /* var datos = {
-                'fecha_inicial' : this.estimacion.fecha_inicial,
-                'fecha_final' : this.estimacion.fecha_final,
-                'observaciones' : this.estimacion.observaciones,
-                'partidas' : this.partidas
-            }
-
-            return this.$store.dispatch('contratos/estimacion/update', {
-                id: this.id,
-                data: datos
-            })
-                .then((data) => {
-                    this.$router.push({name: 'estimacion'});
-                })*/
-        },
         salir(){
             this.$router.go(-1);
         },
@@ -126,6 +152,26 @@ export default {
             }).then(data => {
                this.usuarios = data;
             })
+        },
+        getDepartamentos()
+        {
+            return this.$store.dispatch('activo-fijo/lista-departamento/index', {
+                params: {
+                    scope: 'partidasPorDepartamento'
+                }
+            }).then(data => {
+                this.departamentos = data.data;
+            })
+        },
+        getUbicaciones()
+        {
+            return this.$store.dispatch('activo-fijo/ubicacion-resguardo/index', {
+                params: {
+                    sort: 'vw_ubicaciones_resguados.Ubicacion', order: 'ASC'
+                }
+            }).then(data => {
+                this.ubicaciones = data.data;
+            })
         }
     },
     watch: {
@@ -135,8 +181,71 @@ export default {
                 {
                     this.getUsuarios();
                 }
+                if(value == 3)
+                {
+                    this.getDepartamentos();
+                }
+                if(value == 5)
+                {
+                    this.getUbicaciones();
+                }
             }
         },
+        id_usuario(value)
+        {
+            if (value !== '' && value !== null && value !== undefined)
+            {
+                this.dato = value
+                this.codigo = null
+                this.referencia = null
+                this.id_departamento = ''
+                this.proyecto = ''
+            }
+        },
+        codigo(value)
+        {
+            if (value !== '' && value !== null && value !== undefined)
+            {
+                this.dato = value
+                this.referencia = null
+                this.id_usuario = ''
+                this.id_departamento = ''
+                this.proyecto = ''
+            }
+        },
+        id_departamento(value)
+        {
+            if (value !== '' && value !== null && value !== undefined)
+            {
+                this.dato = value
+                this.referencia = null
+                this.id_usuario = ''
+                this.codigo = null
+                this.proyecto = ''
+            }
+        },
+        referencia(value)
+        {
+            if (value !== '' && value !== null && value !== undefined)
+            {
+                this.dato = value
+                this.codigo = null
+                this.id_usuario = ''
+                this.id_departamento = ''
+                this.proyecto = ''
+            }
+        },
+        proyecto(value)
+        {
+            if (value !== '' && value !== null && value !== undefined)
+            {
+                this.dato = value
+                this.codigo = null
+                this.id_usuario = ''
+                this.id_departamento = ''
+                this.referencia = null
+            }
+        }
     }
 }
 </script>
