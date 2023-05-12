@@ -41,11 +41,10 @@ class ImpresionEtiquetaFormato extends Rotation
     function logo($id_empresa, $x, $y)
     {
         $file = $this->archivo_logo($id_empresa);
-
         $data = unpack("H*", file_get_contents($file));
         $data = bin2hex($data[1]);
         $data = pack('H*', hex2bin($data));
-        $file = public_path('/img/logo_etiqueta_temp.png');
+        $file = public_path('/img/logo_'.$id_empresa.'.png');
         if (file_put_contents($file, $data) !== false) {
             $this->Image($file, $x+3.2, $y+0.6, 0.5, 0.2);
             unlink($file);
