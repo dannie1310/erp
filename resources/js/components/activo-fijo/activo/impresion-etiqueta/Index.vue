@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label for="tipo">Imprimir por: </label>
                         <select class="form-control"
@@ -24,7 +24,7 @@
             </div>
             <br>
             <div class="row">
-                <div class="col-md-12" v-if="tipo == 1">
+                <div class="col-md-10" v-if="tipo == 1">
                     <div class="form-group">
                         <label for="id_usuario">Usuario: </label>
                         <select class="form-control"
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-12" v-if="tipo == 3">
+                <div class="col-md-10" v-if="tipo == 3">
                     <div class="form-group">
                         <label for="id_departamento">Departamento: </label>
                         <select class="form-control"
@@ -90,7 +90,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6" v-if="tipo == 5">
+                <div class="col-md-10" v-if="tipo == 5">
                     <div class="form-group error-content">
                         <div class="form-group">
                             <label for="proyecto">Proyecto:</label>
@@ -189,6 +189,11 @@ export default {
                 {
                     this.getUbicaciones();
                 }
+                this.id_usuario = ''
+                this.codigo = null
+                this.referencia = null
+                this.id_departamento = ''
+                this.proyecto = ''
             }
         },
         id_usuario(value)
@@ -196,10 +201,7 @@ export default {
             if (value !== '' && value !== null && value !== undefined)
             {
                 this.dato = value
-                this.codigo = null
-                this.referencia = null
-                this.id_departamento = ''
-                this.proyecto = ''
+
             }
         },
         codigo(value)
@@ -207,10 +209,6 @@ export default {
             if (value !== '' && value !== null && value !== undefined)
             {
                 this.dato = value
-                this.referencia = null
-                this.id_usuario = ''
-                this.id_departamento = ''
-                this.proyecto = ''
             }
         },
         id_departamento(value)
@@ -218,10 +216,6 @@ export default {
             if (value !== '' && value !== null && value !== undefined)
             {
                 this.dato = value
-                this.referencia = null
-                this.id_usuario = ''
-                this.codigo = null
-                this.proyecto = ''
             }
         },
         referencia(value)
@@ -229,10 +223,6 @@ export default {
             if (value !== '' && value !== null && value !== undefined)
             {
                 this.dato = value
-                this.codigo = null
-                this.id_usuario = ''
-                this.id_departamento = ''
-                this.proyecto = ''
             }
         },
         proyecto(value)
@@ -240,10 +230,6 @@ export default {
             if (value !== '' && value !== null && value !== undefined)
             {
                 this.dato = value
-                this.codigo = null
-                this.id_usuario = ''
-                this.id_departamento = ''
-                this.referencia = null
             }
         }
     }
