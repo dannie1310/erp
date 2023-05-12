@@ -28,6 +28,9 @@ class Concurso extends Model
         'nombre',
         'fecha_hora_inicio_apertura',
         'id_usuario_inicio_apertura',
+        'fecha_fallo',
+        'fecha_hora_registro_fallo',
+        'id_usuario_registro_fallo',
         'estatus'
     ];
 
@@ -62,6 +65,12 @@ class Concurso extends Model
             ->esHermes();
     }
 
+    public function participantePrimerLugar()
+    {
+        return $this->hasOne(ConcursoParticipante::class, 'id_concurso', 'id')
+            ->primerLugar();
+    }
+
     public function participanteGanador()
     {
         return $this->hasOne(ConcursoParticipante::class, 'id_concurso', 'id')
@@ -83,14 +92,37 @@ class Concurso extends Model
      */
     public function getEstadoAttribute()
     {
-        if($this->estatus == 1)
-        {
-            return 'En Proceso';
-        }else if($this->estatus == 2)
-        {
-            return 'Finalizada';
-        }else{
-            return '';
+
+
+        switch ($this->estatus) {
+            case 0:
+                return 'En Proceso';
+            case 1:
+                return 'En Proceso';
+            case 2:
+                return 'Fallo Pendiente';
+            case 3:
+                return 'Finalizado';
+            default:
+                return '';
+        }
+    }
+
+    public function getEstadoAperturaAttribute()
+    {
+
+
+        switch ($this->estatus) {
+            case 0:
+                return 'En Proceso';
+            case 1:
+                return 'En Proceso';
+            case 2:
+                return 'Finalizada';
+            case 3:
+                return 'Finalizada';
+            default:
+                return '';
         }
     }
 
@@ -98,16 +130,13 @@ class Concurso extends Model
     {
         switch ($this->estatus) {
             case 1:
-                return '#f39c12';
-                break;
-
+                return '#f32c12';
             case 2:
+                return '#f39c12';
+            case 3:
                 return '#00a65a';
-                break;
-
             default:
                 return '#d2d6de';
-                break;
         }
     }
 
@@ -115,6 +144,15 @@ class Concurso extends Model
     {
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaFalloFormatAttribute()
+    {
+        if($this->fecha_fallo) {
+            $date = date_create($this->fecha_fallo);
+            return date_format($date, "d/m/Y");
+        }
+        return '-';
     }
 
     public function getDivisorAttribute()
@@ -204,20 +242,20 @@ class Concurso extends Model
         return $arreglo_promedio;
     }
 
-    public function getDatosOfertaGanadoraGraficaAttribute()
+    public function getDatosOfertaPrimerLugarGraficaAttribute()
     {
         $arreglo = [];
         for($i = 0; $i<count($this->participantes);$i++)
         {
-            $arreglo[] = ceil($this->participantes()->ganador()->pluck("monto")->first() / $this->divisor);
+            $arreglo[] = ceil($this->participantes()->primerLugar()->pluck("monto")->first() / $this->divisor);
         }
         return $arreglo;
     }
 
-    public function getDatosIndicadorHermesAttribute()
+    public function getDatosIndicadorGanadorAttribute()
     {
-        $lugar_hermes = $this->participantes()->esHermes()->pluck("lugar")->first();
-        return [$lugar_hermes-1, $lugar_hermes];
+        $lugar_ganador = $this->participantes()->ganador()->pluck("lugar")->first();
+        return [$lugar_ganador-1, $lugar_ganador];
     }
 
     public function getDatosOfertaHermesLineaAttribute()
@@ -261,16 +299,18 @@ class Concurso extends Model
 
     public function getParticipantesParaInformeAttribute()
     {
-        $participantes = $this->participantes()->select(["id","nombre","monto","es_empresa_hermes"])->get()->toArray();
+        $participantes = $this->participantes()->select(["id","nombre","monto","es_empresa_hermes","es_ganador"])->get()->toArray();
 
         $promedio =  [[
             "nombre"=>"PROMEDIO"
             , "monto_format"=>$this->promedio_format
             , "monto"=>$this->promedio
             , "es_empresa_hermes"=>0
+            , "es_ganador" => 0
             , "porcentaje_vs_primer_lugar"=>$this->porcentajePrimerLugar($this->promedio)
             , "porcentaje_vs_promedio"=>$this->porcentajePromedio($this->promedio)
             , "porcentaje_vs_hermes"=>$this->porcentajeHermes($this->promedio)
+            , "porcentaje_vs_ganador"=>$this->porcentajeGanador($this->promedio)
         ]];
 
         $participantes_completos = array_merge($participantes,$promedio);
@@ -280,6 +320,8 @@ class Concurso extends Model
             $participante_completo["porcentaje_vs_primer_lugar"] = $this->porcentajePrimerLugar($participante_completo["monto"]);
             $participante_completo["porcentaje_vs_promedio"] = $this->porcentajePromedio($participante_completo["monto"]);
             $participante_completo["porcentaje_vs_hermes"] = $this->porcentajeHermes($participante_completo["monto"]);
+            $participante_completo["porcentaje_vs_ganador"] = $this->porcentajeGanador($participante_completo["monto"]);
+            $participante_completo["es_ganador"] = $participante_completo["es_ganador"] == 1 ? "X":"";
 
             $participantesObj[] = (object) $participante_completo;
         }
@@ -298,15 +340,38 @@ class Concurso extends Model
         }
     }
 
-     /**
+    public function getResultadoFalloTxtAttribute()
+    {
+        if($this->estatus == 3)
+        {
+            return "Ganador '".$this->participanteGanador->nombre."'";
+        } else{
+            return "Pendiente";
+        }
+
+    }
+
+    public function getEstadoFalloTxtAttribute()
+    {
+        if($this->estatus == 3)
+        {
+            return "Finalizado";
+        } else{
+            return "Pendiente";
+        }
+
+    }
+
+
+    /**
      * Métodos
     */
 
     private function porcentajePrimerLugar($monto)
     {
         if($monto>0){
-            $monto_ganador = $this->participanteGanador->monto;
-            $porcentaje = (($monto / $monto_ganador)-1)  *100;
+            $monto_primer_lugar = $this->participantePrimerLugar->monto;
+            $porcentaje = (($monto / $monto_primer_lugar)-1)  *100;
             return number_format($porcentaje,2) . " %";
         }
         return "N/A";
@@ -325,6 +390,15 @@ class Concurso extends Model
         if($monto>0 && $this->participanteHermes){
             $monto_hermes = $this->participanteHermes->monto;
             $porcentaje = (($monto / $monto_hermes)-1)  *100;
+            return number_format($porcentaje,2). " %";;
+        }
+        return "N/A";
+    }
+    private function porcentajeGanador($monto)
+    {
+        if($monto>0 && $this->participanteGanador){
+            $monto_ganador = $this->participanteGanador->monto;
+            $porcentaje = (($monto / $monto_ganador)-1)  *100;
             return number_format($porcentaje,2). " %";;
         }
         return "N/A";
@@ -443,5 +517,37 @@ class Concurso extends Model
             abort(400, $e->getMessage());
         }
 
+    }
+
+    public function registrarFallo($data)
+    {
+        if($this->estatus == 0 || $this->estatus == 1)
+        {
+            abort(400, "Para poder registrar el fallo el estado del concurso debe ser: 'Fallo Pendiente', actualmente el estado es: ".$this->estado);
+        }
+        if($this->estatus == 3)
+        {
+            abort(400, "Este concurso ya tiene fallo registrado.");
+        }
+        DB::connection('seguridad')->beginTransaction();
+        try {
+            $ganadores = $this->participantes()
+                ->where("es_ganador","=",1)
+                ->get();
+            if(count($ganadores)==0)
+            {
+                abort(400, "Debe indicar quien es el participante ganador.");
+            }
+            if(count($ganadores)> 1)
+            {
+                abort(400, "Existe mas de un participante registado como ganador, por favor vuelva a dar clic sobre el check del participante ganador.");
+            }
+            $this->update($data);
+            DB::connection('seguridad')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 }
