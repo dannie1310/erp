@@ -3417,7 +3417,6 @@ export const routes = [
                             title: 'Activos',
                             breadcrumb: {name: 'ACTIVOS', parent: 'activo-fijo'},
                             middleware: [auth],
-                            permission: '',
                             general: true
                         }
                     },
@@ -3429,7 +3428,7 @@ export const routes = [
                             title: 'Impresión de Etiqueta',
                             breadcrumb: {name: 'IMPRESIÓN DE ETIQUETA', parent: 'activo'},
                             middleware: [auth, permission],
-                            permission: 'consultar_banco'
+                            permission: 'consultar_impresion_etiqueta'
                         }
                     },
                 ]

@@ -23,7 +23,7 @@
                     <i class="right fa fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consulta_resguardo_activo_fijo',true)">
+                    <li class="nav-item" v-if="$root.can('consultar_impresion_etiqueta',true)">
                         <router-link :to="{name: 'impresion-etiqueta'}" class="nav-link" :class="{active: this.$route.name == 'impresion-etiqueta'}">
                             <i class="fa fa-barcode nav-icon"></i>
                             <p>Impresión de Etiquetas</p>

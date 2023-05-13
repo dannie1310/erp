@@ -35,6 +35,7 @@ class PartidaRegistradaController extends Controller
     public function __construct(Manager $fractal, PartidaRegistradaService $service, PartidaRegistradaTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('permisoGlobal:consultar_impresion_etiqueta')->only('store');
 
         $this->fractal = $fractal;
         $this->service = $service;
