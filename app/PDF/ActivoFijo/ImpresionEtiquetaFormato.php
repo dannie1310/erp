@@ -92,7 +92,7 @@ class ImpresionEtiquetaFormato extends Rotation
                 $this->SetXY($this->x_c, $this->y_c);
 
                 $this->SetFont('code39', '', 6);
-                $this->Cell(4.4, 1.15, '*' . $this->etiquetas[$i]['Codigo'] . '*', 1, 1, 'C');
+                $this->Cell(4.4, 1.15, '*' . $this->etiquetas[$i]['Codigo'] . '*', 0, 1, 'C');
 
                 $this->SetFont('Arial', '', 4);
                 $this->SetXY($this->x_c, $this->y_c);
