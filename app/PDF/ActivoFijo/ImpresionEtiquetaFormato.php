@@ -92,15 +92,15 @@ class ImpresionEtiquetaFormato extends Rotation
                 $this->SetXY($this->x_c, $this->y_c);
 
                 $this->SetFont('code39', '', 6);
-                $this->Cell(4.4, 1.15, '*' . $this->etiquetas[$i]['Codigo'] . '*', 0, 1, 'C');
+                $this->Cell(4.4, 1.15, '*' . $this->etiquetas[$i]['Codigo'] . '*', 1, 1, 'C');
 
                 $this->SetFont('Arial', '', 4);
                 $this->SetXY($this->x_c, $this->y_c);
-                $this->Cell(4.4, 1.6, 'ACTIVO FIJO', 0, 0, 'L');
+                $this->Cell(4.4, 1.55, 'ACTIVO FIJO', 0, 0, 'L');
 
                 $this->SetFont('Arial', '', 4);
                 $this->SetXY($this->x_c, $this->y_c);
-                $this->Cell(4.4, 1.8, $this->etiquetas[$i]['Familia'], 0, 0, 'C');
+                $this->CellFit(4.4, 1.8, $this->etiquetas[$i]['Familia'], 0, 0, 'C');
                 $this->logo($this->etiquetas[$i]['idEmpresa'], $this->x_c, $this->y_c);
 
                 $this->SetXY($this->x_c, $this->y_c);
