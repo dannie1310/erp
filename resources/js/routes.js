@@ -3428,7 +3428,8 @@ export const routes = [
                             title: 'Impresión de Etiqueta',
                             breadcrumb: {name: 'IMPRESIÓN DE ETIQUETA', parent: 'activo'},
                             middleware: [auth, permission],
-                            permission: 'consultar_impresion_etiqueta'
+                            permission: 'consultar_impresion_etiqueta',
+                            general: true
                         }
                     },
                 ]
