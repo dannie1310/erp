@@ -100,7 +100,7 @@ class ImpresionEtiquetaFormato extends Rotation
 
                 $this->SetFont('Arial', '', 4);
                 $this->SetXY($this->x_c, $this->y_c);
-                $this->CellFit(4.4, 1.8, $this->etiquetas[$i]['Familia'], 0, 0, 'C');
+                $this->CellFitScale(4.4, 1.8, utf8_decode($this->etiquetas[$i]['Familia']), 0, 0, 'C');
                 $this->logo($this->etiquetas[$i]['idEmpresa'], $this->x_c, $this->y_c);
 
                 $this->SetXY($this->x_c, $this->y_c);
