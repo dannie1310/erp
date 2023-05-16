@@ -16,7 +16,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item" v-if="$root.can('consulta_resguardo_activo_fijo',true)">
+            <li class="nav-item" v-if="$root.can('consultar_impresion_etiqueta',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-boxes"></i>
                     <p>Activos</p>
