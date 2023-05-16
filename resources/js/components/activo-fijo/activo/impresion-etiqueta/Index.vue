@@ -113,7 +113,6 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-times"></i>Regresar</button>
             <formato v-bind:id="dato" v-bind:tipo="tipo"></formato>
         </div>
     </div>
@@ -140,9 +139,6 @@ export default {
         }
     },
     methods: {
-        salir(){
-            this.$router.go(-1);
-        },
         getUsuarios()
         {
             return this.$store.dispatch('activo-fijo/lista-usuario/indexOrdenado', {
