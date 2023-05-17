@@ -27,16 +27,14 @@
                 <div class="col-md-10" v-if="tipo == 1">
                     <div class="form-group">
                         <label for="id_usuario">Usuario: </label>
-                        <select class="form-control"
-                                name="id_usuario"
-                                data-vv-as="Usuario"
-                                v-model="id_usuario"
-                                v-validate="{required: tipo == 1 ? true : false}"
-                                :error="errors.has('id_usuario')"
-                                id="id_usuario">
-                            <option value>-- Seleccionar --</option>
-                            <option v-for="usuario in usuarios" :value="usuario.id" :disabled="usuario.id == 0 ? true : false" :style="usuario.id == 0 ? 'font-weight: bold': ''">{{ usuario.nombre }}</option>
-                        </select>
+                        <treeselect
+                                    v-model="id_usuario"
+                                    :options="usuarios"
+                                    data-vv-as="Usuario"
+                                    v-validate="{required: tipo == 1 ? true : false}"
+                                    placeholder="Seleccione el usuario">
+                            <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                        </treeselect>
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_usuario')">{{ errors.first('id_usuario') }}</div>
                     </div>
                 </div>
@@ -141,12 +139,13 @@ export default {
     methods: {
         getUsuarios()
         {
-            return this.$store.dispatch('activo-fijo/lista-usuario/indexOrdenado', {
+            return this.$store.dispatch('activo-fijo/lista-usuario/index', {
                 params: {
                     scope: 'partidasUbicacion'
                 }
             }).then(data => {
-               this.usuarios = data;
+               this.usuarios = data.data;
+               this.usuariosAcomodar()
             })
         },
         getDepartamentos()
@@ -168,7 +167,14 @@ export default {
             }).then(data => {
                 this.ubicaciones = data.data;
             })
-        }
+        },
+        usuariosAcomodar () {
+            this.usuarios = this.usuarios.map(i => ({
+                id: i.id,
+                label: `${i.nombre}`+' ('+`${i.ubicacion}`+')',
+                customLabel: `${i.nombre}`+' ('+`${i.ubicacion}`+')',
+            }));
+        },
     },
     watch: {
         tipo(value) {
