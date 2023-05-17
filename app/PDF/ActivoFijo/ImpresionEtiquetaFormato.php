@@ -46,7 +46,7 @@ class ImpresionEtiquetaFormato extends Rotation
         $data = pack('H*', hex2bin($data));
         $file = public_path('/img/logo_'.$id_empresa.'.png');
         if (file_put_contents($file, $data) !== false) {
-            $this->Image($file, $x+3.2, $y+0.6, 0.3, 0.3);
+            $this->Image($file, $x+3.2, $y+0.5, 0.3, 0.3);
             unlink($file);
         }
     }
@@ -91,21 +91,21 @@ class ImpresionEtiquetaFormato extends Rotation
                 $this->SetXY($this->x_c, $this->y_c);
 
                 $this->SetFont('code39', '', 6);
-                $this->CellFitScale(4.4, 1.15, '*' . $this->etiquetas[$i]['Codigo'] . '*', 0, 1, 'C');
+                $this->CellFitScale(4.4, 1.3, '*' . $this->etiquetas[$i]['Codigo'] . '*', 1, 1, 'C');
 
                 $this->SetFont('Arial', '', 4);
-                $this->SetXY($this->x_c, $this->y_c);
-                $this->Cell(4.4, 1.55, 'ACTIVO FIJO', 0, 0, 'L');
+                $this->SetXY($this->x_c, $this->y_c+0.6);
+                $this->Cell(1, 0.5, 'ACTIVO FIJO', 0, 0, 'C');
+                $this->logo($this->etiquetas[$i]['idEmpresa'], $this->x_c+0.2, $this->y_c+0.1);
 
                 $this->SetFont('Arial', '', 4);
-                $this->SetXY($this->x_c, $this->y_c);
-                $this->CellFitScale(4.4, 1.8, utf8_decode($this->etiquetas[$i]['Familia']), 0, 0, 'C');
-                $this->logo($this->etiquetas[$i]['idEmpresa'], $this->x_c, $this->y_c);
+                $this->SetXY($this->x_c, $this->y_c+0.9);
+                $this->CellFitScale(4.4, 0.2, utf8_decode($this->etiquetas[$i]['Familia']), 0, 0, 'C');
 
-                $this->SetXY($this->x_c, $this->y_c);
-                $this->Cell(4.4, 2.1, $this->etiquetas[$i]['NumeroSerie'], 0, 0, 'C');
+                $this->SetXY($this->x_c, $this->y_c+1.05);
+                $this->Cell(4.4, 0.15, $this->etiquetas[$i]['NumeroSerie'], 0, 0, 'C');
 
-                $this->x_c = $this->x_c+0.7;
+                $this->x_c = $this->x_c+0.6;
                 $this->SetXY(($this->x_c + 4.4),$this->y_c);
 
                 if ($x == 0) {
