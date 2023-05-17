@@ -47,7 +47,9 @@ class ImpresionEtiquetaFormato extends Rotation
         $file = public_path('/img/logo_'.$id_empresa.'.png');
         if (file_put_contents($file, $data) !== false) {
             $this->Image($file, $x+3.2, $y+0.5, 0.3, 0.3);
-            unlink($file);
+            if(file_exists(public_path('/img/logo_'.$id_empresa.'.png'))) {
+                unlink($file);
+            }
         }
     }
 
@@ -91,7 +93,7 @@ class ImpresionEtiquetaFormato extends Rotation
                 $this->SetXY($this->x_c, $this->y_c);
 
                 $this->SetFont('code39', '', 6);
-                $this->CellFitScale(4.4, 1.3, '*' . $this->etiquetas[$i]['Codigo'] . '*', 1, 1, 'C');
+                $this->CellFitScale(4.4, 1.3, '*' . $this->etiquetas[$i]['Codigo'] . '*', 1, 0, 'C');
 
                 $this->SetFont('Arial', '', 4);
                 $this->SetXY($this->x_c, $this->y_c+0.6);
