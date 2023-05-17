@@ -171,8 +171,8 @@ export default {
         usuariosAcomodar () {
             this.usuarios = this.usuarios.map(i => ({
                 id: i.id,
-                label: `${i.nombre}`+'('+`${i.ubicacion}`+')',
-                customLabel: `${i.nombre}`+'('+`${i.ubicacion}`+')',
+                label: `${i.nombre}`+' ('+`${i.ubicacion}`+')',
+                customLabel: `${i.nombre}`+' ('+`${i.ubicacion}`+')',
             }));
         },
     },
