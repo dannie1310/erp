@@ -5135,6 +5135,32 @@ export const routes = [
                     general: true
                 }
             },
+            {
+                path: ':id/consultar',
+                name: 'concurso-show',
+                props: true,
+                component: require('./components/concursos/concurso/Show').default,
+                meta: {
+                    title: 'Consultar Concurso',
+                    breadcrumb: { parent: 'concursos', name: 'CONSULTAR'},
+                    middleware: [auth, permission],
+                    permission: ['consultar_concurso'],
+                    general: true
+                }
+            },
+            {
+                path: ':id/registro-fallo',
+                name: 'concurso-registro-fallo',
+                props: true,
+                component: require('./components/concursos/concurso/RegistrarFallo').default,
+                meta: {
+                    title: 'Registrar Fallo de Concurso',
+                    breadcrumb: { parent: 'concursos', name: 'REGISTRAR FALLO'},
+                    middleware: [auth, permission],
+                    permission: ['editar_concurso'],
+                    general: true
+                }
+            },
         ]
     },
     {

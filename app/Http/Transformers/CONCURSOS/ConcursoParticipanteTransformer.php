@@ -22,7 +22,8 @@ class ConcursoParticipanteTransformer extends TransformerAbstract
             'nombre' => (string) $model->nombre,
             'monto' => $model->monto,
             'monto_format' => $model->monto_format,
-            'es_empresa_hermes' => $model->es_hermes
+            'es_empresa_hermes' => $model->es_hermes,
+            'es_ganador' => $model->es_ganador == 1 ? true : false
         ];
     }
 }

@@ -18,7 +18,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
+                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 15px'" />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -41,8 +41,9 @@
                 columns: [
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
                     { title: 'Nombre', field: 'nombre',  sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Fecha de Apertura', field: 'fecha_hora_inicio_apertura', tdClass: 'td_c70', sortable: true, thComp: require('../../globals/th-Date').default},
-                    { title: 'Estatus Apertura', field: 'estatus', thClass: 'th_c70', tdComp: require('./partials/EstatusLabel').default, sortable: true},
+                    { title: 'Fecha de Apertura', field: 'fecha', tdClass: 'th_c90', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Fecha de Fallo', field: 'fecha_fallo', tdClass: 'th_c90', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Estatus', field: 'estatus', thClass: 'th_c70', tdComp: require('./partials/EstatusLabel').default, sortable: true},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_c70', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -101,11 +102,14 @@
                     self.$data.data = concursos.map((concurso, i) => ({
                         index: (i + 1) + self.query.offset,
                         nombre: concurso.nombre,
-                        fecha_hora_inicio_apertura: concurso.fecha_format,
+                        fecha: concurso.fecha_format,
+                        fecha_fallo: concurso.fecha_fallo_format,
+
                         id: concurso.id,
                         estatus: this.getEstado(concurso.estatus_descripcion, concurso.estatus_color),
                         buttons: $.extend({}, {
                             id: concurso.id,
+                            fallo: (self.$root.can('editar_concurso', true) && concurso.estatus == 2) ? true : false,
                             edit: (self.$root.can('editar_concurso', true) && concurso.estatus == 1) ? true : false,
                             close: (self.$root.can('cerrar_concurso', true) && concurso.estatus == 1) ? true : false,
                         })
@@ -147,5 +151,13 @@
         }
     }
 </script>
+<style scoped>
+
+body, .btn {
+    font-size: 15px !important;
+}
+
+</style>
+
 
 

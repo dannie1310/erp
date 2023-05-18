@@ -23,5 +23,11 @@ class ConcursoObserver
             $concurso->id_usuario_finalizo_apertura = auth()->id();
             $concurso->fecha_hora_fin_apertura = date('Y-m-d h:i:s');
         }
+
+        if($concurso->estatus != $concurso->getOriginal('estatus') && $concurso->estatus == 3)
+        {
+            $concurso->id_usuario_registro_fallo = auth()->id();
+            $concurso->fecha_hora_registro_fallo = date('Y-m-d h:i:s');
+        }
     }
 }

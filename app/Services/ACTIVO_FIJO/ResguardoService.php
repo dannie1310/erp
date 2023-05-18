@@ -28,7 +28,7 @@ class ResguardoService
     }
 
     public function getResguardos($data){
-        return $this->repository->getResguardos($data);    
+        return $this->repository->getResguardos($data);
     }
 
     public function pdfResguardo($id){

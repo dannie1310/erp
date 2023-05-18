@@ -58,6 +58,11 @@ class ConcursoController extends Controller
         return $this->respondWithItem($this->service->cerrar($id));
     }
 
+    public function setFallo(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->setFallo($request->all(),$id));
+    }
+
     public function pdf($id)
     {
         return $this->service->pdf($id);
@@ -84,6 +89,13 @@ class ConcursoController extends Controller
         return $this->respondWithItem($this->service->show($id));
     }
 
+    public function setParticipanteGanador($id, $id_participante)
+    {
+        $servicioParticipante = new ConcursoParticipanteService(new ConcursoParticipante());
+        $servicioParticipante->setGanador($id_participante);
+        return $this->respondWithItem($this->service->show($id));
+    }
+
     public function destroyParticipante($id, $id_participante)
     {
         //$this->service->eliminaParticipante($id, $id_participante);
@@ -97,6 +109,11 @@ class ConcursoController extends Controller
         $servicioParticipante = new ConcursoParticipanteService(new ConcursoParticipante());
         $transformerParticipante = new ConcursoParticipanteTransformer();
         return $transformerParticipante->transform($servicioParticipante->show($id_participante));
+    }
+
+    public function registrarFallo($id)
+    {
+        return $this->respondWithItem($this->service->registrarFallo($id));
     }
 
 }
