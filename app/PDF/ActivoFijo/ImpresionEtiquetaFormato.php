@@ -116,7 +116,7 @@ class ImpresionEtiquetaFormato extends Rotation
                 $this->SetXY(($this->x_c + 4.4),$this->y_c);
 
                 if ($x == 0) {
-                    $this->Ln(1.265);
+                    $this->Ln(1.275);
                     $x = 4;
                 }
             }
