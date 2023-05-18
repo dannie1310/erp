@@ -489,22 +489,17 @@ class InformeCierre extends Rotation
         $this->cell(2.2,.5,utf8_decode("Promedio:"),0,0,"L");
         $this->SetFont('Arial', '', 12);
         $this->CellFitScale(3.5,.5, $this->concurso->promedio_format,0,0,"R");
-        $this->cell(.2,.5);
-        $this->SetFont('Arial', 'B', 12);
-        $this->cell(8.7,.5,utf8_decode("Oferta Hermes vs Primer Lugar:"),0,0,"R");
-        $this->SetFont('Arial', '', 12);
+
         if($this->concurso->participanteHermes)
         {
+            $this->cell(.2,.5);
+            $this->SetFont('Arial', 'B', 12);
+            $this->cell(8.7,.5,utf8_decode("Oferta Hermes vs Primer Lugar:"),0,0,"R");
+            $this->SetFont('Arial', '', 12);
             $this->CellFitScale(5.2,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,0,"R");
-
-        }else{
-            $this->SetTextColor('255,99,99');
-
-            $this->SetFont('Arial', 'I', 9);
-            $this->CellFitScale(5.2,.5, "No Registrada",0,0,"R");
-
+        } else{
+            $this->ln();
         }
-
         $this->ln();
     }
 
@@ -516,20 +511,23 @@ class InformeCierre extends Rotation
         $this->SetFont('Arial', '', 9);
         $this->CellFitScale(2.5,.5, $this->concurso->promedio_format,0,0,"R");
 
-        $this->cell(.1,.5);
-        $this->SetFont('Arial', 'B', 9);
-        $this->cell(5,.5,utf8_decode("Oferta Hermes vs Primer Lugar:"),0,0,"L");
-        $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(3,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,0,"R");
+        if($this->concurso->participanteHermes)
+        {
+            $this->cell(.1,.5);
+            $this->SetFont('Arial', 'B', 9);
+            $this->cell(5,.5,utf8_decode("Oferta Hermes vs Primer Lugar:"),0,0,"L");
+            $this->SetFont('Arial', '', 9);
+            $this->CellFitScale(3,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,0,"R");
 
-
-        $this->cell(.1,.5);
-        $this->SetFont('Arial', 'B', 9);
-        $this->cell(4.3,.5,utf8_decode("Oferta Hermes vs Ganador:"),0,0,"L");
-        $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(3,.5, $this->concurso->participanteHermes->distancia_ganador_format ." (".$this->concurso->participanteHermes->distancia_ganador_porcentaje.")",0,0,"R");
-
-        $this->ln();
+            $this->cell(.1,.5);
+            $this->SetFont('Arial', 'B', 9);
+            $this->SetTextColor('0,0,0');
+            $this->cell(4.3,.5,utf8_decode("Oferta Hermes vs Ganador:"),0,0,"L");
+            $this->SetFont('Arial', '', 9);
+            $this->CellFitScale(3,.5, $this->concurso->participanteHermes->distancia_ganador_format ." (".$this->concurso->participanteHermes->distancia_ganador_porcentaje.")",0,0,"R");
+        } else{
+            $this->ln();
+        }
     }
 
     public function generaGrafica()
@@ -575,29 +573,44 @@ class InformeCierre extends Rotation
 
 // Create the bar plot ofertas
         $b1plot = new BarPlot($data1y);
-// Create the bar plot oferta hermes
-        $b2plot = new BarPlot($data2y);
+
+        if($this->concurso->participanteHermes) {
+            // Create the bar plot oferta hermes
+            $b2plot = new BarPlot($data2y);
+            $graph->Add($b2plot);
+            $b2plot->SetColor("#7DB646");
+            $b2plot->SetFillColor("#7DB646");
+            $b2plot->SetLegend("Oferta Hermes");
+
+
+            // Create the line plot oferta hermes
+            $l3plot = new LinePlot($data4y);
+            $graph->Add($l3plot);
+            $l3plot->SetBarCenter();
+            $l3plot->SetColor([125,182,70]);
+            $l3plot->SetLegend("Oferta Hermes");
+            $l3plot->mark->SetType(MARK_X,'',1.0);
+            $l3plot->mark->SetWeight(2);
+            $l3plot->mark->SetWidth(8);
+            $l3plot->mark->setColor([125,182,70]);
+            $l3plot->mark->setFillColor([125,182,70]);
+        }
+
+
 // Create the line plot promedio
         $lplot = new LinePlot($data6y);
 // Create the line plot mejor oferta
         $l2plot = new LinePlot($data5y);
-// Create the line plot oferta hermes
-        $l3plot = new LinePlot($data4y);
 
 // ...and add it to the graPH
         $graph->Add($b1plot);
-        $graph->Add($b2plot);
         $graph->Add($lplot);
         $graph->Add($l2plot);
-        $graph->Add($l3plot);
 
         $b1plot->SetColor("#757575");
         $b1plot->SetFillColor("#757575");
         $b1plot->SetLegend("Ofertas");
 
-        $b2plot->SetColor("#7DB646");
-        $b2plot->SetFillColor("#7DB646");
-        $b2plot->SetLegend("Oferta Hermes");
 
         $lplot->SetBarCenter();
         $lplot->SetColor("red");
@@ -617,14 +630,7 @@ class InformeCierre extends Rotation
         $l2plot->mark->setColor("yellow");
         $l2plot->mark->setFillColor("yellow");
 
-        $l3plot->SetBarCenter();
-        $l3plot->SetColor([125,182,70]);
-        $l3plot->SetLegend("Oferta Hermes");
-        $l3plot->mark->SetType(MARK_X,'',1.0);
-        $l3plot->mark->SetWeight(2);
-        $l3plot->mark->SetWidth(8);
-        $l3plot->mark->setColor([125,182,70]);
-        $l3plot->mark->setFillColor([125,182,70]);
+
 
         $graph->legend->SetFrameWeight(1);
         $graph->legend->SetColumns(6);

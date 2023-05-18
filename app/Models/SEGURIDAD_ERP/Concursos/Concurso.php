@@ -498,11 +498,6 @@ class Concurso extends Model
                 'estatus' => 2
             ]);
 
-            if(!count($this->participantes()->esHermes()->get())>0)
-            {
-                abort("500","Debe especificar un participante como empresa del grupo Hermes");
-            }
-
             foreach($this->participantesOrdenados as $key => $p)
             {
                 $p->update([
