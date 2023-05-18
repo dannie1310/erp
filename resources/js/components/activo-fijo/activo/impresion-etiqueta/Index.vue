@@ -90,18 +90,14 @@
                     <div class="form-group error-content">
                         <div class="form-group">
                             <label for="proyecto">Proyecto:</label>
-                            <select class="form-control"
-                                   placeholder="Proyecto"
-                                   name="proyecto"
-                                   id="proyecto"
-                                   data-vv-as="Proyecto"
-                                   v-validate="{required: tipo == 5 ? true : false}"
-                                   v-model="proyecto"
-                                    :error="errors.has('proyecto')"
-                                   :class="{'is-invalid': errors.has('proyecto')}">
-                                <option value>-- Seleccionar --</option>
-                                <option v-for="u in ubicaciones" :value="u.id">{{ u.nombre }}</option>
-                            </select>
+                            <treeselect
+                                v-model="proyecto"
+                                :options="ubicaciones"
+                                data-vv-as="proyecto"
+                                v-validate="{required: tipo == 5 ? true : false}"
+                                placeholder="Seleccione el proyecto">
+                                <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                            </treeselect>
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('proyecto')">{{ errors.first('proyecto') }}</div>
                         </div>
                     </div>
@@ -165,6 +161,7 @@ export default {
                 }
             }).then(data => {
                 this.ubicaciones = data.data;
+                this.ubicacionesAcomodar();
             })
         },
         usuariosAcomodar () {
@@ -176,6 +173,13 @@ export default {
         },
         departamentosAcomodar () {
             this.departamentos = this.departamentos.map(i => ({
+                id: i.id,
+                label: `${i.nombre}`,
+                customLabel: `${i.nombre}`
+            }));
+        },
+        ubicacionesAcomodar () {
+            this.ubicaciones = this.ubicaciones.map(i => ({
                 id: i.id,
                 label: `${i.nombre}`,
                 customLabel: `${i.nombre}`
