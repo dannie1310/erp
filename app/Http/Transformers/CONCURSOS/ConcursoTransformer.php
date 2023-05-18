@@ -41,6 +41,8 @@ class ConcursoTransformer extends TransformerAbstract
             'estado_apertura' => $model->estado_apertura,
             'resultado_apertura' => $model->resultado_txt,
             'resultado_fallo' => $model->resultado_fallo_txt,
+            'color_estado_fallo'=>$model->color_estado_fallo,
+            'color_estado_apertura'=>$model->color_estado_apertura,
         ];
     }
 

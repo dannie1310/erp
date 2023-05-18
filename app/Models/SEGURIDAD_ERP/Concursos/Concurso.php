@@ -140,6 +140,41 @@ class Concurso extends Model
         }
     }
 
+    public function getColorEstadoFalloAttribute()
+    {
+        switch ($this->estatus)
+        {
+            //
+            case 1:
+                return '#f5931c';
+            case 0:
+                return '#f5931c';
+            case 2:
+                return '#f5931c';
+            case 3:
+                return '#7DB646';
+            default:
+                return '#d1cfd1';
+        }
+    }
+
+    public function getColorEstadoAperturaAttribute()
+    {
+        switch ($this->estatus)
+        {
+            case 1:
+                return '#F00';
+            case 2:
+                return '#7DB646';
+            case 3:
+                return '#7DB646';
+            case 0:
+                return '#F00';
+            default:
+                return '#d1cfd1';
+        }
+    }
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha);
