@@ -58,16 +58,14 @@
                 <div class="col-md-10" v-if="tipo == 3">
                     <div class="form-group">
                         <label for="id_departamento">Departamento: </label>
-                        <select class="form-control"
-                                name="id_departamento"
-                                data-vv-as="Departamento"
-                                v-model="id_departamento"
-                                v-validate="{required: tipo == 3 ? true : false}"
-                                :error="errors.has('id_departamento')"
-                                id="id_departamento">
-                            <option value>-- Seleccionar --</option>
-                            <option v-for="d in departamentos" :value="d.id">{{ d.nombre }}</option>
-                        </select>
+                        <treeselect
+                            v-model="id_departamento"
+                            :options="departamentos"
+                            data-vv-as="Departamento"
+                            v-validate="{required: tipo == 3 ? true : false}"
+                            placeholder="Seleccione el departamento">
+                            <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                        </treeselect>
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_departamento')">{{ errors.first('id_departamento') }}</div>
                     </div>
                 </div>
@@ -92,18 +90,14 @@
                     <div class="form-group error-content">
                         <div class="form-group">
                             <label for="proyecto">Proyecto:</label>
-                            <select class="form-control"
-                                   placeholder="Proyecto"
-                                   name="proyecto"
-                                   id="proyecto"
-                                   data-vv-as="Proyecto"
-                                   v-validate="{required: tipo == 5 ? true : false}"
-                                   v-model="proyecto"
-                                    :error="errors.has('proyecto')"
-                                   :class="{'is-invalid': errors.has('proyecto')}">
-                                <option value>-- Seleccionar --</option>
-                                <option v-for="u in ubicaciones" :value="u.id">{{ u.nombre }}</option>
-                            </select>
+                            <treeselect
+                                v-model="proyecto"
+                                :options="ubicaciones"
+                                data-vv-as="proyecto"
+                                v-validate="{required: tipo == 5 ? true : false}"
+                                placeholder="Seleccione el proyecto">
+                                <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                            </treeselect>
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('proyecto')">{{ errors.first('proyecto') }}</div>
                         </div>
                     </div>
@@ -156,6 +150,7 @@ export default {
                 }
             }).then(data => {
                 this.departamentos = data.data;
+                this.departamentosAcomodar();
             })
         },
         getUbicaciones()
@@ -166,6 +161,7 @@ export default {
                 }
             }).then(data => {
                 this.ubicaciones = data.data;
+                this.ubicacionesAcomodar();
             })
         },
         usuariosAcomodar () {
@@ -173,6 +169,20 @@ export default {
                 id: i.id,
                 label: `${i.nombre}`+' ('+`${i.ubicacion}`+')',
                 customLabel: `${i.nombre}`+' ('+`${i.ubicacion}`+')',
+            }));
+        },
+        departamentosAcomodar () {
+            this.departamentos = this.departamentos.map(i => ({
+                id: i.id,
+                label: `${i.nombre}`,
+                customLabel: `${i.nombre}`
+            }));
+        },
+        ubicacionesAcomodar () {
+            this.ubicaciones = this.ubicaciones.map(i => ({
+                id: i.id,
+                label: `${i.nombre}`,
+                customLabel: `${i.nombre}`
             }));
         },
     },
