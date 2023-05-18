@@ -13,7 +13,8 @@ class ConcursoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'participantes'
+        'participantes',
+        'participantes_informe'
     ];
 
     /**
@@ -51,6 +52,14 @@ class ConcursoTransformer extends TransformerAbstract
         if($participantes = $model->participantes()->orderBy("lugar")->get())
         {
             return $this->collection($participantes, new ConcursoParticipanteTransformer);
+        }
+        return null;
+    }
+    public function includeParticipantesInforme(Concurso $model)
+    {
+        if($participantes = $model->participantes_para_informe)
+        {
+            return $this->collection($participantes, new ConcursoParticipanteInformeTransformer);
         }
         return null;
     }

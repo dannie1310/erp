@@ -241,36 +241,57 @@
                                     <table class="table  table-sm table-bordered" style="font-size: 15px">
                                         <thead>
                                             <tr>
-                                                <th class="encabezado index_corto">
+                                                <th class="encabezado index_corto" rowspan="2">
                                                     #
                                                 </th>
-                                                <th class="encabezado c30">
+                                                <th class="encabezado c30" rowspan="2">
                                                     G
                                                 </th>
-                                                <th class="encabezado">
+                                                <th class="encabezado" rowspan="2">
                                                     Participante
                                                 </th>
-                                                <th class="encabezado c90">
+                                                <th class="encabezado c90" rowspan="2">
                                                     Monto Sin IVA
+                                                </th>
+                                                 <th class="encabezado" colspan="5">
+                                                    % en relación a
                                                 </th>
 
                                             </tr>
+                                            <tr>
+                                                <th>1er Lugar</th>
+                                                <th>Promedio</th>
+                                                <th>Hermes</th>
+                                                <th>Ganador</th>
+                                            </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(participante, i) in this.concurso_store.participantes.data"
-                                                :style="participante.es_empresa_hermes?`background-color:#7DB646`:``"
+                                            <tr v-for="(participante, i) in this.concurso_store.participantes_informe.data"
+                                                :style="participante.es_empresa_hermes?`background-color:#7DB646`:participante.nombre =='PROMEDIO'?`background-color:#f9cb98`:``"
                                             >
-                                                <td>{{i+1}}</td>
+                                                <td >{{participante.i}}</td>
                                                 <td style="text-align: center">
-                                                    <i class="fa fa-check" v-if="participante.es_ganador" />
+                                                    <i class="fa fa-trophy" v-if="participante.es_ganador == 'X'" />
                                                 </td>
-                                                <td>
+                                                <td :style="participante.nombre =='PROMEDIO'?`text-align:right`:``">
                                                 {{participante.nombre}}
                                                 </td>
                                                 <td style="text-align: right;">
                                                     {{parseFloat(participante.monto).formatMoney(2,'.',',')}}
                                                 </td>
 
+                                                <td style="text-align: right;">
+                                                    {{participante.porcentaje_vs_primer_lugar}}
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    {{participante.porcentaje_vs_promedio}}
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    {{participante.porcentaje_vs_hermes}}
+                                                </td>
+                                                <td style="text-align: right;">
+                                                    {{participante.porcentaje_vs_ganador}}
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -320,7 +341,7 @@ export default {
                 this.cargando = true;
                 this.$store.dispatch('concursos/concurso/find', {
                     id: this.id,
-                    params:{include: []}
+                    params:{include: 'participantes_informe'}
                 }).then(data => {
                     this.$store.commit('concursos/concurso/SET_CONCURSO', data);
 
