@@ -13,7 +13,8 @@ class ConcursoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'participantes'
+        'participantes',
+        'participantes_informe'
     ];
 
     /**
@@ -36,7 +37,13 @@ class ConcursoTransformer extends TransformerAbstract
             'fecha_fallo_format' => $model->fecha_fallo_format,
             'estatus_descripcion' => $model->estado,
             'estatus' => $model-> estatus,
-            'estatus_color' => $model->estado_color
+            'estatus_color' => $model->estado_color,
+            'estado_fallo' => $model->estado_fallo_txt,
+            'estado_apertura' => $model->estado_apertura,
+            'resultado_apertura' => $model->resultado_txt,
+            'resultado_fallo' => $model->resultado_fallo_txt,
+            'color_estado_fallo'=>$model->color_estado_fallo,
+            'color_estado_apertura'=>$model->color_estado_apertura,
         ];
     }
 
@@ -45,6 +52,14 @@ class ConcursoTransformer extends TransformerAbstract
         if($participantes = $model->participantes()->orderBy("lugar")->get())
         {
             return $this->collection($participantes, new ConcursoParticipanteTransformer);
+        }
+        return null;
+    }
+    public function includeParticipantesInforme(Concurso $model)
+    {
+        if($participantes = $model->participantes_para_informe)
+        {
+            return $this->collection($participantes, new ConcursoParticipanteInformeTransformer);
         }
         return null;
     }

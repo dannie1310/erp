@@ -18,7 +18,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
+                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 15px'" />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -41,8 +41,8 @@
                 columns: [
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
                     { title: 'Nombre', field: 'nombre',  sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Fecha de Apertura', field: 'fecha', tdClass: 'td_c70', sortable: true, thComp: require('../../globals/th-Date').default},
-                    { title: 'Fecha de Fallo', field: 'fecha_fallo', tdClass: 'td_c70', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Fecha de Apertura', field: 'fecha', tdClass: 'th_c90', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Fecha de Fallo', field: 'fecha_fallo', tdClass: 'th_c90', sortable: true, thComp: require('../../globals/th-Date').default},
                     { title: 'Estatus', field: 'estatus', thClass: 'th_c70', tdComp: require('./partials/EstatusLabel').default, sortable: true},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_c70', tdComp: require('./partials/ActionButtons').default},
                 ],
@@ -151,5 +151,13 @@
         }
     }
 </script>
+<style scoped>
+
+body, .btn {
+    font-size: 15px !important;
+}
+
+</style>
+
 
 

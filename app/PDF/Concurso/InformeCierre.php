@@ -532,6 +532,7 @@ class InformeCierre extends Rotation
 
     public function generaGrafica()
     {
+        $this->ln();
         $saltos_grafica = $this->concurso->saltos_grafica;
 //ofertas
         $data1y = $this->concurso->datos_ofertas_grafica;
@@ -573,31 +574,7 @@ class InformeCierre extends Rotation
 
 // Create the bar plot ofertas
         $b1plot = new BarPlot($data1y);
-
-        if($this->concurso->participanteHermes) {
-            // Create the bar plot oferta hermes
-            $b2plot = new BarPlot($data2y);
-            $graph->Add($b2plot);
-            $b2plot->SetColor("#7DB646");
-            $b2plot->SetFillColor("#7DB646");
-            $b2plot->SetLegend("Oferta Hermes");
-
-
-            // Create the line plot oferta hermes
-            $l3plot = new LinePlot($data4y);
-            $graph->Add($l3plot);
-            $l3plot->SetBarCenter();
-            $l3plot->SetColor([125,182,70]);
-            $l3plot->SetLegend("Oferta Hermes");
-            $l3plot->mark->SetType(MARK_X,'',1.0);
-            $l3plot->mark->SetWeight(2);
-            $l3plot->mark->SetWidth(8);
-            $l3plot->mark->setColor([125,182,70]);
-            $l3plot->mark->setFillColor([125,182,70]);
-        }
-
-
-// Create the line plot promedio
+        // Create the line plot promedio
         $lplot = new LinePlot($data6y);
 // Create the line plot mejor oferta
         $l2plot = new LinePlot($data5y);
@@ -629,6 +606,29 @@ class InformeCierre extends Rotation
         $l2plot->mark->SetWidth(8);
         $l2plot->mark->setColor("yellow");
         $l2plot->mark->setFillColor("yellow");
+
+
+        if($this->concurso->participanteHermes) {
+            // Create the bar plot oferta hermes
+            $b2plot = new BarPlot($data2y);
+            $graph->Add($b2plot);
+            $b2plot->SetColor("#7DB646");
+            $b2plot->SetFillColor("#7DB646");
+            $b2plot->SetLegend("Oferta Hermes");
+
+
+            // Create the line plot oferta hermes
+            $l3plot = new LinePlot($data4y);
+            $graph->Add($l3plot);
+            $l3plot->SetBarCenter();
+            $l3plot->SetColor([125,182,70]);
+            $l3plot->SetLegend("Oferta Hermes");
+            $l3plot->mark->SetType(MARK_X,'',1.0);
+            $l3plot->mark->SetWeight(2);
+            $l3plot->mark->SetWidth(8);
+            $l3plot->mark->setColor([125,182,70]);
+            $l3plot->mark->setFillColor([125,182,70]);
+        }
 
 
 
