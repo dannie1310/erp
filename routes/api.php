@@ -190,6 +190,7 @@ $api->version('v1', function ($api) {
             $api->get('porAlmacen', 'App\Http\Controllers\v1\CADECO\MaterialController@materialPorAlmacen');
             $api->get('historico', 'App\Http\Controllers\v1\CADECO\MaterialController@materialHistorico');
             $api->get('historicoSalida', 'App\Http\Controllers\v1\CADECO\MaterialController@historicoSalida');
+            $api->get('historicoMovimientos', 'App\Http\Controllers\v1\CADECO\MaterialController@historicoMovimientos');
         });
 
         // MONEDA
