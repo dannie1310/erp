@@ -47,7 +47,8 @@ class FacturaTransformer extends TransformerAbstract
             'estado_color' => $model->estado_color,
             'subtotal_format' => $model->subtotal_format,
             'iva_format' => $model->iva_format,
-            'total_format' => $model->total_format
+            'total_format' => $model->total_format,
+            'uuid' => $model->uuid
         ];
     }
 
