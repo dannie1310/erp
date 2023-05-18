@@ -58,16 +58,14 @@
                 <div class="col-md-10" v-if="tipo == 3">
                     <div class="form-group">
                         <label for="id_departamento">Departamento: </label>
-                        <select class="form-control"
-                                name="id_departamento"
-                                data-vv-as="Departamento"
-                                v-model="id_departamento"
-                                v-validate="{required: tipo == 3 ? true : false}"
-                                :error="errors.has('id_departamento')"
-                                id="id_departamento">
-                            <option value>-- Seleccionar --</option>
-                            <option v-for="d in departamentos" :value="d.id">{{ d.nombre }}</option>
-                        </select>
+                        <treeselect
+                            v-model="id_departamento"
+                            :options="departamentos"
+                            data-vv-as="Departamento"
+                            v-validate="{required: tipo == 3 ? true : false}"
+                            placeholder="Seleccione el departamento">
+                            <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                        </treeselect>
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_departamento')">{{ errors.first('id_departamento') }}</div>
                     </div>
                 </div>
@@ -156,6 +154,7 @@ export default {
                 }
             }).then(data => {
                 this.departamentos = data.data;
+                this.departamentosAcomodar();
             })
         },
         getUbicaciones()
@@ -173,6 +172,13 @@ export default {
                 id: i.id,
                 label: `${i.nombre}`+' ('+`${i.ubicacion}`+')',
                 customLabel: `${i.nombre}`+' ('+`${i.ubicacion}`+')',
+            }));
+        },
+        departamentosAcomodar () {
+            this.departamentos = this.departamentos.map(i => ({
+                id: i.id,
+                label: `${i.nombre}`,
+                customLabel: `${i.nombre}`
             }));
         },
     },
