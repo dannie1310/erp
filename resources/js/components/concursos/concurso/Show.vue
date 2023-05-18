@@ -18,44 +18,174 @@
                 <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="row">
+                        <!-- md-->
+                        <div class="row d-none d-sm-block">
                             <div class="col-md-12">
                                 <h3>{{concurso_store.nombre}}</h3>
                             </div>
                         </div>
+                        <!-- xs-->
+                        <div class="row d-block d-sm-none">
+                            <div class="col-md-12">
+                                <h6><strong>{{concurso_store.nombre}}</strong></h6>
+                            </div>
+                        </div>
                         <hr>
-                        <div class="row">
-                            <div class="col-md-2 " >
-                                <label for="fecha">Fecha de Apetura:</label>
-                            </div>
-                            <div class="col-md-1" >
-                                {{concurso_store.fecha_format}}
-                            </div>
-                            <div class="col-md-2 " >
-                                <label for="fecha">Estado de Apetura:</label>
-                            </div>
-                            <div class="col-md-1" >
-                                <span class="badge" :style="{'background-color': concurso_store.color_estado_apertura}" style=" font-size: 15px">
-                                    {{concurso_store.estado_apertura}}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2" >
-                                <label for="fecha">Fecha de Fallo:</label>
-                            </div>
-                            <div class="col-md-1" >
-                                {{concurso_store.fecha_fallo_format}}
-                            </div>
-                            <div class="col-md-2 " >
-                                <label for="fecha">Estado de Fallo:</label>
-                            </div>
-                            <div class="col-md-1" >
-                                <span class="badge" :style="{'background-color': concurso_store.color_estado_fallo}" style=" font-size: 15px">
-                                    {{concurso_store.estado_fallo}}
-                                </span>
+                        <div class="row d-block d-sm-none">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-6" >
+                                        <label>Fecha de Apetura:</label>
+                                    </div>
+                                    <div class="col-6" >
+                                        <label>Estado de Apetura:</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6" >
+                                        {{concurso_store.fecha_format}}
+                                    </div>
+                                    <div class="col-6" >
+                                        <span class="badge" :style="{'background-color': concurso_store.color_estado_apertura}" style=" font-size: 15px">
+                                            {{concurso_store.estado_apertura}}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- xs -->
+                         <div class="row d-block d-sm-none">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-6" >
+                                        <label>Fecha de Fallo:</label>
+                                    </div>
+                                    <div class="col-6" >
+                                        <label>Estado de Fallo:</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6" >
+                                        {{concurso_store.fecha_fallo_format}}
+                                    </div>
+                                    <div class="col-6" >
+                                        <span class="badge" :style="{'background-color': concurso_store.color_estado_fallo}" style=" font-size: 15px">
+                                            {{concurso_store.estado_fallo}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- md -->
+                        <div class="d-none d-md-block d-lg-none">
+                            <div class="row ">
+                                <div class="col-md-3 " >
+                                    <label >Fecha de Apetura:</label>
+                                </div>
+                                <div class="col-md-2" >
+                                    {{concurso_store.fecha_format}}
+                                </div>
+                                <div class="col-md-3 " >
+                                    <label for="fecha">Estado de Apetura:</label>
+                                </div>
+                                <div class="col-md-2" >
+                                    <span class="badge" :style="{'background-color': concurso_store.color_estado_apertura}" style=" font-size: 15px">
+                                        {{concurso_store.estado_apertura}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-3" >
+                                    <label for="fecha">Fecha de Fallo:</label>
+                                </div>
+                                <div class="col-md-2" >
+                                    {{concurso_store.fecha_fallo_format}}
+                                </div>
+                                <div class="col-md-3 " >
+                                    <label for="fecha">Estado de Fallo:</label>
+                                </div>
+                                <div class="col-md-2" >
+                                    <span class="badge" :style="{'background-color': concurso_store.color_estado_fallo}" style=" font-size: 15px">
+                                        {{concurso_store.estado_fallo}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- lg -->
+                        <div class="d-none d-lg-block d-xl-none">
+                            <div class="row ">
+                                <div class="col-lg-2 " >
+                                    <label >Fecha de Apetura:</label>
+                                </div>
+                                <div class="col-lg-2" >
+                                    {{concurso_store.fecha_format}}
+                                </div>
+                                <div class="col-lg-2 " >
+                                    <label for="fecha">Estado de Apetura:</label>
+                                </div>
+                                <div class="col-lg-1" >
+                                    <span class="badge" :style="{'background-color': concurso_store.color_estado_apertura}" style=" font-size: 15px">
+                                        {{concurso_store.estado_apertura}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2" >
+                                    <label for="fecha">Fecha de Fallo:</label>
+                                </div>
+                                <div class="col-lg-2" >
+                                    {{concurso_store.fecha_fallo_format}}
+                                </div>
+                                <div class="col-lg-2 " >
+                                    <label for="fecha">Estado de Fallo:</label>
+                                </div>
+                                <div class="col-lg-1" >
+                                    <span class="badge" :style="{'background-color': concurso_store.color_estado_fallo}" style=" font-size: 15px">
+                                        {{concurso_store.estado_fallo}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- xl -->
+                        <div class="d-none d-xl-block">
+                            <div class="row ">
+                                <div class="col-lg-2 " >
+                                    <label >Fecha de Apetura:</label>
+                                </div>
+                                <div class="col-lg-2" >
+                                    {{concurso_store.fecha_format}}
+                                </div>
+                                <div class="col-lg-2 " >
+                                    <label for="fecha">Estado de Apetura:</label>
+                                </div>
+                                <div class="col-lg-1" >
+                                    <span class="badge" :style="{'background-color': concurso_store.color_estado_apertura}" style=" font-size: 15px">
+                                        {{concurso_store.estado_apertura}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-2" >
+                                    <label for="fecha">Fecha de Fallo:</label>
+                                </div>
+                                <div class="col-lg-2" >
+                                    {{concurso_store.fecha_fallo_format}}
+                                </div>
+                                <div class="col-lg-2 " >
+                                    <label for="fecha">Estado de Fallo:</label>
+                                </div>
+                                <div class="col-lg-1" >
+                                    <span class="badge" :style="{'background-color': concurso_store.color_estado_fallo}" style=" font-size: 15px">
+                                        {{concurso_store.estado_fallo}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                         <br>
 
                         <div class="row">
