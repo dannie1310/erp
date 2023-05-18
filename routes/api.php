@@ -279,16 +279,33 @@ $api->version('v1', function ($api) {
      * ACTIVO FIJO
      */
 
-    $api->group(['middleware' => 'api', 'prefix' => 'activo-fijo'], function ($api){
-        $api->group(['prefix' => 'resguardo'], function ($api){
+    $api->group(['middleware' => 'api', 'prefix' => 'activo-fijo'], function ($api) {
+        $api->group(['prefix' => 'lista-departamento'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\ACTIVO_FIJO\ListaDepartamentoController@index');
+        });
+
+        $api->group(['prefix' => 'lista-usuario'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\ACTIVO_FIJO\ListaUsuarioController@index');
+            $api->get('/ordenado', 'App\Http\Controllers\v1\ACTIVO_FIJO\ListaUsuarioController@indexOrdenado');
+        });
+
+        $api->group(['prefix' => 'partidaRegistrada'], function ($api){
+            $api->get('{id}/{tipo}/impresionEtiqueta', 'App\Http\Controllers\v1\ACTIVO_FIJO\PartidaRegistradaController@pdfEtiqueta');
+        });
+
+        $api->group(['prefix' => 'resguardo'], function ($api) {
             $api->get('lista', 'App\Http\Controllers\v1\ACTIVO_FIJO\ResguardoController@listaResguardos');
             $api->get('getResguardos', 'App\Http\Controllers\v1\ACTIVO_FIJO\ResguardoController@getResguardos');
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\ACTIVO_FIJO\ResguardoController@pdfResguardo');
         });
-        $api->group(['prefix' => 'usuario-ubicacion'], function ($api){
-            $api->get('listaUbicaciones', 'App\Http\Controllers\v1\ACTIVO_FIJO\UsuarioUbicacionController@listaUbicaciones');
+
+        $api->group(['prefix' => 'ubicacionResguardo'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\ACTIVO_FIJO\UbicacionResguadoController@index');
         });
 
+        $api->group(['prefix' => 'usuario-ubicacion'], function ($api) {
+            $api->get('listaUbicaciones', 'App\Http\Controllers\v1\ACTIVO_FIJO\UsuarioUbicacionController@listaUbicaciones');
+        });
     });
 
     /**
