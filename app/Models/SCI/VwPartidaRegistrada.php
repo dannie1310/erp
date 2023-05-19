@@ -25,7 +25,7 @@ class VwPartidaRegistrada extends Model
 
     public function scopeBuscarPorUsuario($scope,$id)
     {
-        return $scope->selectEtiquetas()->where('idUsuario', $id);
+        return $scope->selectEtiquetas()->where('idUsuario', $id)->orderBy('Familia', 'asc');
     }
 
     public function scopeBuscarPorCodigo($scope,$id)
@@ -45,6 +45,7 @@ class VwPartidaRegistrada extends Model
 
     public function scopeBuscarPorUbicacion($scope,$id)
     {
-        return $scope->selectEtiquetas()->where('IdUbicacion', $id);
+        return $scope->selectEtiquetas()->where('IdUbicacion', $id)
+            ->orderBy('Usuario', 'asc')->orderBy('Familia', 'asc');
     }
 }
