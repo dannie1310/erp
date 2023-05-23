@@ -353,7 +353,6 @@ export default {
             }
         },
         regresar() {
-            this.iniciar();
             this.$router.push({name: 'concursos'});
         },
     },
