@@ -89,5 +89,10 @@ class MaterialController extends Controller
     {
         return $this->service->historicoSalida($request->all());
     }
+
+    public function historicoMovimientos(Request $request)
+    {
+        return $this->service->historicoMovimientos($request->all());
+    }
 }
 

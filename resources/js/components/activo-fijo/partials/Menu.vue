@@ -16,6 +16,21 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item" v-if="$root.can('consultar_impresion_etiqueta',true)">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="fa fa-boxes"></i>
+                    <p>Activos</p>
+                    <i class="right fa fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_impresion_etiqueta',true)">
+                        <router-link :to="{name: 'impresion-etiqueta'}" class="nav-link" :class="{active: this.$route.name == 'impresion-etiqueta'}">
+                            <i class="fa fa-barcode nav-icon"></i>
+                            <p>Impresión de Etiquetas</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </nav>
 </template>

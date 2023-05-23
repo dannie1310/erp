@@ -84,12 +84,12 @@ class RepNotificacion extends Model
 
     public function getCantidadCfdiFormatAttribute()
     {
-        return number_format($this->cantidad_cfdi,0,'.',',');
+        return number_format($this->cantidad_cfdi);
     }
 
     public function getMontoFormatAttribute()
     {
-        return number_format($this->monto_mxn_cfdi,2,'.',',');
+        return number_format($this->monto_mxn_cfdi,2,);
     }
 
     public function getURegistroAttribute()
@@ -103,17 +103,17 @@ class RepNotificacion extends Model
 
     public function getCfdiAtendidosFormatAttribute()
     {
-        return $this->cfdi_atendidos != null ? $this->cfdi_atendidos : 0;
+        return number_format($this->cfdi_atendidos);
     }
 
     public function getCfdiNuevosFormatAttribute()
     {
-        return $this->cdfi_nuevos != null ? $this->cdfi_nuevos : 0;
+        return number_format($this->cfdi_nuevos);
     }
 
     public function getCfdiCanceladosFormatAttribute()
     {
-        return $this->cfdi_cancelados != null ? $this->cfdi_cancelados : 0;
+        return number_format($this->cfdi_cancelados);
     }
 
     /**

@@ -115,4 +115,9 @@ class MaterialService
     {
         return $this->repository->historico_salida($data['id'], $data['id_almacen']);
     }
+
+    public function historicoMovimientos($data)
+    {
+        return $this->repository->historicoMovimientos($data['id'], $data['id_almacen']);
+    }
 }
