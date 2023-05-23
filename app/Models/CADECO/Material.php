@@ -667,7 +667,7 @@ class Material extends Model
                 if ($movimiento['cantidad_salida'] != null) {
                     $suma = $suma - $movimiento['cantidad_salida'];
                 }
-                $movimiento['saldo_restante'] = $suma;
+                $movimiento['saldo_restante'] = number_format($suma,3,'.','');
                 $movimiento['dias_diferencia'] = $fecha->diff($fechaR)->days;
                 if ($movimiento['dias_diferencia'] <= 3) {
                     $movimiento['color'] = 'text-align: center; color: black';
@@ -675,6 +675,14 @@ class Material extends Model
                     $movimiento['color'] = 'text-align: center; color: blue';
                 } else {
                     $movimiento['color'] = 'text-align: center; color: orange';
+                }
+                if($movimiento['cantidad_entrada'] != null)
+                {
+                    $movimiento['cantidad_entrada'] = number_format($movimiento['cantidad_entrada'], 3, ".", "");
+                }
+                if($movimiento['cantidad_salida'] != null)
+                {
+                    $movimiento['cantidad_salida'] = number_format($movimiento['cantidad_salida'],3,".","");
                 }
                 $movimientos[$i] = $movimiento;
             }
