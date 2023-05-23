@@ -57,23 +57,23 @@ class ImpresionEtiquetaFormato extends Rotation
     {
         if($id_empresa == 1) //La nacional
         {
-            return public_path('img\logo-empresa\GLN.png');
+            return public_path('img/logo-empresa/GLN.png');
         }
         else if($id_empresa == 2)//LA PENINSULAR
         {
-            return public_path('img\logo-empresa\LA_PENINSULAR.png');
+            return public_path('img/logo-empresa/LA_PENINSULAR.png');
         }
         else if($id_empresa == 3 || $id_empresa == 4) //CODRAMSA y OATSA
         {
-            return public_path('img\logo-empresa\CODRAMSA.png');
+            return public_path('img/logo-empresa/CODRAMSA.png');
         }
         else if($id_empresa == 6)
         {
-            return public_path('img\logo-empresa\ELA.png');
+            return public_path('img/logo-empresa/ELA.png');
         }
         else
         {
-           return public_path('img\logo-empresa\PBC.png');
+           return public_path('img/logo-empresa/PBC.png');
         }
     }
 

@@ -25,6 +25,6 @@ class VwListaUsuario extends Model
     {
         return $query->selectRaw('DISTINCT idUsuario, Usuario, Ubicacion')
             ->join('partidas','vw_listaUsuarios.idUsuario','Partidas.usr')
-            ->orderBy('Ubicacion','asc')->orderBy('Usuario','asc');
+            ->orderBy('Usuario','asc');
     }
 }
