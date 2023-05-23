@@ -3380,11 +3380,11 @@ export const routes = [
             {
                 path:'',
                 name: 'activo-fijo',
+                component: require('./components/activo-fijo/Index').default,
                 meta: {
                     title: 'ACTIVO FIJO',
                     middleware: [auth],
-                    permission: ['consulta_resguardo_activo_fijo'],
-                    general: true
+                    breadcrumb: {name: 'ACTIVO FIJO'}
                 }
             },
             {
@@ -3393,16 +3393,16 @@ export const routes = [
                 children: [
                     {
                         path: '/',
-                        name: 'resguardo',
-                        component: require('./components/activo-fijo/resguardos/Index.vue').default,
+                        name: 'resguardos-index',
+                        component: require('./components/activo-fijo/resguardos/Index').default,
                         meta: {
                             title: 'Resguardos',
                             breadcrumb: {name: 'RESGUARDOS', parent: 'activo-fijo'},
-                            middleware: [auth],
-                            permission: 'consulta_resguardo_activo_fijo',
+                            middleware: [auth, permission],
+                            permission: ['consulta_resguardo_activo_fijo'],
                             general: true
                         }
-                    },
+                    }
                 ]
             },
             {
@@ -3416,7 +3416,8 @@ export const routes = [
                         meta: {
                             title: 'Activos',
                             breadcrumb: {name: 'ACTIVOS', parent: 'activo-fijo'},
-                            middleware: [auth],
+                            middleware: [auth,permission],
+                            permission: ['consultar_impresion_etiqueta'],
                             general: true
                         }
                     },

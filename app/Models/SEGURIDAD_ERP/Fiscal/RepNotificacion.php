@@ -89,7 +89,7 @@ class RepNotificacion extends Model
 
     public function getMontoFormatAttribute()
     {
-        return number_format($this->monto_mxn_cfdi,2,);
+        return number_format($this->monto_mxn_cfdi,2);
     }
 
     public function getURegistroAttribute()
