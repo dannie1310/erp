@@ -7,7 +7,7 @@
             <li class="nav-header">SEGUIMIENTO</li>
             <li class="nav-item"  v-if="$root.can('consultar_factura_cuenta_x_cobrar',true)">
                 <router-link :to="{name: 'factura-seg'}" class="nav-link" :class="{active: this.$route.name == 'factura-seg'}">
-                    <i class="fa fa-mail-bulk nav-icon"></i>
+                    <i class="fa fa-file-invoice-dollar nav-icon"></i>
                     <p>Facturas</p>
                 </router-link>
             </li>
