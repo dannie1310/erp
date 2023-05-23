@@ -36,7 +36,7 @@ export default {
             cargando: false,
             HeaderSettings: false,
             columns: [
-                { title: '#', field:'index',sortable: false},
+                { title: '#', field:'index', thClass:"th_index_corto", sortable: false},
                 { title: 'Fecha', field: 'fecha_hora_registro', tdClass: 'td_fecha', sortable: true},
                 { title: 'Envía', field: 'usuario_registro', sortable: true},
                 { title: '# CFDI Detectados', field: 'cantidad_cfdi',tdClass: 'td_money80', sortable: true},
@@ -44,7 +44,7 @@ export default {
                 { title: '# CFDI Atendidos', field: 'cfdi_atendidos',tdClass: 'td_money80', sortable: true},
                 { title: '# CFDI Nuevos', field: 'cfdi_nuevos',tdClass: 'td_money80', sortable: true},
                 { title: '# CFDI Cancelados', field: 'cfdi_cancelados',tdClass: 'td_money80', sortable: true},
-                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                { title: 'Acciones', field: 'buttons', thClass: 'th_c60', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
             total: 0,
