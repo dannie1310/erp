@@ -12,19 +12,17 @@
                                 v-validate="{required: true}"
                                 :error="errors.has('tipo')"
                                 id="tipo">
-                            <option value selected>-- Seleccione tipo de busqueda --</option>
+                            <option value selected>-- Seleccione el tipo de busqueda --</option>
                             <option value="1">Usuario</option>
                             <option value="2">Activo</option>
                             <option value="3">Departamento</option>
-                            <option value="4">Ref. Factura</option>
+                            <option value="4">Referencia de Factura</option>
                             <option value="5">Proyecto</option>
                         </select>
                     </div>
                 </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-md-10" v-if="tipo == 1">
+
+                <div class="col-md-6" v-if="tipo == 1 && cargando==false">
                     <div class="form-group">
                         <label for="id_usuario">Usuario: </label>
                         <treeselect
@@ -55,7 +53,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-10" v-if="tipo == 3">
+                <div class="col-md-6" v-if="tipo == 3 && cargando==false">
                     <div class="form-group">
                         <label for="id_departamento">Departamento: </label>
                         <treeselect
@@ -69,7 +67,7 @@
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_departamento')">{{ errors.first('id_departamento') }}</div>
                     </div>
                 </div>
-                <div class="col-md-6" v-if="tipo == 4">
+                <div class="col-md-6" v-if="tipo == 4 && cargando==false">
                     <div class="form-group error-content">
                         <div class="form-group">
                             <label for="referencia">Referencia de Factura:</label>
@@ -86,7 +84,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-10" v-if="tipo == 5">
+                <div class="col-md-6" v-if="tipo == 5 && cargando==false">
                     <div class="form-group error-content">
                         <div class="form-group">
                             <label for="proyecto">Proyecto:</label>
@@ -101,6 +99,9 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('proyecto')">{{ errors.first('proyecto') }}</div>
                         </div>
                     </div>
+                </div>
+                <div class="col-md-6" v-if="cargando==true" style="margin-top: 30px">
+                    <i class="fa fa-spin fa-spinner"></i> Cargando...
                 </div>
             </div>
         </div>
@@ -127,12 +128,14 @@ export default {
             referencia: null,
             dato: null,
             ubicaciones : [],
-            proyecto : ''
+            proyecto : '',
+            cargando :false,
         }
     },
     methods: {
         getUsuarios()
         {
+            this.cargando = true;
             return this.$store.dispatch('activo-fijo/lista-usuario/index', {
                 params: {
                     scope: 'partidasUbicacion'
@@ -140,10 +143,13 @@ export default {
             }).then(data => {
                this.usuarios = data.data;
                this.usuariosAcomodar()
+            }).finally(()=>{
+                this.cargando = false;
             })
         },
         getDepartamentos()
         {
+            this.cargando = true;
             return this.$store.dispatch('activo-fijo/lista-departamento/index', {
                 params: {
                     scope: 'partidasPorDepartamento'
@@ -151,10 +157,13 @@ export default {
             }).then(data => {
                 this.departamentos = data.data;
                 this.departamentosAcomodar();
+            }).finally(()=>{
+                this.cargando = false;
             })
         },
         getUbicaciones()
         {
+            this.cargando = true;
             return this.$store.dispatch('activo-fijo/ubicacion-resguardo/index', {
                 params: {
                     sort: 'vw_ubicaciones_resguados.Ubicacion', order: 'ASC'
@@ -162,6 +171,8 @@ export default {
             }).then(data => {
                 this.ubicaciones = data.data;
                 this.ubicacionesAcomodar();
+            }).finally(()=>{
+                this.cargando = false;
             })
         },
         usuariosAcomodar () {
