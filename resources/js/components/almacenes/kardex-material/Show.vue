@@ -13,8 +13,8 @@
         </div>
         <div v-else>
             <div class="card">
-                <div class="card-body">
-                    <div class="row">
+                <div class="card-body" v-if="materiales">
+                    <div class="row" v-if="almacen">
                         <div class="col-md-12">
                             <h4><b>{{almacen.descripcion}}</b></h4>
                         </div>
@@ -93,6 +93,8 @@
                             id="nav-home-tab" role="tab">Entradas</a>
                             <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
                             href="#nav-profile" id="nav-profile-tab" role="tab">Salidas</a>
+                            <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
+                            href="#nav-profile_2" id="nav-profile-tab-2" role="tab">Movimientos</a>
                         </div>
                     </nav>
                     <div class="tab-content" id="nav-tabContent" v-if="inventarios">
@@ -101,6 +103,9 @@
                         </div>
                         <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
                             <salida v-bind:salidas="salidas" v-bind:totales="total_sal"/>
+                        </div>
+                        <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile_2" role="tabpanel">
+                            <movimiento v-bind:movimientos="movimientos"/>
                         </div>
                     </div>
                 </div>
@@ -118,9 +123,10 @@
 <script>
 import Entrada from './partials/Entrada.vue';
 import Salida from './partials/Salida.vue';
+import Movimiento from './partials/Movimiento.vue';
 export default {
     name: "kardex-show",
-    components: {Entrada, Salida},
+    components: {Entrada, Salida, Movimiento},
     props: ['id'],
     mounted() {
         this.findAlmacen();
@@ -136,7 +142,8 @@ export default {
             total_mat: null,
             num_pas: 0,
             total_sal: null,
-            almacen: null
+            almacen: null,
+            movimientos : null
         }
     },
     methods: {
@@ -168,6 +175,7 @@ export default {
             this.total_inv = null;
             this.salidas = null;
             this.total_sal = null;
+            this.movimientos = null;
             document.getElementById('table').rows[this.num_pas].style.backgroundColor = "white";
             document.getElementById('table').rows[key].style.backgroundColor = "#CFFCBC";
             return this.$store.dispatch('cadeco/material/historico', {
@@ -187,7 +195,19 @@ export default {
                 }).then(data => {
                     this.salidas = data.salidas;
                     this.total_sal = data.totales;
+                    this.getHistorico(i);
                 })
+            })
+        },
+        getHistorico(i){
+            this.movimientos = null;
+            return this.$store.dispatch('cadeco/material/historicoMovimientos', {
+                params: {
+                    id: i,
+                    id_almacen: this.id
+                }
+            }).then(data => {
+                this.movimientos = data;
             })
         }
     },

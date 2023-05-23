@@ -5,7 +5,7 @@
             <div class="table-responsive">
                 <table class="table  table-sm">
                     <tr>
-                        <th class="encabezado" colspan="5">
+                        <th class="encabezado" colspan="6">
                             {{factura.nombre_proyecto}}
                         </th>
                     </tr>
@@ -16,7 +16,7 @@
                         <th class="encabezado">
                             Número de Factura
                         </th>
-                        <th class="encabezado" colspan="2">
+                        <th class="encabezado" colspan="3">
                             Empresa
                         </th>
                         <th class="encabezado c100">Descripción</th>
@@ -28,7 +28,7 @@
                         <td>
                             {{factura.numero}}
                         </td>
-                        <td colspan="2">
+                        <td colspan="3">
                             {{ factura.nombre_empresa }}
                         </td>
                         <td>
@@ -36,7 +36,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th class="encabezado c100" colspan="2">
+                        <th class="encabezado c100" colspan="3">
                             Cliente
                         </th>
                         <th class="encabezado" colspan="2">
@@ -47,7 +47,7 @@
                         </th>
                     </tr>
                     <tr>
-                        <td colspan="2">
+                        <td colspan="3">
                             {{ factura.nombre_cliente}}
                         </td>
                         <td style="text-align: center">
@@ -62,6 +62,9 @@
 
                     </tr>
                     <tr>
+                        <th class="encabezado c150">
+                            UUID
+                        </th>
                         <th class="encabezado money">
                             Tipo de Cambio
                         </th>
@@ -79,6 +82,9 @@
                         </th>
                     </tr>
                     <tr>
+                        <td style="text-align: right" class="c150">
+                            {{factura.uuid}}
+                        </td>
                         <td class="money">
                             {{ factura.tipo_cambio }}
                         </td>
