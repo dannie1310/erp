@@ -648,48 +648,51 @@ class Material extends Model
     {
         $suma = 0;
         $movimientos = TransaccionKardexVw::whereRaw('(id_almacen_origen = '.$id_almacen.' or id_almacen_destino = '.$id_almacen.') and id_material = '.$id)->orderBy('FechaHoraRegistro', 'asc')->get();
+        if(count($movimientos) > 0) {
+            foreach ($movimientos->toArray() as $i => $movimiento) {
+                $fecha = date_create($movimiento['fecha']);
+                $fechaR = date_create($movimiento['FechaHoraRegistro']);
+                $movimiento['fecha'] = date_format($fecha, "d/m/Y");
+                $movimiento['FechaHoraRegistro'] = date_format($fechaR, "d/m/Y H:i");
 
-        foreach ($movimientos->toArray() as $i => $movimiento) {
-            $fecha= date_create($movimiento['fecha']);
-            $fechaR= date_create($movimiento['FechaHoraRegistro']);
-            $movimiento['fecha'] = date_format($fecha,"d/m/Y");
-            $movimiento['FechaHoraRegistro'] = date_format($fechaR,"d/m/Y H:i");
-
-            if($movimiento['tipo'] == 'TRANSFERENCIA')
-            {
-                if($movimiento['id_almacen_destino'] == $id_almacen)
-                {
-                    $movimiento['cantidad_salida'] = $movimiento['cantidad_entrada'];
-                    $movimiento['cantidad_entrada'] = NULL;
+                if ($movimiento['tipo'] == 'TRANSFERENCIA') {
+                    if ($movimiento['id_almacen_destino'] == $id_almacen) {
+                        $movimiento['cantidad_salida'] = $movimiento['cantidad_entrada'];
+                        $movimiento['cantidad_entrada'] = NULL;
+                    }
                 }
+                if ($movimiento['cantidad_entrada'] != null) {
+                    $suma = $suma + $movimiento['cantidad_entrada'];
+                }
+                if ($movimiento['cantidad_salida'] != null) {
+                    $suma = $suma - $movimiento['cantidad_salida'];
+                }
+                $movimiento['saldo_restante'] = number_format($suma,3,'.','');
+                $movimiento['dias_diferencia'] = $fecha->diff($fechaR)->days;
+                if ($movimiento['dias_diferencia'] <= 3) {
+                    $movimiento['color'] = 'text-align: center; color: black';
+                } else if ($movimiento['dias_diferencia'] <= 6) {
+                    $movimiento['color'] = 'text-align: center; color: blue';
+                } else {
+                    $movimiento['color'] = 'text-align: center; color: orange';
+                }
+                if($movimiento['cantidad_entrada'] != null)
+                {
+                    $movimiento['cantidad_entrada'] = number_format($movimiento['cantidad_entrada'], 3, ".", "");
+                }
+                if($movimiento['cantidad_salida'] != null)
+                {
+                    $movimiento['cantidad_salida'] = number_format($movimiento['cantidad_salida'],3,".","");
+                }
+                $movimientos[$i] = $movimiento;
             }
-            if($movimiento['cantidad_entrada'] != null)
-            {
-                $suma = $suma + $movimiento['cantidad_entrada'];
-            }
-            if($movimiento['cantidad_salida'] != null)
-            {
-                $suma = $suma - $movimiento['cantidad_salida'];
-            }
-            $movimiento['saldo_restante'] = $suma;
-            $movimiento['dias_diferencia'] = $fecha->diff($fechaR)->days;
-            if($movimiento['dias_diferencia'] <= 3)
-            {
-                $movimiento['color'] = 'text-align: center; color: black';
-            }
-            else if($movimiento['dias_diferencia'] <= 6)
-            {
-                $movimiento['color'] = 'text-align: center; color: blue';
-            }
-            else
-            {
-                $movimiento['color'] = 'text-align: center; color: orange';
-            }
-            $movimientos[$i] = $movimiento;
+            return [
+                'data' => $movimientos,
+                'unidad' => $this->find($id)->unidadSeleccionada ? $this->find($id)->unidadSeleccionada->descripcion : NULL
+            ];
         }
-
         return [
-            'data' => $movimientos,
+            'data' => [],
             'unidad' => $this->find($id)->unidadSeleccionada ? $this->find($id)->unidadSeleccionada->descripcion : NULL
         ];
     }
