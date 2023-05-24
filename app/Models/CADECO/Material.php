@@ -559,7 +559,8 @@ class Material extends Model
             items.id_almacen, items.id_concepto')
             ->where('transacciones.id_almacen', '=', $id_almacen)
             ->where('items.id_material', '=', $id)
-            ->orderByRaw('numero_folio', 'id_concepto')->get();
+            ->orderByRaw('numero_folio, id_concepto')
+            ->get();
         foreach ($salidas as $i => $salida) {
             $fecha= date_create($salida->fecha);
             $array[$x]['id'] = $salida->getKey();
