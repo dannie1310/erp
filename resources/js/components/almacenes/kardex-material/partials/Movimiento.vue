@@ -88,7 +88,6 @@ export default {
     props: ['movimientos'],
     data() {
         return {
-            cargando: false,
             v_fecha: false
         }
     },
