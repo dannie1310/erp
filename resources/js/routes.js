@@ -703,7 +703,7 @@ export const routes = [
                         component: require('./components/almacenes/Index').default,
                         meta: {
                             title: 'Almacenes',
-                            breadcrumb: {parent:'home', name: 'ALMACENES'},
+                            breadcrumb: {parent:'home', name: 'SISTEMA DE ALMACENES'},
                             middleware: [auth, context, access]
                         }
                     },
@@ -874,28 +874,40 @@ export const routes = [
                         ]
                     },
                     {
-                        path:'kardex-material',
+                        path:'lista-almacenes',
                         component: require('./components/almacenes/kardex-material/Layout').default,
                         children: [
                             {
                                 path:'/',
-                                name: 'kardex-material',
+                                name: 'lista-almacenes',
                                 component: require('./components/almacenes/kardex-material/Index').default,
                                 meta: {
-                                    title: 'Kardex de Materiales',
-                                    breadcrumb: {parent: 'almacenes', name: 'KARDEX MATERIALES'},
+                                    title: 'Lista de Almacenes',
+                                    breadcrumb: {parent: 'almacenes', name: 'ALMACENES'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_kardex_movimiento_material'
                                 }
                             },
                             {
-                                path: ':id/kardex',
-                                name: 'consultar-almacen',
+                                path: ':id/materiales',
+                                name: 'consultar-materiales-almacen',
                                 component: require('./components/almacenes/kardex-material/Show').default,
                                 props: true,
                                 meta: {
-                                    title: 'Consultar Kardex',
-                                    breadcrumb: {name: 'CONSULTAR', parent: 'kardex-material'},
+                                    title: 'Lista de Materiales',
+                                    breadcrumb: {name: 'MATERIALES', parent: 'lista-almacenes'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_kardex_movimiento_material'
+                                }
+                            },
+                            {
+                                path: ':id_almacen/materiales/:id_material/kardex',
+                                name: 'kardex',
+                                component: require('./components/almacenes/kardex-material/Kardex').default,
+                                props: true,
+                                meta: {
+                                    title: 'Kardex de Material',
+                                    breadcrumb: {name: 'KARDEX', parent: 'lista-almacenes'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_kardex_movimiento_material'
                                 }

@@ -24,7 +24,7 @@ export default {
                 { title: 'Importe Adquirido',  tdClass: 'td_money', thClass: 'th_money', field:'adquirido'},
                 { title: 'Importe Pagado',  tdClass: 'td_money', thClass: 'th_money', field:'pagado'},
                 { title: 'Importe Por Pagar',  tdClass: 'td_money', thClass: 'th_money', field:'por_pagar'},
-                { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
+                { title: 'Acciones', field: 'buttons', thClass: 'th_c80', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
             total: 0,

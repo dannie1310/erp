@@ -13,35 +13,35 @@
                             </div>
                             <br>
                             <div class="row" v-if="movimientos">
-                                <div class="table-responsive" style="overflow-y: scroll;">
+                                <div class="table-responsive">
                                     <table class="table table-bordered table-sm">
                                         <thead>
                                             <tr>
-                                                <th class="encabezado" rowspan="3">
+                                                <th class="encabezado c50" rowspan="3">
                                                     Fecha
                                                 </th>
-                                                <th class="encabezado v_fecha"  style="display: none" rowspan="3">
+                                                <th class="encabezado v_fecha c120"  style="display: none" rowspan="3">
                                                     Fecha de Registro
                                                 </th>
                                                 <th class="encabezado" colspan="2" rowspan="2">
                                                     Transaccion
                                                 </th>
                                                 <th class="encabezado" colspan="2">Cantidad</th>
-                                                <th class="encabezado" rowspan="3">Saldo</th>
+                                                <th class="encabezado c100" rowspan="3">Saldo</th>
                                             </tr>
                                             <tr>
                                                 <th class="encabezado" colspan="2">({{ movimientos.unidad }})</th>
                                             </tr>
                                             <tr>
-                                                <th>Tipo</th>
-                                                <th>Folio</th>
-                                                <th>Entrada</th>
-                                                <th>Salida</th>
+                                                <th class="c90">Tipo</th>
+                                                <th class="c90">Folio</th>
+                                                <th class="c100">Entrada</th>
+                                                <th class="c100">Salida</th>
                                             </tr>
                                         </thead>
                                         <tbody v-for="movimiento in movimientos.data">
                                             <tr>
-                                                <td style="text-align: center; color: black" :style="movimiento.color">
+                                                <td style="text-align: center; " :style="movimiento.color">
                                                     {{movimiento.fecha}}
                                                 </td>
                                                 <td style="text-align: center; display: none" class="v_fecha">
@@ -54,13 +54,13 @@
                                                     {{movimiento.folio}}
                                                 </td>
                                                 <td style="text-align: right">
-                                                    {{movimiento.cantidad_entrada}}
+                                                    {{ parseFloat(movimiento.cantidad_entrada).formatea()}}
                                                 </td>
                                                 <td style="text-align: right">
-                                                    {{movimiento.cantidad_salida}}
+                                                    {{ parseFloat(movimiento.cantidad_salida).formatea() }}
                                                 </td>
                                                 <td style="text-align: right">
-                                                    {{movimiento.saldo_restante}}
+                                                    {{ parseFloat(movimiento.saldo_restante).formatea() }}
                                                 </td>
                                             </tr>
                                         </tbody>

@@ -486,6 +486,8 @@ class Material extends Model
         $adquirido = 0;
         $pagado = 0;
         $x_pagar = 0;
+        $material = Material::find($id);
+        $almacen = Almacen::find($id_almacen);
 
         $inventarios = Transaccion::join('items', 'transacciones.id_transaccion','items.id_transaccion')
             ->join('inventarios', 'inventarios.id_item', 'items.id_item')
@@ -517,6 +519,8 @@ class Material extends Model
             $movimientos_totales = null;
         }
         return [
+            'material' =>$material->descripcion,
+            'almacen' =>$almacen->descripcion,
             'inventarios' => $array,
             'totales' => [
                 'entrada' => number_format($entrada,2,".",","),
@@ -559,7 +563,8 @@ class Material extends Model
             items.id_almacen, items.id_concepto')
             ->where('transacciones.id_almacen', '=', $id_almacen)
             ->where('items.id_material', '=', $id)
-            ->orderByRaw('numero_folio', 'id_concepto')->get();
+            ->orderByRaw('numero_folio, id_concepto')
+            ->get();
         foreach ($salidas as $i => $salida) {
             $fecha= date_create($salida->fecha);
             $array[$x]['id'] = $salida->getKey();
