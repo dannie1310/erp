@@ -22,9 +22,9 @@
                             <a aria-controls="nav-home" aria-selected="false" class="nav-item nav-link active" data-toggle="tab" href="#nav-home"
                                id="nav-home-tab" role="tab">Movimientos</a>
                             <a aria-controls="nav-profile" aria-selected="true" class="nav-item nav-link" data-toggle="tab"
-                               href="#nav-profile_2" id="nav-profile-tab-2" role="tab">Entradas</a>
+                               href="#nav-profile_2" id="nav-profile-tab-2" role="tab">Detalle</a>
                             <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
-                               href="#nav-profile" id="nav-profile-tab" role="tab">Salidas</a>
+                               href="#nav-profile" id="nav-profile-tab" role="tab">Distribución</a>
                         </div>
                     </nav>
                     <div class="tab-content" id="nav-tabContent" >
@@ -93,6 +93,7 @@ export default {
             this.movimientos = null;
             this.titulo_material = null;
             this.titulo_almacen = null;
+            this.getHistorico();
             return this.$store.dispatch('cadeco/material/historico', {
                 params: {
                     id: this.id_material,
@@ -112,6 +113,8 @@ export default {
                     this.salidas = data.salidas;
                     this.total_sal = data.totales;
                     this.getHistorico();
+                }).finally(()=>{
+                    this.cargando = false;
                 })
             })
 
@@ -125,8 +128,6 @@ export default {
                 }
             }).then(data => {
                 this.movimientos = data;
-            }).finally(()=>{
-                this.cargando = false;
             })
         }
     },

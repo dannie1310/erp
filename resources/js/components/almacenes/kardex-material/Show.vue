@@ -65,7 +65,7 @@
                                          </td>
                                      </tr>
                                  </tbody>
-                                 <tfoot v-if="total_mat">
+                                <!-- <tfoot v-if="total_mat">
                                     <tr>
                                         <th style="text-align: right"><b>TOTAL</b></th>
                                         <td></td>
@@ -80,7 +80,7 @@
                                             <b>{{total_mat.x_pagar}}</b>
                                         </td>
                                     </tr>
-                                 </tfoot>
+                                 </tfoot>-->
                              </table>
                         </div>
                     </div>
