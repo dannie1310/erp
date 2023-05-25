@@ -74,5 +74,4 @@ class ProveedorREPController extends Controller
     {
         return $this->service->getCuerpoCorreo($id);
     }
-
 }

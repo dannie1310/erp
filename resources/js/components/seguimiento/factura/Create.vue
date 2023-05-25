@@ -73,7 +73,7 @@
                                         v-model="registro.id_proyecto"
                                         :class="{'is-invalid': errors.has('id_proyecto')}">
                                          <option value>--Seleccionar--</option>
-                                        <option v-for="proyecto in registro.proyectos" :value="proyecto.id">{{ proyecto.nombre }}</option>
+                                        <option v-for="proyecto in registro.proyectos" :value="proyecto.id" :disabled="proyecto.id == 0 ? true : false">{{ proyecto.nombre }}</option>
                                     </select>
                                     <div class="invalid-feedback" v-show="errors.has('id_proyecto')">{{ errors.first('id_proyecto') }}</div>
                                 </div>

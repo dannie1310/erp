@@ -703,7 +703,7 @@ export const routes = [
                         component: require('./components/almacenes/Index').default,
                         meta: {
                             title: 'Almacenes',
-                            breadcrumb: {parent:'home', name: 'ALMACENES'},
+                            breadcrumb: {parent:'home', name: 'SISTEMA DE ALMACENES'},
                             middleware: [auth, context, access]
                         }
                     },
@@ -874,28 +874,40 @@ export const routes = [
                         ]
                     },
                     {
-                        path:'kardex-material',
+                        path:'lista-almacenes',
                         component: require('./components/almacenes/kardex-material/Layout').default,
                         children: [
                             {
                                 path:'/',
-                                name: 'kardex-material',
+                                name: 'lista-almacenes',
                                 component: require('./components/almacenes/kardex-material/Index').default,
                                 meta: {
-                                    title: 'Kardex de Materiales',
-                                    breadcrumb: {parent: 'almacenes', name: 'KARDEX MATERIALES'},
+                                    title: 'Lista de Almacenes',
+                                    breadcrumb: {parent: 'almacenes', name: 'ALMACENES'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_kardex_movimiento_material'
                                 }
                             },
                             {
-                                path: ':id/kardex',
-                                name: 'consultar-almacen',
+                                path: ':id_almacen/materiales',
+                                name: 'consultar-materiales-almacen',
                                 component: require('./components/almacenes/kardex-material/Show').default,
                                 props: true,
                                 meta: {
-                                    title: 'Consultar Kardex',
-                                    breadcrumb: {name: 'CONSULTAR', parent: 'kardex-material'},
+                                    title: 'Lista de Materiales',
+                                    breadcrumb: {name: 'MATERIALES', parent: 'lista-almacenes'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_kardex_movimiento_material'
+                                }
+                            },
+                            {
+                                path: ':id_almacen/materiales/:id_material/kardex',
+                                name: 'kardex',
+                                component: require('./components/almacenes/kardex-material/Kardex').default,
+                                props: true,
+                                meta: {
+                                    title: 'Kardex de Material',
+                                    breadcrumb: {name: 'KARDEX', parent: 'lista-almacenes'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_kardex_movimiento_material'
                                 }
@@ -3380,38 +3392,60 @@ export const routes = [
             {
                 path:'',
                 name: 'activo-fijo',
+                component: require('./components/activo-fijo/Index').default,
                 meta: {
                     title: 'ACTIVO FIJO',
                     middleware: [auth],
-                    //permission: ['editar_poliza','configurar_visibilidad_empresa_ctpq','configurar_editabilidad_empresa_ctpq','consultar_log_edicion_poliza'],
-                    general: true
+                    breadcrumb: {name: 'ACTIVO FIJO'}
                 }
             },
             {
-                path:"activos-administrar",
-                name:"activos-administrar",
-                component: require('./components/activo-fijo/activos/Administrar.vue').default,
-                meta: {
-                    title: 'Administrar',
-                    breadcrumb: {parent: 'activo-fijo', name: 'ADMINISTRAR'},
-                    middleware: [auth],
-
-                    //permission: ['editar_poliza','consultar_poliza'],
-                    general: true
-                }
+                path:"resguardo",
+                component: require('./components/activo-fijo/resguardos/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'resguardos-index',
+                        component: require('./components/activo-fijo/resguardos/Index').default,
+                        meta: {
+                            title: 'Resguardos',
+                            breadcrumb: {name: 'RESGUARDOS', parent: 'activo-fijo'},
+                            middleware: [auth, permission],
+                            permission: ['consulta_resguardo_activo_fijo'],
+                            general: true
+                        }
+                    }
+                ]
             },
             {
-                path:"resguardos-index",
-                name:"resguardos-index",
-                component: require('./components/activo-fijo/resguardos/Index.vue').default,
-                meta: {
-                    title: 'Resguardos',
-                    breadcrumb: {parent: 'activo-fijo', name: 'RESGUARDOS'},
-                    middleware: [auth],
-
-                    //permission: ['editar_poliza','consultar_poliza'],
-                    general: true
-                }
+                path:"activo",
+                component: require('./components/activo-fijo/activo/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'activo',
+                        component: require('./components/activo-fijo/activo/Index.vue').default,
+                        meta: {
+                            title: 'Activos',
+                            breadcrumb: {name: 'ACTIVOS', parent: 'activo-fijo'},
+                            middleware: [auth,permission],
+                            permission: ['consultar_impresion_etiqueta'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'impresion-etiqueta',
+                        name: 'impresion-etiqueta',
+                        component: require('./components/activo-fijo/activo/impresion-etiqueta/Index').default,
+                        meta: {
+                            title: 'Impresión de Etiqueta',
+                            breadcrumb: {name: 'IMPRESIÓN DE ETIQUETA', parent: 'activo'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_impresion_etiqueta',
+                            general: true
+                        }
+                    },
+                ]
             },
         ],
     },

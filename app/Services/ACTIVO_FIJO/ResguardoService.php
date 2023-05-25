@@ -3,6 +3,7 @@
 namespace App\Services\ACTIVO_FIJO;
 
 use App\Models\ACTIVO_FIJO\Resguardo;
+use App\PDF\ActivoFijo\ImpresionEtiquetaFormato;
 use App\PDF\ActivoFijo\ResguardoFormato;
 use App\Models\ACTIVO_FIJO\UsuarioUbicacion;
 use App\Repositories\ACTIVO_FIJO\ResguardoRepository as Repository;

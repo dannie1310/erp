@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 use App\CSV\ListaMaterialesLayout;
+use App\Models\CADECO\Almacenes\TransaccionKardexVw;
 use App\Models\CADECO\Contabilidad\CuentaMaterial;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -164,6 +165,11 @@ class Material extends Model
     {
         return $this->hasMany(self::class, 'tipo_material', 'tipo_material')
             ->where('nivel', 'LIKE',  '009.___.');
+    }
+
+    public function unidadSeleccionada()
+    {
+        return $this->belongsTo(Unidad::class, 'unidad', 'unidad');
     }
 
     public function eliminarInsumo()
@@ -480,37 +486,64 @@ class Material extends Model
         $adquirido = 0;
         $pagado = 0;
         $x_pagar = 0;
+        $material = Material::find($id);
+        $almacen = Almacen::find($id_almacen);
 
         $inventarios = Transaccion::join('items', 'transacciones.id_transaccion','items.id_transaccion')
             ->join('inventarios', 'inventarios.id_item', 'items.id_item')
             ->where('items.id_almacen', '=', $id_almacen)
             ->where('items.id_material', '=', $id)
             ->selectRaw('transacciones.*, items.*, inventarios.*')
-            ->orderBy('numero_folio', 'ASC')->get();
+            ->orderBy('fecha', 'ASC')->get();
 
         foreach ($inventarios as $i => $inventario) {
             $movimientos_totales = $this->getTotalesSalida([$inventario->id_lote]);
-
             $fecha= date_create($inventario->fecha);
             $array[$i]['id'] = $inventario->getKey();
             $array[$i]['fecha'] = date_format($fecha,"d/m/Y");
             $array[$i]['unidad'] = $inventario->unidad;
-            $array[$i]['entrada'] = number_format($inventario->cantidad,2,".", ",");
-            $array[$i]['salida'] = number_format($movimientos_totales ? $movimientos_totales->suma_salida : 0, 2, ".", ",");
-            $array[$i]['existencia'] = number_format(($inventario->cantidad - ($movimientos_totales ? $movimientos_totales->suma_salida : 0)), 2, ".", ",");
+            $array[$i]['entrada'] = $inventario->cantidad;
             $array[$i]['adquirido'] = number_format($inventario->monto_total, 2, ".", ",");
             $array[$i]['pagado'] = number_format($inventario->monto_pagado,2, ".", ",");
             $array[$i]['x_pagar'] =  number_format(($inventario->monto_total - $inventario->monto_pagado),2,".",",");
-            $array[$i]['referencia'] = 'ENT #'.$inventario->numero_folio;
-            $entrada+= $inventario->cantidad;
-            $salida+= $movimientos_totales ? $movimientos_totales->suma_salida : 0;
-            $existencia += ($inventario->cantidad - ($movimientos_totales ? $movimientos_totales->suma_salida : 0));
+            if($inventario->tipo_transaccion == 33)
+            {
+                $array[$i]['referencia'] = 'ENT #'.$inventario->numero_folio;
+                $array[$i]['salida'] = ($movimientos_totales ? $movimientos_totales->suma_salida : 0);
+            }
+            if($inventario->tipo_transaccion == 34 && $inventario->opciones == 65537)
+            {
+                $array[$i]['referencia'] = 'TRS #'.$inventario->numero_folio;
+                $array[$i]['salida'] = 0;
+            }
+            if($inventario->tipo_transaccion == 35)
+            {
+                if($inventario->opciones == 0)
+                {
+                    $array[$i]['referencia'] = 'A(+) #'.$inventario->numero_folio;
+                }
+                if($inventario->opciones == 2)
+                {
+                    $array[$i]['referencia'] = 'NVLT #'.$inventario->numero_folio;
+                    $array[$i]['salida'] = $inventario->saldo;
+                }
+            }
+
+            $array[$i]['existencia'] = ((float)$array[$i]['entrada'] - (float)$array[$i]['salida']);
+            $entrada+= $array[$i]['entrada'] ;
+            $salida+=  $array[$i]['salida'];
+            $existencia += $array[$i]['existencia'];
+            $array[$i]['salida'] = number_format($array[$i]['salida'], 2, ".", ",");
+            $array[$i]['entrada'] = number_format($array[$i]['entrada'],2,".", ",");
+            $array[$i]['existencia'] = number_format($array[$i]['existencia'],2,".", ",");
             $adquirido += $inventario->monto_total;
             $pagado += $inventario->monto_pagado;
             $x_pagar += ($inventario->monto_total - $inventario->monto_pagado);
             $movimientos_totales = null;
         }
         return [
+            'material' =>$material->descripcion,
+            'almacen' =>$almacen->descripcion,
             'inventarios' => $array,
             'totales' => [
                 'entrada' => number_format($entrada,2,".",","),
@@ -547,18 +580,37 @@ class Material extends Model
             ->leftjoin('movimientos', 'movimientos.id_item', 'items.id_item')
             ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
             ->selectRaw('[transacciones].id_transaccion, [transacciones].fecha, [transacciones].numero_folio,
+            [transacciones].tipo_transaccion,[transacciones].opciones,
             movimientos.cantidad as cant_mov, inventarios.cantidad as cant_inv,
             movimientos.monto_total as monto_total_mov, inventarios.monto_total as monto_total_inv,
             movimientos.monto_pagado as monto_pagado_mov, inventarios.monto_pagado as monto_pagado_inv,
             items.id_almacen, items.id_concepto')
             ->where('transacciones.id_almacen', '=', $id_almacen)
             ->where('items.id_material', '=', $id)
-            ->orderByRaw('numero_folio', 'id_concepto')->get();
+            ->orderByRaw('numero_folio, id_concepto')
+            ->get();
+
         foreach ($salidas as $i => $salida) {
             $fecha= date_create($salida->fecha);
             $array[$x]['id'] = $salida->getKey();
             $array[$x]['fecha'] = date_format($fecha,"d/m/Y");
-            $array[$x]['referencia'] = 'SAL #'.$salida->numero_folio;
+            if($salida->tipo_transaccion == 34)
+            {
+                if($salida->opciones == 1){
+                    $array[$x]['referencia'] = 'SAL #'.$salida->numero_folio;
+                }
+                if($salida->opciones == 65537)
+                {
+                    $array[$x]['referencia'] = 'TRS #'.$salida->numero_folio;
+                }
+            }
+            if($salida->tipo_transaccion == 35)
+            {
+                if($salida->opciones == 1)
+                {
+                    $array[$x]['referencia'] = 'A(-) #'.$salida->numero_folio;
+                }
+            }
             $array[$x]['cantidad'] = number_format($salida->cant_mov + $salida->cant_inv,2,".",",");
             $array[$x]['total'] = number_format($salida->monto_total_mov + $salida->monto_pagado_inv, 2,".",",");
             $array[$x]['pagado'] = number_format($salida->monto_pagado_mov + $salida->monto_pagado_inv, 2, ".", ",");
@@ -582,6 +634,8 @@ class Material extends Model
             }
         }
         $total_almacen = $this->getTotalesSalidasAlmacen($id,$id_almacen);
+
+        $datos = TransaccionKardexVw::whereRaw('id_almacen_origen = '.$id_almacen.' and id_material = '.$id)->get();
         return [
             'salidas' => $array,
             'totales' => [
@@ -589,7 +643,8 @@ class Material extends Model
                 'total' => number_format($total_almacen['total_salida'],2,".",","),
                 'pagado' => number_format($total_almacen['pagado_salida'],2,".",","),
                 'x_pagar' => number_format($total_almacen['por_pagar_salida'],2,".",","),
-            ]
+            ],
+            'movimientos' => $datos
         ];
     }
 
@@ -632,6 +687,61 @@ class Material extends Model
             'total_salida' => $totales->total_salida + $totales->total_salida_m,
             'pagado_salida' => $totales->pagado_salida + $totales->pagado_salida_m,
             'por_pagar_salida' => $totales->por_pagar_salida + $totales->por_pagar_salida_m
+        ];
+    }
+
+    public function historico_movimientos($id, $id_almacen)
+    {
+        $suma = 0;
+        $movimientos = TransaccionKardexVw::whereRaw('(id_almacen_origen = '.$id_almacen.' or id_almacen_destino = '.$id_almacen.') and id_material = '.$id)->orderBy('FechaHoraRegistro', 'asc')->get();
+        if(count($movimientos) > 0) {
+            foreach ($movimientos->toArray() as $i => $movimiento) {
+                $fecha = date_create($movimiento['fecha']);
+                $fechaR = date_create($movimiento['FechaHoraRegistro']);
+                $movimiento['fecha'] = date_format($fecha, "d/m/Y");
+                $movimiento['FechaHoraRegistro'] = date_format($fechaR, "d/m/Y H:i");
+
+                if ($movimiento['tipo'] == 'TRANSFERENCIA') {
+                    if ($movimiento['id_almacen_destino'] == $id_almacen) {
+                        $movimiento['cantidad_salida'] = $movimiento['cantidad_entrada'];
+                        $movimiento['cantidad_entrada'] = NULL;
+                    }
+                }
+                if ($movimiento['cantidad_entrada'] != null) {
+                    $suma = $suma + $movimiento['cantidad_entrada'];
+                }
+                if ($movimiento['cantidad_salida'] != null) {
+                    $suma = $suma - $movimiento['cantidad_salida'];
+                }
+                $movimiento['saldo_restante'] = number_format($suma,3,'.','');
+                $movimiento['dias_diferencia'] = $fecha->diff($fechaR)->days;
+                if ($movimiento['dias_diferencia'] <= 3) {
+                    $movimiento['color'] = 'text-align: center; color: black';
+                }else if ($movimiento['dias_diferencia'] <= 7) {
+                    $movimiento['color'] = 'text-align: center; color: blue';
+                }else if ($movimiento['dias_diferencia'] <= 11) {
+                    $movimiento['color'] = 'text-align: center; color: orange';
+                }else {
+                    $movimiento['color'] = 'text-align: center; color: red';
+                }
+                if($movimiento['cantidad_entrada'] != null)
+                {
+                    $movimiento['cantidad_entrada'] = number_format($movimiento['cantidad_entrada'], 3, ".", "");
+                }
+                if($movimiento['cantidad_salida'] != null)
+                {
+                    $movimiento['cantidad_salida'] = number_format($movimiento['cantidad_salida'],3,".","");
+                }
+                $movimientos[$i] = $movimiento;
+            }
+            return [
+                'data' => $movimientos,
+                'unidad' => $this->find($id)->unidadSeleccionada ? $this->find($id)->unidadSeleccionada->descripcion : NULL
+            ];
+        }
+        return [
+            'data' => [],
+            'unidad' => $this->find($id)->unidadSeleccionada ? $this->find($id)->unidadSeleccionada->descripcion : NULL
         ];
     }
 }

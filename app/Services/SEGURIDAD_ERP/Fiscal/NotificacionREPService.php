@@ -4,6 +4,7 @@ namespace App\Services\SEGURIDAD_ERP\Fiscal;
 
 use App\Models\SEGURIDAD_ERP\Fiscal\RepNotificacion;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\Storage;
 
 class NotificacionREPService
 {
@@ -22,5 +23,14 @@ class NotificacionREPService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function pdf($id)
+    {
+        $dir_descarga = public_path("downloads/fiscal/comunicados_notificaciones/".$id.".pdf");
+        if(is_file($dir_descarga)){
+            return response()->file($dir_descarga);
+        }
+       return "PDF no encontrado.";
     }
 }

@@ -67,8 +67,8 @@
                                             </td>
                                         </tr>
                                         <tr v-if="totales">
-                                            <td class="encabezado"><b>TOTAL</b></td>
-                                            <td></td>
+                                            <td class="encabezado" colspan="2" style="text-align: right"><b>TOTAL</b></td>
+
                                             <td style="text-align: right">
                                                 <b>{{totales.entrada}}</b>
                                             </td>
@@ -114,7 +114,7 @@
         props: ['inventarios', 'totales'],
         data() {
             return {
-                cargando: false,
+
             }
         },
         methods: {

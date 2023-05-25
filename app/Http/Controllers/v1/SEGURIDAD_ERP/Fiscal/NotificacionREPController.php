@@ -43,4 +43,9 @@ class NotificacionREPController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function pdf($id)
+    {
+        return $this->service->pdf($id);
+    }
 }
