@@ -494,7 +494,7 @@ class Material extends Model
             ->where('items.id_almacen', '=', $id_almacen)
             ->where('items.id_material', '=', $id)
             ->selectRaw('transacciones.*, items.*, inventarios.*')
-            ->orderBy('numero_folio', 'ASC')->get();
+            ->orderBy('fecha', 'ASC')->get();
 
         foreach ($inventarios as $i => $inventario) {
             $movimientos_totales = $this->getTotalesSalida([$inventario->id_lote]);
@@ -508,7 +508,26 @@ class Material extends Model
             $array[$i]['adquirido'] = number_format($inventario->monto_total, 2, ".", ",");
             $array[$i]['pagado'] = number_format($inventario->monto_pagado,2, ".", ",");
             $array[$i]['x_pagar'] =  number_format(($inventario->monto_total - $inventario->monto_pagado),2,".",",");
-            $array[$i]['referencia'] = $inventario->tipo_transaccion == 33 ? 'ENT #'.$inventario->numero_folio : 'TRS #'.$inventario->numero_folio;
+            if($inventario->tipo_transaccion == 33)
+            {
+                $array[$i]['referencia'] = 'ENT #'.$inventario->numero_folio;
+            }
+            if($inventario->tipo_transaccion == 34 && $inventario->opciones == 65537)
+            {
+                $array[$i]['referencia'] = 'TRS #'.$inventario->numero_folio;
+            }
+            if($inventario->tipo_transaccion == 35)
+            {
+                if($inventario->opciones == 0)
+                {
+                    $array[$i]['referencia'] = 'A(+) #'.$inventario->numero_folio;
+                }
+                if($inventario->opciones == 2)
+                {
+                    $array[$i]['referencia'] = 'NVLT #'.$inventario->numero_folio;
+                }
+            }
+
             $entrada+= $inventario->cantidad;
             $salida+= $movimientos_totales ? $movimientos_totales->suma_salida : 0;
             $existencia += ($inventario->cantidad - ($movimientos_totales ? $movimientos_totales->suma_salida : 0));
@@ -556,6 +575,7 @@ class Material extends Model
             ->leftjoin('movimientos', 'movimientos.id_item', 'items.id_item')
             ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
             ->selectRaw('[transacciones].id_transaccion, [transacciones].fecha, [transacciones].numero_folio,
+            [transacciones].tipo_transaccion,[transacciones].opciones,
             movimientos.cantidad as cant_mov, inventarios.cantidad as cant_inv,
             movimientos.monto_total as monto_total_mov, inventarios.monto_total as monto_total_inv,
             movimientos.monto_pagado as monto_pagado_mov, inventarios.monto_pagado as monto_pagado_inv,
@@ -564,11 +584,28 @@ class Material extends Model
             ->where('items.id_material', '=', $id)
             ->orderByRaw('numero_folio, id_concepto')
             ->get();
+
         foreach ($salidas as $i => $salida) {
             $fecha= date_create($salida->fecha);
             $array[$x]['id'] = $salida->getKey();
             $array[$x]['fecha'] = date_format($fecha,"d/m/Y");
-            $array[$x]['referencia'] = 'SAL #'.$salida->numero_folio;
+            if($salida->tipo_transaccion == 34)
+            {
+                if($salida->opciones == 1){
+                    $array[$x]['referencia'] = 'SAL #'.$salida->numero_folio;
+                }
+                if($salida->opciones == 65537)
+                {
+                    $array[$x]['referencia'] = 'TRS #'.$salida->numero_folio;
+                }
+            }
+            if($salida->tipo_transaccion == 35)
+            {
+                if($salida->opciones == 1)
+                {
+                    $array[$x]['referencia'] = 'A(-) #'.$salida->numero_folio;
+                }
+            }
             $array[$x]['cantidad'] = number_format($salida->cant_mov + $salida->cant_inv,2,".",",");
             $array[$x]['total'] = number_format($salida->monto_total_mov + $salida->monto_pagado_inv, 2,".",",");
             $array[$x]['pagado'] = number_format($salida->monto_pagado_mov + $salida->monto_pagado_inv, 2, ".", ",");
