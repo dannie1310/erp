@@ -80,7 +80,7 @@ export default {
     },
     methods: {
         salir(){
-            this.$router.push({name: 'lista-almacenes', params: {id_almacen: this.id_almacen}});
+            this.$router.push({name: 'consultar-materiales-almacen', params: {id_almacen: this.id_almacen}});
 
         },
 

@@ -101,7 +101,7 @@
 
 export default {
     name: "kardex-show",
-    props: ['id'],
+    props: ['id_almacen'],
     mounted() {
         this.findAlmacen();
         this.find();
@@ -131,7 +131,7 @@ export default {
             this.cargando = true;
             return this.$store.dispatch('cadeco/material/porAlmacen', {
                 params: {
-                    id: this.id
+                    id: this.id_almacen
                 }
             }).then(data => {
                 this.materiales = data.materiales;
@@ -142,13 +142,13 @@ export default {
         },
         findAlmacen() {
             this.cargando = true;
-            return this.$store.dispatch('cadeco/almacen/find',{id: this.id
+            return this.$store.dispatch('cadeco/almacen/find',{id: this.id_almacen
             }).then(data => {
                 this.almacen = data;
             })
         },
         getKardex(i){
-            this.$router.push({name: 'kardex', params: {id_almacen: this.id, id_material:i}});
+            this.$router.push({name: 'kardex', params: {id_almacen: this.id_almacen, id_material:i}});
         },
     },
 }
