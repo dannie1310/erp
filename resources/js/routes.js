@@ -889,7 +889,7 @@ export const routes = [
                                 }
                             },
                             {
-                                path: ':id/materiales',
+                                path: ':id_almacen/materiales',
                                 name: 'consultar-materiales-almacen',
                                 component: require('./components/almacenes/kardex-material/Show').default,
                                 props: true,
