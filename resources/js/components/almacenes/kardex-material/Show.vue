@@ -12,44 +12,43 @@
             </div>
         </div>
         <div v-else>
-            <div class="card">
+            <div class="card" v-if="!historial_cargado">
+                 <div class="card-header" v-if="almacen">
+                    <h4>{{almacen.descripcion}}</h4>
+                </div>
                 <div class="card-body" v-if="materiales">
-                    <div class="row" v-if="almacen">
-                        <div class="col-md-12">
-                            <h4><b>{{almacen.descripcion}}</b></h4>
-                        </div>
-                    </div>
+
                     <div class="row">
-                        <div class="table-responsive" style="max-height: 250px; overflow-y: scroll;">
+                        <div class="table-responsive" >
                             <table class="table table-hover table-bordered table-sm" id="table">
                                 <thead>
                                     <tr>
                                         <th class="encabezado">
                                             Material
                                          </th>
-                                         <th class="encabezado">
+                                         <th class="encabezado c70">
                                              Unidad
                                          </th>
-                                         <th class="encabezado">
+                                         <th class="encabezado c90">
                                              Existencia
                                          </th>
-                                         <th class="encabezado">
+                                         <th class="encabezado c120">
                                              Importe Total
                                          </th>
-                                         <th class="encabezado">
+                                         <th class="encabezado c120">
                                              Importe Pagado
                                          </th>
-                                         <th class="encabezado">
+                                         <th class="encabezado c120">
                                              Importe Por Pagar
                                          </th>
                                      </tr>
                                  </thead>
                                  <tbody>
-                                     <tr v-for="(material, i) in materiales" :key="material.id" @click="getHistorial(material.id, i+1)">
-                                         <th style="text-align: left; width:200px;">
+                                     <tr v-for="(material, i) in materiales" :key="material.id" @click="getKardex(material.id)" >
+                                         <td style="text-align: left;">
                                              {{material.descripcion}}
-                                         </th>
-                                         <td style="text-align: right; width:100px;">
+                                         </td>
+                                         <td >
                                              {{material.unidad}}
                                          </td>
                                          <td style="text-align: right">
@@ -66,9 +65,9 @@
                                          </td>
                                      </tr>
                                  </tbody>
-                                 <tfoot>
+                                 <tfoot v-if="total_mat">
                                     <tr>
-                                        <th style="text-align: center"><b>TOTAL</b></th>
+                                        <th style="text-align: right"><b>TOTAL</b></th>
                                         <td></td>
                                         <td></td>
                                         <td style="text-align: right">
@@ -85,32 +84,10 @@
                              </table>
                         </div>
                     </div>
-                    <br />
-                    <hr />
-                    <nav v-if="inventarios">
-                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                            <a aria-controls="nav-home" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-home"
-                            id="nav-home-tab" role="tab">Entradas</a>
-                            <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
-                            href="#nav-profile" id="nav-profile-tab" role="tab">Salidas</a>
-                            <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
-                            href="#nav-profile_2" id="nav-profile-tab-2" role="tab">Movimientos</a>
-                        </div>
-                    </nav>
-                    <div class="tab-content" id="nav-tabContent" v-if="inventarios">
-                        <div aria-labelledby="nav-home-tab" class="tab-pane fade show active" id="nav-home" role="tabpanel">
-                            <entrada v-bind:inventarios="inventarios"  v-bind:totales="total_inv"/>
-                        </div>
-                        <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
-                            <salida v-bind:salidas="salidas" v-bind:totales="total_sal"/>
-                        </div>
-                        <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile_2" role="tabpanel">
-                            <movimiento v-bind:movimientos="movimientos"/>
-                        </div>
-                    </div>
+
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                    <button type="button" class="btn btn-primary" v-on:click="salir">
                         <i class="fa fa-angle-left"></i>
                         Regresar
                     </button>
@@ -121,12 +98,9 @@
 </template>
 
 <script>
-import Entrada from './partials/Entrada.vue';
-import Salida from './partials/Salida.vue';
-import Movimiento from './partials/Movimiento.vue';
+
 export default {
     name: "kardex-show",
-    components: {Entrada, Salida, Movimiento},
     props: ['id'],
     mounted() {
         this.findAlmacen();
@@ -135,6 +109,8 @@ export default {
     data() {
         return {
             cargando: false,
+            cargando_historial : false,
+            historial_cargado: false,
             materiales: [],
             inventarios: null,
             salidas: null,
@@ -143,7 +119,8 @@ export default {
             num_pas: 0,
             total_sal: null,
             almacen: null,
-            movimientos : null
+            movimientos : null,
+            titulo_material : null,
         }
     },
     methods: {
@@ -170,46 +147,9 @@ export default {
                 this.almacen = data;
             })
         },
-        getHistorial(i, key){
-            this.inventarios = null;
-            this.total_inv = null;
-            this.salidas = null;
-            this.total_sal = null;
-            this.movimientos = null;
-            document.getElementById('table').rows[this.num_pas].style.backgroundColor = "white";
-            document.getElementById('table').rows[key].style.backgroundColor = "#CFFCBC";
-            return this.$store.dispatch('cadeco/material/historico', {
-                params: {
-                    id: i,
-                    id_almacen: this.id
-                }
-            }).then(data => {
-                this.inventarios = data.inventarios;
-                this.total_inv = data.totales;
-                this.num_pas = key;
-                return this.$store.dispatch('cadeco/material/historicoSalida', {
-                    params: {
-                        id: i,
-                        id_almacen: this.id
-                    }
-                }).then(data => {
-                    this.salidas = data.salidas;
-                    this.total_sal = data.totales;
-                    this.getHistorico(i);
-                })
-            })
+        getKardex(i){
+            this.$router.push({name: 'kardex', params: {id_almacen: this.id, id_material:i}});
         },
-        getHistorico(i){
-            this.movimientos = null;
-            return this.$store.dispatch('cadeco/material/historicoMovimientos', {
-                params: {
-                    id: i,
-                    id_almacen: this.id
-                }
-            }).then(data => {
-                this.movimientos = data;
-            })
-        }
     },
 }
 </script>

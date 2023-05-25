@@ -84,7 +84,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr v-if="totales" style="background-color: yellow;">
-                                                <td class="encabezado"><b>TOTAL</b></td>
+                                                <td class="encabezado" style="text-align: right"><b>TOTAL</b></td>
                                                 <td style="text-align: right">
                                                     <b>{{totales.cantidad}}</b>
                                                 </td>

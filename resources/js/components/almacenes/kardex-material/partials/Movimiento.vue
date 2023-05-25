@@ -13,7 +13,7 @@
                             </div>
                             <br>
                             <div class="row" v-if="movimientos">
-                                <div class="table-responsive" style="overflow-y: scroll;">
+                                <div class="table-responsive">
                                     <table class="table table-bordered table-sm">
                                         <thead>
                                             <tr>

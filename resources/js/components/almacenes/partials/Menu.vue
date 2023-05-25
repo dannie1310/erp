@@ -45,7 +45,7 @@
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_kardex_movimiento_material')">
-                <router-link :to="{name: 'kardex-material'}" class="nav-link" :class="{active: this.$route.name == 'kardex-material'}">
+                <router-link :to="{name: 'lista-almacenes'}" class="nav-link" :class="{active: this.$route.name == 'lista-almacenes'}">
                     <i class="nav-icon fa fa-table"></i>
                     <p>Kardex de Materiales</p>
                 </router-link>
