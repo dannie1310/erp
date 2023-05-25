@@ -114,7 +114,7 @@
         props: ['inventarios', 'totales'],
         data() {
             return {
-                cargando: false,
+
             }
         },
         methods: {

@@ -502,19 +502,19 @@ class Material extends Model
             $array[$i]['id'] = $inventario->getKey();
             $array[$i]['fecha'] = date_format($fecha,"d/m/Y");
             $array[$i]['unidad'] = $inventario->unidad;
-            $array[$i]['entrada'] = number_format($inventario->cantidad,2,".", ",");
-            $array[$i]['salida'] = number_format($movimientos_totales ? $movimientos_totales->suma_salida : 0, 2, ".", ",");
-            $array[$i]['existencia'] = number_format(($inventario->cantidad - ($movimientos_totales ? $movimientos_totales->suma_salida : 0)), 2, ".", ",");
+            $array[$i]['entrada'] = $inventario->cantidad;
             $array[$i]['adquirido'] = number_format($inventario->monto_total, 2, ".", ",");
             $array[$i]['pagado'] = number_format($inventario->monto_pagado,2, ".", ",");
             $array[$i]['x_pagar'] =  number_format(($inventario->monto_total - $inventario->monto_pagado),2,".",",");
             if($inventario->tipo_transaccion == 33)
             {
                 $array[$i]['referencia'] = 'ENT #'.$inventario->numero_folio;
+                $array[$i]['salida'] = ($movimientos_totales ? $movimientos_totales->suma_salida : 0);
             }
             if($inventario->tipo_transaccion == 34 && $inventario->opciones == 65537)
             {
                 $array[$i]['referencia'] = 'TRS #'.$inventario->numero_folio;
+                $array[$i]['salida'] = 0;
             }
             if($inventario->tipo_transaccion == 35)
             {
@@ -525,12 +525,17 @@ class Material extends Model
                 if($inventario->opciones == 2)
                 {
                     $array[$i]['referencia'] = 'NVLT #'.$inventario->numero_folio;
+                    $array[$i]['salida'] = $inventario->saldo;
                 }
             }
 
-            $entrada+= $inventario->cantidad;
-            $salida+= $movimientos_totales ? $movimientos_totales->suma_salida : 0;
-            $existencia += ($inventario->cantidad - ($movimientos_totales ? $movimientos_totales->suma_salida : 0));
+            $array[$i]['existencia'] = ((float)$array[$i]['entrada'] - (float)$array[$i]['salida']);
+            $entrada+= $array[$i]['entrada'] ;
+            $salida+=  $array[$i]['salida'];
+            $existencia += $array[$i]['existencia'];
+            $array[$i]['salida'] = number_format($array[$i]['salida'], 2, ".", ",");
+            $array[$i]['entrada'] = number_format($array[$i]['entrada'],2,".", ",");
+            $array[$i]['existencia'] = number_format($array[$i]['existencia'],2,".", ",");
             $adquirido += $inventario->monto_total;
             $pagado += $inventario->monto_pagado;
             $x_pagar += ($inventario->monto_total - $inventario->monto_pagado);

@@ -125,7 +125,7 @@
         props: ['salidas', 'totales'],
         data() {
             return {
-                cargando: false,
+
             }
         },
         methods: {
