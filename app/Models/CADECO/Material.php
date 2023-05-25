@@ -498,7 +498,6 @@ class Material extends Model
 
         foreach ($inventarios as $i => $inventario) {
             $movimientos_totales = $this->getTotalesSalida([$inventario->id_lote]);
-
             $fecha= date_create($inventario->fecha);
             $array[$i]['id'] = $inventario->getKey();
             $array[$i]['fecha'] = date_format($fecha,"d/m/Y");
@@ -509,7 +508,7 @@ class Material extends Model
             $array[$i]['adquirido'] = number_format($inventario->monto_total, 2, ".", ",");
             $array[$i]['pagado'] = number_format($inventario->monto_pagado,2, ".", ",");
             $array[$i]['x_pagar'] =  number_format(($inventario->monto_total - $inventario->monto_pagado),2,".",",");
-            $array[$i]['referencia'] = 'ENT #'.$inventario->numero_folio;
+            $array[$i]['referencia'] = $inventario->tipo_transaccion == 33 ? 'ENT #'.$inventario->numero_folio : 'TRS #'.$inventario->numero_folio;
             $entrada+= $inventario->cantidad;
             $salida+= $movimientos_totales ? $movimientos_totales->suma_salida : 0;
             $existencia += ($inventario->cantidad - ($movimientos_totales ? $movimientos_totales->suma_salida : 0));
@@ -676,10 +675,12 @@ class Material extends Model
                 $movimiento['dias_diferencia'] = $fecha->diff($fechaR)->days;
                 if ($movimiento['dias_diferencia'] <= 3) {
                     $movimiento['color'] = 'text-align: center; color: black';
-                } else if ($movimiento['dias_diferencia'] <= 6) {
+                }else if ($movimiento['dias_diferencia'] <= 7) {
                     $movimiento['color'] = 'text-align: center; color: blue';
-                } else {
+                }else if ($movimiento['dias_diferencia'] <= 11) {
                     $movimiento['color'] = 'text-align: center; color: orange';
+                }else {
+                    $movimiento['color'] = 'text-align: center; color: red';
                 }
                 if($movimiento['cantidad_entrada'] != null)
                 {

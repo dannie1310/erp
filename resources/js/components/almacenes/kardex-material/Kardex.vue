@@ -93,6 +93,7 @@ export default {
             this.movimientos = null;
             this.titulo_material = null;
             this.titulo_almacen = null;
+            this.getHistorico();
             return this.$store.dispatch('cadeco/material/historico', {
                 params: {
                     id: this.id_material,
@@ -112,6 +113,8 @@ export default {
                     this.salidas = data.salidas;
                     this.total_sal = data.totales;
                     this.getHistorico();
+                }).finally(()=>{
+                    this.cargando = false;
                 })
             })
 
@@ -125,8 +128,6 @@ export default {
                 }
             }).then(data => {
                 this.movimientos = data;
-            }).finally(()=>{
-                this.cargando = false;
             })
         }
     },
