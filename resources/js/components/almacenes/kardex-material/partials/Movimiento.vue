@@ -9,6 +9,7 @@
                                 <div class="form-check form-check-inline">
                                     <input v-model="v_fecha" class="form-check-input" type="checkbox" id="v_fecha" value="v_fecha">
                                     <label class="form-check-label" for="v_fecha">Ver Fecha de Registro</label>
+                                    <i class="fa fa-info-circle primary" v-on:click="verInfo" style="margin-left: 5px; cursor: pointer"></i>
                                 </div>
                             </div>
                             <br>
@@ -75,6 +76,51 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="modal fade" ref="modal_info" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
+                            <div class="modal-dialog modal-sm" id="mdialTamanio">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h6 class="modal-title"><i  class="fa fa-info-circle"/>Información</h6>
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                                    </div>
+                                    <div class="modal-body modal-sm"  ref="body" style="font-size: 14px">
+                                        <div class="row">
+                                            <div class="col-md-12" style="font-size: 13px">
+                                                <div class="alert alert-primary d-flex align-items-center" role="alert">
+                                                    <i  class="fa fa-info-circle"/>
+                                                    Diferencia Fecha vs Fecha de Registro
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="color: black">
+                                                Negro -/+ <strong>0 a 3</strong> días de diferencia
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="color: blue">
+                                                Azul -/+ <strong>4 a 7</strong> días de diferencia
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="color: orange">
+                                                Anaranjado -/+ <strong>8 a 11</strong> días de diferencia
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="color: red">
+                                                Rojo mas de <strong>12</strong> días de diferencia
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Cerrar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -89,6 +135,12 @@ export default {
     data() {
         return {
             v_fecha: false
+        }
+    },
+    methods: {
+        verInfo(){
+            $(this.$refs.modal_info).appendTo('body')
+            $(this.$refs.modal_info).modal('show');
         }
     },
     watch: {
