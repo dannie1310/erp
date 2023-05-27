@@ -60,6 +60,11 @@ class ProveedorREPController extends Controller
         return $this->service->descargaXls($request->all());
     }
 
+    public function descargaIndividualXls(Request $request, $id)
+    {
+        return $this->service->descargaIndividualXls($id);
+    }
+
     public function enviarComunicado(Request $request, $id)
     {
         return $this->service->enviarComunicado($id, $request->all());
