@@ -73,7 +73,7 @@ class CFDSAT extends Model
     ];
 
     protected $dates =["fecha", "fecha_cancelacion","ultima_verificacion"];
-    //protected $dateFormat = 'Y-m-d H:i:s';
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     public function carga()
     {
@@ -250,7 +250,7 @@ class CFDSAT extends Model
 
     public function scopeRepPendiente($query)
     {
-        return $query->join("Fiscal.vw_cfd_sat_rep_pendiente","vw_cfd_sat_rep_pendiente.id_cfdi","=","cfd_sat.id")
+        return $query->join("Fiscal.etl_cfdi_sat_rep_pendientes","etl_cfdi_sat_rep_pendientes.id_cfdi","=","cfd_sat.id")
             ->where('tipo_comprobante', '=', 'I')
             ->where("cancelado","=",0)
             ->where("cfd_sat.metodo_pago","=","PPD")
