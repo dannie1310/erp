@@ -4,11 +4,13 @@ namespace App\CSV\Fiscal;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Events\AfterSheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class ProveedorREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, WithEvents
+class ProveedorREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, WithEvents, WithColumnFormatting
 {
     protected $id;
 
@@ -56,15 +58,42 @@ class ProveedorREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize,
                         'name' => 'arial',
                         'bold' => true
                     ]]);
-
-                $event->sheet->getStyle('k2:O1000000')->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-                $event->sheet->getStyle('u2:u1000000')->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-                $event->sheet->getStyle('w2:y1000000')->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-
+/*
+                $event->sheet->getStyle('k')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $event->sheet->getStyle('l')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $event->sheet->getStyle('m')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $event->sheet->getStyle('n')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $event->sheet->getStyle('o')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $event->sheet->getStyle('u')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $event->sheet->getStyle('w')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $event->sheet->getStyle('x')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                $event->sheet->getStyle('y')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+*/
             },
+        ];
+    }
+
+    public function columnFormats(): array
+    {
+        return [
+            'k' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'l' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'm' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'n' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'o' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'u' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'w' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'x' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'y' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 

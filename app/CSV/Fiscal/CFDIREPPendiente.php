@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class CFDIREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, WithEvents
+class CFDIREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, WithEvents, WithColumnFormatting
 {
     protected $data;
 
@@ -166,17 +166,23 @@ class CFDIREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, With
                         'name' => 'arial',
                         'bold' => true
                     ]]);
+                },
+        ];
+    }
 
+    public function columnFormats(): array
+    {
+        return [
+            'k' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'l' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'm' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'n' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'o' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
 
-
-                $event->sheet->getStyle('k2:O1000000')->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-                $event->sheet->getStyle('u2:u1000000')->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-                $event->sheet->getStyle('w2:y1000000')->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-
-            },
+            'u' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'w' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'x' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'y' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 
