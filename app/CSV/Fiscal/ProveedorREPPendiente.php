@@ -20,21 +20,22 @@ class ProveedorREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize,
     public function query()
     {
         ini_set('memory_limit', -1) ;
-        $query = CFDSAT::join('Fiscal.vw_cfd_sat_rep_pendiente', 'cfd_sat.id', 'vw_cfd_sat_rep_pendiente.id_cfdi')
+        ini_set('max_execution_time', '7200') ;
+
+        $query = CFDSAT::join('Fiscal.etl_cfdi_sat_rep_pendientes', 'cfd_sat.id', 'etl_cfdi_sat_rep_pendientes.id_cfdi')
             ->join('Contabilidad.ListaEmpresasSAT', 'cfd_sat.id_empresa_sat', 'ListaEmpresasSAT.id')
-            ->join('Fiscal.vw_proveedores_rep', 'cfd_sat.id_proveedor_sat', 'vw_proveedores_rep.id');;
+            ->join('Fiscal.etl_proveedores_rep', 'cfd_sat.id_proveedor_sat', 'etl_proveedores_rep.id');;
 
         $query->whereRaw("cfd_sat.id_proveedor_sat =".$this->id);
 
+        $query->orderBy("etl_cfdi_sat_rep_pendientes.pendiente_pago", "DESC");
 
-        $query->orderBy("vw_cfd_sat_rep_pendiente.pendiente_pago", "DESC");
-
-        $query->selectRaw("ROW_NUMBER() OVER(ORDER BY vw_cfd_sat_rep_pendiente.pendiente_pago DESC) as no_fila, fecha,serie,folio,tipo_comprobante, uuid, rfc_receptor
+        $query->selectRaw("ROW_NUMBER() OVER(ORDER BY etl_cfdi_sat_rep_pendientes.pendiente_pago DESC) as no_fila, fecha,serie,folio,tipo_comprobante, uuid, rfc_receptor
         , ListaEmpresasSAT.razon_social as empresa, rfc_proveedor, proveedor, subtotal, descuento, total_impuestos_retenidos, total_impuestos_trasladados,
         total, moneda, tipo_cambio, conceptos_txt, cfd_sat.ubicacion_sao,  cfd_sat.ubicacion_contabilidad,
-        vw_cfd_sat_rep_pendiente.total_cfdi,
-        vw_cfd_sat_rep_pendiente.cantidad_pagos, vw_cfd_sat_rep_pendiente.total_pagado, vw_cfd_sat_rep_pendiente.total_nc
-              , vw_cfd_sat_rep_pendiente.pendiente_pago");
+        etl_cfdi_sat_rep_pendientes.total_cfdi,
+        etl_cfdi_sat_rep_pendientes.cantidad_pagos, etl_cfdi_sat_rep_pendientes.total_pagado, etl_cfdi_sat_rep_pendientes.total_nc
+              , etl_cfdi_sat_rep_pendientes.pendiente_pago");
 
         return $query;
     }
@@ -42,7 +43,6 @@ class ProveedorREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize,
     /**
      * @return array
      */
-
 
     public function registerEvents(): array
     {
@@ -74,6 +74,4 @@ class ProveedorREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize,
             , 'DESCUENTO', 'IMPUESTOS RETENIDOS', 'IMPUESTOS TRASLADADOS', 'TOTAL', 'MONEDA', 'TC', 'CONCEPTOS','UBICACIÓN SAO'
             ,'UBICACIÓN CONTABILIDAD','TOTAL CFDI', '# PAGOS', 'TOTAL PAGOS', 'TOTAL NC', 'MONTO PENDIENTE REP']);
     }
-
-
 }
