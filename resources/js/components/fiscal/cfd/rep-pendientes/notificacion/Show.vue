@@ -70,7 +70,10 @@
                                             Administrador
                                         </th>
                                     </tr>
-                                    <tr v-for="(ubicacion, i) in notificacion.proveedor_rep.ubicaciones.data">
+                                    <tr v-if="notificacion.proveedor_rep.ubicaciones == undefined">
+                                        <td colspan="4">No cuenta con ubicaciones</td>
+                                    </tr>
+                                    <tr v-else v-for="(ubicacion, i) in notificacion.proveedor_rep.ubicaciones.data">
                                         <td>{{i+1}}</td>
                                         <td>
                                             {{ ubicacion.ubicacion }}
@@ -132,6 +135,7 @@ export default {
                 params: {include: ['destinatarios', 'proveedor', 'proveedor_rep.ubicaciones']}
             }).then(data => {
                 this.notificacion = data;
+                console.log(this.notificacion.proveedor_rep.ubicaciones, this.notificacion.proveedor_rep)
                 this.verPDF();
             }).finally(() => {
                 this.cargando = false;
