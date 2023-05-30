@@ -30,7 +30,7 @@
 <script>
 export default {
     name: "index-notificacion-rep-proveedor",
-    props: ['id'],
+    props: ['id_proveedor'],
     data() {
         return {
             cargando: false,
@@ -50,21 +50,18 @@ export default {
             total: 0,
             query: {
                 include: ['destinatarios'],
-                scope: ['porProveedor:'+this.id], sort:'id', order: 'desc'
+                scope: ['porProveedor:'+this.id_proveedor], sort:'id', order: 'desc'
             },
             daterange: null,
         }
     },
     mounted(){
-        this.$Progress.start();
-        this.paginate()
-            .finally(() => {
-                this.$Progress.finish();
-            })
+
     },
 
     methods: {
         paginate(){
+            this.$Progress.start();
             this.$store.commit('fiscal/proveedor-rep/SET_PROVEEDOR_REP', null);
             this.find();
             this.cargando=true;
@@ -74,11 +71,12 @@ export default {
                 })
                 .finally(()=>{
                     this.cargando=false;
+                    this.$Progress.finish();
                 })
         },
         find(){
             return this.$store.dispatch('fiscal/proveedor-rep/find', {
-                id: this.id,
+                id: this.id_proveedor,
                 params: {
                 }
             }).then(data => {
@@ -86,7 +84,7 @@ export default {
             })
         },
         salir(){
-            this.$router.go(-1);
+            this.$router.push({name: 'informe-rep-faltantes-proveedor'});
         },
     },
     computed: {
