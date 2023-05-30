@@ -71,7 +71,7 @@
                                         </th>
                                     </tr>
                                     <tr v-if="notificacion.proveedor_rep.ubicaciones == undefined">
-                                        <td colspan="4">No cuenta con ubicaciones</td>
+                                        <td colspan="4">No cuenta con obras relacionadas</td>
                                     </tr>
                                     <tr v-else v-for="(ubicacion, i) in notificacion.proveedor_rep.ubicaciones.data">
                                         <td>{{i+1}}</td>
