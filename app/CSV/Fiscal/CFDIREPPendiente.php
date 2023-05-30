@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class CFDIREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, WithEvents
+class CFDIREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, WithEvents, WithColumnFormatting
 {
     protected $data;
 
@@ -30,9 +30,9 @@ class CFDIREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, With
 
     public function query()
     {
-        $query = CFDSAT::join('Fiscal.vw_cfd_sat_rep_pendiente', 'cfd_sat.id', 'vw_cfd_sat_rep_pendiente.id_cfdi')
+        $query = CFDSAT::join('Fiscal.etl_cfdi_sat_rep_pendientes', 'cfd_sat.id', 'etl_cfdi_sat_rep_pendientes.id_cfdi')
             ->join('Contabilidad.ListaEmpresasSAT', 'cfd_sat.id_empresa_sat', 'ListaEmpresasSAT.id')
-            ->join('Fiscal.vw_proveedores_rep', 'cfd_sat.id_proveedor_sat', 'vw_proveedores_rep.id');;
+            ->join('Fiscal.etl_proveedores_rep', 'cfd_sat.id_proveedor_sat', 'etl_proveedores_rep.id');;
 
         if (key_exists("startDate", $this->data) && key_exists("endDate", $this->data)) {
             $query->whereBetween('cfd_sat.fecha', [$this->data["startDate"], $this->data["endDate"]]);
@@ -137,14 +137,14 @@ class CFDIREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, With
         }
 
 
-        $query->orderBy("vw_cfd_sat_rep_pendiente.pendiente_pago", "DESC");
+        $query->orderBy("etl_cfdi_sat_rep_pendientes.pendiente_pago", "DESC");
 
-        $query->selectRaw("ROW_NUMBER() OVER(ORDER BY vw_cfd_sat_rep_pendiente.pendiente_pago DESC) as no_fila, fecha,serie,folio,tipo_comprobante, uuid, rfc_receptor
+        $query->selectRaw("ROW_NUMBER() OVER(ORDER BY etl_cfdi_sat_rep_pendientes.pendiente_pago DESC) as no_fila, fecha,serie,folio,tipo_comprobante, uuid, rfc_receptor
         , ListaEmpresasSAT.razon_social as empresa, rfc_proveedor, proveedor, subtotal, descuento, total_impuestos_retenidos, total_impuestos_trasladados,
         total, moneda, tipo_cambio, conceptos_txt, cfd_sat.ubicacion_sao,  cfd_sat.ubicacion_contabilidad,
-        vw_cfd_sat_rep_pendiente.total_cfdi,
-        vw_cfd_sat_rep_pendiente.cantidad_pagos, vw_cfd_sat_rep_pendiente.total_pagado, vw_cfd_sat_rep_pendiente.total_nc
-              , vw_cfd_sat_rep_pendiente.pendiente_pago");
+        etl_cfdi_sat_rep_pendientes.total_cfdi,
+        etl_cfdi_sat_rep_pendientes.cantidad_pagos, etl_cfdi_sat_rep_pendientes.total_pagado, etl_cfdi_sat_rep_pendientes.total_nc
+              , etl_cfdi_sat_rep_pendientes.pendiente_pago");
 
         return $query;
     }
@@ -166,17 +166,23 @@ class CFDIREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, With
                         'name' => 'arial',
                         'bold' => true
                     ]]);
+                },
+        ];
+    }
 
+    public function columnFormats(): array
+    {
+        return [
+            'k' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'l' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'm' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'n' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'o' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
 
-
-                $event->sheet->getStyle('k2:O1000000')->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-                $event->sheet->getStyle('u2:u1000000')->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-                $event->sheet->getStyle('w2:y1000000')->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-
-            },
+            'u' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'w' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'x' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'y' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 

@@ -72,6 +72,9 @@ class CFDSATController extends Controller
         /*$this->service->reprocesaCFDObtenerTipo();
         return response()->json([], 200);*/
 
+        /*$this->service->detectarCancelacionesNotasCredito();
+        return response()->json([], 200);*/
+
         $respuesta =$this->service->procesaDirectorioZIPCFD();
         return response()->json($respuesta, 200);
     }

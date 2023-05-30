@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProveedorREP extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.Fiscal.vw_proveedores_rep';
+    protected $table = 'SEGURIDAD_ERP.Fiscal.etl_proveedores_rep';
     public $timestamps = false;
 
     public $fillable = [

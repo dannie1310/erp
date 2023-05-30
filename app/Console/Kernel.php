@@ -29,8 +29,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('procesa:liberaCotizaciones')->everyMinute();
         $schedule->command('valida:vigenciaCFDI')->weeklyOn(1,'22:00');
         $schedule->command('procesa:solicitudesPagoParaIndicador')->everyMinute();
-        // $schedule->command('inspire')
-        //          ->hourly();
     }
 
     /**

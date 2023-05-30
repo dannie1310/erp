@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class VwCFDSATPendientesREP extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.Fiscal.vw_cfd_sat_rep_pendiente';
+    protected $table = 'SEGURIDAD_ERP.Fiscal.etl_cfdi_sat_rep_pendientes';
     public $timestamps = false;
     protected $fillable =[
 

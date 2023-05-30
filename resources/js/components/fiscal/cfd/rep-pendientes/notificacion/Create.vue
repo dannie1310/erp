@@ -1,11 +1,9 @@
 <template>
     <span>
-
-        <div class="card"  >
+        <div class="card">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-6">
-
                         <div class="row" style="margin-bottom: 5px">
                             <div class="col-md-12">
                                 <span><i class="fa fa-envelope"></i>DESTINATARIOS <span v-if="!cargando"><strong>{{proveedor.proveedor}}</strong></span></span>
@@ -150,7 +148,6 @@
 
                     </div>
                 </div>
-
             </div>
         </div>
 
