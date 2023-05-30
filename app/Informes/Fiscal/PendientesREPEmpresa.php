@@ -80,11 +80,11 @@ SELECT
 
     FROM
     SEGURIDAD_ERP.Contabilidad.cfd_sat cs
-INNER JOIN SEGURIDAD_ERP.Fiscal.vw_cfd_sat_rep_pendiente csrp ON
+INNER JOIN SEGURIDAD_ERP.Fiscal.etl_cfdi_sat_rep_pendientes csrp ON
     cs.id = csrp.id_cfdi
 INNER JOIN SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT les ON
     cs.id_empresa_sat = les.id
-INNER JOIN SEGURIDAD_ERP.Fiscal.vw_proveedores_rep ps ON
+INNER JOIN SEGURIDAD_ERP.Fiscal.etl_proveedores_rep ps ON
     cs.id_proveedor_sat = ps.id
     where $filtros
 

@@ -519,6 +519,7 @@ $api->version('v1', function ($api) {
             $api->post('{id}/enviar-comunicado','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@enviarComunicado')->where(['id' => '[0-9]+']);
             $api->post('{id}/actualizar-contactos','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@actualizarContactos')->where(['id' => '[0-9]+']);
             $api->get('{id}/cuerpo-correo','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
+            $api->get('{id}/rep-pendiente-proveedor-xls', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@descargaIndividualXLS');
         });
 
         $api->group(['prefix' => 'informes'], function ($api){

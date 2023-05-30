@@ -7,15 +7,18 @@
         <router-link  :to="{ name: 'historico-notificacion-rep', params: {id: value.id}}"  type="button" class="btn btn-sm btn-outline-primary" title="Consultar histórico de notificaciones">
             <i class="fa fa-history"></i>
         </router-link>
+        <rep-pendiente-proveedor-xls v-bind:id="value.id"></rep-pendiente-proveedor-xls>
+
     </div>
 </template>
 
 <script>
 
     import ComunicadoProveedoresREP from "../ComunicadoProveedoresREP";
+    import RepPendienteProveedorXls from "./RepPendienteProveedorXls.vue";
     export default {
         name: "ActionButtonsPorProveedor",
-        components: {ComunicadoProveedoresREP},
+        components: {RepPendienteProveedorXls, ComunicadoProveedoresREP},
         props: ['value']
     }
 </script>

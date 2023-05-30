@@ -2,6 +2,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Fiscal;
 use App\CSV\Fiscal\ProveedoresREPPendiente;
+use App\CSV\Fiscal\ProveedorREPPendiente;
 use App\Events\RegistroNotificacionREP;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
 use App\PDF\Fiscal\Comunicado;
@@ -166,6 +167,11 @@ class ProveedorREPService
     public function descargaXls($data)
     {
         return Excel::download(new ProveedoresREPPendiente($data), 'proveedores_rep_pendiente_' . date('Y-m-d H:i:s') . '.xlsx');
+    }
+
+    public function descargaIndividualXls($id)
+    {
+        return Excel::download(new ProveedorREPPendiente($id), 'proveedor_rep_pendiente_' . date('Y-m-d H:i:s') . '.xlsx');
     }
 
     public function enviarComunicado($id, $data)

@@ -179,9 +179,9 @@ class ProveedoresREPPendiente implements FromQuery, WithHeadings, ShouldAutoSize
     public function columnFormats(): array
     {
         return [
-            'E' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,
-            'F' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,
-            'G' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,
+            'E' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'F' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
+            'G' => NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1,
         ];
     }
 
