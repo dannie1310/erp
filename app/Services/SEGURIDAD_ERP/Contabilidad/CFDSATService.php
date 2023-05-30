@@ -2171,6 +2171,140 @@ class CFDSATService
         }*/
     }
 
+    public function detectarCancelacionesREP()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+        /*CFDI*/
+        $cantidad = CFDSAT::join("Fiscal.etl_cfdi_sat_rep_pendientes"
+                ,"etl_cfdi_sat_rep_pendientes.id_cfdi"
+                ,"Contabilidad.cfd_sat.id"
+            )
+            ->count();
+
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::join("Fiscal.etl_cfdi_sat_rep_pendientes"
+                ,"etl_cfdi_sat_rep_pendientes.id_cfdi"
+                ,"Contabilidad.cfd_sat.id"
+            )
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->selectRaw("Contabilidad.cfd_sat.*")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessCancelacionCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
+            }
+        }
+
+        /*PAGOS*/
+
+        $hoy_str = date('Y-m-d');
+        $hace_1Y_str = date("Y-m-d",strtotime($hoy_str."- 1 years"));
+        $hace_1Y = DateTime::createFromFormat('Y-m-d', $hace_1Y_str);
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            ->whereIn("tipo_comprobante",["P"])
+            ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::join("Fiscal.etl_cfdi_sat_rep_pendientes"
+                ,"etl_cfdi_sat_rep_pendientes.id_cfdi"
+                ,"Contabilidad.cfd_sat.id"
+            )
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessCancelacionCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
+            }
+        }
+    }
+
+    public function detectarCancelacionesPagos()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        /*PAGOS*/
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            ->whereIn("tipo_comprobante",["P"])
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=","0")
+                ->whereIn("tipo_comprobante",["P"])
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessCancelacionCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
+            }
+        }
+    }
+
+    public function detectarCancelacionesNotasCredito()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        /*NOTAS DE CRÉDITO*/
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            ->whereIn("tipo_comprobante",["E"])
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=","0")
+                ->whereIn("tipo_comprobante",["E"])
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessCancelacionCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
+            }
+        }
+    }
+
+
     public function obtenerInformeREPProveedorPDF($data)
     {
         $informe = $this->obtenerInformeREPProveedor($data);
