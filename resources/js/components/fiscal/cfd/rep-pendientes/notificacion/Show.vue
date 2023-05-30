@@ -135,7 +135,6 @@ export default {
                 params: {include: ['destinatarios', 'proveedor', 'proveedor_rep.ubicaciones']}
             }).then(data => {
                 this.notificacion = data;
-                console.log(this.notificacion.proveedor_rep.ubicaciones, this.notificacion.proveedor_rep)
                 this.verPDF();
             }).finally(() => {
                 this.cargando = false;
