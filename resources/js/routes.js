@@ -4259,6 +4259,24 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'polizas-vs-cfdi',
+                        component: require('./components/fiscal/cfd/rep-pendientes/Layout.vue').default,
+                        children: [
+                            {
+                                path: 'polizas-egreso-sin-cfdi',
+                                name: 'polizas-egreso-sin-cfdi',
+                                component: require('./components/fiscal/polizas-vs-cfdi/polizas-egreso/Index').default,
+                                meta: {
+                                    title: 'Lista de Pólizas de Egreso Sin CFDI',
+                                    breadcrumb: {name: 'PÓLIZAS EGRESO SIN CFDI', parent: 'fiscal'},
+                                    middleware: [auth, permission],
+                                    permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                                    general: true
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'informe',
                         name: 'informe-cfd-empresa-tiempo',
                         component: require('./components/fiscal/cfd/cfd-sat/InformeCFDEmpresaMes').default,
