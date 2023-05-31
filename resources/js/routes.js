@@ -4274,6 +4274,19 @@ export const routes = [
                                     general: true
                                 }
                             },
+                            {
+                                path: ':id_empresa/:id',
+                                name: 'show-poliza-egreso-sin-cfdi',
+                                props: true,
+                                component: require('./components/fiscal/polizas-vs-cfdi/polizas-egreso/Show').default,
+                                meta: {
+                                    title: 'Póliza',
+                                    breadcrumb: {parent: 'polizas-egreso-sin-cfdi', name: 'CONSULTAR PÓLIZA'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_informe_cfd_x_empresa_x_mes',
+                                    general: true
+                                }
+                            },
                         ]
                     },
                     {

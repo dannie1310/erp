@@ -56,4 +56,13 @@ class PolizaCFDIRequerido extends Model
         $base_datos_contpaq = Obra::find(Context::getIdObra())->datosContables->BDContPaq;
         return $query->where("base_datos_contpaq","=", $base_datos_contpaq);
     }
+
+    public function scopeDeEgresos($query){
+        return $query->where("tipo","=",'Egresos');
+    }
+
+    public function getMontoFormatAttribute()
+    {
+        return number_format($this->monto,2);
+    }
 }

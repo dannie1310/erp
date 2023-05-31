@@ -2,6 +2,12 @@
     <span>
         <div class="row">
             <div class="col-12">
+                <!-- /.card -->
+            </div>
+                <!-- /.col -->
+        </div>
+        <div class="row">
+            <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <div class="form-row">
@@ -10,19 +16,10 @@
                             </div>
                         </div>
                     </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-            </div>
-                <!-- /.col -->
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
-                            <datatable v-bind="$data" />
+                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 13px'" />
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -47,17 +44,19 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'BD CTPQ', field: 'base_datos_ctpq', thComp: require('../../../globals/th-Filter.vue').default},
                     { title: 'Empresa', field: 'empresa_ctpq', thComp: require('../../../globals/th-Filter.vue').default},
-                    { title: 'Ejercicio', field: 'ejercicio',tdClass: 'td_money', thComp: require('../../../globals/th-Filter.vue').default},
-                    { title: 'Periodo', field: 'periodo',tdClass: 'td_money', thComp: require('../../../globals/th-Filter.vue').default},
-                    { title: 'Tipo Póliza', field: 'tipo_poliza',tdClass: 'td_money', thComp: require('../../../globals/th-Filter.vue').default},
-                    { title: 'Folio Póliza', field: 'folio_poliza',tdClass: 'td_money', thComp: require('../../../globals/th-Filter.vue').default},
-                    { title: 'Fecha Póliza', field: 'fecha_poliza',tdClass: 'td_money',thComp: require('../../../globals/th-Date.vue').default, sortable: true},
-                    { title: 'CFDI', field: 'cfdi',tdClass: 'td_money', tdComp: require('./partials/ListaCFDI.vue').default },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons.vue').default},
+                    { title: 'Ejercicio', field: 'ejercicio', thClass: 'th_c70', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Periodo', field: 'periodo', thClass: 'th_c70', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Tipo Póliza', field: 'tipo_poliza', thClass: 'th_c70', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Folio Póliza', field: 'folio_poliza', thClass: 'th_c70', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Fecha Póliza', field: 'fecha', thClass: 'th_c70', thComp: require('../../../globals/th-Date.vue').default, sortable: true},
+                    { title: 'Monto Póliza', field: 'monto', thClass: 'th_c100', tdClass: 'td_money',thComp: require('../../../globals/th-Filter.vue').default, sortable: true},
+                    { title: '# CFDI Asociados', field: 'cfdi', thClass: 'th_c70', tdComp: require('./partials/ListaCFDI.vue').default },
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c70', tdComp: require('./partials/ActionButtons.vue').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
+                    scope:"deEgresos",
                     include: ['empresa','asociacion_cfdi.cfdi'],
                     sort: 'fecha',  order: 'desc'
                 },
@@ -118,7 +117,7 @@
                         periodo: poliza.periodo,
                         tipo_poliza: poliza.tipo,
                         folio_poliza: poliza.folio,
-                        fecha_poliza: poliza.fecha_format,
+                        fecha: poliza.fecha_format,
                         monto: poliza.monto_format,
                         cfdi: poliza.asociacion_cfdi.data,
                         buttons: $.extend({}, {

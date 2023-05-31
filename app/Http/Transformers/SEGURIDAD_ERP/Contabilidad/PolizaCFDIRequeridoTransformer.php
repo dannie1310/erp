@@ -25,9 +25,10 @@ class PolizaCFDIRequeridoTransformer extends TransformerAbstract
             'id_poliza_contpaq'=>$model->id_poliza_contpaq,
             'ejercicio'=>$model->ejercicio,
             'periodo'=>$model->periodo,
-            'folio'=>$model->folio,
+            'folio'=>number_format($model->folio),
             'tipo'=>$model->tipo,
             'fecha_format'=>$model->fecha_format,
+            'monto_format'=>$model->monto_format,
         ];
     }
 
