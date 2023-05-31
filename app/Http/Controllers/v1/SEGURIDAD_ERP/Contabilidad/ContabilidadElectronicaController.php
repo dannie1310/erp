@@ -29,6 +29,7 @@ class ContabilidadElectronicaController extends Controller
     public function __construct(Manager $fractal, ContabilidadElectronicaService $service)
     {
         $this->middleware('auth:api');
+        $this->middleware('permisoGlobal:consultar_contabilidad_electronica')->only('getDatosXML');
 
         $this->fractal = $fractal;
         $this->service = $service;

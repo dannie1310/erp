@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-8">
                     <div class="row">
                         <div class="col-md-2">
                             <label for="archivo">Archivo:</label>
@@ -23,19 +23,19 @@
                 </div>
             </div>
             <div class="row" v-if="datos != null">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm">
                             <thead>
                             <tr>
-                                <th class="encabezado">RFC</th>
+                                <th class="encabezado" colspan="2">RFC</th>
                                 <th class="encabezado">Mes</th>
                                 <th class="encabezado">Año</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td>{{datos.rfc}}</td>
+                                <td colspan="2">{{datos.rfc}}</td>
                                 <td class="numerico" style="text-align: right">{{datos.mes}}</td>
                                 <td class="numerico" style="text-align: right">{{datos.anio}}</td>
                             </tr>
@@ -88,6 +88,8 @@ export default {
     methods: {
         onFileChange(e){
             this.archivo = null;
+            this.archivo_name = null;
+            this.datos = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
@@ -135,8 +137,7 @@ export default {
                             this.$refs.archivo.value = '';
                             this.archivo = null;
                         }
-                        this.cleanData();
-                        swal('Carga con XML', 'Archivo sin datos válidos', 'warning')
+                        swal('Contabilidad Electrónica con XML', 'El archivo debe ser compatible con la contabilidad electrónica.', 'warning')
                     }
                 }).finally(() => {
                     this.cargando = false;

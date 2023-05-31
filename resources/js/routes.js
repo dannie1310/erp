@@ -3822,7 +3822,7 @@ export const routes = [
                             title: 'Contabilidad Electrónica',
                             breadcrumb: {parent: 'contabilidad-general', name: 'CONTABILIDAD ELECTRÓNICA'},
                             middleware: [auth, permission],
-                            permission: 'configurar_visibilidad_empresa_ctpq',
+                            permission: 'consultar_contabilidad_electronica',
                             general: true
                         }
                     }

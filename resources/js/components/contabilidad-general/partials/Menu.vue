@@ -106,7 +106,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item"  v-if="$root.can('asociar_cuentas_contpaq_con_proveedor', true )">
+            <li class="nav-item"  v-if="$root.can('consultar_contabilidad_electronica', true )">
                 <router-link :to="{name: 'contabilidad-electronica'}" class="nav-link" :class="{active: this.$route.name == 'contabilidad-electronica'}">
                     &nbsp;<i class="fas fa-exchange-alt"></i>
                     <p>Contabilidad Electrónica</p>

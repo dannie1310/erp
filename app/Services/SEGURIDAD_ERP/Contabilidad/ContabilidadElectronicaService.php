@@ -43,18 +43,21 @@ class ContabilidadElectronicaService
         $arreglo['anio'] = (int) $factura_xml['Anio'];
         $arreglo['tipo'] = (string) $factura_xml['TipoEnvio'];
 
-        $factura_xml->registerXPathNamespace('t', $ns['BCE']);
+        if(array_key_exists('BCE',$ns)) {
+            $factura_xml->registerXPathNamespace('t', $ns['BCE']);
 
-        $partidas = $factura_xml->xpath('BCE:Ctas');
-        $i = 0;
-        foreach ($partidas as $p) {
-            $arreglo["partidas"][$i]["numero_cuenta"] = (string)$p["NumCta"];
-            $arreglo["partidas"][$i]["saldo"] = '$ ' . number_format((float)$p["SaldoIni"], 2, ".", ",");
-            $arreglo["partidas"][$i]["debe"] = (int)$p["Debe"] != 0 ? '$ ' . number_format((float)$p["Debe"], 2, '.', ',') : '$  -';
-            $arreglo["partidas"][$i]["haber"] = (int)$p["Haber"] != 0 ? '$ ' . number_format((float)$p["Haber"], 2,'.',',') : '$  -';
-            $arreglo["partidas"][$i]["saldo_total"] = '$ ' . number_format((float)$p["SaldoFin"], 2, '.',',');
-            $i++;
+            $partidas = $factura_xml->xpath('BCE:Ctas');
+            $i = 0;
+            foreach ($partidas as $p) {
+                $arreglo["partidas"][$i]["numero_cuenta"] = (string)$p["NumCta"];
+                $arreglo["partidas"][$i]["saldo"] = '$ ' . number_format((float)$p["SaldoIni"], 2, ".", ",");
+                $arreglo["partidas"][$i]["debe"] = (int)$p["Debe"] != 0 ? '$ ' . number_format((float)$p["Debe"], 2, '.', ',') : '$  -';
+                $arreglo["partidas"][$i]["haber"] = (int)$p["Haber"] != 0 ? '$ ' . number_format((float)$p["Haber"], 2, '.', ',') : '$  -';
+                $arreglo["partidas"][$i]["saldo_total"] = '$ ' . number_format((float)$p["SaldoFin"], 2, '.', ',');
+                $i++;
+            }
+            return $arreglo;
         }
-        return $arreglo;
+        return [];
     }
 }
