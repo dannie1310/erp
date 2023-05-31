@@ -2,12 +2,12 @@
     <div class="card">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-10">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="archivo">Archivo:</label>
                         </div>
-                        <div class="col-md-9">
+                        <div class="col-md-10">
                             <div class="form-group error-content" >
                                 <input type="file" class="form-control" id="archivo" @change="onFileChange"
                                        row="3"
@@ -22,10 +22,53 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="card-footer">
-            <div class="pull-right">
-                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 ">Procesar</button>
+            <div class="row" v-if="datos != null">
+                <div class="col-md-6">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                            <tr>
+                                <th class="encabezado">RFC</th>
+                                <th class="encabezado">Mes</th>
+                                <th class="encabezado">Año</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>{{datos.rfc}}</td>
+                                <td class="numerico" style="text-align: right">{{datos.mes}}</td>
+                                <td class="numerico" style="text-align: right">{{datos.anio}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table">
+                            <thead>
+                            <tr>
+                                <th class="index_corto">#</th>
+                                <th class="encabezado">Cuenta</th>
+                                <th class="encabezado">Saldo Inicial</th>
+                                <th class="encabezado">Debe</th>
+                                <th class="encabezado">Haber</th>
+                                <th class="encabezado">Saldo Final</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(partida, i) in datos.partidas">
+                                <td class="encabezado index_corto">{{i+1}}</td>
+                                <td class="numerico">{{partida.numero_cuenta}}</td>
+                                <td class="numerico" style="text-align: right">{{partida.saldo}}</td>
+                                <td class="numerico" style="text-align: right">{{partida.debe}}</td>
+                                <td class="numerico" style="text-align: right">{{partida.haber}}</td>
+                                <td class="numerico" style="text-align: right">{{partida.saldo_total}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -39,6 +82,7 @@ export default {
             cargando :false,
             archivo:null,
             archivo_name:null,
+            datos : null
         }
     },
     methods: {
@@ -84,26 +128,12 @@ export default {
                 })
                 .then(data => {
                     var count = Object.keys(data).length;
-
                     if(count > 0 ){
-                        if(data.tipo_comprobante === "I"){
-
-                            this.dato.total = (parseFloat(this.dato.total) + parseFloat(data.total)).toFixed(2);
-                            this.dato.impuesto = (parseFloat(this.dato.impuesto) + parseFloat(data.impuesto)).toFixed(2);
-                            this.dato.referencia = data.serie + data.folio;
-                            this.dato.emision = data.fecha;
-                            this.dato.id_empresa = data.empresa_bd.id_empresa;
-                            this.dato.id_moneda = data.moneda_bd.id_moneda;
-                            this.empresas.push({id:data.empresa_bd.id_empresa,razon_social:data.empresa_bd.razon_social,rfc:data.empresa_bd.rfc});
-                        } else if(data.tipo_comprobante === "E"){
-                            this.dato.total = (parseFloat(this.dato.total) - parseFloat(data.total)).toFixed(2);
-                        }
-
-
+                        this.datos = data
                     }else{
                         if(this.$refs.archivo.value !== ''){
                             this.$refs.archivo.value = '';
-                            this.dato.archivo = null;
+                            this.archivo = null;
                         }
                         this.cleanData();
                         swal('Carga con XML', 'Archivo sin datos válidos', 'warning')

@@ -20,11 +20,41 @@ class ContabilidadElectronicaService
     public function getDatosXML(array $data)
     {
         $archivo_xml = $data["xml"];
-        $arreglo_cfd = $this->getArregloCFD($archivo_xml);
-        dd($arreglo_cfd, $archivo_xml);
+        $arreglo = [];
+        //$arreglo["xml"] = $archivo_xml;
+        try {
+            libxml_use_internal_errors(true);
+            $factura_xml = simplexml_load_file($archivo_xml);
+            if($factura_xml === false)
+            {
+                $factura_xml = simplexml_load_string($archivo_xml);
+            }
 
+            if(!$factura_xml){
+                $errors = libxml_get_errors();
+            }
+        } catch (\Exception $e) {
+            return 0;
+        }
+        $ns = $factura_xml->getNamespaces(true);
+        $arreglo['version'] = (string) $factura_xml['Version'];
+        $arreglo['rfc'] = (string) $factura_xml['RFC'];
+        $arreglo['mes'] = (int) $factura_xml['Mes'];
+        $arreglo['anio'] = (int) $factura_xml['Anio'];
+        $arreglo['tipo'] = (string) $factura_xml['TipoEnvio'];
 
-        return $arreglo_cfd;
+        $factura_xml->registerXPathNamespace('t', $ns['BCE']);
+
+        $partidas = $factura_xml->xpath('BCE:Ctas');
+        $i = 0;
+        foreach ($partidas as $p) {
+            $arreglo["partidas"][$i]["numero_cuenta"] = (string)$p["NumCta"];
+            $arreglo["partidas"][$i]["saldo"] = '$ ' . number_format((float)$p["SaldoIni"], 2, ".", ",");
+            $arreglo["partidas"][$i]["debe"] = (int)$p["Debe"] != 0 ? '$ ' . number_format((float)$p["Debe"], 2, '.', ',') : '$  -';
+            $arreglo["partidas"][$i]["haber"] = (int)$p["Haber"] != 0 ? '$ ' . number_format((float)$p["Haber"], 2,'.',',') : '$  -';
+            $arreglo["partidas"][$i]["saldo_total"] = '$ ' . number_format((float)$p["SaldoFin"], 2, '.',',');
+            $i++;
+        }
+        return $arreglo;
     }
-
 }
