@@ -100,11 +100,17 @@
                     <li class="nav-item" v-if="$root.can('asociar_cuentas_contpaq_con_proveedor', true )">
                         <router-link :to="{name: 'asociacion-cuenta-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'asociacion-cuenta-proveedor'}">
                             &nbsp;<i class="fas fa-exchange-alt"></i>
-                            <p>Asociación 
+                            <p>Asociación
                                 Cta Proveedor</p>
                         </router-link>
                     </li>
                 </ul>
+            </li>
+            <li class="nav-item"  v-if="$root.can('asociar_cuentas_contpaq_con_proveedor', true )">
+                <router-link :to="{name: 'contabilidad-electronica'}" class="nav-link" :class="{active: this.$route.name == 'contabilidad-electronica'}">
+                    &nbsp;<i class="fas fa-exchange-alt"></i>
+                    <p>Contabilidad Electrónica</p>
+                </router-link>
             </li>
         </ul>
     </nav>
