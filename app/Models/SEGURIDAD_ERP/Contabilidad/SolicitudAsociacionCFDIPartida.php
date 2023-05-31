@@ -92,6 +92,7 @@ class SolicitudAsociacionCFDIPartida extends Model
         catch (\Exception $e){
             $this->sin_acceso_parametros = 1;
             $this->save();
+            $this->logs()->create(["message"=>$e->getMessage()]);
         }
         if($base){
             $exp = explode("_", $this->base_datos);
@@ -138,6 +139,7 @@ class SolicitudAsociacionCFDIPartida extends Model
             } catch (\Exception $e){
                 $this->sin_acceso = 1;
                 $this->save();
+                $this->logs()->create(["message"=>$e->getMessage()]);
             }
         }
         return $asociaciones;
@@ -278,13 +280,16 @@ where numero_empresa_contpaq is not null");
         catch (\Exception $e){
             $this->sin_acceso_parametros = 1;
             $this->save();
+            $this->logs()->create(["message"=>$e->getMessage()]);
         }
 
         if($base){
             $query = "
-              select distinct db_name() as base_datos_contpaq, Polizas.Id as id_poliza_contpaq, Polizas.Ejercicio as ejercicio,
-              Polizas.Periodo as periodo, TiposPolizas.Nombre as tipo, Polizas.Folio as folio, Polizas.Guid as guid_poliza_contpaq,
-              Polizas.Cargos AS monto, Polizas.fecha as fecha, ".$this->id_solicitud_asociacion." as solicitud_asociacion_registro
+              select distinct db_name() as base_datos_contpaq, Polizas.Id as id_poliza_contpaq,
+              Polizas.Ejercicio as ejercicio, Polizas.Periodo as periodo, TiposPolizas.Nombre as tipo,
+              Polizas.Folio as folio, Polizas.Guid as guid_poliza_contpaq,
+              Polizas.Cargos AS monto, Polizas.fecha as fecha, ".$this->id_solicitud_asociacion."
+              as solicitud_asociacion_registro
               from [dbo].Polizas
                join [dbo].TiposPolizas on(TiposPolizas.Id = Polizas.TipoPol)
               join [dbo].MovimientosPoliza
@@ -304,7 +309,7 @@ where numero_empresa_contpaq is not null");
                 }, $polizas);
 
             } catch (\Exception $e){
-
+                $this->logs()->create(["message"=>$e->getMessage()]);
             }
         }
         return $polizas;
