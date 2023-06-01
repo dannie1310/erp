@@ -2,7 +2,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
-use App\CSV\Contabilidad\PolizasCFDI;
+use App\CSV\Contabilidad\PolizasCFDIRequerido;
 use App\Models\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequerido as Model;
 use App\Repositories\Repository;
 use Maatwebsite\Excel\Facades\Excel;
@@ -76,6 +76,6 @@ class PolizaCFDIRequeridoService
     {
         ini_set('memory_limit', -1) ;
         ini_set('max_execution_time', '7200') ;
-        return Excel::download(new PolizasCFDI($data), 'polizas_egreso_sin_cfdi_' . date('Y-m-d H:i:s') . '.xlsx');
+        return Excel::download(new PolizasCFDIRequerido($data), 'polizas_egreso_sin_cfdi_' . date('Y-m-d H:i:s') . '.xlsx');
     }
 }

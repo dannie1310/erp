@@ -45,7 +45,8 @@ class PolizaTransformer extends TransformerAbstract
             'monto' => (string) $model->Cargos,
             'monto_format' => (string) $model->cargos_format,
             'empresa' => $model->empresa,
-            'base_datos' => $model->base_datos
+            'base_datos' => $model->base_datos,
+            'usuario_nombre'=>$model->usuario->Nombre
         ];
     }
 

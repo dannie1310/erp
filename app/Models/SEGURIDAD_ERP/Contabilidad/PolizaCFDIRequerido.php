@@ -30,7 +30,10 @@ class PolizaCFDIRequerido extends Model
         'folio',
         "solicitud_asociacion_registro",
         "solicitud_asociacion_cancelacion",
-        "estatus"
+        "estatus",
+        'concepto',
+        'usuario_codigo',
+        'usuario_nombre'
     ];
     public $timestamps = false;
 

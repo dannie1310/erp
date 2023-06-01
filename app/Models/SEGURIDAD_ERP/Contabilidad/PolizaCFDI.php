@@ -28,7 +28,10 @@ class PolizaCFDI extends Model
         "monto",
         "tipo",
         'folio',
-        "solicitud_asociacion_registro"
+        "solicitud_asociacion_registro",
+        'concepto',
+        'usuario_codigo',
+        'usuario_nombre'
     ];
     public $timestamps = false;
 
