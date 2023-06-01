@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-12">
-                <!-- /.card -->
+                <polizas-egreso-sin-c-f-d-i-xls v-bind:query="query"></polizas-egreso-sin-c-f-d-i-xls>
             </div>
                 <!-- /.col -->
         </div>
@@ -34,9 +34,10 @@
 
 <script>
     import DateRangePicker from "../../../globals/DateRangePicker.vue";
+    import PolizasEgresoSinCFDIXls from "./partials/PolizasEgresoSinCFDIXls.vue";
     export default {
         name: "polizas-egreso-cfdi-index",
-        components: {DateRangePicker},
+        components: {PolizasEgresoSinCFDIXls, DateRangePicker},
         data() {
             return {
                 HeaderSettings: false,
