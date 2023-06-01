@@ -75,15 +75,16 @@
         },
 
         mounted() {
-            this.$Progress.start();
+            /*
             this.paginate()
                 .finally(() => {
-                    this.$Progress.finish();
-                })
+
+                })*/
         },
 
         methods: {
             paginate() {
+                this.$Progress.start();
                 this.cargando = true;
                 return this.$store.dispatch('contabilidadGeneral/poliza-cfdi/paginate', { params: this.query })
                     .then(data => {
@@ -92,6 +93,7 @@
                 })
                 .finally(() => {
                     this.cargando = false;
+                    this.$Progress.finish();
                 })
             },
             actualizarPolizas(){
