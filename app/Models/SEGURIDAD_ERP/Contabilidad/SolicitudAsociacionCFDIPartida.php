@@ -311,8 +311,15 @@ where numero_empresa_contpaq is not null");
                LEFT JOIN GeneralesSQL.dbo.Usuarios us ON
                 us.Id = Polizas.IdUsuario
 
-               where e.Guid_Relacionado is null and (Cuentas.Nombre like 'IVA %' or Cuentas.Codigo like '2120%'
-               or Cuentas.Codigo like '2130%' or Cuentas.Codigo like '2165%');";
+               where e.Guid_Relacionado is null and (Cuentas.Nombre like 'IVA %' or Cuentas.Codigo like '1195%'
+               or Cuentas.Codigo like '1196%');";
+            /**
+             * 2120->Proveedores
+             * 2130->Acreedores
+             * 2165->Cías Afiliadas por pagar
+             * 1195->IVA Acreditable
+             * 1196->IVA Acreditable no pagado
+             **/
             try{
                 $polizas = DB::connection("cntpq")->select($query);
                 $polizas = array_map(function ($value) {
