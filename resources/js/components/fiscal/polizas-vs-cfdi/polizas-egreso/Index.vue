@@ -2,6 +2,9 @@
     <span>
         <div class="row">
             <div class="col-12">
+                <button @click="actualizarPolizas"  class="btn btn-app btn-secondary float-right" title="Actualizar Relación con Pólizas">
+                    <i class="fa fa-sync"></i> Actualizar Pólizas
+                </button>
                 <polizas-egreso-sin-c-f-d-i-xls v-bind:query="query"></polizas-egreso-sin-c-f-d-i-xls>
             </div>
                 <!-- /.col -->
@@ -90,6 +93,17 @@
                 .finally(() => {
                     this.cargando = false;
                 })
+            },
+            actualizarPolizas(){
+                return this.$store.dispatch('contabilidadGeneral/poliza/actualizaCFDI',
+                    {
+                        params: this.query,
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.descargando = false;
+                    });
             },
         },
 
