@@ -73,7 +73,7 @@ class PolizasCFDIRequerido implements  FromQuery, WithHeadings, ShouldAutoSize, 
             ->orderBy("periodo", "DESC");
 
         $query->selectRaw("ROW_NUMBER() OVER(ORDER BY polizas_cfdi_requerido.base_datos_contpaq ASC, polizas_cfdi_requerido.ejercicio DESC, polizas_cfdi_requerido.periodo DESC) as no_fila,
-        base_datos_contpaq, ejercicio, periodo, folio, fecha, tipo, monto");
+        base_datos_contpaq, ejercicio, periodo, folio, fecha, tipo, monto, concepto, usuario_codigo, usuario_nombre");
 
         return $query;
     }
@@ -108,7 +108,8 @@ class PolizasCFDIRequerido implements  FromQuery, WithHeadings, ShouldAutoSize, 
 
     public function headings(): array
     {
-        return array(['#', 'BD CONTPAQ', 'EJERCICIO', 'PERIODO', 'FOLIO', 'FECHA', 'TIPO PÓLIZA', 'MONTO']);
+        return array(['#', 'BD CONTPAQ', 'EJERCICIO', 'PERIODO', 'FOLIO', 'FECHA'
+            , 'TIPO PÓLIZA', 'MONTO','CONCEPTO','CÓODIGO USUARIO REGISTRÓ','NOMBRE USUARIO REGISTRÓ']);
     }
 
 
