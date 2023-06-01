@@ -3809,7 +3809,25 @@ export const routes = [
                         }
                     }
                 ]
-            }
+            },
+            {
+                path: 'contabilidad-electronica',
+                component: require('./components/contabilidad-general/contabilidad-electronica/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"contabilidad-electronica",
+                        component: require('./components/contabilidad-general/contabilidad-electronica/Index.vue').default,
+                        meta: {
+                            title: 'Contabilidad Electrónica',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CONTABILIDAD ELECTRÓNICA'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_contabilidad_electronica',
+                            general: true
+                        }
+                    }
+                ]
+            },
         ]
     },
     {

@@ -312,6 +312,11 @@ $api->version('v1', function ($api) {
      * CONTABILIDAD GENERAL
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad-general'], function ($api) {
+
+        $api->group(['prefix' => 'contabilidad-electronica'], function ($api) {
+            $api->post('xml', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@getDatosXML');
+        });
+
         $api->group(['prefix' => 'cuenta'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CTPQ\CuentaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CTPQ\CuentaController@paginate');
