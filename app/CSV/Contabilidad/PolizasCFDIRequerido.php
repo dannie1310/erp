@@ -20,7 +20,7 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class PolizasCFDI implements  FromQuery, WithHeadings, ShouldAutoSize, WithEvents, WithColumnFormatting
+class PolizasCFDIRequerido implements  FromQuery, WithHeadings, ShouldAutoSize, WithEvents, WithColumnFormatting
 {
     protected $data;
 
