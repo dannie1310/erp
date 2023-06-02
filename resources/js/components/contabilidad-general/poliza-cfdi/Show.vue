@@ -19,17 +19,16 @@
 </template>
 
 <script>
-import CFDI from "../../cfd/cfd-sat/CFDI";
-import PDFPoliza from "../../../contabilidad-general/poliza/partials/PDFPoliza.vue";
-import PolizaPartialShow from "../../../contabilidad-general/poliza/partials/PartialShow.vue";
+import PDFPoliza from "../poliza/partials/PDFPoliza.vue";
+import PolizaPartialShow from "../poliza/partials/PartialShow.vue";
 
 export default {
-    name: "poliza-show",
+    name: "poliza-cfdi-show",
     props : ['id', 'id_empresa'],
-    components: {PDFPoliza, PolizaPartialShow, CFDI},
+    components: {PDFPoliza, PolizaPartialShow},
     methods :{
         regresar() {
-            this.$router.push({name: 'polizas-egreso-sin-cfdi'});
+            this.$router.push({name: 'poliza-cfdi'});
         },
     },
     watch:{
