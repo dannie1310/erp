@@ -2,7 +2,10 @@
     <span>
         <div class="row">
             <div class="col-12">
-                <!-- /.card -->
+                <button @click="actualizarPolizas"  class="btn btn-app btn-secondary float-right" title="Actualizar Relación con Pólizas">
+                    <i class="fa fa-sync"></i> Actualizar Pólizas
+                </button>
+                <polizas-egreso-sin-c-f-d-i-xls v-bind:query="query"></polizas-egreso-sin-c-f-d-i-xls>
             </div>
                 <!-- /.col -->
         </div>
@@ -34,9 +37,10 @@
 
 <script>
     import DateRangePicker from "../../../globals/DateRangePicker.vue";
+    import PolizasEgresoSinCFDIXls from "./partials/PolizasEgresoSinCFDIXls.vue";
     export default {
         name: "polizas-egreso-cfdi-index",
-        components: {DateRangePicker},
+        components: {PolizasEgresoSinCFDIXls, DateRangePicker},
         data() {
             return {
                 HeaderSettings: false,
@@ -71,15 +75,16 @@
         },
 
         mounted() {
-            this.$Progress.start();
+            /*
             this.paginate()
                 .finally(() => {
-                    this.$Progress.finish();
-                })
+
+                })*/
         },
 
         methods: {
             paginate() {
+                this.$Progress.start();
                 this.cargando = true;
                 return this.$store.dispatch('contabilidadGeneral/poliza-cfdi/paginate', { params: this.query })
                     .then(data => {
@@ -88,7 +93,19 @@
                 })
                 .finally(() => {
                     this.cargando = false;
+                    this.$Progress.finish();
                 })
+            },
+            actualizarPolizas(){
+                return this.$store.dispatch('contabilidadGeneral/poliza/actualizaCFDI',
+                    {
+                        params: this.query,
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.descargando = false;
+                    });
             },
         },
 

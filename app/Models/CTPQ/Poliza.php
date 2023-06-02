@@ -11,6 +11,7 @@ namespace App\Models\CTPQ;
 use App\Facades\Context;
 use App\Models\CADECO\Movimiento;
 use App\Models\CADECO\Obra;
+use App\Models\CTPQ\GeneralesSQL\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
@@ -80,6 +81,11 @@ class Poliza extends Model
         return $this->hasMany(Expediente::class, 'Guid_Relacionado', 'Guid');
     }
 
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class,"IdUsuario","Id");
+    }
+
     public function cfdi()
     {
         return $this->hasMany(CFDSAT::class, 'uuid', 'Guid');
@@ -125,7 +131,8 @@ class Poliza extends Model
     }
     public function getEmpresaAttribute()
     {
-        return Parametro::find(1)->RazonSocial;
+        $idEmpresa = Parametro::find(1)->pluck("IdEmpresa")->first();
+        return Empresa::find($idEmpresa)->Nombre;
     }
     public function getBaseDatosAttribute()
     {

@@ -119,7 +119,10 @@ class SolicitudAsociacionCFDIPartida extends Model
             p.Fecha as fecha,
             p.Cargos as monto,
             tp.Nombre as tipo,
-            ".$numero_empresa." as numero_empresa
+            ".$numero_empresa." as numero_empresa,
+            p.Concepto as concepto,
+            us.Codigo as usuario_codigo,
+            us.Nombre as usuario_nombre
         FROM
             [document_".$base->GuidDSL."_metadata].dbo.Comprobante c
             LEFT JOIN [other_".$base->GuidDSL."_metadata].dbo.Expedientes e ON
@@ -128,6 +131,8 @@ class SolicitudAsociacionCFDIPartida extends Model
                 p.Guid = e.Guid_Relacionado
             LEFT JOIN ".$this->base_datos.".dbo.TiposPolizas tp ON
                 tp.Id = p.TipoPol
+            LEFT JOIN GeneralesSQL.dbo.Usuarios us ON
+                us.Id = p.IdUsuario
             where c.UUID is not null;";
 
             try{
@@ -289,7 +294,10 @@ where numero_empresa_contpaq is not null");
               Polizas.Ejercicio as ejercicio, Polizas.Periodo as periodo, TiposPolizas.Nombre as tipo,
               Polizas.Folio as folio, Polizas.Guid as guid_poliza_contpaq,
               Polizas.Cargos AS monto, Polizas.fecha as fecha, ".$this->id_solicitud_asociacion."
-              as solicitud_asociacion_registro
+              as solicitud_asociacion_registro,
+            Polizas.Concepto as concepto,
+            us.Codigo as usuario_codigo,
+            us.Nombre as usuario_nombre
               from [dbo].Polizas
                join [dbo].TiposPolizas on(TiposPolizas.Id = Polizas.TipoPol)
               join [dbo].MovimientosPoliza
@@ -300,8 +308,18 @@ where numero_empresa_contpaq is not null");
                LEFT JOIN [other_".$base->GuidDSL."_metadata].dbo.Expedientes e ON
                Polizas.Guid = e.Guid_Relacionado
 
-               where e.Guid_Relacionado is null and (Cuentas.Nombre like 'IVA %' or Cuentas.Codigo like '2120%'
-               or Cuentas.Codigo like '2130%' or Cuentas.Codigo like '2165%');";
+               LEFT JOIN GeneralesSQL.dbo.Usuarios us ON
+                us.Id = Polizas.IdUsuario
+
+               where e.Guid_Relacionado is null and (Cuentas.Nombre like 'IVA %' or Cuentas.Codigo like '1195%'
+               or Cuentas.Codigo like '1196%');";
+            /**
+             * 2120->Proveedores
+             * 2130->Acreedores
+             * 2165->Cías Afiliadas por pagar
+             * 1195->IVA Acreditable
+             * 1196->IVA Acreditable no pagado
+             **/
             try{
                 $polizas = DB::connection("cntpq")->select($query);
                 $polizas = array_map(function ($value) {

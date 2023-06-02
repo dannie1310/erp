@@ -3540,6 +3540,19 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id_empresa/:id',
+                        name: 'poliza-contpaq-cfdi-show',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza-cfdi/Show').default,
+                        meta: {
+                            title: 'Consultar Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'CONSULTAR'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        }
+                    },
                 ]
             },
             {
@@ -3809,7 +3822,25 @@ export const routes = [
                         }
                     }
                 ]
-            }
+            },
+            {
+                path: 'contabilidad-electronica',
+                component: require('./components/contabilidad-general/contabilidad-electronica/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"contabilidad-electronica",
+                        component: require('./components/contabilidad-general/contabilidad-electronica/Index.vue').default,
+                        meta: {
+                            title: 'Contabilidad Electrónica',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CONTABILIDAD ELECTRÓNICA'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_contabilidad_electronica',
+                            general: true
+                        }
+                    }
+                ]
+            },
         ]
     },
     {

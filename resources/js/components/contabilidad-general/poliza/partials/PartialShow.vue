@@ -48,46 +48,52 @@
                 </div>
             </div>
             <div class="row">
-                            <div class="col-md-12 table-responsive" style="overflow-y: auto;max-height: 600px;">
-                                <table class="table table-sm table-fs-sm">
-                                    <thead>
-                                        <tr>
-                                            <th class="index_corto">#</th>
-                                            <th class="no_parte">Cuenta</th>
-                                            <th class="no_parte">Descripción</th>
-                                            <th class="">Cargo</th>
-                                            <th class="">Abono</th>
-                                            <th class="">Referencia</th>
-                                            <th class="c200">CFDI Asociado</th>
-                                            <th class="">Concepto</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(movimiento, i) in poliza.movimientos_poliza.data">
-                                            <td>{{ i + 1 }}</td>
-                                            <td>{{movimiento.cuenta.cuenta_format}}</td>
-                                            <td>{{movimiento.cuenta.descripcion}}</td>
-                                            <td style="text-align: right">{{movimiento.cargo_format}}</td>
-                                            <td style="text-align: right">{{movimiento.abono_format}}</td>
-                                            <td>{{movimiento.referencia}}</td>
-                                            <td v-if="movimiento.asociacion_cfdi">
-                                                <CFDI v-if="movimiento.asociacion_cfdi.cfdi" v-bind:txt="movimiento.asociacion_cfdi.cfdi.uuid" v-bind:id="movimiento.asociacion_cfdi.cfdi.id" @click="movimiento.asociacion_cfdi.cfdi.id" ></CFDI>
-                                            </td>
-                                            <td v-else></td>
-                                            <td>{{movimiento.concepto}}</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="3" style="border: none; text-align: right"><b>Total Póliza:</b></td>
-                                            <td style="text-align: right">{{poliza.cargos_format}}</td>
-                                            <td style="text-align: right">{{poliza.abonos_format}}</td>
-                                            <td colspan="3" style="border: none"></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
+                <div class="col-md-12 table-responsive" style="overflow-y: auto;max-height: 600px;">
+                    <table class="table table-sm table-fs-sm">
+                        <thead>
+                            <tr>
+                                <th class="index_corto">#</th>
+                                <th class="no_parte">Cuenta</th>
+                                <th class="no_parte">Descripción</th>
+                                <th class="">Cargo</th>
+                                <th class="">Abono</th>
+                                <th class="">Referencia</th>
+                                <th class="c200">CFDI Asociado</th>
+                                <th class="">Concepto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(movimiento, i) in poliza.movimientos_poliza.data">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{movimiento.cuenta.cuenta_format}}</td>
+                                <td>{{movimiento.cuenta.descripcion}}</td>
+                                <td style="text-align: right">{{movimiento.cargo_format}}</td>
+                                <td style="text-align: right">{{movimiento.abono_format}}</td>
+                                <td>{{movimiento.referencia}}</td>
+                                <td v-if="movimiento.asociacion_cfdi">
+                                    <CFDI v-if="movimiento.asociacion_cfdi.cfdi" v-bind:txt="movimiento.asociacion_cfdi.cfdi.uuid" v-bind:id="movimiento.asociacion_cfdi.cfdi.id" @click="movimiento.asociacion_cfdi.cfdi.id" ></CFDI>
+                                </td>
+                                <td v-else></td>
+                                <td>{{movimiento.concepto}}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="border: none; text-align: right"><b>Total Póliza:</b></td>
+                                <td style="text-align: right">{{poliza.cargos_format}}</td>
+                                <td style="text-align: right">{{poliza.abonos_format}}</td>
+                                <td colspan="3" style="border: none"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    Usuario Registró: <strong>{{poliza.usuario_nombre}}</strong>
+                </div>
+
+            </div>
         </div>
     </span>
 
