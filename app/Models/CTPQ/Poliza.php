@@ -11,6 +11,7 @@ namespace App\Models\CTPQ;
 use App\Facades\Context;
 use App\Models\CADECO\Movimiento;
 use App\Models\CADECO\Obra;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
@@ -77,6 +78,11 @@ class Poliza extends Model
     public function expedientes()
     {
         return $this->hasMany(Expediente::class, 'Guid_Relacionado', 'Guid');
+    }
+
+    public function cfdi()
+    {
+        return $this->hasMany(CFDSAT::class, 'uuid', 'Guid');
     }
 
 
