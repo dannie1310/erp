@@ -194,7 +194,7 @@ class PolizaFormatoT1B extends Rotation
     {
         $this->ln(1);
         $this->setXY(1, $this->getY());
-        $this->SetFont('Arial', '', 12);
+        $this->SetFont('Arial', '', 10);
         $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L',180);
         $this->cfdiAsociadoTitulos();
     }
@@ -203,7 +203,7 @@ class PolizaFormatoT1B extends Rotation
     {
         $this->ln();
         $this->setXY(1, $this->getY());
-        $this->SetFont('Arial', '', 10);
+        $this->SetFont('Arial', '', 9);
         $this->Cell(20, 0.5, utf8_decode('Emisión'), 'B', 0, 'L',180);
         $this->setXY(3, $this->getY());
         $this->Cell(1, 0.5, utf8_decode('Tipo'), 0, 0, 'C');
@@ -229,7 +229,7 @@ class PolizaFormatoT1B extends Rotation
         $this->ln(0.6);
 
         foreach ($this->data->cfdi as $cfdi) {
-            $this->SetFont('Arial', '', 10);
+            $this->SetFont('Arial', '', 9);
             $this->SetFillColor(255, 255, 255);
             $this->setXY(1, $this->getY());
             $this->Cell(1.9, 0.5, $cfdi->fecha_sencilla_format, '', 0, 'L', 180);
