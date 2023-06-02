@@ -201,11 +201,14 @@ class PolizaFormatoT1A extends Rotation
 
     public function cfdi()
     {
-        $this->ln(1);
-        $this->setXY(1, $this->getY());
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L',180);
-        $this->cfdiAsociadoTitulos();
+        if($this->data->cfdi->toArray() != [])
+        {
+            $this->ln(1);
+            $this->setXY(1, $this->getY());
+            $this->SetFont('Arial', '', 10);
+            $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L', 180);
+            $this->cfdiAsociadoTitulos();
+        }
     }
 
     public function cfdiAsociadoTitulos()

@@ -185,18 +185,18 @@ class PolizaFormatoT1B extends Rotation
         $this->cell($this->WidthTotal-5.1,0.3, '', '', 0, 'L', 180);
         $this->cell(2.6,0.3, 'Total Comp. Ext..', '', 0, 'R', 180);
         $this->cell(2.6,0.3, 0, '', 0, 'R', 180);
-
-
-
     }
 
     public function cfdi()
     {
-        $this->ln(1);
-        $this->setXY(1, $this->getY());
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L',180);
-        $this->cfdiAsociadoTitulos();
+        if($this->data->cfdi->toArray() != [])
+        {
+            $this->ln(1);
+            $this->setXY(1, $this->getY());
+            $this->SetFont('Arial', '', 10);
+            $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L', 180);
+            $this->cfdiAsociadoTitulos();
+        }
     }
 
     public function cfdiAsociadoTitulos()
