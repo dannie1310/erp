@@ -12,6 +12,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Movimiento;
 use App\Models\CADECO\Obra;
 use App\Models\CTPQ\GeneralesSQL\Usuario;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
@@ -83,6 +84,11 @@ class Poliza extends Model
     public function usuario()
     {
         return $this->belongsTo(Usuario::class,"IdUsuario","Id");
+    }
+
+    public function cfdi()
+    {
+        return $this->hasMany(CFDSAT::class, 'uuid', 'Guid');
     }
 
 
