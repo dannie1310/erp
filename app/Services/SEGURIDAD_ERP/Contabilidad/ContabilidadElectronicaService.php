@@ -5,6 +5,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 use App\Models\CTPQ\Cuenta;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\TipoCuenta;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaRepository as Repository;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -61,9 +62,11 @@ class ContabilidadElectronicaService
                     DB::purge('cntpq');
                     Config::set('database.connections.cntpq.database', $nombreDB);
                     $cuenta = Cuenta::where ('Codigo',str_replace('-','',(string)$p["NumCta"]))->first();
+                    $tipo = TipoCuenta::where('tipo','=',$cuenta->Tipo)->first();
                 }
                 $arreglo["partidas"][$i]["codigo_cuenta"] = (string)$p["NumCta"];
                 $arreglo["partidas"][$i]["numero_cuenta"] = $cuenta ? $cuenta->Nombre: '';
+                $arreglo["partidas"][$i]["naturaleza"] = $tipo ? $tipo->naturaleza: '';
                 $arreglo["partidas"][$i]["saldo"] = '$ ' . number_format((float)$p["SaldoIni"], 2, ".", ",");
                 $arreglo["partidas"][$i]["debe"] = (int)$p["Debe"] != 0 ? '$ ' . number_format((float)$p["Debe"], 2, '.', ',') : '$  -';
                 $arreglo["partidas"][$i]["haber"] = (int)$p["Haber"] != 0 ? '$ ' . number_format((float)$p["Haber"], 2, '.', ',') : '$  -';
