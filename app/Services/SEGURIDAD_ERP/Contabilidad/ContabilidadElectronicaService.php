@@ -2,7 +2,12 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use App\Models\CTPQ\Cuenta;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaRepository as Repository;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class ContabilidadElectronicaService
 {
@@ -39,6 +44,8 @@ class ContabilidadElectronicaService
         $ns = $factura_xml->getNamespaces(true);
         $arreglo['version'] = (string) $factura_xml['Version'];
         $arreglo['rfc'] = (string) $factura_xml['RFC'];
+        $empresa = EmpresaSAT::where('rfc', (string) $factura_xml['RFC'])->first();
+        $nombreDB = Empresa::where('IdEmpresaSAT', $empresa->getKey())->pluck('AliasBDD')->first();
         $arreglo['mes'] = (int) $factura_xml['Mes'];
         $arreglo['anio'] = (int) $factura_xml['Anio'];
         $arreglo['tipo'] = (string) $factura_xml['TipoEnvio'];
@@ -49,7 +56,14 @@ class ContabilidadElectronicaService
             $partidas = $factura_xml->xpath('BCE:Ctas');
             $i = 0;
             foreach ($partidas as $p) {
-                $arreglo["partidas"][$i]["numero_cuenta"] = (string)$p["NumCta"];
+                if($nombreDB)
+                {
+                    DB::purge('cntpq');
+                    Config::set('database.connections.cntpq.database', $nombreDB);
+                    $cuenta = Cuenta::where ('Codigo',str_replace('-','',(string)$p["NumCta"]))->first();
+                }
+                $arreglo["partidas"][$i]["codigo_cuenta"] = (string)$p["NumCta"];
+                $arreglo["partidas"][$i]["numero_cuenta"] = $cuenta ? $cuenta->Nombre: '';
                 $arreglo["partidas"][$i]["saldo"] = '$ ' . number_format((float)$p["SaldoIni"], 2, ".", ",");
                 $arreglo["partidas"][$i]["debe"] = (int)$p["Debe"] != 0 ? '$ ' . number_format((float)$p["Debe"], 2, '.', ',') : '$  -';
                 $arreglo["partidas"][$i]["haber"] = (int)$p["Haber"] != 0 ? '$ ' . number_format((float)$p["Haber"], 2, '.', ',') : '$  -';
