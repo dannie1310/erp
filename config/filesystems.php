@@ -158,5 +158,9 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_CONTABILIDAD_GENERAL_POLIZAS_ZIP')),
         ],
+        'contabilidad_electronica' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_LAYOUT_CONTABILIDAD_ELECTRONICA')),
+        ],
     ],
 ];

@@ -2,6 +2,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use App\CSV\Contabilidad\ContabilidadElectronicaLayout;
 use App\Models\CTPQ\Cuenta;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
@@ -9,6 +10,8 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\TipoCuenta;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaRepository as Repository;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ContabilidadElectronicaService
 {
@@ -45,6 +48,7 @@ class ContabilidadElectronicaService
         $ns = $factura_xml->getNamespaces(true);
         $arreglo['version'] = (string) $factura_xml['Version'];
         $arreglo['rfc'] = (string) $factura_xml['RFC'];
+        //dd($factura_xml, $arreglo);
         $empresa = EmpresaSAT::where('rfc', (string) $factura_xml['RFC'])->first();
         $nombreDB = Empresa::where('IdEmpresaSAT', $empresa->getKey())->pluck('AliasBDD')->first();
         $arreglo['mes'] = (int) $factura_xml['Mes'];
@@ -76,5 +80,12 @@ class ContabilidadElectronicaService
             return $arreglo;
         }
         return [];
+    }
+
+    public function excel($datos)
+    {
+        $nombre_archivo = 'Layout' . date('dmYY_His') . '.csv';
+        (new ContabilidadElectronicaLayout($datos))->store($nombre_archivo, 'contabilidad_electronica');
+        return Storage::disk('contabilidad_electronica')->download($nombre_archivo);
     }
 }

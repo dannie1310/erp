@@ -43,6 +43,9 @@
                         </table>
                     </div>
                 </div>
+                <div class="col-md-8" v-if="datos">
+                    <descarga v-bind:datos="datos" />
+                </div>
                 <div class="col-md-12">
                     <div class="table-responsive">
                         <table class="table table-bordered table">
@@ -79,14 +82,20 @@
 </template>
 
 <script>
+import Descarga from "./DescargaLayout";
 export default {
     name: "Index",
+    components: {Descarga},
     data() {
         return {
             cargando :false,
             archivo:null,
             archivo_name:null,
-            datos : null
+            datos : null,
+            data : {
+                'xml' : null,
+                'nombre_archivo' : null
+            }
         }
     },
     methods: {
