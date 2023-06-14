@@ -399,6 +399,20 @@ class Poliza extends Model
                     );
                 }
             }
+            if($this->transaccionAntecedente->tipo_transaccion == 82)
+            {
+                $transaccion = Pago::find($this->transaccionAntecedente->id_transaccion);
+                if($transaccion) {
+                    $uuid_cfdis = $transaccion->facturasRepositorio();
+                    foreach ($uuid_cfdis as $uud_cfdi) {
+                        $poliza_interfaz->polizasCFDI()->create(
+                            [
+                                'cfdi_uuid' => $uud_cfdi->uuid
+                            ]
+                        );
+                    }
+                }
+            }
         }
     }
 
@@ -467,9 +481,6 @@ class Poliza extends Model
                                 ]
                             );
                         }
-
-                        /*if($poliza_cfdi)
-                        dd($poliza_cfdi);*/
                     }
                 }
             }
