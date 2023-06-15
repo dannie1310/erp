@@ -211,16 +211,16 @@ class PolizaFormatoT1A extends Rotation
             ->where('id_poliza_contpaq', $this->data->Id)
             ->where('alias_bd_contpaq',Config::get('database.connections.cntpq.database'))
             ->withoutGlobalScopes()->first();
-
-        $cfdis_interfaz = $poliza->polizasCFDI->pluck('cfdi_uuid');
-        $this->cfdis = CFDSAT::whereIn('uuid', $cfdis_interfaz)->get();
-        if($this->cfdis->toArray() != [])
-        {
-            $this->ln(1);
-            $this->setXY(1, $this->getY());
-            $this->SetFont('Arial', '', 10);
-            $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L', 180);
-            $this->cfdiAsociadoTitulos();
+        if($poliza && $poliza->polizasCFDI) {
+            $cfdis_interfaz = $poliza->polizasCFDI->pluck('cfdi_uuid');
+            $this->cfdis = CFDSAT::whereIn('uuid', $cfdis_interfaz)->get();
+            if ($this->cfdis->toArray() != []) {
+                $this->ln(1);
+                $this->setXY(1, $this->getY());
+                $this->SetFont('Arial', '', 10);
+                $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L', 180);
+                $this->cfdiAsociadoTitulos();
+            }
         }
     }
 

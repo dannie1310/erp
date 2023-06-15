@@ -6,9 +6,11 @@ namespace App\PDF\CTPQ;
 
 use App\Models\CTPQ\Parametro;
 use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use DateInterval;
 use DateTime;
 use Ghidev\Fpdf\Rotation;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class PolizaFormatoT1B extends Rotation
@@ -16,6 +18,7 @@ class PolizaFormatoT1B extends Rotation
     private $poliza;
     private $empresa;
     private $data;
+    private $cfdis;
 
     const DPI = 96;
     const MM_IN_INCH = 25.4;
@@ -189,13 +192,20 @@ class PolizaFormatoT1B extends Rotation
 
     public function cfdi()
     {
-        if($this->data->cfdi->toArray() != [])
-        {
-            $this->ln(1);
-            $this->setXY(1, $this->getY());
-            $this->SetFont('Arial', '', 10);
-            $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L', 180);
-            $this->cfdiAsociadoTitulos();
+        $poliza = \App\Models\INTERFAZ\Poliza::where('poliza_contpaq', $this->data->Folio)
+            ->where('id_poliza_contpaq', $this->data->Id)
+            ->where('alias_bd_contpaq',Config::get('database.connections.cntpq.database'))
+            ->withoutGlobalScopes()->first();
+        if($poliza && $poliza->polizasCFDI) {
+            $cfdis_interfaz = $poliza->polizasCFDI->pluck('cfdi_uuid');
+            $this->cfdis = CFDSAT::whereIn('uuid', $cfdis_interfaz)->get();
+            if ($this->cfdis->toArray() != []) {
+                $this->ln(1);
+                $this->setXY(1, $this->getY());
+                $this->SetFont('Arial', '', 10);
+                $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L', 180);
+                $this->cfdiAsociadoTitulos();
+            }
         }
     }
 
@@ -228,7 +238,7 @@ class PolizaFormatoT1B extends Rotation
         $this->suma_cfdi = 0;
         $this->ln(0.6);
 
-        foreach ($this->data->cfdi as $cfdi) {
+        foreach ($this->cfdis as $cfdi) {
             $this->SetFont('Arial', '', 9);
             $this->SetFillColor(255, 255, 255);
             $this->setXY(1, $this->getY());
