@@ -6,9 +6,11 @@ namespace App\PDF\CTPQ;
 
 use App\Models\CTPQ\Parametro;
 use App\Models\CTPQ\Poliza;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use DateInterval;
 use DateTime;
 use Ghidev\Fpdf\Rotation;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class PolizaFormatoT1B extends Rotation
@@ -16,6 +18,7 @@ class PolizaFormatoT1B extends Rotation
     private $poliza;
     private $empresa;
     private $data;
+    private $cfdis;
 
     const DPI = 96;
     const MM_IN_INCH = 25.4;
@@ -30,6 +33,7 @@ class PolizaFormatoT1B extends Rotation
     private $fecha;
 
     private $footer_encola = false;
+    private $encola = false;
     private $num = 1;
     private $key_folio = 0;
 
@@ -83,7 +87,14 @@ class PolizaFormatoT1B extends Rotation
         $this->setXY(12.7, 2.6);
         $this->Cell(0, 0, utf8_decode('Cta. Estatal: ') . Parametro::getRegEstatal(), 0, 0, 'L');
 
-        $this->partidasTitle();
+        if($this->encola == 'partidas')
+        {
+            $this->partidasTitle();
+        }
+        if($this->encola == 'cfdi')
+        {
+            $this->cfdiAsociadoTitulos();
+        }
     }
 
     public function partidasTitle()
@@ -121,6 +132,7 @@ class PolizaFormatoT1B extends Rotation
 
     public function partidas()
     {
+        $this->partidasTitle();
         $this->SetFont('Arial', '', 10);
         $this->SetFillColor(255, 255, 255);
         $this->Cell(2.35,0.5, $this->poliza->fecha_mes_letra_format, '', 0, 'L', 180);
@@ -135,7 +147,7 @@ class PolizaFormatoT1B extends Rotation
         $this->suma_abono = 0;
         $this->suma_cargo = 0;
         $count = 1;
-
+        $this->encola = 'partidas';
         foreach($this->poliza->movimientos as $movimiento){
 
             $this->SetFont('Arial', '', 10);
@@ -185,26 +197,37 @@ class PolizaFormatoT1B extends Rotation
         $this->cell($this->WidthTotal-5.1,0.3, '', '', 0, 'L', 180);
         $this->cell(2.6,0.3, 'Total Comp. Ext..', '', 0, 'R', 180);
         $this->cell(2.6,0.3, 0, '', 0, 'R', 180);
+        $this->encola = '';
     }
 
     public function cfdi()
     {
-        if($this->data->cfdi->toArray() != [])
-        {
-            $this->ln(1);
-            $this->setXY(1, $this->getY());
-            $this->SetFont('Arial', '', 10);
-            $this->Cell(20, 0.5, utf8_decode('CFD/CFDI ASOCIADOS A LA PÓLIZA'), '', 0, 'L', 180);
-            $this->cfdiAsociadoTitulos();
+        $poliza = \App\Models\INTERFAZ\Poliza::where('poliza_contpaq', $this->data->Folio)
+            ->where('id_poliza_contpaq', $this->data->Id)
+            ->where('alias_bd_contpaq',Config::get('database.connections.cntpq.database'))
+            ->withoutGlobalScopes()->first();
+        if($poliza && $poliza->polizasCFDI) {
+            $cfdis_interfaz = $poliza->polizasCFDI->pluck('cfdi_uuid');
+            $this->cfdis = CFDSAT::whereIn('uuid', $cfdis_interfaz)->get();
+            if ($this->cfdis->toArray() != []) {
+                $this->cfdiAsociadoTitulos();
+                $this->cfdipartidas();
+            }
         }
     }
 
     public function cfdiAsociadoTitulos()
     {
-        $this->ln();
+        $this->ln(1);
         $this->setXY(1, $this->getY());
+        $this->SetFont('Arial', 'B', 10);
+        $this->Cell(20, 0.5, utf8_decode('CFD/CFDI  ASOCIADOS  A  LA  PÓLIZA'), '', 0, 'L', 180);
+        $this->ln(0.5);
+        $this->setXY(0.5, $this->getY());
         $this->SetFont('Arial', '', 9);
-        $this->Cell(20, 0.5, utf8_decode('Emisión'), 'B', 0, 'L',180);
+        $this->Cell(20, 0.5, '#', 'B', 0, 'L',180);
+        $this->setXY(1, $this->getY());
+        $this->Cell(0.8, 0.5, utf8_decode('Emisión'), 0, 0, 'L');
         $this->setXY(3, $this->getY());
         $this->Cell(1, 0.5, utf8_decode('Tipo'), 0, 0, 'C');
         $this->setXY(4.3, $this->getY());
@@ -219,45 +242,57 @@ class PolizaFormatoT1B extends Rotation
         $this->Cell(1, 0.5, utf8_decode('Razón Social'), 0, 0, 'C');
         $this->setXY(19, $this->getY());
         $this->Cell(1, 0.5, utf8_decode('Total'), 0, 0, 'C');
-        $this->cfdipartidas();
+        $this->ln(0.55);
     }
 
     public function cfdipartidas()
     {
         $this->SetFillColor(255, 255, 255);
         $this->suma_cfdi = 0;
-        $this->ln(0.6);
-
-        foreach ($this->data->cfdi as $cfdi) {
+        $this->encola = 'cfdi';
+        foreach ($this->cfdis as $key => $cfdi) {
             $this->SetFont('Arial', '', 9);
             $this->SetFillColor(255, 255, 255);
-            $this->setXY(1, $this->getY());
+            $this->setXY(0.5, $this->getY()+0.01);
+            $this->Cell(0.5, 0.5, $key+1, '', 0, 'L', 180);
+            $this->setXY(1, $this->getY()+0.01);
             $this->Cell(1.9, 0.5, $cfdi->fecha_sencilla_format, '', 0, 'L', 180);
-            $this->setXY(3, $this->getY());
+            $this->setXY(3, $this->getY()+0.01);
             $this->Cell(1.3, 0.5, $cfdi->tipo_descripcion, '', 0, 'L');
-            $this->setXY(4.3, $this->getY());
-            $this->Cell(0.6, 0.5, $cfdi->serie, '', 0, 'L');
-            $this->setXY(5, $this->getY());
-            $this->Cell(1.8, 0.5, $cfdi->folio, '', 0, 'L');
-            $this->setXY(6.8, $this->getY()); // 33 + ..
+            $this->setXY(4.3, $this->getY()+0.01);
+            if (strlen($cfdi->serie) > 4) {
+                $s = substr($cfdi->serie, 0, 4);
+            } else {
+                $s = $cfdi->serie;
+            }
+            $this->Cell(1, 0.5, $s, '', 0, 'L');
+            $this->setXY(5.4, $this->getY()+0.01);
+            if (strlen($cfdi->folio) > 9) {
+                $folio = substr($cfdi->folio, 0, 9);
+            } else {
+                $folio = $cfdi->folio;
+            }
+            $this->Cell(1.7, 0.5, $folio, '', 0, 'L');
+            $this->setXY(7.3, $this->getY()+0.01); // 33 + ..
             if (strlen($cfdi->uuid) > 27) {
                 $uuid = substr($cfdi->uuid, 0, 27);
             } else {
                 $uuid = $cfdi->uuid;
             }
             $this->Cell(5.6, 0.5, $uuid . '..', '', 0, 'L');
-            $this->setXY(12.4, $this->getY());
+            $this->setXY(12.7, $this->getY()+0.01);
             $this->Cell(2.6, 0.5, $cfdi->rfc_receptor, '', 0, 'L');
-            $this->setXY(15, $this->getY());//14 ..
+            $this->setXY(15.5, $this->getY()+0.01);//14 ..
             if (strlen($cfdi->proveedor->razon_social) > 12) {
                 $ra = substr($cfdi->proveedor->razon_social, 0, 12);
             } else {
                 $ra = $cfdi->proveedor->razon_social;
             }
             $this->Cell(3, 0.5, $ra . '..', '', 0, 'L');
-            $this->setXY(18, $this->getY());
-            $this->Cell(3, 0.5, number_format($cfdi->total, 2, ".", ","), '', 0, 'R');
+            $this->setXY(18.5, $this->getY()+0.01);
+            $this->Cell(2, 0.5, number_format($cfdi->total, 2, ".", ","), '', 0, 'R');
             $this->suma_cfdi = $this->suma_cfdi + $cfdi->total;
+            $this->ln(0.8);
         }
         $this->ln(0.5);
         $this->setXY(15, $this->getY());
@@ -269,7 +304,7 @@ class PolizaFormatoT1B extends Rotation
         $this->Cell(3, 0.5, 'Total Comp. Ext :', '', 0, 'R');
         $this->setXY(18, $this->getY());
         $this->Cell(3, 0.5, number_format($this->suma_abono-$this->suma_cfdi, 2, ".", ","), '', 0, 'R');
-
+        $this->encola = '';
     }
 
     function create($path = '') {
@@ -280,7 +315,7 @@ class PolizaFormatoT1B extends Rotation
         $this->SetMargins(1, 0.9, 1);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true,5);
+        $this->SetAutoPageBreak(true,4);
         $this->partidas();
         $this->cfdi();
 
