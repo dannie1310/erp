@@ -2510,6 +2510,19 @@ export const routes = [
                                     general: true
                                 }
                             },
+                            {
+                                path: ':id_empresa/:id',
+                                name: 'poliza-cfdi-show',
+                                props: true,
+                                component: require('./components/contabilidad/poliza-cfdi/Show').default,
+                                meta: {
+                                    title: 'Consultar Póliza',
+                                    breadcrumb: {parent: 'poliza-cfdi-proyecto', name: 'CONSULTAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_poliza',
+                                    general: true
+                                }
+                            },
                         ]
                     },
                     {
