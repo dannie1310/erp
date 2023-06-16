@@ -134,7 +134,7 @@ class Cuenta extends Model
         return $codigo;
     }
 
-    public function getTipoAttribute()
+    public function getTipoCtaMayorAttribute()
     {
         switch ($this->CtaMayor) {
             case 1 :

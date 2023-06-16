@@ -49,7 +49,9 @@
                             <thead>
                             <tr>
                                 <th class="index_corto">#</th>
+                                <th class="encabezado">Código cuenta</th>
                                 <th class="encabezado">Cuenta</th>
+                                <th class="encabezado">Naturaleza</th>
                                 <th class="encabezado">Saldo Inicial</th>
                                 <th class="encabezado">Debe</th>
                                 <th class="encabezado">Haber</th>
@@ -59,7 +61,9 @@
                             <tbody>
                             <tr v-for="(partida, i) in datos.partidas">
                                 <td class="encabezado index_corto">{{i+1}}</td>
+                                <td class="numerico">{{partida.codigo_cuenta}}</td>
                                 <td class="numerico">{{partida.numero_cuenta}}</td>
+                                <td class="numerico">{{partida.naturaleza}}</td>
                                 <td class="numerico" style="text-align: right">{{partida.saldo}}</td>
                                 <td class="numerico" style="text-align: right">{{partida.debe}}</td>
                                 <td class="numerico" style="text-align: right">{{partida.haber}}</td>
