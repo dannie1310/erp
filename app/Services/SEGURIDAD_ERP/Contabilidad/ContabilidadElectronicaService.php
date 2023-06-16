@@ -51,12 +51,12 @@ class ContabilidadElectronicaService
         $empresa = EmpresaSAT::where('rfc', (string) $factura_xml['RFC'])->first();
         if($empresa == null)
         {
-            abort(500, "La empresa con RFC: ".$factura_xml['RFC'].", no existe en los catálogos");
+            abort(500, "La empresa con RFC: ".$factura_xml['RFC']. ". \n \n Favor de contactar a soporte a aplicaciones.");
         }
         $nombreDB = Empresa::where('IdEmpresaSAT', $empresa->getKey())->pluck('AliasBDD')->first();
         if($nombreDB == null)
         {
-            abort(500, "La empresa con RFC: ".$factura_xml['RFC'].", No cuenta con el alias de la base de datos correspondiente.");
+            abort(500, "La empresa con RFC: ".$factura_xml['RFC'].", No cuenta con el alias de la base de datos correspondiente.. \n \n Favor de contactar a soporte a aplicaciones.");
         }
         $arreglo['mes'] = (int) $factura_xml['Mes'];
         $arreglo['anio'] = (int) $factura_xml['Anio'];
