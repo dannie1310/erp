@@ -27,7 +27,6 @@ class ContabilidadElectronicaService
     {
         $archivo_xml = $data["xml"];
         $arreglo = [];
-        //$arreglo["xml"] = $archivo_xml;
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
@@ -43,10 +42,22 @@ class ContabilidadElectronicaService
             return 0;
         }
         $ns = $factura_xml->getNamespaces(true);
+        if($factura_xml['RFC'] == null)
+        {
+            abort(500, "El archivo no es compatible con la contabilidad Electrónica.");
+        }
         $arreglo['version'] = (string) $factura_xml['Version'];
         $arreglo['rfc'] = (string) $factura_xml['RFC'];
         $empresa = EmpresaSAT::where('rfc', (string) $factura_xml['RFC'])->first();
+        if($empresa == null)
+        {
+            abort(500, "La empresa con RFC: ".$factura_xml['RFC'].", no existe en los catálogos");
+        }
         $nombreDB = Empresa::where('IdEmpresaSAT', $empresa->getKey())->pluck('AliasBDD')->first();
+        if($nombreDB == null)
+        {
+            abort(500, "La empresa con RFC: ".$factura_xml['RFC'].", No cuenta con el alias de la base de datos correspondiente.");
+        }
         $arreglo['mes'] = (int) $factura_xml['Mes'];
         $arreglo['anio'] = (int) $factura_xml['Anio'];
         $arreglo['tipo'] = (string) $factura_xml['TipoEnvio'];
