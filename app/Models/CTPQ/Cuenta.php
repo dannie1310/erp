@@ -93,19 +93,29 @@ class Cuenta extends Model
 
     public function getCuentaFormatAttribute()
     {
-        $parametros = Parametro::first();
-        $cta = vsprintf(str_replace('X', '%s', $parametros->Mascarilla), str_split($this->Codigo));
-        if (strlen($cta) > 16) {
-            $cta = substr($cta, 0, 16) . '..';
+        if(is_numeric($this->Codigo))
+        {
+            $parametros = Parametro::first();
+            $cta = vsprintf(str_replace('X', '%s', $parametros->Mascarilla), str_split($this->Codigo));
+            if (strlen($cta) > 16) {
+                $cta = substr($cta, 0, 16) . '..';
+            }
+            return $cta;
+        }else{
+            return $this->Codigo;
         }
-        return $cta;
     }
 
     public function getCuentaCompletaFormatAttribute()
     {
-        $parametros = Parametro::first();
-        $cta = vsprintf(str_replace('X', '%s', $parametros->Mascarilla), str_split($this->Codigo));
-        return $cta;
+        if(is_numeric($this->Codigo))
+        {
+            $parametros = Parametro::first();
+            $cta = vsprintf(str_replace('X', '%s', $parametros->Mascarilla), str_split($this->Codigo));
+            return $cta;
+        }else{
+            return $this->Codigo;
+        }
     }
 
     public function getCodigoLongitud($lcodigo_b)
