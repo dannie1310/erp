@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="descargar()" type="button" class="btn btn-app btn-outline-success pull-right" :disabled="cargando" title="Descargar Layout">
+        <button @click="descargar()" type="button" class="btn btn-app btn-outline-success pull-right" :disabled="cargando" title="Descargar Balanza en Excel">
             <i class="fa fa-download"></i>Descargar Excel
         </button>
     </span>
