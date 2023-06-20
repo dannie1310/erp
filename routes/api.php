@@ -315,6 +315,7 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'contabilidad-electronica'], function ($api) {
             $api->post('xml', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@getDatosXML');
+            $api->post('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@descargar');
         });
 
         $api->group(['prefix' => 'cuenta'], function ($api) {

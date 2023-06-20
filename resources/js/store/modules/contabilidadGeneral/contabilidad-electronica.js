@@ -33,6 +33,35 @@ export default {
                     })
             });
         },
+        descargar(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'descargar', payload.datos, payload.config)
+                    .then(r => r.data)
+                    .then(data => {
+                        const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.setAttribute('download', 'Layout.csv');
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+           /* var urr = URI + 'descargar?&access_token=' + this._vm.$session.get('jwt')+'&partidas=' + Object.values(payload.datos.partidas);
+
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Layout descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }*/
+        },
     },
     getters: {
         cuentas(state) {

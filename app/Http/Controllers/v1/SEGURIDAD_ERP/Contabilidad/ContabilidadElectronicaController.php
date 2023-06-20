@@ -39,4 +39,9 @@ class ContabilidadElectronicaController extends Controller
     {
         return response()->json($this->service->getDatosXML($request->all()), 200);
     }
+
+    public function descargar(Request $request)
+    {
+        return $this->service->excel($request->all());
+    }
 }
