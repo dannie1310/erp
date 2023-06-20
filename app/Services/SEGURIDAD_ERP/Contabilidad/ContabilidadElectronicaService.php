@@ -2,7 +2,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
-use App\CSV\Contabilidad\ContabilidadElectronicaLayout;
+use App\Exports\Contabilidad\BalanzaComprobacion;
 use App\Models\CTPQ\Cuenta;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
@@ -11,7 +11,6 @@ use App\Repositories\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaRepositor
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Facades\Excel;
 
 class ContabilidadElectronicaService
 {
@@ -32,44 +31,44 @@ class ContabilidadElectronicaService
         $arreglo = [];
         try {
             libxml_use_internal_errors(true);
-            $factura_xml = simplexml_load_file($archivo_xml);
-            if($factura_xml === false)
+            $balanza_xml = simplexml_load_file($archivo_xml);
+            if($balanza_xml === false)
             {
-                $factura_xml = simplexml_load_string($archivo_xml);
+                $balanza_xml = simplexml_load_string($archivo_xml);
             }
 
-            if(!$factura_xml){
+            if(!$balanza_xml){
                 $errors = libxml_get_errors();
             }
         } catch (\Exception $e) {
             return 0;
         }
-        $ns = $factura_xml->getNamespaces(true);
-        if($factura_xml['RFC'] == null)
+        $ns = $balanza_xml->getNamespaces(true);
+        if($balanza_xml['RFC'] == null)
         {
             abort(500, "El archivo no es compatible con la contabilidad Electrónica.");
         }
-        $arreglo['version'] = (string) $factura_xml['Version'];
-        $arreglo['rfc'] = (string) $factura_xml['RFC'];
-        //dd($factura_xml, $arreglo);
-        $empresa = EmpresaSAT::where('rfc', (string) $factura_xml['RFC'])->first();
+        $arreglo['version'] = (string) $balanza_xml['Version'];
+        $arreglo['rfc'] = (string) $balanza_xml['RFC'];
+        $empresa = EmpresaSAT::where('rfc', (string) $balanza_xml['RFC'])->first();
         if($empresa == null)
         {
-            abort(500, "La empresa con RFC: ".$factura_xml['RFC']. ". \n \n Favor de contactar a soporte a aplicaciones.");
+            abort(500, "La empresa con RFC: ".$balanza_xml['RFC']. " no fue encontrada en el catálogo de empresas. \n \n Favor de contactar a soporte a aplicaciones.");
         }
         $nombreDB = Empresa::where('IdEmpresaSAT', $empresa->getKey())->pluck('AliasBDD')->first();
         if($nombreDB == null)
         {
-            abort(500, "La empresa con RFC: ".$factura_xml['RFC'].", No cuenta con el alias de la base de datos correspondiente.. \n \n Favor de contactar a soporte a aplicaciones.");
+            abort(500, "La empresa con RFC: ".$balanza_xml['RFC']." no cuenta con el alias de la base de datos correspondiente.. \n \n Favor de contactar a soporte a aplicaciones.");
         }
-        $arreglo['mes'] = (int) $factura_xml['Mes'];
-        $arreglo['anio'] = (int) $factura_xml['Anio'];
-        $arreglo['tipo'] = (string) $factura_xml['TipoEnvio'];
+        $arreglo['mes'] = (int) $balanza_xml['Mes'];
+        $arreglo['anio'] = (int) $balanza_xml['Anio'];
+        $arreglo['tipo'] = (string) $balanza_xml['TipoEnvio'];
+        $arreglo["razon_social"] = (string) $empresa->razon_social;
 
         if(array_key_exists('BCE',$ns)) {
-            $factura_xml->registerXPathNamespace('t', $ns['BCE']);
+            $balanza_xml->registerXPathNamespace('t', $ns['BCE']);
 
-            $partidas = $factura_xml->xpath('BCE:Ctas');
+            $partidas = $balanza_xml->xpath('BCE:Ctas');
             if($nombreDB)
             {
                 $cuenta_instancia = new Cuenta();
@@ -99,8 +98,8 @@ class ContabilidadElectronicaService
 
     public function excel($datos)
     {
-        $nombre_archivo = 'Layout' . date('dmYY_His') . '.csv';
-        (new ContabilidadElectronicaLayout($datos))->store($nombre_archivo, 'contabilidad_electronica');
+        $nombre_archivo = 'BalanzaComprobacion_'.$datos["rfc"]."_" . date('d-m-Y_His') . '.xlsx';
+        (new BalanzaComprobacion($datos))->store($nombre_archivo, 'contabilidad_electronica');
         return Storage::disk('contabilidad_electronica')->download($nombre_archivo);
     }
 }
