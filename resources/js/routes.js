@@ -3845,8 +3845,8 @@ export const routes = [
                         name:"contabilidad-electronica",
                         component: require('./components/contabilidad-general/contabilidad-electronica/Index.vue').default,
                         meta: {
-                            title: 'Contabilidad Electrónica',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'CONTABILIDAD ELECTRÓNICA'},
+                            title: 'Lectura de Balanza XML',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'LECTURA DE BALANZA XML'},
                             middleware: [auth, permission],
                             permission: 'consultar_contabilidad_electronica',
                             general: true

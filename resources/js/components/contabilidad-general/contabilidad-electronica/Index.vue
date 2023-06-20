@@ -1,51 +1,63 @@
 <template>
-    <div class="card">
+    <div class="card" v-if="cargando">
         <div class="card-body">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="row">
-                        <div class="col-md-2">
-                            <label for="archivo">Archivo:</label>
-                        </div>
-                        <div class="col-md-10">
-                            <div class="form-group error-content" >
-                                <input type="file" class="form-control" id="archivo" @change="onFileChange"
-                                       row="3"
-                                       v-validate="{required: true,  ext: ['xml'], size: 3072}"
-                                       name="archivo"
-                                       data-vv-as="Archivo"
-                                       ref="archivo"
-                                       :class="{'is-invalid': errors.has('archivo')}">
-                                <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
-                            </div>
-                        </div>
+            <div class="row" >
+                <div class="col-md-12">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="sr-only">Cargando...</span>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="card" v-else>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-2">
+                    <label for="archivo">Archivo de Balanza:</label>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group error-content" >
+                        <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                               row="3"
+                               v-validate="{required: true,  ext: ['xml'], size: 3072}"
+                               name="archivo"
+                               data-vv-as="Archivo"
+                               ref="archivo"
+                               :class="{'is-invalid': errors.has('archivo')}">
+                        <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
+                    </div>
+                </div>
+            </div>
+            <hr v-if="datos != null">
             <div class="row" v-if="datos != null">
-                <div class="col-md-4">
+                <div class="col-md-10">
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm">
                             <thead>
                             <tr>
-                                <th class="encabezado" colspan="2">RFC</th>
-                                <th class="encabezado">Mes</th>
-                                <th class="encabezado">Año</th>
+                                <th class="encabezado">RFC</th>
+                                <th class="encabezado" >Razón Social</th>
+                                <th class="encabezado">Periodo</th>
+                                <th class="encabezado">Ejercicio</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td colspan="2">{{datos.rfc}}</td>
-                                <td class="numerico" style="text-align: right">{{datos.mes}}</td>
-                                <td class="numerico" style="text-align: right">{{datos.anio}}</td>
+                                <td >{{datos.rfc}}</td>
+                                <td >{{datos.razon_social}}</td>
+                                <td >{{datos.mes}}</td>
+                                <td >{{datos.anio}}</td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="col-md-8" v-if="datos">
+                <div class="col-md-2" v-if="datos">
                     <descarga v-bind:datos="datos" />
                 </div>
+            </div>
+            <div class="row" v-if="datos != null">
                 <div class="col-md-12">
                     <div class="table-responsive">
                         <table class="table table-bordered table">
@@ -100,6 +112,7 @@ export default {
     },
     methods: {
         onFileChange(e){
+            this.cargando = true;
             this.archivo = null;
             this.archivo_name = null;
             this.datos = null;
@@ -129,7 +142,6 @@ export default {
         },
 
         cargarXML(){
-            this.cargando = true;
             var formData = new FormData();
             formData.append('xml',  this.archivo);
             formData.append('nombre_archivo',  this.archivo_name);
