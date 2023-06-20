@@ -308,7 +308,7 @@ class PolizaFormatoT1A extends Rotation
             $this->suma_cfdi = $this->suma_cfdi + $cfdi->total;
             $this->ln(0.3);
         }
-        $this->ln(0.5);
+        $this->ln(0.2);
         $this->setXY(15, $this->getY());
         $this->Cell(3, 0.5, 'Total CFD/CFDI :', '', 0, 'R');
         $this->setXY(18, $this->getY());
