@@ -17,12 +17,9 @@
         },
         methods: {
             descargar() {
-                console.log("AQUI? LLEGA?? ", this.datos);
-               // this.cargando = true;
                 return this.$store.dispatch('contabilidadGeneral/contabilidad-electronica/descargar', {datos: this.datos})
                     .then(() => {
                         this.$emit('success')
-                      //  this.cargando = false;
                     })
                 }
         },

@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\CSV\Contabilidad;
+namespace App\Exports\Contabilidad;
 
 
 use Maatwebsite\Excel\Concerns\Exportable;
@@ -9,8 +9,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 
 
-
-class ContabilidadElectronicaLayout implements FromCollection, WithHeadings
+class BalanzaComprobacion implements FromCollection, WithHeadings
 {
     use Exportable;
     protected $datos;

@@ -109,7 +109,7 @@
             <li class="nav-item"  v-if="$root.can('consultar_contabilidad_electronica', true )">
                 <router-link :to="{name: 'contabilidad-electronica'}" class="nav-link" :class="{active: this.$route.name == 'contabilidad-electronica'}">
                     &nbsp;<i class="fas fa-exchange-alt"></i>
-                    <p>Contabilidad Electrónica</p>
+                    <p>Lectura de Balanza XML</p>
                 </router-link>
             </li>
         </ul>
