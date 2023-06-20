@@ -66,21 +66,25 @@ class ContabilidadElectronicaService
             $factura_xml->registerXPathNamespace('t', $ns['BCE']);
 
             $partidas = $factura_xml->xpath('BCE:Ctas');
+            if($nombreDB)
+            {
+                $cuenta_instancia = new Cuenta();
+                $cuenta_instancia->setConnection("cntpq_inf");
+                DB::purge('cntpq_inf');
+                Config::set('database.connections.cntpq_inf.database', $nombreDB);
+            }
             $i = 0;
             foreach ($partidas as $p) {
-                if($nombreDB)
-                {
-                    DB::purge('cntpq');
-                    Config::set('database.connections.cntpq.database', $nombreDB);
-                    $cuenta = Cuenta::where ('Codigo',str_replace('-','',(string)$p["NumCta"]))->first();
-                    $tipo = TipoCuenta::where('tipo','=',$cuenta->Tipo)->first();
-                }
+
+                $cuenta = $cuenta_instancia->where('Codigo',str_replace('-','',(string)$p["NumCta"]))->first();
+                $tipo = TipoCuenta::where('tipo','=',$cuenta->Tipo)->first();
+
                 $arreglo["partidas"][$i]["codigo_cuenta"] = (string)$p["NumCta"];
                 $arreglo["partidas"][$i]["numero_cuenta"] = $cuenta ? $cuenta->Nombre: '';
                 $arreglo["partidas"][$i]["naturaleza"] = $tipo ? $tipo->naturaleza: '';
                 $arreglo["partidas"][$i]["saldo"] = '$ ' . number_format((float)$p["SaldoIni"], 2, ".", ",");
-                $arreglo["partidas"][$i]["debe"] = (int)$p["Debe"] != 0 ? '$ ' . number_format((float)$p["Debe"], 2, '.', ',') : '$  -';
-                $arreglo["partidas"][$i]["haber"] = (int)$p["Haber"] != 0 ? '$ ' . number_format((float)$p["Haber"], 2, '.', ',') : '$  -';
+                $arreglo["partidas"][$i]["debe"] = (int)$p["Debe"] != 0 ? '$ ' . number_format((float)$p["Debe"], 2, '.', ',') : '-';
+                $arreglo["partidas"][$i]["haber"] = (int)$p["Haber"] != 0 ? '$ ' . number_format((float)$p["Haber"], 2, '.', ',') : '-';
                 $arreglo["partidas"][$i]["saldo_total"] = '$ ' . number_format((float)$p["SaldoFin"], 2, '.', ',');
                 $i++;
             }
