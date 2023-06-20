@@ -98,7 +98,7 @@ class ContabilidadElectronicaService
 
     public function excel($datos)
     {
-        $nombre_archivo = 'BalanzaComprobacion_'.$datos["rfc"]."_" . date('d-m-Y_His') . '.xlsx';
+        $nombre_archivo = 'BalanzaComprobacion_'.$datos["rfc"]."_" . date('d-m-Y_His') . '.csv';
         (new BalanzaComprobacion($datos))->store($nombre_archivo, 'contabilidad_electronica');
         return Storage::disk('contabilidad_electronica')->download($nombre_archivo);
     }

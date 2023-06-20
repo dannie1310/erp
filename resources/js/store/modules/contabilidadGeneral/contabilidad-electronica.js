@@ -42,7 +42,7 @@ export default {
                         const url = window.URL.createObjectURL(new Blob([data],{ type: 'text/csv' }));
                         const link = document.createElement('a');
                         link.href = url;
-                        link.setAttribute('download', 'Layout.csv');
+                        link.setAttribute('download', 'Balanza_'+payload.datos.rfc+'.csv');
                         document.body.appendChild(link);
                         link.click();
                     })
