@@ -1,6 +1,17 @@
 <template>
     <span>
-        <div class="row" v-if="!cargando">
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" v-else>
             <div class="col-12">
                 <form role="form" @submit.prevent="validate" v-if="!cargando && poliza" class="detalle_poliza">
                     <div class="card">
@@ -320,8 +331,6 @@
                 })
             }else {
                 this.find()
-                this.getCuentas();
-                this.getTipos();
             }
         },
         methods: {
@@ -346,6 +355,8 @@
                     params: {include: ['movimientos_poliza.asociacion_cfdi', 'tipo', 'asociacion_cfdi'], id_empresa: this.id_empresa}
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+                }).finally(()=>{
+                    this.getCuentas();
                 })
             },
             update(){
@@ -377,6 +388,8 @@
                 })
                     .then(data => {
                         this.cuentas = data.data;
+                    }).finally(()=>{
+                        this.getTipos();
                     })
             },
             getTipos() {
