@@ -220,9 +220,15 @@ class PolizaFormatoT1A extends Rotation
         if(count($this->data->expedientes) > 0) {
             foreach ($this->data->expedientes as $expediente) {
                 $base = Parametro::find(1);
-                DB::purge('cntpqdm');
-                Config::set('database.connections.cntpqdm.database', 'document_' . $base->GuidDSL . '_metadata');
-                $comprobante = Comprobante::where('GuidDocument', $expediente->Guid_Pertenece)->first();
+                try {
+                    DB::purge('cntpqdm');
+                    Config::set('database.connections.cntpqdm.database', 'document_' . $base->GuidDSL . '_metadata');
+                    $comprobante = Comprobante::where('GuidDocument', $expediente->Guid_Pertenece)->first();
+                }catch (\Exception $e)
+                {
+                    abort(500, "Error de acceso a las bases de metadatos de la empresa.");
+                    throw $e;
+                }
                 if ($comprobante->toArray() != []) {
                     $cfdi = CFDSAT::where('uuid', $comprobante->UUID)->first();
                     $this->cfdis[] = $cfdi;
