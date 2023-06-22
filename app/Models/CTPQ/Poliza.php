@@ -12,6 +12,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Movimiento;
 use App\Models\CADECO\Obra;
 use App\Models\CTPQ\GeneralesSQL\Usuario;
+use App\Models\CTPQ\OtherMetadata\Expediente;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
@@ -78,6 +79,9 @@ class Poliza extends Model
 
     public function expedientes()
     {
+        $base =  Parametro::find(1);
+        DB::purge('cntpqom');
+        Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
         return $this->hasMany(Expediente::class, 'Guid_Relacionado', 'Guid');
     }
 

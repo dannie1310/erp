@@ -6,6 +6,7 @@ namespace App\Models\CTPQ\OtherMetadata;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
