@@ -29,7 +29,7 @@ export default {
     components: {PDFPoliza, PolizaPartialShow, CFDI},
     methods :{
         regresar() {
-            this.$router.push({name: 'seleccionar-empresa'});
+            this.$router.push({name: 'poliza-contpaq', params: {id_empresa: this.id_empresa}});
         },
     },
     watch:{

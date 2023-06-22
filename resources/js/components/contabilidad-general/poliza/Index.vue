@@ -132,9 +132,6 @@
                 conectado:false,
                 buscando:false,
                 encontradas:false,
-                //id_empresa: '',
-                //empresas: [],
-                //empresa_seleccionada: [],
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
@@ -145,11 +142,13 @@
                     { title: 'Folio', field: 'folio', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Monto', field: 'cargos', tdClass: 'td_money', thClass: 'th_money', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Concepto', field: 'concepto',thComp: require('../../globals/th-Filter').default, sortable: false},
+                    { title: '# CFDI', field: 'cantidad_cfdi',tdClass: 'right',sortable: false},
+                    { title: 'Usuario', field: 'usuario_codigo',tdClass: 'td_c80',sortable: false},
                     { title: 'Acciones', field: 'buttons', tdClass: 'td_c120',  thClass: 'th_c120',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {sort:'fecha',order:'desc'},
                 search: '',
                 file:'',
                 nombre: ''
@@ -184,6 +183,8 @@
                         folio: poliza.folio,
                         cargos: poliza.cargos,
                         concepto: poliza.concepto,
+                        cantidad_cfdi: poliza.cantidad_cfdi,
+                        usuario_codigo: poliza.usuario_codigo,
                         buttons: $.extend({}, {
                             id: poliza.id,
                             id_empresa: this.id_empresa,

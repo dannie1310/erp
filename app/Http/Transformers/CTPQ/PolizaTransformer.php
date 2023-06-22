@@ -46,7 +46,9 @@ class PolizaTransformer extends TransformerAbstract
             'monto_format' => (string) $model->cargos_format,
             'empresa' => $model->empresa,
             'base_datos' => $model->base_datos,
-            'usuario_nombre'=>$model->usuario->Nombre
+            'usuario_nombre'=>$model->usuario->Nombre,
+            'usuario_codigo'=>$model->usuario->Codigo,
+            'cantidad_cfdi'=>$model->asociacionCFDI->count() > 0 ? $model->asociacionCFDI->count() : '-'
         ];
     }
 
