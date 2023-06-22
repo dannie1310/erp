@@ -6,6 +6,7 @@ namespace App\PDF\CTPQ;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use App\Models\CTPQ\Parametro;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
@@ -216,14 +217,24 @@ class PolizaFormatoT1A extends Rotation
 
     public function cfdi()
     {
-        $poliza = \App\Models\INTERFAZ\Poliza::where('poliza_contpaq', $this->data->Folio)
-            ->where('id_poliza_contpaq', $this->data->Id)
-            ->where('alias_bd_contpaq',Config::get('database.connections.cntpq.database'))
-            ->withoutGlobalScopes()->first();
-        if($poliza && $poliza->polizasCFDI) {
-            $cfdis_interfaz = $poliza->polizasCFDI->pluck('cfdi_uuid');
-            $this->cfdis = CFDSAT::whereIn('uuid', $cfdis_interfaz)->orderBy('fecha','asc')->get();
-            if ($this->cfdis->toArray() != []) {
+        if(count($this->data->expedientes) > 0) {
+            foreach ($this->data->expedientes as $expediente) {
+                $base = Parametro::find(1);
+                try {
+                    DB::purge('cntpqdm');
+                    Config::set('database.connections.cntpqdm.database', 'document_' . $base->GuidDSL . '_metadata');
+                    $comprobante = Comprobante::where('GuidDocument', $expediente->Guid_Pertenece)->first();
+                }catch (\Exception $e)
+                {
+                    abort(500, "Error de acceso a las bases de metadatos de la empresa.");
+                    throw $e;
+                }
+                if ($comprobante->toArray() != []) {
+                    $cfdi = CFDSAT::where('uuid', $comprobante->UUID)->first();
+                    $this->cfdis[] = $cfdi;
+                }
+            }
+            if ($this->cfdis != []) {
                 $this->cfdiAsociadoTitulos();
                 $this->cfdipartidas();
             }
