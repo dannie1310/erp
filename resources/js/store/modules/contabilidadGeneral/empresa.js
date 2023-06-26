@@ -71,6 +71,26 @@ export default {
                     })
             });
         },
+        actualizaAccesoMetadatos(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'actualiza-acceso-metadatos', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        swal( "Verificación Finalizada",{
+                            icon: "success",
+                            timer: 6000,
+                            buttons: false,
+                        })
+                            .then(() => {
+                                resolve(data);
+                            })
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         paginate (context, payload) {
             return new Promise((resolve, reject) => {
                 axios

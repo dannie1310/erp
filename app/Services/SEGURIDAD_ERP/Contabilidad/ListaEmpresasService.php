@@ -52,6 +52,11 @@ class ListaEmpresasService{
         return $this->repository->sincronizar();
     }
 
+    public function actualizaAccesoMetadatos()
+    {
+        $this->repository->actualizaAccesoMetadatos();
+    }
+
     public function validaCuenta($id_empresa, $cuenta)
     {
 

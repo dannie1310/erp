@@ -27,7 +27,13 @@ class Empresa extends Model
         'Nombre',
         'AliasBDD',
         'SincronizacionPolizasCFDI',
-        "IdEmpresaContpaq"
+        "IdEmpresaContpaq",
+        "GuidDSL",
+        "con_acceso_other_metadata",
+        "con_acceso_other_content",
+        "con_acceso_document_content",
+        "con_acceso_document_metadata",
+        "con_acceso_ct"
     ];
 
     public $searchable = [

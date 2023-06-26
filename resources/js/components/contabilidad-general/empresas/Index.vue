@@ -7,6 +7,11 @@
                     <i class="fa fa-sync" v-else></i>
                     Sincronizar con Contpaq
                 </button>
+                <button @click="actualizaAccesoMetadatos"  class="btn btn-app btn-secondary float-right" title="Sincronizar Empresas con Contpaq" :disabled="verificando">
+                    <i class="fa fa-spin fa-spinner" v-if="verificando"></i>
+                    <i class="fa fa-network-wired" v-else></i>
+                    Verificar Acceso BD
+                </button>
             </div>
         </div>
         <div class="row">
@@ -61,6 +66,7 @@
                 search: '',
                 cargando: false,
                 sincronizando : false,
+                verificando : false,
             }
         },
 
@@ -95,7 +101,19 @@
                     }).finally(() => {
                         this.sincronizando = false;
                     });
-            }
+            },
+            actualizaAccesoMetadatos(){
+                this.sincronizando = true;
+                return this.$store.dispatch('contabilidadGeneral/empresa/actualizaAccesoMetadatos',
+                    {
+
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.sincronizando = false;
+                    });
+            },
         },
 
         computed: {
