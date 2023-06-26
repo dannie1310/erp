@@ -27,7 +27,13 @@ class Empresa extends Model
         'Nombre',
         'AliasBDD',
         'SincronizacionPolizasCFDI',
-        "IdEmpresaContpaq"
+        "IdEmpresaContpaq",
+        "GuidDSL",
+        "con_acceso_other_metadata",
+        "con_acceso_other_content",
+        "con_acceso_document_content",
+        "con_acceso_document_metadata",
+        "con_acceso_ct"
     ];
 
     public $searchable = [
@@ -112,6 +118,37 @@ class Empresa extends Model
         }
         return $ejercicios;
 
+    }
+
+    public function getEstadoAccesoAttribute()
+    {
+        if($this->con_acceso_ct == 1 &&
+        $this->con_acceso_other_metadata == 1 &&
+        $this->con_acceso_other_content == 1 &&
+        $this->con_acceso_document_content == 1 &&
+        $this->con_acceso_document_metadata == 1){
+            return 2;
+        } else if($this->con_acceso_ct == 0 &&
+            $this->con_acceso_other_metadata == 0 &&
+            $this->con_acceso_other_content == 0 &&
+            $this->con_acceso_document_content == 0 &&
+            $this->con_acceso_document_metadata == 0){
+            return 0;
+        } else { return 1;}
+    }
+
+    public function getEstadoAccesoTxtAttribute()
+    {
+        if($this->estado_acceso == 0)
+        {
+            return "Sin Acceso";
+        }else if($this->estado_acceso == 1)
+        {
+            return "Acceso Parcial";
+        }else if($this->estado_acceso == 2)
+        {
+            return "Acceso Total";
+        }
     }
 
     public function getPeriodosAttribute($ejercicio)

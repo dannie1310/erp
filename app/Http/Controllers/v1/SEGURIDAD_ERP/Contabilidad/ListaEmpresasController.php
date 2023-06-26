@@ -61,4 +61,15 @@ class ListaEmpresasController extends Controller
         $res = $this->service->sincronizar();
         return response()->json($res, 200);
     }
+
+    public function actualizaAccesoMetadatos(Request $request)
+    {
+        $this->service->actualizaAccesoMetadatos();
+        return response()->json([], 200);
+    }
+
+    public function descargarExcel()
+    {
+        return $this->service->descargarExcel();
+    }
 }

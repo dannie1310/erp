@@ -7,6 +7,14 @@
                     <i class="fa fa-sync" v-else></i>
                     Sincronizar con Contpaq
                 </button>
+                <button @click="actualizaAccesoMetadatos"  class="btn btn-app btn-secondary float-right" title="Sincronizar Empresas con Contpaq" :disabled="verificando">
+                    <i class="fa fa-spin fa-spinner" v-if="verificando"></i>
+                    <i class="fa fa-network-wired" v-else></i>
+                    Verificar Acceso BD
+                </button>
+                <button @click="descargar" type="button" class="btn btn-app btn-outline-success pull-right" :disabled="cargando" title="Descargar Balanza en Excel">
+                    <i class="fa fa-download"></i>Descargar Excel
+                </button>
             </div>
         </div>
         <div class="row">
@@ -48,6 +56,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Nombre', field: 'nombre', sortable: true },
                     { title: 'Alias', field: 'alias', sortable: true },
+                    { title: 'Con Acceso', field: 'acceso', tdClass:"center", sortable: false, tdComp: require('./partials/EstadoAcceso.vue').default },
                     { title: 'Visible', field: 'visible', sortable: true, tdComp: require('./partials/SwitchVisible').default },
                     { title: 'Editable', field: 'editable', sortable: true, tdComp: require('./partials/SwitchEditable').default },
                     { title: 'Histórica', field: 'historica', sortable: true, tdComp: require('./partials/SwitchHistorica').default },
@@ -61,6 +70,7 @@
                 search: '',
                 cargando: false,
                 sincronizando : false,
+                verificando : false,
             }
         },
 
@@ -95,6 +105,24 @@
                     }).finally(() => {
                         this.sincronizando = false;
                     });
+            },
+            actualizaAccesoMetadatos(){
+                this.sincronizando = true;
+                return this.$store.dispatch('contabilidadGeneral/empresa/actualizaAccesoMetadatos',
+                    {
+
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.sincronizando = false;
+                    });
+            },
+            descargar() {
+                return this.$store.dispatch('contabilidadGeneral/empresa/descargarExcel', {datos: this.datos})
+                    .then(() => {
+                        this.$emit('success')
+                    })
             }
         },
 
@@ -119,6 +147,7 @@
                         index: (i + 1) + self.query.offset,
                         nombre: empresa.nombre,
                         alias: empresa.alias,
+                        acceso: empresa.acceso,
                         /*visible: empresa.visible == 1?'SI':'NO',*/
                         visible: $.extend({},{id: empresa.id, visible: empresa.visible}),
                         /*editable: empresa.editable == 1?'SI':'NO',*/

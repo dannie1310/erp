@@ -9,11 +9,17 @@
 namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
+use App\Models\CTPQ\OtherContent\DocumentContent;
+use App\Models\CTPQ\OtherMetadata\Expediente;
+use App\Models\CTPQ\Parametro;
+use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDIPartida;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class ListaEmpresaRepository extends Repository implements RepositoryInterface
@@ -62,6 +68,64 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
         ];
 
     }
+    public function actualizaAccesoMetadatos()
+    {
+        $empresas_actuales = Empresa::where("Estatus","=",1)->get();
+        foreach($empresas_actuales as $empresa_actual) {
+            try {
+                DB::purge('cntpq');
+                Config::set('database.connections.cntpq.database', $empresa_actual->AliasBDD);
+                Poliza::first();
+                $empresa_actual->con_acceso_ct = 1;
+                $empresa_actual->save();
+            } catch (\Exception $e) {
+                $empresa_actual->con_acceso_ct = 0;
+                $empresa_actual->save();
+            }
+            if($empresa_actual->GuidDSL) {
+                try {
+                    DB::purge('cntpqom');
+                    Config::set('database.connections.cntpqom.database', 'other_' . $empresa_actual->GuidDSL . '_metadata');
+                    Expediente::first();
+                    $empresa_actual->con_acceso_other_metadata = 1;
+                    $empresa_actual->save();
+                } catch (\Exception $e) {
+                    $empresa_actual->con_acceso_other_metadata = 0;
+                    $empresa_actual->save();
+                }
+                try {
+                    DB::purge('cntpqoc');
+                    Config::set('database.connections.cntpqoc.database', 'other_' . $empresa_actual->GuidDSL . '_content');
+                    DocumentContent::first();
+                    $empresa_actual->con_acceso_other_content = 1;
+                    $empresa_actual->save();
+                } catch (\Exception $e) {
+                    $empresa_actual->con_acceso_other_content = 0;
+                    $empresa_actual->save();
+                }
+                try {
+                    DB::purge('cntpqdc');
+                    Config::set('database.connections.cntpqdc.database', 'document_' . $empresa_actual->GuidDSL . '_content');
+                    DocumentContent::first();
+                    $empresa_actual->con_acceso_document_content = 1;
+                    $empresa_actual->save();
+                } catch (\Exception $e) {
+                    $empresa_actual->con_acceso_document_content = 0;
+                    $empresa_actual->save();
+                }
+                try {
+                    DB::purge('cntpqdm');
+                    Config::set('database.connections.cntpqdm.database', 'document_' . $empresa_actual->GuidDSL . '_metadata');
+                    Comprobante::first();
+                    $empresa_actual->con_acceso_document_metadata = 1;
+                    $empresa_actual->save();
+                } catch (\Exception $e) {
+                    $empresa_actual->con_acceso_document_metadata = 0;
+                    $empresa_actual->save();
+                }
+            }
+        }
+    }
 
     private function registra($empresas_actuales,$empresas_contpaq){
         $alias_actuales = array_keys($empresas_actuales);
@@ -74,7 +138,8 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
             Empresa::create([
                 "Nombre"=>$empresas_contpaq[$alias_bdd],
                 "AliasBDD"=>$alias_bdd,
-                "IdEmpresaContpaq"=>$empresa_contpaq->Id
+                "IdEmpresaContpaq"=>$empresa_contpaq->Id,
+                "GuidDSL"=>$empresa_contpaq->GuidDSL,
             ]);
             $registros++;
         }
@@ -116,6 +181,7 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
                 if($empresa_actual->Nombre != $empresas_contpaq[$alias_bdd] || $empresa_actual->IdEmpresaContpaq != $empresa_contpaq->Id){
                     $empresa_actual->Nombre = $empresas_contpaq[$alias_bdd];
                     $empresa_actual->IdEmpresaContpaq = $empresa_contpaq->Id;
+                    $empresa_actual->GuidDSL = $empresa_contpaq->GuidDSL;
                     $empresa_actual->save();
                     $actualizaciones++;
                 }
