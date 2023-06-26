@@ -137,6 +137,20 @@ class Empresa extends Model
         } else { return 1;}
     }
 
+    public function getEstadoAccesoTxtAttribute()
+    {
+        if($this->estado_acceso == 0)
+        {
+            return "Sin Acceso";
+        }else if($this->estado_acceso == 1)
+        {
+            return "Acceso Parcial";
+        }else if($this->estado_acceso == 2)
+        {
+            return "Acceso Total";
+        }
+    }
+
     public function getPeriodosAttribute($ejercicio)
     {
         $ejercicios = [];

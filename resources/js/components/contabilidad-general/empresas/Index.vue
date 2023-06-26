@@ -12,6 +12,9 @@
                     <i class="fa fa-network-wired" v-else></i>
                     Verificar Acceso BD
                 </button>
+                <button @click="descargar" type="button" class="btn btn-app btn-outline-success pull-right" :disabled="cargando" title="Descargar Balanza en Excel">
+                    <i class="fa fa-download"></i>Descargar Excel
+                </button>
             </div>
         </div>
         <div class="row">
@@ -115,6 +118,12 @@
                         this.sincronizando = false;
                     });
             },
+            descargar() {
+                return this.$store.dispatch('contabilidadGeneral/empresa/descargarExcel', {datos: this.datos})
+                    .then(() => {
+                        this.$emit('success')
+                    })
+            }
         },
 
         computed: {
