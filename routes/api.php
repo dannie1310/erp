@@ -343,6 +343,7 @@ $api->version('v1', function ($api) {
             $api->post('busquedaExcel', 'App\Http\Controllers\v1\CTPQ\PolizaController@busquedaExcel');
             $api->get('descargar-zip', 'App\Http\Controllers\v1\CTPQ\PolizaController@getZip');
             $api->post('actualizar-cfdi', 'App\Http\Controllers\v1\CTPQ\PolizaController@getAsociacionCFDI');
+            $api->post('{id}/lista-cfdi-asociar', 'App\Http\Controllers\v1\CTPQ\PolizaController@listarPosiblesCFDI')->where(['id' => '[0-9]+']);
         });
         $api->group(['prefix' => 'poliza-cfdi'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@index');

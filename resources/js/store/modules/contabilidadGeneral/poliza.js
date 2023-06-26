@@ -59,6 +59,19 @@ export default {
             });
         },
 
+        findCfdi(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.post(URI + payload.id + '/lista-cfdi-asociar', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+
         descargaZip(context, payload){
             let filtros = 0;
             var search = 'id_empresa=' + payload.params.id_empresa + '&caida=' + payload.tipo + '&';

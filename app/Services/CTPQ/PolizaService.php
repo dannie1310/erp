@@ -392,4 +392,9 @@ class PolizaService
         }
         return $solicitud;
     }
+
+    public function listarPosiblesCFDI($parametros)
+    {
+        return $this->repository->listarPosiblesCFDI($parametros["params"]["id_empresa"], $parametros["params"]["id_poliza"]);
+    }
 }

@@ -87,4 +87,9 @@ class PolizaController extends Controller
         $respuesta =$this->service->asociarCFDI();
         return response()->json($respuesta, 200);
     }
+
+    public function listarPosiblesCFDI(Request $request)
+    {
+        return $this->service->listarPosiblesCFDI($request->all());
+    }
 }
