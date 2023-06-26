@@ -53,6 +53,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Nombre', field: 'nombre', sortable: true },
                     { title: 'Alias', field: 'alias', sortable: true },
+                    { title: 'Con Acceso', field: 'acceso', tdClass:"center", sortable: false, tdComp: require('./partials/EstadoAcceso.vue').default },
                     { title: 'Visible', field: 'visible', sortable: true, tdComp: require('./partials/SwitchVisible').default },
                     { title: 'Editable', field: 'editable', sortable: true, tdComp: require('./partials/SwitchEditable').default },
                     { title: 'Histórica', field: 'historica', sortable: true, tdComp: require('./partials/SwitchHistorica').default },
@@ -137,6 +138,7 @@
                         index: (i + 1) + self.query.offset,
                         nombre: empresa.nombre,
                         alias: empresa.alias,
+                        acceso: empresa.acceso,
                         /*visible: empresa.visible == 1?'SI':'NO',*/
                         visible: $.extend({},{id: empresa.id, visible: empresa.visible}),
                         /*editable: empresa.editable == 1?'SI':'NO',*/

@@ -120,6 +120,23 @@ class Empresa extends Model
 
     }
 
+    public function getEstadoAccesoAttribute()
+    {
+        if($this->con_acceso_ct == 1 &&
+        $this->con_acceso_other_metadata == 1 &&
+        $this->con_acceso_other_content == 1 &&
+        $this->con_acceso_document_content == 1 &&
+        $this->con_acceso_document_metadata == 1){
+            return 2;
+        } else if($this->con_acceso_ct == 0 &&
+            $this->con_acceso_other_metadata == 0 &&
+            $this->con_acceso_other_content == 0 &&
+            $this->con_acceso_document_content == 0 &&
+            $this->con_acceso_document_metadata == 0){
+            return 0;
+        } else { return 1;}
+    }
+
     public function getPeriodosAttribute($ejercicio)
     {
         $ejercicios = [];
