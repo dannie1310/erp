@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-12">
                 <button @click="actualizarPolizas"  class="btn btn-app btn-secondary float-right" title="Actualizar Relación con Pólizas">
-                    <i class="fa fa-sync"></i> Actualizar Pólizas
+                    <i class="fa fa-sync"></i> Actualizar Pólizas vs CFDI
                 </button>
                 <polizas-egreso-sin-c-f-d-i-xls v-bind:query="query"></polizas-egreso-sin-c-f-d-i-xls>
             </div>
