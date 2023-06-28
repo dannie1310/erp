@@ -82,14 +82,15 @@ import PDFPoliza from "./partials/PDFPoliza";
 import ListaCfdiAsociar from "./ListaCFDI.vue";
 
 export default {
-    name: "poliza-show",
+    name: "poliza-asocia-cfdi",
     props : ['id', 'id_empresa'],
     components: {ListaCfdiAsociar, PDFPoliza, PolizaPartialShow, CFDI},
     data() {
         return {
             cfdis : {},
             cargando :false,
-            cfdis_pendientes : [],
+            cfdi_store : [],
+
         }
     },
     mounted() {
@@ -118,27 +119,44 @@ export default {
         asociar()
         {
             var item_a_guardar = 0;
-
             let _self = this;
-            this.cfdis_pendientes.forEach(function(element) {
-                if(element.seleccionado == 1)
+
+            _self.cfdi_store = [];
+
+            this.cfdis.forEach(function(element) {
+                if(element.seleccionado === true || element.seleccionado === 1)
                 {
                     item_a_guardar = item_a_guardar + 1;
-                    _self.cfdi_store.push(element.id_poliza_sao);
+                    _self.cfdi_store.push(element.id);
                 }
             });
             if(item_a_guardar > 0)
             {
-                this.datos_store["cfdi"] = _self.cfdi_store;
-                return this.$store.dispatch('contabilidad/poliza/asociarCFDI',
-                    this.datos_store
+                return this.$store.dispatch('contabilidadGeneral/poliza/asociarCFDI',
+                    {"cfdi":_self.cfdi_store,
+                        "id_poliza":_self.id,
+                        "id_empresa":_self.id_empresa}
                 ).then((data) => {
+                    this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
                     this.$emit('success')
                 }).finally(() => {
-                    this.getPolizasPorAsociar();
+                    //this.getPolizasPorAsociar();
                 });
             }
         }
+    },
+    watch: {
+        checkbox_toggle(value){
+            if(value == 1){
+                this.cfdis.forEach(function(element) {
+                    element.seleccionado = 1;
+                });
+            } else {
+                this.cfdis.forEach(function(element) {
+                    element.seleccionado = 0;
+                });
+            }
+        },
     },
 
 }

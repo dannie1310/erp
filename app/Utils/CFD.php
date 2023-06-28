@@ -20,10 +20,10 @@ use Webpatser\Uuid\Uuid;
 
 class CFD
 {
-    protected $arreglo_factura;
-    protected $log;
-    protected $archivo_xml;
-    protected $logs;
+    public $arreglo_factura;
+    public $log;
+    public $archivo_xml;
+    public $logs;
 
     public function __construct($archivo_xml)
     {
@@ -618,7 +618,7 @@ class CFD
         $xml_array = $this->arreglo_factura;
         $this->logs = [];
 
-        if(in_array($this->arreglo_factura['tipo_comprobante'], ["I", "E"])) {
+        if(in_array($this->arreglo_factura['tipo_comprobante'], ["I", "E", "P"])) {
 
             $xml_split = explode('base64,', $xml_fuente);
             $xml = base64_decode($xml_split[1]);

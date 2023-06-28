@@ -92,4 +92,10 @@ class PolizaController extends Controller
     {
         return $this->service->listarPosiblesCFDI($request->all());
     }
+
+    public function asociarCFDI(Request $request)
+    {
+        $item = $this->service->setAsociarCFDI($request->all());
+        return $this->respondWithItem($item);
+    }
 }

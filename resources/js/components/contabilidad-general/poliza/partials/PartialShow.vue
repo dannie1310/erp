@@ -116,8 +116,7 @@ export default {
     methods: {
         find()
         {
-            this.cargando = true;
-            if(this.id > 0 && this.id_empresa > 0) {
+            if(this.poliza == null){
                 this.cargando = true;
                 this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
                 return this.$store.dispatch('contabilidadGeneral/poliza/find', {
@@ -132,7 +131,22 @@ export default {
                     this.cargando = false;
                 });
             }
-            else {
+            else if(this.id > 0 && this.id_empresa > 0 && this.id != this.poliza.id) {
+                this.cargando = true;
+                this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', null);
+                return this.$store.dispatch('contabilidadGeneral/poliza/find', {
+                    id: this.id,
+                    params: {
+                        include: ['movimientos_poliza.asociacion_cfdi', 'tipo', 'asociacion_cfdi'],
+                        id_empresa: this.id_empresa
+                    }
+                }).then(data => {
+                    this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+                }).finally(() => {
+                    this.cargando = false;
+                });
+            }
+            else if(this.poliza_parametro != null){
                 this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', this.poliza_parametro);
                 this.cargando = false;
             }
@@ -141,7 +155,7 @@ export default {
     computed: {
         poliza(){
             return this.$store.getters['contabilidadGeneral/poliza/currentPoliza'];
-        }
+        },
     },
 }
 </script>

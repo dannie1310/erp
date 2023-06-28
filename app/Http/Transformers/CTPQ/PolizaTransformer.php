@@ -28,6 +28,8 @@ class PolizaTransformer extends TransformerAbstract
         'asociacion_cfdi'
     ];
 
+    protected $defaultIncludes = ["asociacion_cfdi", "movimientos_poliza"];
+
     public function transform(Poliza $model) {
         return [
             'id' => (int) $model->getKey(),
@@ -44,8 +46,8 @@ class PolizaTransformer extends TransformerAbstract
             'tipo' => (string) $model->tipo_poliza->Nombre,
             'monto' => (string) $model->Cargos,
             'monto_format' => (string) $model->cargos_format,
-            'empresa' => $model->empresa,
-            'base_datos' => $model->base_datos,
+            //'empresa' => $model->empresa,
+            //'base_datos' => $model->base_datos,
             'usuario_nombre'=>$model->usuario->Nombre,
             'usuario_codigo'=>$model->usuario->Codigo,
             'cantidad_cfdi'=>$model->asociacionCFDI->count() > 0 ? $model->asociacionCFDI->count() : '-'

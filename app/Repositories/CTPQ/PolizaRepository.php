@@ -113,6 +113,7 @@ class PolizaRepository extends Repository implements RepositoryInterface
 
         foreach ($cfdis as $cfdi)
         {
+            $cfdi->seleccionado = false;
             if(in_array($cfdi->total, $importes) || in_array($cfdi->importe_iva, $importes))
             {
                 $cfdi->grado_coincidencia += 1;
@@ -127,5 +128,10 @@ class PolizaRepository extends Repository implements RepositoryInterface
 
         return $cfdis;
 
+    }
+
+    public function asociarCFDI($data)
+    {
+        return $this->model->asociarCFDI($data);
     }
 }
