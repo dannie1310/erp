@@ -415,6 +415,17 @@ class CFDSAT extends Model
         }
     }
 
+    public function getTipoDescripcionAttribute()
+    {
+        return $this->tipo_comprobante === 'I' ? 'Ingreso' : ($this->tipo_comprobante == 'E' ? 'Egreso' : 'Pago');
+    }
+
+    public function getFechaEmisionFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/M/Y");
+    }
+
     public function registrar($data)
     {
         $factura = null;

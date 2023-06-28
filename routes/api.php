@@ -312,6 +312,12 @@ $api->version('v1', function ($api) {
      * CONTABILIDAD GENERAL
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad-general'], function ($api) {
+
+        $api->group(['prefix' => 'contabilidad-electronica'], function ($api) {
+            $api->post('xml', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@getDatosXML');
+            $api->post('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@descargar');
+        });
+
         $api->group(['prefix' => 'cuenta'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CTPQ\CuentaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CTPQ\CuentaController@paginate');
@@ -342,6 +348,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@show')->where(['id' => '[0-9]+']);
+            $api->get('/egresos-sin-cfdi-xls', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@descargarXLS');
         });
         $api->group(['prefix' => 'proveedor-sat'], function ($api) {
             $api->get('buscarProveedoresSat', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ProveedorSATController@buscarProveedorAsociar');
@@ -381,6 +388,9 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/consolidar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@consolidar')->where(['id' => '[0-9]+']);
             $api->get('/pdfDiferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@pdfDiferencias');
             $api->post('sincronizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@sincronizar');
+            $api->post('actualiza-acceso-metadatos', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@actualizaAccesoMetadatos');
+            $api->get('descargar-excel', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@descargarExcel');
+
         });
         $api->group(['prefix' => 'empresa-sat'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@index');

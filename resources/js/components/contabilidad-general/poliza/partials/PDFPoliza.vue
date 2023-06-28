@@ -1,8 +1,12 @@
 <template>
     <span>
         <span v-if="txt!='' && (txt_btn =='' || txt_btn == undefined)" @click="init" style="cursor: pointer; text-decoration: underline; color: #003eff" >{{txt}}</span>
-        <button @click="init" type="button" class="btn btn-outline-success" :class="{'btn-sm': txt_btn==''}" title="PDF Póliza" v-else>
+        <button @click="init" type="button" class="btn btn-outline-success" :class="{'btn-sm': txt_btn==''}" title="PDF Póliza"
+                v-if="(txt=='' || txt == undefined) && (txt_btn !='' && txt_btn != undefined)">
             <i class="fa fa-file-pdf-o"></i>{{txt_btn}}
+        </button>
+        <button @click="init" type="button" class="btn btn-outline-success" :class="{'btn-sm': txt_btn==''}" title="PDF Póliza" v-else>
+            <i class="fa fa-file-pdf-o"></i>
         </button>
 
         <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">

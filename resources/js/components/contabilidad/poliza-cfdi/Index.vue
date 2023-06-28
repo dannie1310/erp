@@ -141,7 +141,7 @@
                         cfdi: poliza.asociacion_cfdi.data,
                         buttons: $.extend({}, {
                             id: poliza.id_poliza_contpaq,
-                            id_empresa: poliza.empresa.id_empresa_contpaq,
+                            id_empresa: poliza.empresa.id,
                         })
 
                     }));

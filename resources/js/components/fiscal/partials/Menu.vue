@@ -57,7 +57,6 @@
                 </a>
                 <ul class="nav nav-treeview">
 
-
                     <li class="nav-item"  v-if="$root.can('consultar_cfdi',true)">
                         <router-link :to="{name: 'informe-rep-faltantes'}" class="nav-link" :class="{active: this.$route.name == 'informe-rep-faltantes'}">
                             <i class="fa fa-files-o nav-icon"></i>
@@ -72,7 +71,22 @@
                         </router-link>
                     </li>
 
+                </ul>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_cfdi',true)">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="fa fa-file-invoice nav-icon"></i>
+                    <p>Pólizas vs CFDI</p>
+                    <i class="right fa fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
 
+                    <li class="nav-item"  v-if="$root.can('consultar_cfdi',true)">
+                        <router-link :to="{name: 'polizas-egreso-sin-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'polizas-egreso-sin-cfdi'}">
+                            <i class="fa fa-files-o nav-icon"></i>
+                            <p>Pólizas de Egreso sin CFDI</p>
+                        </router-link>
+                    </li>
                 </ul>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_informe_listado_efos_vs_cfdi_recibidos',true)">

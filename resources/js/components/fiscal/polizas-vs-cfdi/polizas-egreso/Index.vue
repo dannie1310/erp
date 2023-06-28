@@ -1,0 +1,215 @@
+<template>
+    <span>
+        <div class="row">
+            <div class="col-12">
+                <button @click="actualizarPolizas"  class="btn btn-app btn-secondary float-right" title="Actualizar Relación con Pólizas">
+                    <i class="fa fa-sync"></i> Actualizar Pólizas vs CFDI
+                </button>
+                <polizas-egreso-sin-c-f-d-i-xls v-bind:query="query"></polizas-egreso-sin-c-f-d-i-xls>
+            </div>
+                <!-- /.col -->
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="form-row">
+                            <div class="col">
+                                <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="$data.daterange"/>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 13px'" />
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+    </span>
+
+</template>
+
+<script>
+    import DateRangePicker from "../../../globals/DateRangePicker.vue";
+    import PolizasEgresoSinCFDIXls from "./partials/PolizasEgresoSinCFDIXls.vue";
+    export default {
+        name: "polizas-egreso-cfdi-index",
+        components: {PolizasEgresoSinCFDIXls, DateRangePicker},
+        data() {
+            return {
+                HeaderSettings: false,
+                columns: [
+                    { title: '#', field: 'index', sortable: false },
+                    { title: 'BD CTPQ', field: 'base_datos_ctpq', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Empresa', field: 'empresa_ctpq', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Ejercicio', field: 'ejercicio', thClass: 'th_c70', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Periodo', field: 'periodo', thClass: 'th_c70', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Tipo Póliza', field: 'tipo_poliza', thClass: 'th_c70', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Folio Póliza', field: 'folio_poliza', thClass: 'th_c70', thComp: require('../../../globals/th-Filter.vue').default},
+                    { title: 'Fecha Póliza', field: 'fecha', thClass: 'th_c70', thComp: require('../../../globals/th-Date.vue').default, sortable: true},
+                    { title: 'Monto Póliza', field: 'monto', thClass: 'th_c100', tdClass: 'td_money',thComp: require('../../../globals/th-Filter.vue').default, sortable: true},
+                    { title: '# CFDI Asociados', field: 'cfdi', thClass: 'th_c70', tdComp: require('./partials/ListaCFDI.vue').default },
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c70', tdComp: require('./partials/ActionButtons.vue').default},
+                ],
+                data: [],
+                total: 0,
+                query: {
+                    scope:"deEgresos",
+                    include: ['empresa','asociacion_cfdi.cfdi'],
+                    sort: 'fecha',  order: 'desc'
+                },
+                search: '',
+                cargando: false,
+                sincronizando : false,
+                ver_pendientes: false,
+                ver_asociados: false,
+                daterange: null,
+
+            }
+        },
+
+        mounted() {
+            /*
+            this.paginate()
+                .finally(() => {
+
+                })*/
+        },
+
+        methods: {
+            paginate() {
+                this.$Progress.start();
+                this.cargando = true;
+                return this.$store.dispatch('contabilidadGeneral/poliza-cfdi/paginate', { params: this.query })
+                    .then(data => {
+                        this.$store.commit('contabilidadGeneral/poliza-cfdi/SET_POLIZAS', data.data);
+                        this.$store.commit('contabilidadGeneral/poliza-cfdi/SET_META', data.meta);
+                })
+                .finally(() => {
+                    this.cargando = false;
+                    this.$Progress.finish();
+                })
+            },
+            actualizarPolizas(){
+                return this.$store.dispatch('contabilidadGeneral/poliza/actualizaCFDI',
+                    {
+                        params: this.query,
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.descargando = false;
+                    });
+            },
+        },
+
+        computed: {
+            polizas(){
+                return this.$store.getters['contabilidadGeneral/poliza-cfdi/polizas'];
+            },
+            meta(){
+                return this.$store.getters['contabilidadGeneral/poliza-cfdi/meta'];
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
+        },
+
+        watch: {
+            polizas: {
+                handler(polizas) {
+                    let self = this
+                    self.$data.data = []
+                    self.$data.data = polizas.map((poliza, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        base_datos_ctpq: poliza.base_datos,
+                        empresa_ctpq: poliza.empresa.nombre,
+                        ejercicio: poliza.ejercicio,
+                        periodo: poliza.periodo,
+                        tipo_poliza: poliza.tipo,
+                        folio_poliza: poliza.folio,
+                        fecha: poliza.fecha_format,
+                        monto: poliza.monto_format,
+                        cfdi: poliza.asociacion_cfdi.data,
+                        buttons: $.extend({}, {
+                            id: poliza.id_poliza_contpaq,
+                            id_empresa: poliza.empresa.id,
+                        })
+
+                    }));
+                },
+                deep: true
+            },
+            meta: {
+                handler (meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler () {
+                    this.paginate()
+                },
+                deep: true
+            },
+            'daterange.startDate': {
+                handler(sd) {
+                    this.query.startDate = sd.format('YYYY-MM-DD')
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+                deep: true
+            },
+            'daterange.endDate': {
+                handler(ed) {
+                    this.query.endDate = ed.format('YYYY-MM-DD')
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+                deep: true
+            },
+            ver_pendientes:{
+                handler(vp) {
+                    this.query.solo_pendientes = vp
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+            },
+            ver_asociados:{
+                handler(va) {
+                    this.query.solo_asociados = va
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
+        }
+    }
+</script>
+
+<style>
+
+</style>

@@ -56,4 +56,9 @@ class PolizaCFDIRequeridoController extends Controller
         return $this->traitIndex($request);
     }
 
+    public function descargarXLS(Request $request)
+    {
+        return $this->service->descargaXLS($request->all());
+    }
+
 }

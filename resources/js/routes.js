@@ -2510,6 +2510,19 @@ export const routes = [
                                     general: true
                                 }
                             },
+                            {
+                                path: ':id_empresa/:id',
+                                name: 'poliza-cfdi-show',
+                                props: true,
+                                component: require('./components/contabilidad/poliza-cfdi/Show').default,
+                                meta: {
+                                    title: 'Consultar Póliza',
+                                    breadcrumb: {parent: 'poliza-cfdi-proyecto', name: 'CONSULTAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_poliza',
+                                    general: true
+                                }
+                            },
                         ]
                     },
                     {
@@ -3540,6 +3553,19 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id_empresa/:id',
+                        name: 'poliza-contpaq-cfdi-show',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza-cfdi/Show').default,
+                        meta: {
+                            title: 'Consultar Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'CONSULTAR'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        }
+                    },
                 ]
             },
             {
@@ -3809,7 +3835,25 @@ export const routes = [
                         }
                     }
                 ]
-            }
+            },
+            {
+                path: 'contabilidad-electronica',
+                component: require('./components/contabilidad-general/contabilidad-electronica/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"contabilidad-electronica",
+                        component: require('./components/contabilidad-general/contabilidad-electronica/Index.vue').default,
+                        meta: {
+                            title: 'Lectura de Balanza XML',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'LECTURA DE BALANZA XML'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_contabilidad_electronica',
+                            general: true
+                        }
+                    }
+                ]
+            },
         ]
     },
     {
@@ -4253,6 +4297,37 @@ export const routes = [
                                     breadcrumb: {name: 'Enviar Comunicado', parent: 'informe-rep-faltantes-proveedor'},
                                     middleware: [auth, permission],
                                     permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                                    general: true
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'polizas-vs-cfdi',
+                        component: require('./components/fiscal/cfd/rep-pendientes/Layout.vue').default,
+                        children: [
+                            {
+                                path: 'polizas-egreso-sin-cfdi',
+                                name: 'polizas-egreso-sin-cfdi',
+                                component: require('./components/fiscal/polizas-vs-cfdi/polizas-egreso/Index').default,
+                                meta: {
+                                    title: 'Lista de Pólizas de Egreso Sin CFDI',
+                                    breadcrumb: {name: 'PÓLIZAS EGRESO SIN CFDI', parent: 'fiscal'},
+                                    middleware: [auth, permission],
+                                    permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id_empresa/:id',
+                                name: 'show-poliza-egreso-sin-cfdi',
+                                props: true,
+                                component: require('./components/fiscal/polizas-vs-cfdi/polizas-egreso/Show').default,
+                                meta: {
+                                    title: 'Póliza',
+                                    breadcrumb: {parent: 'polizas-egreso-sin-cfdi', name: 'CONSULTAR PÓLIZA'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_informe_cfd_x_empresa_x_mes',
                                     general: true
                                 }
                             },

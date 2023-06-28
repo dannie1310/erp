@@ -8,6 +8,8 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use DateTime;
 use Exception;
 use DateTimeZone;
@@ -1225,5 +1227,30 @@ class Pago extends Transaccion
         }else{
             return number_format($saldo,2,'.',',');
         }
+    }
+
+    public function obtenerFacturas()
+    {
+        $ordenes = $this->ordenesPago;
+        $id_facturas = [];
+
+        if($ordenes) {
+            foreach ($ordenes as $key => $orden) {
+                if($id_facturas == '')
+                {
+                    $id_facturas[$key] = $orden->id_referente;
+                }else {
+                    $id_facturas[$key] = $orden->id_referente;
+
+                }
+            }
+        }
+        return $id_facturas;
+    }
+
+    public function facturasRepositorio()
+    {
+        return FacturaRepositorio::whereIn('id_transaccion', $this->obtenerFacturas())
+            ->where('id_proyecto', '=', Proyecto::where('base_datos', '=', Context::getDatabase())->first()->getKey())->get();
     }
 }

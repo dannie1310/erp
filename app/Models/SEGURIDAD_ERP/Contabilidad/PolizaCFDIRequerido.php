@@ -30,7 +30,10 @@ class PolizaCFDIRequerido extends Model
         'folio',
         "solicitud_asociacion_registro",
         "solicitud_asociacion_cancelacion",
-        "estatus"
+        "estatus",
+        'concepto',
+        'usuario_codigo',
+        'usuario_nombre'
     ];
     public $timestamps = false;
 
@@ -55,5 +58,14 @@ class PolizaCFDIRequerido extends Model
         $id_proyecto = Proyecto::where("base_datos","=",Context::getDatabase())->first()->id;
         $base_datos_contpaq = Obra::find(Context::getIdObra())->datosContables->BDContPaq;
         return $query->where("base_datos_contpaq","=", $base_datos_contpaq);
+    }
+
+    public function scopeDeEgresos($query){
+        return $query->where("tipo","=",'Egresos');
+    }
+
+    public function getMontoFormatAttribute()
+    {
+        return number_format($this->monto,2);
     }
 }

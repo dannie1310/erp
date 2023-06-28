@@ -1,6 +1,8 @@
 <template>
     <div class="btn-group">
-        <Show  v-bind:id="value.id" v-bind:id_empresa="value.id_empresa" />
+        <router-link  :to="{ name: 'poliza-contpaq-cfdi-show', params: {id: value.id, id_empresa: value.id_empresa}}" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar">
+            <i class="fa fa-eye"></i>
+        </router-link>
         <PDFPoliza v-bind:id="value.id" v-bind:id_empresa="value.id_empresa"></PDFPoliza>
     </div>
 </template>

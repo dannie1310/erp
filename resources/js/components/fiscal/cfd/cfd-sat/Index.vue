@@ -9,7 +9,7 @@
                     <i class="fa fa-download"></i> Descargar
                 </button>
                 <button @click="actualizarPolizas"  class="btn btn-app btn-secondary float-right" title="Actualizar Relación con Pólizas">
-                    <i class="fa fa-sync"></i> Actualizar Pólizas
+                    <i class="fa fa-sync"></i> Actualizar Pólizas vs CFDI
                 </button>
             </div>
         </div>
