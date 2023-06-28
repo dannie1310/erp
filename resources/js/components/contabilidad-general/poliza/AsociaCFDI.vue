@@ -30,7 +30,7 @@
                     </thead>
                     <tbody>
                         <tr v-for="(cfdi, i) in cfdis" :style="cfdi.grado_coincidencia ==3?`background-color : lightgreen`:``">
-                            <td bgcolor="">{{i +1}}</td>
+                            <td>{{parseInt(i)+1}}</td>
                             <td>{{cfdi.tipo_comprobante}}</td>
                             <td>{{cfdi.fecha_cfdi}}</td>
                             <td>{{cfdi.razon_social}}</td>

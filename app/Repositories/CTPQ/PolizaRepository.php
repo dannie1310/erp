@@ -84,6 +84,9 @@ class PolizaRepository extends Repository implements RepositoryInterface
 
         $poliza = Poliza::find($id_poliza);
 
+        $uuid_cfdi_asociados = $poliza->asociacionCFDI->pluck("UUID")
+        ->toArray();
+
         $id_cuentas = PolizaMovimiento::where("IdPoliza","=",$poliza->Id)
             ->get()
             ->pluck("IdCuenta")
@@ -124,9 +127,13 @@ class PolizaRepository extends Repository implements RepositoryInterface
             }
         }
 
-       $cfdis->sortByDesc("grado_coincidencia");
+        $nuevos_cfdi = $cfdis->filter(function ($item) use($uuid_cfdi_asociados){
+            if(!in_array($item->uuid,$uuid_cfdi_asociados)){
+                return $item;
+            }
+        });
 
-        return $cfdis;
+        return $nuevos_cfdi;
 
     }
 
