@@ -25,10 +25,11 @@ class PolizaTransformer extends TransformerAbstract
         'movimientos_poliza',
         'incidentes_activos',
         'tipo',
-        'asociacion_cfdi'
+        'asociacion_cfdi',
+        'posibles_cfdi'
     ];
 
-    protected $defaultIncludes = ["asociacion_cfdi", "movimientos_poliza"];
+    protected $defaultIncludes = ["asociacion_cfdi", "movimientos_poliza",'posibles_cfdi'];
 
     public function transform(Poliza $model) {
         return [
@@ -46,8 +47,8 @@ class PolizaTransformer extends TransformerAbstract
             'tipo' => (string) $model->tipo_poliza->Nombre,
             'monto' => (string) $model->Cargos,
             'monto_format' => (string) $model->cargos_format,
-            //'empresa' => $model->empresa,
-            //'base_datos' => $model->base_datos,
+            'empresa' => $model->empresa,
+            'base_datos' => $model->base_datos,
             'usuario_nombre'=>$model->usuario->Nombre,
             'usuario_codigo'=>$model->usuario->Codigo,
             'cantidad_cfdi'=>$model->asociacionCFDI->count() > 0 ? $model->asociacionCFDI->count() : '-'
@@ -93,6 +94,15 @@ class PolizaTransformer extends TransformerAbstract
         if($items = $poliza->asociacionCFDI)
         {
             return $this->collection($items, new AsocCFDITransformer);
+        }
+        return null;
+    }
+
+    public function includePosiblesCFDI(Poliza $poliza)
+    {
+        if($items = $poliza->posibles_cfdi)
+        {
+            return $this->collection($items, new PolizaPosiblesCFDITransformer);
         }
         return null;
     }

@@ -73,7 +73,8 @@ class PolizaRepository extends Repository implements RepositoryInterface
 
     public function listarPosiblesCFDI($id_empresa, $id_poliza)
     {
-        $empresa = EmpresaERP::find($id_empresa);
+        return $this->model->posibles_cfdi;
+        /*$empresa = EmpresaERP::find($id_empresa);
         $id_empresa_contpaq = $empresa->IdEmpresaContpaq;
 
         if($empresa)
@@ -134,6 +135,7 @@ class PolizaRepository extends Repository implements RepositoryInterface
         });
 
         return $nuevos_cfdi;
+        */
 
     }
 

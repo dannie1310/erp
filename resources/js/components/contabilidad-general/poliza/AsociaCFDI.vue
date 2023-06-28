@@ -8,7 +8,7 @@
                         <br>
                         <div class="row" v-if="!cargando">
             <hr>
-            <div class="col-md-12 table-responsive">
+            <div class="col-md-12 table-responsive" v-if="poliza">
                 <strong>
                     Lista de posibles CFDI
                 </strong>
@@ -29,7 +29,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(cfdi, i) in cfdis" :style="cfdi.grado_coincidencia ==3?`background-color : lightgreen`:``">
+                        <tr v-for="(cfdi, i) in poliza.posibles_cfdi.data" :style="cfdi.grado_coincidencia ==3?`background-color : lightgreen`:``">
                             <td>{{parseInt(i)+1}}</td>
                             <td>{{cfdi.tipo_comprobante}}</td>
                             <td>{{cfdi.fecha_cfdi}}</td>
@@ -158,7 +158,11 @@ export default {
             }
         },
     },
-
+    computed: {
+        poliza(){
+            return this.$store.getters['contabilidadGeneral/poliza/currentPoliza'];
+        },
+    },
 }
 </script>
 <style scoped>

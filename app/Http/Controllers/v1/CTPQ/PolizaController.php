@@ -11,7 +11,10 @@ namespace App\Http\Controllers\v1\CTPQ;
 
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CTPQ\PolizaTransformer;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Services\CTPQ\PolizaService;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
@@ -90,6 +93,12 @@ class PolizaController extends Controller
 
     public function listarPosiblesCFDI(Request $request)
     {
+        $empresa = Empresa::find($request->params["id_empresa"]);
+        if($empresa)
+        {
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+        }
         return $this->service->listarPosiblesCFDI($request->all());
     }
 

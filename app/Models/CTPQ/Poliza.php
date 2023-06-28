@@ -7,6 +7,8 @@ use App\Models\CTPQ\OtherMetadata\DocApp;
 use App\Models\CTPQ\OtherMetadata\Documento;
 use App\Models\CTPQ\OtherMetadata\Expediente;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CuentaContpaqProvedorSat;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa as EmpresaERP;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
@@ -18,7 +20,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Support\Facades\Config;
 use App\Models\CTPQ\DocumentMetadata\Comprobante;
-use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 
 class Poliza extends Model
 {
@@ -831,4 +832,61 @@ class Poliza extends Model
         return $poliza;
     }
 
+    public function getPosiblesCFDIAttribute()
+    {
+        $id_empresa_contpaq = Empresa::where("AliasBDD","=",Config::get('database.connections.cntpq.database'))
+            ->pluck("Id")->first();
+
+        $poliza = $this;
+
+        $uuid_cfdi_asociados = $poliza->asociacionCFDI->pluck("UUID")
+            ->toArray();
+
+        $id_cuentas = $this->movimientos
+            ->pluck("IdCuenta")
+            ->toArray();
+
+        $id_proveedor_sat = CuentaContpaqProvedorSat::whereIn("id_cuenta_contpaq", $id_cuentas)
+            ->where("id_empresa_contpaq","=",$id_empresa_contpaq)
+            ->get()
+            ->pluck("id_proveedor_sat")
+            ->toArray();
+
+        $importes = PolizaMovimiento::where("IdPoliza","=",$poliza->Id)
+            ->get()
+            ->pluck("Importe")->toArray();
+
+        $cfdis = CFDSAT::
+        join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
+            ->where("cancelado","=",0)
+            ->whereIn("id_proveedor_sat",$id_proveedor_sat)
+            ->orWhereIn("total",$importes)
+            ->orWhereIn("importe_iva",$importes)
+            ->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
+            ,cfd_sat.serie, cfd_sat.folio, proveedores_sat.rfc, proveedores_sat.razon_social
+            , FORMAT(cfd_sat.fecha,'dd-MM-yyyy') as fecha_cfdi, 1 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
+            ->orderBy("cfd_sat.total")
+            ->get();
+
+        foreach ($cfdis as $cfdi)
+        {
+            $cfdi->seleccionado = false;
+            if(in_array($cfdi->total, $importes) || in_array($cfdi->importe_iva, $importes))
+            {
+                $cfdi->grado_coincidencia += 1;
+            }
+            if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
+            {
+                $cfdi->grado_coincidencia += 1;
+            }
+        }
+
+        $nuevos_cfdi = $cfdis->filter(function ($item) use($uuid_cfdi_asociados){
+            if(!in_array($item->uuid,$uuid_cfdi_asociados)){
+                return $item;
+            }
+        });
+
+        return $nuevos_cfdi;
+    }
 }
