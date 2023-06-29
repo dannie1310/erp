@@ -8,7 +8,7 @@
                         <br>
                         <div class="row" v-if="!cargando">
                             <hr>
-                            <div class="col-md-12 table-responsive" v-if="poliza && poliza.posibles_cfdi.data.length > 0">
+                            <div class="col-md-12 table-responsive" v-if="poliza && poliza.posibles_cfdi">
                                 <strong>
                                     Lista de posibles CFDI
                                 </strong>
@@ -28,13 +28,14 @@
                                             <th style="width: 15px"></th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody v-if="poliza.posibles_cfdi.data.length > 0">
                                         <tr v-for="(cfdi, i) in poliza.posibles_cfdi.data" :style="cfdi.grado_coincidencia ==3?`background-color : lightgreen`:``">
                                             <td>{{parseInt(i)+1}}</td>
                                             <td>{{cfdi.tipo_comprobante}}</td>
                                             <td>{{cfdi.fecha_cfdi}}</td>
                                             <td>{{cfdi.razon_social}}</td>
-                                            <td>{{cfdi.uuid}}</td>
+                                            <td>
+                                                <CFDI v-if="cfdi" v-bind:txt="cfdi.uuid" v-bind:id="cfdi.id" @click="cfdi.id" ></CFDI>
                                             <td>{{cfdi.serie}}</td>
                                             <td>{{cfdi.folio}}</td>
                                             <td>{{cfdi.conceptos_txt}}</td>
@@ -49,16 +50,20 @@
                                             </td>
                                         </tr>
                                     </tbody>
+                                    <tbody v-else>
+                                    <tr style="background-color: lightgrey">
+                                        <td colspan="11" style="text-align: center; font-size: 12px; font-style: italic">
+
+                                            <strong>Sin CFDI Detectados</strong>
+
+                                        </td>
+                                    </tr>
+
+                                    </tbody>
                                 </table>
 
                             </div>
-                            <div v-else>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        Sin CFDI detectados.
-                                    </div>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                     <div class="card-footer">
@@ -140,13 +145,6 @@ export default {
                 new_value = true;
             }
             this.$store.commit('contabilidadGeneral/poliza/UPDATE_ATTRIBUTE_POSIBLE_CFDI', {attribute: 'seleccionado', value: new_value});
-            //this.$store.commit('contabilidadGeneral/poliza/UPDATE_POSIBLE_CFDI', {seleccionado:new_value});
-
-
-
-
-            //posibles_cfdi
-            //this.$store.commit('contabilidadGeneral/poliza/UPDATE_ATTRIBUTE', {attribute: $(e.target).attr('name'), value: new_value});
         },
     },
     watch: {
