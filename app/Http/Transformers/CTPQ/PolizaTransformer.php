@@ -29,7 +29,7 @@ class PolizaTransformer extends TransformerAbstract
         'posibles_cfdi'
     ];
 
-    protected $defaultIncludes = ["asociacion_cfdi", "movimientos_poliza",'posibles_cfdi'];
+    protected $defaultIncludes = [];
 
     public function transform(Poliza $model) {
         return [

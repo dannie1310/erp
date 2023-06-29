@@ -105,6 +105,7 @@ class PolizaController extends Controller
     public function asociarCFDI(Request $request)
     {
         $item = $this->service->setAsociarCFDI($request->all());
+        $this->fractal->parseIncludes(["posibles_cfdi","asociacion_cfdi"]);
         return $this->respondWithItem($item);
     }
 }

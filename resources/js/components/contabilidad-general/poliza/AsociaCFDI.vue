@@ -128,7 +128,6 @@ export default {
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
                     this.$emit('success')
                 }).finally(() => {
-                    //this.getPolizasPorAsociar();
                 });
             }
         },
