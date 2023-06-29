@@ -653,7 +653,7 @@ class CFD
                 }
                 $duplicado = false;
                 try {
-                    if ($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])) {
+                    if ($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['uuid'])) {
                         $this->logs[] = "CFDI ya existente en ADD";
                     }
                 } catch (Exception $e) {

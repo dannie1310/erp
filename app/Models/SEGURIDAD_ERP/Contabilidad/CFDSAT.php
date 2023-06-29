@@ -715,7 +715,7 @@ class CFDSAT extends Model
             }
             $duplicado = false;
             try {
-                if ($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])) {
+                if ($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['uuid'])) {
                     $logs[] = ["tipo" => 1, "descripcion" => "CFDI ya existente en ADD"];
                 }
             } catch (Exception $e) {
