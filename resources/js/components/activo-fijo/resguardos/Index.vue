@@ -55,7 +55,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="pull-right">
-                        <button type="button" class="btn btn-primary" v-on:click="getResguardos" :disabled="cargando || buscando">
+                        <button type="button" class="btn btn-primary" v-on:click="paginate" :disabled="cargando || buscando">
                             <span v-if="!buscando">
                                 <i class="fa fa-search"></i>Consultar
                             </span>
@@ -88,7 +88,7 @@
 import UsuarioSelect from "../../igh/usuario/Select.vue";
 import {ModelListSelect} from 'vue-search-select';
 export default {
-    name: "camion-index",
+    name: "resguardo-index",
     components: {UsuarioSelect, ModelListSelect},
     data() {
         return {
@@ -102,7 +102,7 @@ export default {
             ],
             data: [],
             total: 0,
-            query: {scope:'', sort: '', order: ''},
+            query: {scope:'', sort: '', order: '',tipo:'', ubicacion:'', empleado:''},
             estado: "",
             buscando: false,
             cargando: false,
@@ -123,14 +123,12 @@ export default {
         })
     },
     methods: {
-        getResguardos() {
+        paginate() {
             this.buscando = true;
-            return this.$store.dispatch('activo-fijo/resguardo/getResguardos', {
-                params: {
-                    ubicacion: this.ubicacion,
-                    empleado: this.user_id,
-                    tipo: this.tipoActivo,
-                }})
+            this.query.ubicacion = this.ubicacion;
+            this.query.empleado = this.user_id;
+            this.query.tipo = this.tipoActivo;
+            return this.$store.dispatch('activo-fijo/resguardo/getResguardos', { params : this.query })
                 .then(data => {
                     if(data.data.length == 0){
                         swal('Atención', 'No hay resguardos registrados con los datos ingresados, intente con otros', 'warning');
@@ -178,7 +176,7 @@ export default {
                 let self = this
                 self.$data.data = []
                 self.$data.data = activos.map((activo, i) => ({
-                    index: (i + 1) ,
+                    index: (i + 1) + self.query.offset,
                     empleado: activo.nombreEmpleado,
                     ubicacion: activo.ubicacion,
                     tipo: activo.grupoEquipoNombre,
@@ -197,25 +195,25 @@ export default {
             },
             deep: true
         },
-        // query: {
-        //     handler(query) {
-        //         this.paginate(query)
-        //     },
-        //     deep: true
-        // },
-        // search(val) {
-        //     if (this.timer) {
-        //         clearTimeout(this.timer);
-        //         this.timer = null;
-        //     }
-        //     this.timer = setTimeout(() => {
-        //         this.query.search = val;
-        //         this.query.offset = 0;
-        //         this.paginate();
+        query: {
+            handler(query) {
+                this.paginate(query)
+            },
+            deep: true
+        },
+        search(val) {
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = null;
+            }
+            this.timer = setTimeout(() => {
+                this.query.search = val;
+                this.query.offset = 0;
+                this.paginate();
 
-        //     }, 500);
-        // },
-        cargando(val) {
+            }, 500);
+        },
+        buscando(val) {
             $('tbody').css({
                 '-webkit-filter': val ? 'blur(2px)' : '',
                 'pointer-events': val ? 'none' : ''
