@@ -5,9 +5,18 @@ export default {
         polizas: [],
         currentPoliza: null,
         meta: {},
+
+        posibles_cfdi:[],
+        currentPosibleCFDI :null,
     },
 
     mutations: {
+
+        SET_POLIZA(state, data) {
+            state.currentPoliza = data;
+            state.posibles_cfdi = state.currentPoliza && state.currentPoliza.posibles_cfdi ? state.currentPoliza.posibles_cfdi.data : null;
+        },
+
         SET_POLIZAS(state, data) {
             state.polizas = data;
         },
@@ -23,12 +32,35 @@ export default {
                 }
                 return poliza
             })
+            state.posibles_cfdi = state.posibles_cfdi && data.posibles_cfdi.data? data.posibles_cfdi.data : null;
             state.currentPoliza = state.currentPoliza ? data : null;
         },
 
-        SET_POLIZA(state, data) {
-            state.currentPoliza = data;
-        }
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentPoliza, data.attribute, data.value);
+        },
+
+        UPDATE_ATTRIBUTE_POSIBLE_CFDI(state, data) {
+            _.set(state.currentPosibleCFDI, data.attribute, data.value);
+        },
+
+        SET_POSIBLES_CFDI(state, data) {
+            state.posibles_cfdi = data;
+        },
+
+        SET_POSIBLE_CFDI(state, data) {
+            state.currentPosibleCFDI = data;
+        },
+
+        UPDATE_POSIBLE_CFDI(state, data) {
+            state.posibles_cfdi = state.posibles_cfdi.map(cfdi => {
+                if (cfdi.id === data.id) {
+                    return Object.assign({}, cfdi, data)
+                }
+                return cfdi
+            })
+            state.currentPosibleCFDI = state.currentPosibleCFDI ? data : null;
+        },
     },
 
     actions: {
@@ -272,6 +304,14 @@ export default {
 
         currentPoliza(state) {
             return state.currentPoliza
-        }
+        },
+
+        posibles_cfdi(state) {
+            return state.posibles_cfdi
+        },
+
+        currentPosibleCFDI(state) {
+            return state.currentPosibleCFDI
+        },
     }
 }

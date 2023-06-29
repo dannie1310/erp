@@ -677,7 +677,7 @@ class Poliza extends Model
     public function asociarCFDI($data)
     {
 
-        $empresa = Empresa::find($data["id_empresa"]);
+        $empresa = EmpresaERP::find($data["id_empresa"]);
 
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
@@ -842,6 +842,8 @@ class Poliza extends Model
         $uuid_cfdi_asociados = $poliza->asociacionCFDI->pluck("UUID")
             ->toArray();
 
+        $uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);
+
         $id_cuentas = $this->movimientos
             ->pluck("IdCuenta")
             ->toArray();
@@ -882,7 +884,7 @@ class Poliza extends Model
         }
 
         $nuevos_cfdi = $cfdis->filter(function ($item) use($uuid_cfdi_asociados){
-            if(!in_array($item->uuid,$uuid_cfdi_asociados)){
+            if(!in_array(strtoupper($item->uuid),$uuid_cfdi_asociados)){
                 return $item;
             }
         });
