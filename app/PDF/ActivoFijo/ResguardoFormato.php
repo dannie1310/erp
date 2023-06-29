@@ -59,7 +59,7 @@ class ResguardoFormato extends Rotation
         $data = unpack("H*", file_get_contents($file));
         $data = bin2hex($data[1]);
         $data = pack('H*', hex2bin($data));
-        $file = public_path('/img/logo_temp.png');
+        $file = public_path('/img/logo_'.$this->resguardo->getKey().'.png');
         if (file_put_contents($file, $data) !== false) {
             list($width, $height) = $this->resizeToFit($file);
             $this->Image($file, -0.5, 1, $width, $height);
