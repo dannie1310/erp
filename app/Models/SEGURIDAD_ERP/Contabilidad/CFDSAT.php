@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Webpatser\Uuid\Uuid;
+use Exception;
 
 class CFDSAT extends Model
 {
@@ -815,7 +816,8 @@ class CFDSAT extends Model
 
         try{
             $resp = DB::connection('cntpqdm')
-                ->update(DB::raw("DECLARE @return_value int  EXEC [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = N'$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0, @filename=NULL SELECT 'Return Value' = @return_value"));
+                ->update(DB::raw("SET NOCOUNT ON;
+SET ANSI_WARNINGS OFF; DECLARE @return_value int  EXEC [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = N'$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0, @filename=NULL SELECT 'Return Value' = @return_value"));
 
         }catch(Exception $e){
             throw new Exception("-Error de ejecución de sp spInsUpdDocument en la base de datos: ".Config::get('database.connections.cntpqdm.database')." respuesta: ".$e->getMessage().$e->getLine(),500);

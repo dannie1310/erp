@@ -17,6 +17,7 @@ use DateTime;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Webpatser\Uuid\Uuid;
+use Exception;
 
 class CFD
 {
