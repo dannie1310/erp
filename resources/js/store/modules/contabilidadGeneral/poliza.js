@@ -15,6 +15,7 @@ export default {
         SET_POLIZA(state, data) {
             state.currentPoliza = data;
             state.posibles_cfdi = state.currentPoliza && state.currentPoliza.posibles_cfdi ? state.currentPoliza.posibles_cfdi.data : null;
+            state.currentPosibleCFDI = null;
         },
 
         SET_POLIZAS(state, data) {
