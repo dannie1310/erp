@@ -126,6 +126,8 @@ export default {
                         "id_empresa":_self.id_empresa}
                 ).then((data) => {
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+                    console.log(data);
+                    $("input").removeAttr("checked");
                     this.$emit('success')
                 }).finally(() => {
                 });
