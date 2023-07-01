@@ -672,12 +672,6 @@ class CFDSAT extends Model
 
         $xml = "data:text/xml;base64," . $this->xml_file;
         $cfd = new CFD($xml);
-        /*try{
-            $logs = $cfd->guardarXmlEnADD();
-        }catch (\Exception $e)
-        {
-            $logs[] = "Error catch: " . $e->getMessage();
-        }*/
 
         $xml_fuente = $cfd->archivo_xml;
         $xml_array = $cfd->arreglo_factura;
@@ -691,51 +685,52 @@ class CFDSAT extends Model
             $logs[] = ["tipo" => 0, "descripcion" => "Inicia"];
             DB::purge('cntpq');
             Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
-            try {
+            //try {
                 $parametros = Parametro::first();
-            } catch (Exception $e) {
+            /*} catch (Exception $e) {
                 $logs[] = ["tipo" => -1, "descripcion" => "Error de lectura a la base de datos: " . Config::get('database.connections.cntpq.database') . "."];
-            }
+            }*/
 
-            try {
+            //try {
                 $arreglo_bbdd = $this->existDb($parametros->GuidDSL);
                 if ($arreglo_bbdd == false) {
                     $logs[] = ["tipo" => -1, "descripcion" => "Error existDb"];
                 }
-            } catch (Exception $e) {
+            /*} catch (Exception $e) {
                 $logs[] = ["tipo" => -1, "descripcion" => "Error existDb catch: " . $e->getMessage()];
-            }
+            }*/
 
-            try {
+            //try {
                 $val_insercionCertificado = $this->insUpdCertificate($xml_array['certificado'], $xml_array['no_certificado'], $xml_array['emisor']['rfc'], $xml_array['emisor']['nombre']);
                 if (!$val_insercionCertificado) {
                     $logs[] = ["tipo" => -1, "descripcion" => "Error insUpdCertificate"];
                 }
-            } catch (Exception $e) {
+            /*} catch (Exception $e) {
                 $logs[] = ["tipo" => -1, "descripcion" => "Error insUpdCertificate catch: " . $e->getMessage()];
-            }
+            }*/
             $duplicado = false;
-            try {
+            //try {
                 if ($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['uuid'])) {
                     $logs[] = ["tipo" => 1, "descripcion" => "CFDI ya existente en ADD"];
                 }
-            } catch (Exception $e) {
+            /*} catch (Exception $e) {
                 $logs[] = ["tipo" => -1, "descripcion" => "Error buscarCfdiDuplicado catch: " . $e->getMessage()];
-            }
+            }*/
 
             if (!$duplicado) {
                 $guid_doc_metadata = Uuid::generate()->string;
 
-                try {
+                //try {
                     $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'], $arreglo_bbdd[1]['NameDB'], $arreglo_bbdd[3]['NameDB'], $arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']);
                     if (!$va_insert_xml) {
                         $logs[] = ["tipo" => -1, "descripcion" => "Error spInsUpdDocument"];
                     } else {
                         $logs[] = ["tipo" => 1, "descripcion" => "Envío éxitoso, comprobante con GUID: " . $guid_doc_metadata . " en base de datos: " . Config::get('database.connections.cntpqdm.database')];
                     }
-                } catch (Exception $e) {
+                /*} catch (Exception $e) {
                     $logs[] = ["tipo" => -1, "descripcion" => "Error spInsUpdDocument catch: " . $e->getMessage()];
-                }
+                    dd($xml, $arreglo_bbdd[0]['NameDB'], $arreglo_bbdd[1]['NameDB'], $arreglo_bbdd[3]['NameDB'], $arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio'],$logs);
+                }*/
             }
 
             $logs[] = ["tipo" => 0, "descripcion" => "Finaliza"];
