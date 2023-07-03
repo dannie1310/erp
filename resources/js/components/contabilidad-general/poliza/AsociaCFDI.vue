@@ -42,10 +42,9 @@
                                             <td style="text-align: right">{{parseFloat(cfdi.importe_iva).formatMoney(2)}}</td>
                                             <td style="text-align: right">{{parseFloat(cfdi.total).formatMoney(2)}}</td>
                                             <td style="text-align: center">
-                                                <div class="form-check form-check-inline">
-                                                    <label class="form-check-label" style="cursor:pointer" >
-                                                        <input class="form-check-input" type="checkbox" name="enviar" :value="cfdi.seleccionado" @change="updateSeleccionado(cfdi)">
-                                                    </label>
+                                                <div class="custom-control custom-checkbox mb-3">
+                                                    <input type="checkbox" class="custom-control-input" :id="cfdi.id" :name="cfdi.id" :value="cfdi.seleccionado" @change="updateSeleccionado(cfdi)">
+                                                    <label class="custom-control-label" :for="cfdi.id"></label>
                                                 </div>
                                             </td>
                                         </tr>
