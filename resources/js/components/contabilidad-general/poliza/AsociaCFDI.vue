@@ -29,7 +29,7 @@
                                         </tr>
                                     </thead>
                                     <tbody v-if="poliza.posibles_cfdi.data.length > 0">
-                                        <tr v-for="(cfdi, i) in poliza.posibles_cfdi.data" :style="cfdi.grado_coincidencia ==3?`background-color : lightgreen`:``">
+                                        <tr v-for="(cfdi, i) in poliza.posibles_cfdi.data" :style="cfdi.grado_coincidencia ==3?`background-color : lightgreen`:cfdi.grado_coincidencia ==2?`background-color : lightyellow`:``">
                                             <td>{{parseInt(i)+1}}</td>
                                             <td>{{cfdi.tipo_comprobante}}</td>
                                             <td>{{cfdi.fecha_cfdi}}</td>
