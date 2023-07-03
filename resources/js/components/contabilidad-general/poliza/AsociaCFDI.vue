@@ -42,9 +42,14 @@
                                             <td style="text-align: right">{{parseFloat(cfdi.importe_iva).formatMoney(2)}}</td>
                                             <td style="text-align: right">{{parseFloat(cfdi.total).formatMoney(2)}}</td>
                                             <td style="text-align: center">
-                                                <div class="custom-control custom-checkbox mb-3">
+                                                <!--<div class="custom-control custom-checkbox mb-3">
                                                     <input type="checkbox" class="custom-control-input" :id="cfdi.id" :name="cfdi.id" :value="cfdi.seleccionado" @change="updateSeleccionado(cfdi)">
                                                     <label class="custom-control-label" :for="cfdi.id"></label>
+                                                </div>-->
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label" style="cursor:pointer" >
+                                                        <input class="form-check-input" type="checkbox" name="enviar" :value="cfdi.seleccionado" @change="updateSeleccionado(cfdi)">
+                                                    </label>
                                                 </div>
                                             </td>
                                         </tr>
@@ -125,9 +130,8 @@ export default {
                         "id_empresa":_self.id_empresa}
                 ).then((data) => {
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
-                    $("input.form-check-input").removeAttr("checked");
-                    $("input.form-check-input").val("false");
-                    this.$emit('success')
+                    this.$emit('success');
+                    this.$router.push({name: 'poliza-contpaq-show', params: {id: this.id, id_empresa: this.id_empresa}});
                 }).finally(() => {
                 });
             }
