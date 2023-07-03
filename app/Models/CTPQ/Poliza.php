@@ -858,19 +858,69 @@ class Poliza extends Model
             ->get()
             ->pluck("Importe")->toArray();
 
-        $cfdis = CFDSAT::
-        join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
-            ->where("cancelado","=",0)
-            ->whereIn("id_proveedor_sat",$id_proveedor_sat)
-            ->orWhereIn("total",$importes)
-            ->orWhereIn("importe_iva",$importes)
-            ->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
-            ,cfd_sat.serie, cfd_sat.folio, proveedores_sat.rfc, proveedores_sat.razon_social
-            , FORMAT(cfd_sat.fecha,'dd-MM-yyyy') as fecha_cfdi, 1 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
-            ->orderBy("cfd_sat.total")
-            ->get();
+        $referencias = PolizaMovimiento::where("IdPoliza","=",$poliza->Id)
+            ->get()
+            ->pluck("Referencia")->toArray();
 
-        foreach ($cfdis as $cfdi)
+
+        $referencias = array_unique($referencias);
+
+        $query = CFDSAT::
+        join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
+            ->where("cancelado","=",0);
+
+        if($id_proveedor_sat>0)
+        {
+            $query->whereIn("id_proveedor_sat",$id_proveedor_sat);
+            $query->WhereIn("total",$importes)
+            ;
+        }else{
+            $query->orWhereIn("total",$importes)
+                ->orWhereIn("importe_iva",$importes);
+        }
+            $query->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
+            ,cfd_sat.serie, cfd_sat.folio, proveedores_sat.rfc, proveedores_sat.razon_social
+            , FORMAT(cfd_sat.fecha,'dd-MM-yyyy') as fecha_cfdi, 0 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
+            ->orderBy("cfd_sat.total")
+            ;
+
+        $cfdis = $query->get();
+
+        $nuevos_cfdi = $cfdis->filter(function ($item) use($uuid_cfdi_asociados){
+            if(!in_array(strtoupper($item->uuid),$uuid_cfdi_asociados)){
+                return $item;
+            }
+        });
+
+        $nuevos_cfdi = $nuevos_cfdi->map(
+            function ($cfdi) use ($importes, $id_proveedor_sat, $referencias)
+            {
+                $cfdi->seleccionado = false;
+                if(in_array($cfdi->total, $importes) || in_array($cfdi->importe_iva, $importes))
+                {
+                    $cfdi->grado_coincidencia += 1;
+                }
+                if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
+                {
+                    $cfdi->grado_coincidencia += 1;
+                }
+
+                foreach($referencias as $referencia)
+                {
+                    if(strpos($referencia,$cfdi->folio))
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        break;
+                    }
+                }
+                return $cfdi;
+            }
+
+        )
+            ->sortByDesc("grado_coincidencia")
+        ;
+
+        /*foreach ($cfdis as $cfdi)
         {
             $cfdi->seleccionado = false;
             if(in_array($cfdi->total, $importes) || in_array($cfdi->importe_iva, $importes))
@@ -881,13 +931,18 @@ class Poliza extends Model
             {
                 $cfdi->grado_coincidencia += 1;
             }
+
+            foreach($referencias as $referencia)
+            {
+                if(strpos($referencia,$cfdi->folio))
+                {
+                    $cfdi->grado_coincidencia += 1;
+                    break;
+                }
+            }
         }
 
-        $nuevos_cfdi = $cfdis->filter(function ($item) use($uuid_cfdi_asociados){
-            if(!in_array(strtoupper($item->uuid),$uuid_cfdi_asociados)){
-                return $item;
-            }
-        });
+        $nuevos_cfdi->sortByDesc("grado_coincidencia");*/
 
         return $nuevos_cfdi;
     }
