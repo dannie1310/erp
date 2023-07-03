@@ -1,19 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: EMartinez
- * Date: 19/02/2020
- * Time: 11:56 AM
- */
 
 namespace App\Models\CTPQ;
 
-use App\Facades\Context;
-use App\Models\CADECO\Movimiento;
-use App\Models\CADECO\Obra;
 use App\Models\CTPQ\GeneralesSQL\Usuario;
+use App\Models\CTPQ\OtherMetadata\DocApp;
+use App\Models\CTPQ\OtherMetadata\Documento;
 use App\Models\CTPQ\OtherMetadata\Expediente;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CuentaContpaqProvedorSat;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa as EmpresaERP;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
@@ -21,12 +16,10 @@ use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Support\Facades\Config;
 use App\Models\CTPQ\DocumentMetadata\Comprobante;
-
 
 class Poliza extends Model
 {
@@ -679,5 +672,223 @@ class Poliza extends Model
             'Reconstruir'=>true,
             "Id"=>AsocCFDI::getUltimoFolio()
         ]);
+    }
+
+    public function asociarCFDI($data)
+    {
+
+        $empresa = EmpresaERP::find($data["id_empresa"]);
+
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+        $poliza = Poliza::find($data["id_poliza"]);
+
+        $base = Parametro::find(1);
+        DB::purge('cntpqom');
+        Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+
+        DB::purge('cntpqdm');
+        Config::set('database.connections.cntpqdm.database', 'document_'.$base->GuidDSL.'_metadata');
+
+        $fecha = date('Y-m-d').' 00:00:00';
+        DB::connection('cntpq')->beginTransaction();
+        DB::connection('cntpqom')->beginTransaction();
+        try {
+            if ($poliza) {
+                $guid_poliza = $poliza->Guid;
+                $tipo = "Poliza de ".$poliza->tipo_poliza->Nombre;
+                DB::purge('cntpqom');
+                Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+                $documento = Documento::where('GuidDocument',"=", $guid_poliza)->first();
+                if (is_null($documento)) {
+                    try{
+                        Documento::create([
+                            'GuidDocument' => $guid_poliza,
+                            'Status' => 'active',
+                            'IdTipoDocumento' => 20,
+                            'Type' => 'Polizas',
+                            'Path' => '',
+                            'Hash' => '',
+                            'MetadataEstatusApp' => '',
+                            'UserResponsibleApp' => '',
+                            'ReferenceApp' => '',
+                            'NotesApp' => '',
+                            'ProcessApp' => '',
+                            'NoPaymentStatusapp' => '',
+                            'ClaveDescripcion' => '',
+                            'SourceFile' => '',
+                            'Type_Otro' => '',
+                            'Type_Ext' => '',
+                            'Period' => 0,
+                            'Year' => 0,
+                            'TotalPayRoll' => 0,
+                            'SalaryType' => '',
+                            'IsAsoContabilidad' => 1
+                        ]);
+                    }catch (\Exception $e){
+                        DB::connection('cntpqom')->rollBack();
+                        DB::connection('cntpq')->rollBack();
+                        abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpqom.database').", no fue posible registrar el Documento en Contpaq. \n \n Favor de contactar a soporte a aplicaciones.");
+                    }
+
+                }
+
+                $doc_app = DocApp::where('GuidDocument',"=", $guid_poliza)->first();
+                if (is_null($doc_app)) {
+                    try{
+                        DocApp::create([
+                            'GuidDocument' => $guid_poliza,
+                            'Fecha' => $fecha,
+                            'Tipo' => 'Polizas',
+                            'Subtipo' => $tipo,
+                            'Ejercicio' => $poliza->Ejercicio,
+                            'Periodo' => $poliza->Periodo,
+                            'Numero' => $poliza->Folio,
+                            'SubTipoNumero' => '',
+                            'Cuenta' => '',
+                            'Folio' => 0,
+                            'Responsable' =>0
+                        ]);
+                    }catch (\Exception $e){
+                        DB::connection('cntpqom')->rollBack();
+                        DB::connection('cntpq')->rollBack();
+                        abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                    }
+                }
+                foreach ($data["cfdi"] as $id_cfdi) {
+                    $cfdi = CFDSAT::find($id_cfdi);
+
+
+                    if ($cfdi && !$cfdi->tiene_comprobante_add){
+                        try{
+                            $cfdi->guardarXmlEnADD($empresa);
+                        }catch (\Exception $e){
+                            DB::connection('cntpqom')->rollBack();
+                            DB::connection('cntpq')->rollBack();
+
+                            abort(500,"Error en carga de CFDI a repositorio contpaq (ADD): \n \n".$e->getMessage()." \n \n Favor de contactar a soporte a aplicaciones.");
+                        }
+                    }
+                    if ($cfdi && $cfdi->tiene_comprobante_add) {
+                        $guid_document = $cfdi->comprobanteADD->GuidDocument;
+                        try{
+                            DB::purge('cntpq');
+                            Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+                            $poliza->generaAsociacionCFDI($cfdi->comprobanteADD);
+                        }catch (\Exception $e){
+                            DB::connection('cntpqom')->rollBack();
+                            DB::connection('cntpq')->rollBack();
+                            //$cfdi->estado = -4;
+                            //$cfdi->save();
+                            abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpq.database').", la asociación de póliza con expediente CFDI no pudo ser realizada. \n \n".$e->getMessage()." \n\n Favor de contactar a soporte a aplicaciones.");
+                        }
+                        try{
+                            DB::purge('cntpqom');
+                            Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+                            $expediente = Expediente::buscarExpediente($guid_poliza, $guid_document)->first();
+                        }catch (\Exception $e){
+                            DB::connection('cntpqom')->rollBack();
+                            DB::connection('cntpq')->rollBack();
+                            //$cfdi->estado = -3;
+                            //$cfdi->save();
+                            abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpqom.database').", el expediente no pudo ser buscado. \n \n Favor de contactar a soporte a aplicaciones.");
+                        }
+
+                        if (is_null($expediente)) {
+                            try{
+                                $comentario =$tipo . ", ejercicio: " . $poliza->Ejercicio . ", periodo: " . $poliza->Periodo . ", numero: " . $poliza->Folio . ", empresa: " . $empresa->AliasBDD . ", guid: " . $guid_poliza;
+                                Expediente::create([
+                                    'Guid_Relacionado' => $guid_poliza,
+                                    'Guid_Pertenece' => $guid_document,
+                                    'ApplicationType_Exp' => 'Contabilidad',
+                                    'Type_Exp' => 'CFDI',
+                                    'Comment_Exp' => $comentario,
+                                    'TimeStamp_Exp' => $fecha
+                                ]);
+                            }catch (\Exception $e){
+                                DB::connection('cntpqom')->rollBack();
+                                DB::connection('cntpq')->rollBack();
+                                //$cfdi->estado = -3;
+                                //$cfdi->save();
+                                abort(500,"Error de escritura en la base de datos: ".Config::get('database.connections.cntpqom.database').", el expediente no pudo ser registrado. \n \n Favor de contactar a soporte a aplicaciones.");
+                            }
+                        }
+                    }else{
+                        DB::connection('cntpqom')->rollBack();
+                        DB::connection('cntpq')->rollBack();
+                        abort(500,"Error en carga de CFDI a repositorio contpaq (ADD). \n \n Favor de contactar a soporte a aplicaciones.");
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            DB::connection('cntpqom')->rollBack();
+            DB::connection('cntpq')->rollBack();
+            abort(400, $e->getMessage());
+        }
+
+        DB::connection('cntpqom')->commit();
+        DB::connection('cntpq')->commit();
+
+        return $poliza;
+    }
+
+    public function getPosiblesCFDIAttribute()
+    {
+        $id_empresa_contpaq = Empresa::where("AliasBDD","=",Config::get('database.connections.cntpq.database'))
+            ->pluck("Id")->first();
+
+        $poliza = $this;
+
+        $uuid_cfdi_asociados = $poliza->asociacionCFDI->pluck("UUID")
+            ->toArray();
+
+        $uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);
+
+        $id_cuentas = $this->movimientos
+            ->pluck("IdCuenta")
+            ->toArray();
+
+        $id_proveedor_sat = CuentaContpaqProvedorSat::whereIn("id_cuenta_contpaq", $id_cuentas)
+            ->where("id_empresa_contpaq","=",$id_empresa_contpaq)
+            ->get()
+            ->pluck("id_proveedor_sat")
+            ->toArray();
+
+        $importes = PolizaMovimiento::where("IdPoliza","=",$poliza->Id)
+            ->get()
+            ->pluck("Importe")->toArray();
+
+        $cfdis = CFDSAT::
+        join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
+            ->where("cancelado","=",0)
+            ->whereIn("id_proveedor_sat",$id_proveedor_sat)
+            ->orWhereIn("total",$importes)
+            ->orWhereIn("importe_iva",$importes)
+            ->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
+            ,cfd_sat.serie, cfd_sat.folio, proveedores_sat.rfc, proveedores_sat.razon_social
+            , FORMAT(cfd_sat.fecha,'dd-MM-yyyy') as fecha_cfdi, 1 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
+            ->orderBy("cfd_sat.total")
+            ->get();
+
+        foreach ($cfdis as $cfdi)
+        {
+            $cfdi->seleccionado = false;
+            if(in_array($cfdi->total, $importes) || in_array($cfdi->importe_iva, $importes))
+            {
+                $cfdi->grado_coincidencia += 1;
+            }
+            if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
+            {
+                $cfdi->grado_coincidencia += 1;
+            }
+        }
+
+        $nuevos_cfdi = $cfdis->filter(function ($item) use($uuid_cfdi_asociados){
+            if(!in_array(strtoupper($item->uuid),$uuid_cfdi_asociados)){
+                return $item;
+            }
+        });
+
+        return $nuevos_cfdi;
     }
 }
