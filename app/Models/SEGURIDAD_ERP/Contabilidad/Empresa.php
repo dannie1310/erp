@@ -71,6 +71,11 @@ class Empresa extends Model
         return $this->hasOne(EmpresaSATvsEmpresaContabilidad::class,"id_empresa_contabilidad","id");
     }
 
+    public function empresaSAT()
+    {
+        return $this->belongsTo(EmpresaSAT::class,"IdEmpresaSAT","id");
+    }
+
     public function polizas()
     {
         DB::purge('cntpq');
