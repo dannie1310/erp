@@ -834,8 +834,16 @@ class Poliza extends Model
 
     public function getPosiblesCFDIAttribute()
     {
-        $id_empresa_contpaq = Empresa::where("AliasBDD","=",Config::get('database.connections.cntpq.database'))
-            ->pluck("Id")->first();
+        $empresa_erp = EmpresaERP::where("AliasBDD","=",Config::get('database.connections.cntpq.database'))
+            ->first();
+        $id_empresa_contpaq = $empresa_erp->IdEmpresaContpaq;
+
+
+        if(!$empresa_erp->empresaSAT)
+        {
+            throw new \Exception("No hay una empresa SAT asociada a la empresa de Contabilidad",500);
+        }
+
 
         $poliza = $this;
 
@@ -867,7 +875,8 @@ class Poliza extends Model
 
         $query = CFDSAT::
         join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
-            ->where("cancelado","=",0);
+            ->where("cancelado","=",0)
+        ->where("id_empresa_sat","=",$empresa_erp->IdEmpresaSAT);
 
         if($id_proveedor_sat>0)
         {
