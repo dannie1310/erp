@@ -144,7 +144,7 @@
                     { title: 'Concepto', field: 'concepto',thComp: require('../../globals/th-Filter').default, sortable: false},
                     { title: '# CFDI', field: 'cantidad_cfdi',tdClass: 'right',sortable: false},
                     { title: 'Usuario', field: 'usuario_codigo',tdClass: 'td_c80',sortable: false},
-                    { title: 'Acciones', field: 'buttons', tdClass: 'td_c150',  thClass: 'th_c120',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', tdClass: 'td_c150',  thClass: 'th_c150',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
