@@ -1,7 +1,6 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
             <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-file-powerpoint nav-icon"></i>
@@ -23,7 +22,6 @@
                     </li>
                 </ul>
             </li>
-
             <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-not-equal nav-icon"></i>
@@ -110,6 +108,12 @@
                 <router-link :to="{name: 'contabilidad-electronica'}" class="nav-link" :class="{active: this.$route.name == 'contabilidad-electronica'}">
                     &nbsp;<i class="fas fa-exchange-alt"></i>
                     <p>Lectura de Balanza XML</p>
+                </router-link>
+            </li>
+            <li class="nav-item" v-if="$root.can('consultar_contabilidad_electronica', true)">
+                <router-link :to="{name: 'proyectado'}" class="nav-link" :class="{active: this.$route.name == 'proyectado'}">
+                    <i class="fa fa-clipboard-list nav-icon"></i>
+                    <p>Carga de Pasivos</p>
                 </router-link>
             </li>
         </ul>
