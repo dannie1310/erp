@@ -313,6 +313,11 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad-general'], function ($api) {
 
+        $api->group(['prefix' => 'layout-pasivo'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@paginate');
+        });
+
         $api->group(['prefix' => 'contabilidad-electronica'], function ($api) {
             $api->post('xml', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@getDatosXML');
             $api->post('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@descargar');

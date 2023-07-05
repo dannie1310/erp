@@ -97,7 +97,7 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('asociar_cuentas_contpaq_con_proveedor', true )">
                         <router-link :to="{name: 'asociacion-cuenta-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'asociacion-cuenta-proveedor'}">
-                            &nbsp;<i class="fas fa-exchange-alt"></i>
+                            &nbsp;<i class="fas fa-exchange-alt nav-icon"></i>
                             <p>Asociación
                                 Cta Proveedor</p>
                         </router-link>
@@ -106,14 +106,14 @@
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_contabilidad_electronica', true )">
                 <router-link :to="{name: 'contabilidad-electronica'}" class="nav-link" :class="{active: this.$route.name == 'contabilidad-electronica'}">
-                    &nbsp;<i class="fas fa-exchange-alt"></i>
+                    &nbsp;<i class="fas fa-exchange-alt nav-icon"></i>
                     <p>Lectura de Balanza XML</p>
                 </router-link>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_contabilidad_electronica', true)">
-                <router-link :to="{name: 'proyectado'}" class="nav-link" :class="{active: this.$route.name == 'proyectado'}">
-                    <i class="fa fa-clipboard-list nav-icon"></i>
-                    <p>Carga de Pasivos</p>
+            <li class="nav-item"  v-if="$root.can('consultar_layous_pasivos', true )">
+                <router-link :to="{name: 'layouts-pasivos'}" class="nav-link" :class="{active: this.$route.name == 'layouts-pasivos'}">
+                    &nbsp;<i class="fas fa-file-excel nav-icon"></i>
+                    <p>Layouts Pasivos</p>
                 </router-link>
             </li>
         </ul>

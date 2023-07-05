@@ -3868,18 +3868,18 @@ export const routes = [
                 ]
             },
             {
-                path: 'carga-pasivos',
-                component: require('./components/contabilidad-general/carga-pasivos/CargarLayout.vue').default,
+                path: 'layouts-pasivos',
+                component: require('./components/contabilidad-general/layout-pasivos/Index.vue').default,
                 children:[
                     {
                         path:"/",
-                        name:"carga-pasivos",
-                        component: require('./components/contabilidad-general/carga-pasivos/CargarLayout.vue').default,
+                        name:"layouts-pasivos",
+                        component: require('./components/contabilidad-general/layout-pasivos/Index.vue').default,
                         meta: {
-                            title: 'Carga de Layout de Pasivos',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'CARGA DE LAYOUT DE PASIVOS'},
-                            middleware: [auth, permission],
-                            permission: 'consultar_contabilidad_electronica',
+                            title: 'Lista de layouts para carga de pasivos',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'LAYOUTS PASIVOS'},
+                            //middleware: [auth, permission],
+                            permission: 'consultar_layous_pasivos',
                             general: true
                         }
                     }
