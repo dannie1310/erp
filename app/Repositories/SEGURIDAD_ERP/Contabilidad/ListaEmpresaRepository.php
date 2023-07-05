@@ -82,6 +82,16 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
                 $empresa_actual->con_acceso_ct = 0;
                 $empresa_actual->save();
             }
+
+            try{
+                DB::purge('cntpq');
+                Config::set('database.connections.cntpq.database', $empresa_actual->AliasBDD);
+                $parametro = Parametro::find(1);
+                $empresa_actual->GuidDSL = $parametro->GuidDSL;
+                $empresa_actual->save();
+            }catch(\Exception $e){
+
+            }
             if($empresa_actual->GuidDSL) {
                 try {
                     DB::purge('cntpqom');
@@ -174,14 +184,23 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
         foreach($empresas_actuales as $alias_bdd=>$nombre){
             $empresa_contpaq = \App\Models\CTPQ\Empresa::where("AliasBDD", "=", $alias_bdd)
                 ->first();
-
             $empresa_actual = Empresa::where("AliasBDD","=",$alias_bdd)->where("Estatus","=",1)
                 ->first();
+
+            try{
+                DB::purge('cntpq');
+                Config::set('database.connections.cntpq.database', $alias_bdd);
+                $parametro = Parametro::find(1);
+                $empresa_actual->GuidDSL = $parametro->GuidDSL;
+                $empresa_actual->save();
+            }catch(\Exception $e){
+
+            }
+
             try{
                 if($empresa_actual->Nombre != $empresas_contpaq[$alias_bdd] || $empresa_actual->IdEmpresaContpaq != $empresa_contpaq->Id){
                     $empresa_actual->Nombre = $empresas_contpaq[$alias_bdd];
                     $empresa_actual->IdEmpresaContpaq = $empresa_contpaq->Id;
-                    $empresa_actual->GuidDSL = $empresa_contpaq->GuidDSL;
                     $empresa_actual->save();
                     $actualizaciones++;
                 }

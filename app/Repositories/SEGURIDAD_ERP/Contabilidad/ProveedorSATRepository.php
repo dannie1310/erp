@@ -30,7 +30,7 @@ class ProveedorSATRepository extends Repository implements RepositoryInterface
         if(count($where_arr)>0){
             $where = implode(" OR ", $where_arr);
         }
-        $proveedorSAT = ProveedorSAT::whereRaw($where)->get();
+        $proveedorSAT = ProveedorSAT::whereRaw($where)->OrderBy("razon_social")->get();
         return $proveedorSAT;
     }
 
