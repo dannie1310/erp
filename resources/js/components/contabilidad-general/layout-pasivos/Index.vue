@@ -6,7 +6,7 @@
 
                     <!-- /.card-header -->
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <div >
                             <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" />
                         </div>
                     </div>
@@ -28,11 +28,11 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
+                    { title: '#', field: 'index',tdClass: 'index_corto', sortable: false },
                     { title: 'Nombre Archivo', field: 'nombre_archivo', thComp: require('../../globals/th-Filter').default},
                     { title: 'Usuario Cargo', field: 'usuario_carga', thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha / Hora Carga', field: 'fecha_hora_carga',tdClass: 'td_c150', thComp: require('../../globals/th-Filter').default},
-                    { title: 'Acciones', field: 'buttons', tdClass: 'td_c70',  thClass: 'th_c70',   tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', tdClass: 'td_c90',  thClass: 'th_c90',   tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

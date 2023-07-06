@@ -3869,7 +3869,7 @@ export const routes = [
             },
             {
                 path: 'layouts-pasivos',
-                component: require('./components/contabilidad-general/layout-pasivos/Index.vue').default,
+                component: require('./components/contabilidad-general/layout-pasivos/Layout.vue').default,
                 children:[
                     {
                         path:"/",
@@ -3882,7 +3882,20 @@ export const routes = [
                             permission: 'consultar_layous_pasivos',
                             general: true
                         }
-                    }
+                    },
+                    {
+                        path: ':id',
+                        name: 'layouts-pasivos-show',
+                        props: true,
+                        component: require('./components/contabilidad-general/layout-pasivos/Show.vue').default,
+                        meta: {
+                            title: 'Consultar Pasivos por Layout',
+                            breadcrumb: {parent: 'layouts-pasivos', name: 'CONSULTAR'},
+                            //middleware: [auth, permission],
+                            permission: 'consultar_layous_pasivos',
+                            general: true
+                        }
+                    },
                 ]
             },
         ]

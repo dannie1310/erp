@@ -45,6 +45,26 @@ class LayoutPasivoPartida extends Model
      * Atributos
      */
 
+    public function getImporteFacturaFormatAttribute($key)
+    {
+        return number_format($this->importe_factura);
+    }
+
+    public function getImporteMxnFormatAttribute($key)
+    {
+        return number_format($this->importe_mxn);
+    }
+
+    public function getTcFacturaFormatAttribute($key)
+    {
+        return number_format($this->tc_factura);
+    }
+
+    public function getSaldoFormatAttribute($key)
+    {
+        return number_format($this->saldo);
+    }
+
     /**
      * Métodos
      */

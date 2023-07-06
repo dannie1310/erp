@@ -4,12 +4,11 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <poliza-partial-show v-bind:id="this.id" v-bind:id_empresa="this.id_empresa"></poliza-partial-show>
+                        <layout-partial-show v-bind:id ="this.id"></layout-partial-show>
                     </div>
                     <div class="card-footer">
                         <div class="pull-right">
                             <button type="button" class="btn btn-secondary " v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
-                            <PDFPoliza v-bind:id="this.id" v-bind:id_empresa="this.id_empresa" v-bind:txt_btn="'Ver PDF'"></PDFPoliza>
                         </div>
                     </div>
                 </div>
@@ -21,24 +20,19 @@
 <script>
 import PDFPoliza from "../poliza/partials/PDFPoliza.vue";
 import PolizaPartialShow from "../poliza/partials/PartialShow.vue";
+import LayoutPartialShow from "./partials/PartialShow.vue";
 
 export default {
-    name: "poliza-cfdi-show",
-    props : ['id', 'id_empresa'],
-    components: {PDFPoliza, PolizaPartialShow},
+    name: "layout-pasivo-show",
+    props : ['id'],
+    components: {LayoutPartialShow},
     methods :{
         regresar() {
-            this.$router.push({name: 'poliza-cfdi'});
+            this.$router.push({name: 'layouts-pasivos'});
         },
     },
     watch:{
-        tipo_modal : {
-            handler(tipo_modal) {
-                if(tipo_modal !== '' && tipo_modal === 1){
-                    this.init();
-                }
-            }
-        },
+
     }
 }
 </script>
