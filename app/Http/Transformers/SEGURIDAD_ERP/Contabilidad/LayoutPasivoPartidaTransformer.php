@@ -32,11 +32,11 @@ class LayoutPasivoPartidaTransformer extends TransformerAbstract
             'concepto' => $model->concepto,
             'folio_factura' => $model->folio_factura,
             'fecha_factura' => $model->fecha_factura,
-            'importe_factura' => $model->importe_factura,
+            'importe_factura' => $model->importe_factura_format,
             'moneda_factura' => $model->moneda_factura,
-            'tc_factura'=>$model->tc_factura,
-            'importe_mxn'=>$model->importe_mxn,
-            'saldo'=>$model->saldo,
+            'tc_factura'=>$model->tc_factura_format,
+            'importe_mxn'=>$model->importe_mxn_format,
+            'saldo'=>$model->saldo_format,
             'uuid'=>$model->uuid,
         ];
     }
