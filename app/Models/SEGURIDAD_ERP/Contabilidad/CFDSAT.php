@@ -320,6 +320,20 @@ class CFDSAT extends Model
         }
     }
 
+    public function getImporteIvaMxnAttribute()
+    {
+        if($this->moneda != "MXN"){
+            if($this->tipo_cambio>0){
+                return $this->importe_iva * $this->tipo_cambio;
+            }else{
+                return $this->importe_iva;
+            }
+
+        }else{
+            return $this->importe_iva;
+        }
+    }
+
     public function getTotalMxnFormatAttribute()
     {
         return '$ ' . number_format(($this->total_mxn),2);

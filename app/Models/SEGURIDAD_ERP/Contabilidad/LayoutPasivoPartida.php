@@ -76,6 +76,22 @@ class LayoutPasivoPartida extends Model
         return number_format($this->tc_factura,4);
     }
 
+    public function getSaldoMxnAttribute()
+    {
+        if($this->CFDI)
+        {
+            if($this->CFDI->moneda != "MXN"){
+                if($this->CFDI->tipo_cambio>0){
+                    return $this->saldo * $this->CFDI->tipo_cambio;
+                }else{
+                    return $this->saldo;
+                }
+            }else{
+                return $this->saldo;
+            }
+        }
+    }
+
     public function getSaldoFormatAttribute($key)
     {
         return number_format($this->saldo,2);
