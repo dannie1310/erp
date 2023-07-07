@@ -3896,7 +3896,8 @@ export const routes = [
                         meta: {
                             title: 'Carga de Layout',
                             breadcrumb: {parent: 'layouts-pasivos', name: 'CARGA DE PASIVOS'},
-                            middleware: [auth],
+                            middleware: [auth,permission],
+                            permission: 'cargar_layouts_pasivos',
                             general: true
                         }
                     }

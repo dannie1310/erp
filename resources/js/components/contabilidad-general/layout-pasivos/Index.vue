@@ -2,7 +2,7 @@
     <span>
         <div class="row">
             <div class="col-12">
-                <router-link :to="{name: 'cargar-pasivos'}" class="btn btn-app float-right">
+                <router-link :to="{name: 'cargar-pasivos'}" v-if="$root.can('cargar_layouts_pasivos',true)" :disabled="cargando" class="btn btn-app float-right">
                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                     <i class="fa fa-plus" v-else></i>
                     Carga Layout
