@@ -50,7 +50,7 @@ class LayoutPasivoCargaController extends Controller
         return $this->respondWithItem($item);
     }
 
-    public function listaPosiblesCFDI(Request $request, $id)
+    public function listaPosiblesCFDI($id)
     {
         return $this->service->listarPosiblesCFDI($id);
     }
@@ -58,5 +58,15 @@ class LayoutPasivoCargaController extends Controller
     public function procesaLayoutPasivos(Request $request)
     {
         return $this->service->procesaLayoutPasivos($request->all());
+    }
+
+    public function validaDescargarLayoutIFS($id)
+    {
+        return $this->service->validaDescargarLayoutIFS($id);
+    }
+
+    public function descargarLayoutIFS($id)
+    {
+        return $this->service->descargarLayoutIFS($id);
     }
 }
