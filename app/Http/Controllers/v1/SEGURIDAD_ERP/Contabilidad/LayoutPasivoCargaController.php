@@ -43,6 +43,18 @@ class LayoutPasivoCargaController extends Controller
         $this->transformer = $transformer;
     }
 
+    public function asociarCFDI($id)
+    {
+        $item = $this->service->asociarCFDI($id);
+        $this->fractal->parseIncludes(["cfdi","partidas"]);
+        return $this->respondWithItem($item);
+    }
+
+    public function listaPosiblesCFDI(Request $request, $id)
+    {
+        return $this->service->listarPosiblesCFDI($id);
+    }
+
     public function procesaLayoutPasivos(Request $request)
     {
         return $this->service->procesaLayoutPasivos($request->all());

@@ -4,11 +4,13 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <layout-partial-show v-bind:id ="this.id"></layout-partial-show>
+                        <layout-partial-show-datos-carga></layout-partial-show-datos-carga>
+                        <layout-partial-show-lista-pasivos-validar></layout-partial-show-lista-pasivos-validar>
                     </div>
                     <div class="card-footer">
                         <div class="pull-right">
-                            <button type="button" class="btn btn-secondary " v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                             <button type="button" class="btn btn-primary" v-on:click="asociarCFDI" :disabled="actualizando || cargando"><i class="fa fa-file-invoice-dollar" ></i>Asociar CFDI</button>
+                             &nbsp;&nbsp;<button type="button" class="btn btn-secondary " v-on:click="regresar" :disabled="actualizando || cargando"><i class="fa fa-angle-left" ></i>Regresar</button>
                         </div>
                     </div>
                 </div>
@@ -18,18 +20,24 @@
 </template>
 
 <script>
-import PDFPoliza from "../poliza/partials/PDFPoliza.vue";
-import PolizaPartialShow from "../poliza/partials/PartialShow.vue";
+
 import LayoutPartialShow from "./partials/PartialShow.vue";
+import LayoutPartialShowDatosCarga from "./partials/PartialShowDatosCarga.vue";
+import LayoutPartialShowListaPasivosValidar from "./partials/PartialShowListaPasivosValidar.vue";
 
 export default {
     name: "layout-pasivo-show",
     props : ['id'],
-    components: {LayoutPartialShow},
+    components: {LayoutPartialShowListaPasivosValidar, LayoutPartialShowDatosCarga, LayoutPartialShow},
     mounted() {
         this.find();
     },
-    methods: {
+    data(){
+        return {
+            cargando:false,
+        }
+    },
+    methods :{
         regresar() {
             this.$router.push({name: 'layouts-pasivos'});
         },
@@ -64,15 +72,34 @@ export default {
                     this.cargando = false;
                 });
             }
-            else if(this.layout_parametro != null){
-                this.$store.commit('contabilidadGeneral/layout-pasivo/SET_LAYOUT', this.layout_parametro);
-                this.cargando = false;
-            }
-        }
+        },
+        asociarCFDI() {
+            this.$store.commit('contabilidadGeneral/layout-pasivo/SET_ACTUALIZANDO', true);
+
+            let _self = this;
+
+            return this.$store.dispatch('contabilidadGeneral/layout-pasivo/asociarCFDI',
+                {
+                    id: _self.id,
+                    data: {},
+                    config: {
+                        params: { _method: 'POST'}
+                    }
+                })
+                .then(data => {
+                    this.$store.commit('contabilidadGeneral/layout-pasivo/SET_LAYOUT', data);
+                }).finally(() => {
+                    this.$store.commit('contabilidadGeneral/layout-pasivo/SET_ACTUALIZANDO', false);
+                });
+
+        },
     },
     computed: {
         layout(){
             return this.$store.getters['contabilidadGeneral/layout-pasivo/currentLayout'];
+        },
+        actualizando() {
+            return this.$store.getters['contabilidadGeneral/layout-pasivo/actualizando'];
         },
     },
 }
