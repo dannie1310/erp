@@ -317,6 +317,8 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@show')->where(['id' => '[0-9]+']);
+            $api->post('{id_pasivo}/lista-cfdi-asociar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@listaPosiblesCFDI')->where(['id_pasivo' => '[0-9]+']);
+            $api->post('{id}/asociar-cfdi', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@asociarCFDI')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'contabilidad-electronica'], function ($api) {
