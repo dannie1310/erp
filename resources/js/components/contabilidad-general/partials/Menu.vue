@@ -110,7 +110,7 @@
                     <p>Lectura de Balanza XML</p>
                 </router-link>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_layous_pasivos', true )">
+            <li class="nav-item"  v-if="$root.can('consultar_layouts_pasivos', true )">
                 <router-link :to="{name: 'layouts-pasivos'}" class="nav-link" :class="{active: this.$route.name == 'layouts-pasivos'}">
                     &nbsp;<i class="fas fa-file-excel nav-icon"></i>
                     <p>Layouts Pasivos</p>
