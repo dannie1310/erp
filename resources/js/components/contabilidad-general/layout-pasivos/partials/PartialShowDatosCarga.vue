@@ -4,21 +4,52 @@
            <span class="sr-only">Cargando...</span>
         </div>
         <div v-else>
-            <layout-partial-show-datos-carga></layout-partial-show-datos-carga>
-            <layout-partial-show-lista-pasivos></layout-partial-show-lista-pasivos>
+            <div class="row">
+                <div class="col-md-12 table-responsive">
+                    <table class="table table-sm table-fs-sm">
+                        <thead>
+                            <tr>
+                                <th class="c200">Nombre Archivo</th>
+                                <th class="c90">Usuario Carga</th>
+                                <th class="c90">Fecha / Hora Carga</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    {{layout.nombre_archivo}}
+                                </td>
+                                <td >
+                                    {{layout.usuario_carga}}
+                                </td>
+                                <td>
+                                    {{layout.fecha_hora_carga}}
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </span>
 
 </template>
 
 <script>
-import LayoutPartialShowDatosCarga from "./PartialShowDatosCarga.vue";
-import LayoutPartialShowListaPasivos from "./PartialShowListaPasivos.vue";
-
 export default {
-    name: "layout-partial-show",
+    name: "layout-partial-show-datos-carga",
     props : ['id','layout_parametro'],
-    components : {LayoutPartialShowListaPasivos, LayoutPartialShowDatosCarga},
+    components : {},
+    data(){
+        return {
+            cargando:false,
+        }
+    },
+    mounted() {
+    },
+    methods: {
+    },
     computed: {
         layout(){
             return this.$store.getters['contabilidadGeneral/layout-pasivo/currentLayout'];

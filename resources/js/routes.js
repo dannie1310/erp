@@ -3896,6 +3896,19 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/validar',
+                        name: 'layouts-pasivos-validar',
+                        props: true,
+                        component: require('./components/contabilidad-general/layout-pasivos/Validar.vue').default,
+                        meta: {
+                            title: 'Validar Pasivos',
+                            breadcrumb: {parent: 'layouts-pasivos', name: 'VALIDAR'},
+                            //middleware: [auth, permission],
+                            permission: 'consultar_layous_pasivos',
+                            general: true
+                        }
+                    },
                 ]
             },
         ]

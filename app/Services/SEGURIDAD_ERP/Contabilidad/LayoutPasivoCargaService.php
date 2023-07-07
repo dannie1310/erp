@@ -46,4 +46,14 @@ class LayoutPasivoCargaService{
     {
         return $this->repository->show($id);
     }
+
+    public function asociarCFDI($id_pasivo)
+    {
+        return $this->repository->asociarCFDI($id_pasivo);
+    }
+
+    public function listarPosiblesCFDI($id_pasivo)
+    {
+        return $this->repository->listarPosiblesCFDI($id_pasivo);
+    }
 }
