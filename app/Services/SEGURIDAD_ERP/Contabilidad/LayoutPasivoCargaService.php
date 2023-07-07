@@ -78,14 +78,14 @@ class LayoutPasivoCargaService{
             foreach ($celdas as $key => $pasivo) {
                 if ($key > 0 && $pasivo[0] != null && (is_numeric($pasivo[11]) && is_numeric($pasivo[12])))
                 {
-                   if($pasivo[1] == null || $pasivo[1] == ''
-                        || $pasivo[3] == null || $pasivo[3] == ''
-                        || $pasivo[6] == null || $pasivo[6] == ''
-                        || $pasivo[7] == null || $pasivo[7] == ''
-                        || $pasivo[8] == null || $pasivo[8] == ''
-                        || $pasivo[12] == null || $pasivo[12] == '')
+                   if(($pasivo[1] == null || $pasivo[1] == '')
+                        || ($pasivo[3] == null || $pasivo[3] == '')
+                        || ($pasivo[6] == null || $pasivo[6] == '')
+                        || ($pasivo[7] == null || $pasivo[7] == '')
+                        || ($pasivo[8] == null || $pasivo[8] == '')
+                        || ($pasivo[12] == null || $pasivo[12] == ''))
                    {
-                       abort(400, 'Faltan datos obligatorios para poder realizar la carga.');
+                       abort(404, 'Faltan datos obligatorios para poder realizar la carga.');
                    }
 
                     $empresa = Empresa::where('AliasBDD', $pasivo[1])->first();

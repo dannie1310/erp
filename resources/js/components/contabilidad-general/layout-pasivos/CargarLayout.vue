@@ -95,24 +95,11 @@
                         }
                     })
                     .then(data => {
-                        if(data.partidas_no_validas){
-                            this.modalInvalidas = true;
                             this.data = data;
                             this.file = null;
                             this.$validator.errors.clear();
-                        }else if (data.cantidad_presupuestos > 0){
-                            this.file = null;
-                            this.file_name = '';
-                            this.$validator.errors.clear();
-                            this.$router.push({name: 'asignacion-contratista-layout-create', params: {id_contrato: this.id_contrato, data:data}});
-                        }else{
-                            this.file = null;
-                            this.file_name = '';
-                            this.$validator.errors.clear();
-                            swal('¡Aviso!', 'El archivo XLS no tiene partidas asignadas.', 'warning')
-                        }
                     }).finally(() => {
-
+                        this.salir()
                     });
             },
             salir()
