@@ -3883,24 +3883,6 @@ export const routes = [
                             general: true
                         }
                     },
-                ]
-            },
-            {
-                path: 'cargar-pasivos',
-                component: require('./components/contabilidad-general/layout-pasivos/CargarLayout.vue').default,
-                children: [
-                    {
-                        path: "/",
-                        name: "cargar-pasivos",
-                        component: require('./components/contabilidad-general/layout-pasivos/CargarLayout.vue').default,
-                        meta: {
-                            title: 'Carga de Layout',
-                            breadcrumb: {parent: 'layouts-pasivos', name: 'CARGA DE PASIVOS'},
-                            middleware: [auth,permission],
-                            permission: 'cargar_layouts_pasivos',
-                            general: true
-                        }
-                    },
                     {
                         path: ':id',
                         name: 'layouts-pasivos-show',
@@ -3927,8 +3909,27 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: 'cargar',
+                        component: require('./components/contabilidad-general/layout-pasivos/CargarLayout.vue').default,
+                        children: [
+                            {
+                                path: "/",
+                                name: "cargar-pasivos",
+                                component: require('./components/contabilidad-general/layout-pasivos/CargarLayout.vue').default,
+                                meta: {
+                                    title: 'Carga de Layout',
+                                    breadcrumb: {parent: 'layouts-pasivos', name: 'CARGA DE PASIVOS'},
+                                    //middleware: [auth,permission],
+                                    permission: 'cargar_layouts_pasivos',
+                                    general: true
+                                }
+                            },
+                        ]
+                    },
                 ]
             },
+
         ]
     },
     {
