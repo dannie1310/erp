@@ -3,9 +3,11 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use App\Exports\Contabilidad\LayoutPasivosIFSExport;
 use App\Exports\Contabilidad\ListaEmpresasExport;
 use App\Exports\FinanzasGlobal\SolicitudesPagoAplicadasExport;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCarga;
+use App\Models\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartida;
 use App\Models\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicada;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaRepository;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\ListaEmpresaRepository as Repository;
@@ -55,5 +57,11 @@ class LayoutPasivoCargaService{
     public function listarPosiblesCFDI($id_pasivo)
     {
         return $this->repository->listarPosiblesCFDI($id_pasivo);
+    }
+
+    public function descargarLayoutIFS($id)
+    {
+        $lista_pasivos = LayoutPasivoPartida::where("id_carga","=",$id)->get();
+        return Excel::download(new LayoutPasivosIFSExport($lista_pasivos), 'pasivos_ifs'."_".date('dmY_His').'.xlsx');
     }
 }

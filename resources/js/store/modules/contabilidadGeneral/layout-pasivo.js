@@ -88,6 +88,19 @@ export default {
                     })
             });
         },
+        descargaLayoutIFS(context, payload) {
+
+            var urr = URI + payload.id + '/descargar-layout-ifs?access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Layout descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
     },
 
     getters: {
