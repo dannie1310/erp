@@ -4,6 +4,7 @@ export default {
     state: {
         layouts: [],
         currentLayout: null,
+        actualizando:false,
         meta: {},
     },
 
@@ -14,6 +15,10 @@ export default {
 
         SET_META(state, data) {
             state.meta = data;
+        },
+
+        SET_ACTUALIZANDO(state, data){
+            state.actualizando = data
         },
 
         UPDATE_LAYOUT(state, data) {
@@ -49,6 +54,31 @@ export default {
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios.get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+
+        findCFDI(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.post(URI + payload.id_pasivo + '/lista-cfdi-asociar', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        asociarCFDI(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.post(URI + payload.id + '/asociar-cfdi', { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -110,6 +140,10 @@ export default {
 
         currentLayout(state) {
             return state.currentLayout
+        },
+
+        actualizando(state) {
+            return state.actualizando
         }
     }
 }

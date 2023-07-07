@@ -916,7 +916,7 @@ class Poliza extends Model
 
                 foreach($referencias as $referencia)
                 {
-                    if(strpos($referencia,$cfdi->folio))
+                    if(strpos($referencia,$cfdi->folio)!==false)
                     {
                         $cfdi->grado_coincidencia += 1;
                         break;
@@ -928,30 +928,6 @@ class Poliza extends Model
         )
             ->sortByDesc("grado_coincidencia")
         ;
-
-        /*foreach ($cfdis as $cfdi)
-        {
-            $cfdi->seleccionado = false;
-            if(in_array($cfdi->total, $importes) || in_array($cfdi->importe_iva, $importes))
-            {
-                $cfdi->grado_coincidencia += 1;
-            }
-            if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
-            {
-                $cfdi->grado_coincidencia += 1;
-            }
-
-            foreach($referencias as $referencia)
-            {
-                if(strpos($referencia,$cfdi->folio))
-                {
-                    $cfdi->grado_coincidencia += 1;
-                    break;
-                }
-            }
-        }
-
-        $nuevos_cfdi->sortByDesc("grado_coincidencia");*/
 
         return $nuevos_cfdi;
     }
