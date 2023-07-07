@@ -59,9 +59,37 @@ class LayoutPasivoCargaService{
         return $this->repository->listarPosiblesCFDI($id_pasivo);
     }
 
+    public function validaDescargarLayoutIFS($id)
+    {
+        $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga","=",$id)
+            ->where("coincide_rfc_empresa","=",0)
+            ->orWhere("coincide_rfc_proveedor","=",0)
+            ->orWhere("coincide_folio","=",0)
+            ->orWhere("coincide_fecha","=",0)
+            ->orWhere("coincide_importe","=",0)
+            ->orWhere("coincide_moneda","=",0)
+            ->count();
+        if($cantidad_pasivos_falta_coincidencia>0)
+        {
+            return ["respuesta"=>false];
+            abort(403,"Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir.");
+        }
+        return ["respuesta"=>true];;
+    }
+
     public function descargarLayoutIFS($id)
     {
-        $lista_pasivos = LayoutPasivoPartida::where("id_carga","=",$id)->get();
-        return Excel::download(new LayoutPasivosIFSExport($lista_pasivos), 'pasivos_ifs'."_".date('dmY_His').'.xlsx');
+        $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga","=",$id)
+            ->where("coincide_rfc_empresa","=",0)
+            ->orWhere("coincide_rfc_proveedor","=",0)
+            ->orWhere("coincide_folio","=",0)
+            ->orWhere("coincide_fecha","=",0)
+            ->orWhere("coincide_importe","=",0)
+            ->orWhere("coincide_moneda","=",0)
+            ->count();
+        if($cantidad_pasivos_falta_coincidencia==0) {
+            $lista_pasivos = LayoutPasivoPartida::where("id_carga", "=", $id)->get();
+            return Excel::download(new LayoutPasivosIFSExport($lista_pasivos), 'pasivos_ifs' . "_" . date('dmY_His') . '.xlsx');
+        }
     }
 }

@@ -54,6 +54,11 @@ class LayoutPasivoCargaController extends Controller
         return $this->service->listarPosiblesCFDI($id);
     }
 
+    public function validaDescargarLayoutIFS($id)
+    {
+        return $this->service->validaDescargarLayoutIFS($id);
+    }
+
     public function descargarLayoutIFS($id)
     {
         return $this->service->descargarLayoutIFS($id);

@@ -90,16 +90,32 @@ export default {
         },
         descargaLayoutIFS(context, payload) {
 
-            var urr = URI + payload.id + '/descargar-layout-ifs?access_token=' + this._vm.$session.get('jwt');
-            var win = window.open(urr, "_blank");
 
-            win.onbeforeunload = () => {
-                swal("Layout descargado correctamente.", {
-                    icon: "success",
-                    timer: 2000,
-                    buttons: false
-                })
-            }
+
+
+            return new Promise((resolve, reject) => {
+                axios.get(URI + payload.id+"/valida-descargar-layout-ifs", {})
+                    .then(r => r.data)
+                    .then(data => {
+                        if(data.respuesta){
+                            var urr = URI + payload.id + '/descargar-layout-ifs?access_token=' + this._vm.$session.get('jwt');
+                            var win = window.open(urr, "_blank");
+
+                            win.onbeforeunload = () => {
+                                swal("Layout descargado correctamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                })
+                            }
+                        }else{
+                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir.", "error")
+                        }
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
         },
     },
 
