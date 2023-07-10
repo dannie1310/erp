@@ -7,6 +7,7 @@ use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaTransforme
 use App\Services\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaService;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class LayoutPasivoCargaController extends Controller
@@ -52,6 +53,11 @@ class LayoutPasivoCargaController extends Controller
     public function listaPosiblesCFDI($id)
     {
         return $this->service->listarPosiblesCFDI($id);
+    }
+
+    public function procesaLayoutPasivos(Request $request)
+    {
+        return $this->service->procesaLayoutPasivos($request->all());
     }
 
     public function validaDescargarLayoutIFS($id)

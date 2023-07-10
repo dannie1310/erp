@@ -88,6 +88,44 @@ export default {
                     })
             });
         },
+        cargaLayout(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar Layout de Pasivos",
+                    text: "¿Está seguro de que desea cargar el layout?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cargar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'cargar-layout', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo cargado correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject('Archivo no procesable');
+                                })
+                        }
+                    });
+            });
+        },
         descargaLayoutIFS(context, payload) {
 
 

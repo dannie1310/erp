@@ -2,8 +2,14 @@
     <span>
         <div class="row">
             <div class="col-12">
+                <router-link :to="{name: 'cargar-pasivos'}" :disabled="cargando" class="btn btn-app float-right">
+                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                    <i class="fa fa-plus" v-else></i>
+                    Carga Layout
+                </router-link>
+            </div>
+            <div class="col-12">
                 <div class="card">
-
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div >

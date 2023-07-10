@@ -1,7 +1,6 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
             <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-file-powerpoint nav-icon"></i>
@@ -23,7 +22,6 @@
                     </li>
                 </ul>
             </li>
-
             <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-not-equal nav-icon"></i>
@@ -112,7 +110,7 @@
                     <p>Lectura de Balanza XML</p>
                 </router-link>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_layous_pasivos', true )">
+            <li class="nav-item"  v-if="$root.can('consultar_layouts_pasivos', true )">
                 <router-link :to="{name: 'layouts-pasivos'}" class="nav-link" :class="{active: this.$route.name == 'layouts-pasivos'}">
                     &nbsp;<i class="fas fa-file-excel nav-icon"></i>
                     <p>Layouts Pasivos</p>
