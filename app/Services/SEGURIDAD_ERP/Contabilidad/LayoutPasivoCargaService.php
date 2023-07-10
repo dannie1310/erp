@@ -88,40 +88,53 @@ class LayoutPasivoCargaService{
 
         try{
             foreach ($celdas as $key => $pasivo) {
-                if ($key > 0 && $pasivo[0] != null && (is_numeric($pasivo[11]) && is_numeric($pasivo[12])))
+                if ($key > 0 &&(
+                        ($pasivo[1] != null || $pasivo[1] != '')
+                        || ($pasivo[4] != null || $pasivo[4] != '')
+                        || ($pasivo[7] != null || $pasivo[7] != '')
+                        || ($pasivo[8] != null || $pasivo[8] != '')
+                        || ($pasivo[9] != null || $pasivo[9] != '')
+                        || ($pasivo[10] != null || $pasivo[10] != '')
+                        || ($pasivo[13] != null || $pasivo[13] != '')
+                        || ($pasivo[14] != null || $pasivo[14] != '')
+                        || ($pasivo[15] != null || $pasivo[15] != '')
+                    ))
                 {
-                   if(($pasivo[1] == null || $pasivo[1] == '')
-                        || ($pasivo[3] == null || $pasivo[3] == '')
-                        || ($pasivo[6] == null || $pasivo[6] == '')
+                    if(
+                        ($pasivo[1] == null || $pasivo[1] == '')
+                        || ($pasivo[4] == null || $pasivo[4] == '')
                         || ($pasivo[7] == null || $pasivo[7] == '')
                         || ($pasivo[8] == null || $pasivo[8] == '')
-                        || ($pasivo[12] == null || $pasivo[12] == ''))
-                   {
-                       abort(404, 'Faltan datos obligatorios para poder realizar la carga.');
-                   }
+                        || ($pasivo[9] == null || $pasivo[9] == '')
+                        || ($pasivo[10] == null || $pasivo[10] == '')
+                        || ($pasivo[13] == null || $pasivo[13] == '')
+                        || ($pasivo[14] == null || $pasivo[14] == '')
+                        || ($pasivo[15] == null || $pasivo[15] == '')
+                    )
+                    {
+                        abort(404, 'Faltan datos obligatorios en la partida '.($key+1).' para poder realizar la carga.');
+                    }
 
                     $empresa = Empresa::where('AliasBDD', $pasivo[1])->first();
                     if ($empresa == null) {
-                        abort(400, 'No se encuentra la empresa en bases.');
+                        abort(400, 'No se encuentra la empresa en el catálogo de empresas.');
 
                     }
                     $guardar_pasivo->partidas()->create([
-                        "id_carga" => $guardar_pasivo->getKey(),
                         "obra" => $pasivo[0],
                         "bbdd_contpaq" => $pasivo[1],
                         "rfc_empresa" => $empresa->empresaSAT->rfc,
                         "empresa" => $empresa->empresaSAT->razon_social,
-                        "rfc_proveedor" => $pasivo[3],
-                        "proveedor" => $pasivo[4],
-                        "concepto" => $pasivo[5],
-                        "folio_factura" => $pasivo[6],
-                        "fecha_factura" => $pasivo[7],
-                        "importe_factura" => $pasivo[8],
-                        "moneda_factura" => $pasivo[9],
-                        "tc_factura" => $pasivo[10],
-                        "importe_mxn" => $pasivo[11],
-                        "saldo" => $pasivo[12],
-                        "uuid" => 0
+                        "rfc_proveedor" => $pasivo[4],
+                        "proveedor" => $pasivo[5],
+                        "concepto" => $pasivo[6],
+                        "folio_factura" => $pasivo[7],
+                        "fecha_factura" => $pasivo[8],
+                        "importe_factura" => $pasivo[9],
+                        "moneda_factura" => $pasivo[10],
+                        "tc_factura" => $pasivo[11],
+                        "importe_mxn" => $pasivo[12],
+                        "saldo" => $pasivo[13],
                     ]);
                 }
             }
@@ -129,7 +142,7 @@ class LayoutPasivoCargaService{
             return $guardar_pasivo;
         } catch (\Exception $e){
             DB::connection('seguridad')->rollBack();
-            abort(400, 'Error al cargar archivo:\n'.$e);
+            abort(400, 'Error al cargar archivo'.$e);
             throw $e;
         }
     }
