@@ -72,8 +72,7 @@ class LayoutPasivoCargaService{
         unlink($file_xls);
         $celdas = $rows[0];
         if(count($celdas) == 0 ) {
-            DB::connection('seguridad')->rollBack();
-            abort(400, 'Error al cargar archivo debe contar con partidas');
+            abort(400, 'Error al cargar archivo, debe contar con partidas');
         }
         try {
             DB::connection('seguridad')->beginTransaction();
@@ -82,10 +81,12 @@ class LayoutPasivoCargaService{
                 "usuario_cargo" => auth()->id(),
                 "estado" => 1,
             ]);
-            if ($guardar_pasivo == null) {
-                abort(400, 'El archivo  XLS no corresponde.');
-            }
+        } catch (\Exception $e){
+            DB::connection('seguridad')->rollBack();
+            abort(400, 'Error al registrar la carga del archivo. \n'.$e);
+        }
 
+        try{
             foreach ($celdas as $key => $pasivo) {
                 if ($key > 0 && $pasivo[0] != null && (is_numeric($pasivo[11]) && is_numeric($pasivo[12])))
                 {
@@ -128,7 +129,7 @@ class LayoutPasivoCargaService{
             return $guardar_pasivo;
         } catch (\Exception $e){
             DB::connection('seguridad')->rollBack();
-            abort(400, 'Error al cargar archivo'.$e);
+            abort(400, 'Error al cargar archivo:\n'.$e);
             throw $e;
         }
     }
@@ -145,7 +146,8 @@ class LayoutPasivoCargaService{
 
     private function generaDirectorios($nombre_archivo)
     {
-        $nombre = $nombre_archivo . "_" . date("Ymdhis") . ".xlsx";
+        $nombre_archivo= pathinfo($nombre_archivo, PATHINFO_FILENAME);;
+        $nombre = $nombre_archivo . "_" . date("Ymd_his") . ".xlsx";
         $dir_xls = "uploads/contabilidadGeneral/layoutPasivo/";
         $path_xls = $dir_xls . $nombre;
 

@@ -92,7 +92,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cargar Layout de Pasivos",
-                    text: "¿Está seguro/a de que desea cargar xlsx?",
+                    text: "¿Está seguro de que desea cargar el layout?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -100,19 +100,18 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Agregar',
+                            text: 'Si, Cargar',
                             closeModal: false,
                         }
                     }
                 })
                     .then((value) => {
-                        console.log(payload, payload.data.file, payload.config)
                         if (value) {
                             axios
-                                .post(URI + 'cargalayout', payload.data, payload.config)
+                                .post(URI + 'cargar-layout', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Archivo leido correctamente", {
+                                    swal("Archivo cargado correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false

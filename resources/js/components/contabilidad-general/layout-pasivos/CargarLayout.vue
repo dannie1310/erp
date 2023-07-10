@@ -98,13 +98,14 @@
                             this.data = data;
                             this.file = null;
                             this.$validator.errors.clear();
-                    }).finally(() => {
                         this.salir()
+                    }).finally(() => {
+
                     });
             },
             salir()
             {
-                this.$router.go(-1);
+                this.$router.push("layouts-pasivos");
             },
         }
     }
