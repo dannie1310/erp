@@ -17,6 +17,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Utils\ValidacionSistema;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class LayoutPasivoCargaService{
 
@@ -120,8 +121,10 @@ class LayoutPasivoCargaService{
                         abort(400, 'No se encuentra la empresa en el catálogo de empresas.');
 
                     }
+                    $fecha = Date::excelToDateTimeObject($pasivo[8]);
+                    $fecha = (date_format($fecha,"Y/m/d"));
                     $guardar_pasivo->partidas()->create([
-                        "obra" => $pasivo[0],
+                        "obra" => $empresa->Descripcion!='' ? $empresa->Descripcion : $pasivo[0],
                         "bbdd_contpaq" => $pasivo[1],
                         "rfc_empresa" => $empresa->empresaSAT->rfc,
                         "empresa" => $empresa->empresaSAT->razon_social,
@@ -129,7 +132,7 @@ class LayoutPasivoCargaService{
                         "proveedor" => $pasivo[5],
                         "concepto" => $pasivo[6],
                         "folio_factura" => $pasivo[7],
-                        "fecha_factura" => $pasivo[8],
+                        "fecha_factura" => $fecha,
                         "importe_factura" => $pasivo[9],
                         "moneda_factura" => $pasivo[10],
                         "tc_factura" => $pasivo[11],

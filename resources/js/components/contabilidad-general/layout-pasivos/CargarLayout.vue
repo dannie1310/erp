@@ -105,7 +105,7 @@
             },
             salir()
             {
-                this.$router.push("layouts-pasivos");
+                this.$router.push({name: 'layouts-pasivos'});
             },
         }
     }
