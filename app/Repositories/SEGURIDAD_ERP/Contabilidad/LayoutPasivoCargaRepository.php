@@ -22,14 +22,17 @@ class LayoutPasivoCargaRepository extends Repository implements RepositoryInterf
         {
             foreach ($layout_pasivos->partidas as $partida) {
                 $posibles = $partida->posibles_cfdi;
-                $partida->uuid = $posibles[0]->uuid;
-                $partida->coincide_rfc_empresa = $posibles[0]->coincide_rfc_empresa;
-                $partida->coincide_rfc_proveedor = $posibles[0]->coincide_rfc_proveedor;
-                $partida->coincide_folio = $posibles[0]->coincide_folio;
-                $partida->coincide_fecha = $posibles[0]->coincide_fecha;
-                $partida->coincide_importe = $posibles[0]->coincide_importe;
-                $partida->coincide_moneda = $posibles[0]->coincide_moneda;
-                $partida->save();
+                if(count($posibles)>0)
+                {
+                    $partida->uuid = $posibles[0]->uuid;
+                    $partida->coincide_rfc_empresa = $posibles[0]->coincide_rfc_empresa;
+                    $partida->coincide_rfc_proveedor = $posibles[0]->coincide_rfc_proveedor;
+                    $partida->coincide_folio = $posibles[0]->coincide_folio;
+                    $partida->coincide_fecha = $posibles[0]->coincide_fecha;
+                    $partida->coincide_importe = $posibles[0]->coincide_importe;
+                    $partida->coincide_moneda = $posibles[0]->coincide_moneda;
+                    $partida->save();
+                }
             }
         }
 
