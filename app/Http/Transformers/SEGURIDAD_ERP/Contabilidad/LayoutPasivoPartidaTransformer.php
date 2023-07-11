@@ -48,6 +48,8 @@ class LayoutPasivoPartidaTransformer extends TransformerAbstract
             'tc_factura'=>$model->tc_factura_format,
             'importe_mxn'=>$model->importe_mxn_format,
             'saldo'=>$model->saldo_format,
+            'tc_saldo'=>$model->tc_saldo_format,
+            'saldo_mxn'=>$model->saldo_mxn_format,
             'uuid'=>$model->uuid,
             'coincide_rfc_empresa'=>$model->coincide_rfc_empresa ==1 ?true:false,
             'coincide_rfc_proveedor'=>$model->coincide_rfc_proveedor ==1 ?true:false,

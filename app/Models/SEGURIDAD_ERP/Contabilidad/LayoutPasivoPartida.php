@@ -27,6 +27,8 @@ class LayoutPasivoPartida extends Model
         "tc_factura",
         "importe_mxn",
         "saldo",
+        "tc_saldo",
+        "saldo_mxn",
         "uuid",
         "coincide_fecha",
         "coincide_folio",
@@ -76,7 +78,17 @@ class LayoutPasivoPartida extends Model
         return number_format($this->tc_factura,4);
     }
 
-    public function getSaldoMxnAttribute()
+    public function getTcSaldoFormatAttribute($key)
+    {
+        return number_format($this->tc_saldo,4);
+    }
+
+    public function getSaldoMxnFormatAttribute($key)
+    {
+        return number_format($this->saldo_mxn,2);
+    }
+
+    public function getSaldoCalculadoMxnAttribute()
     {
         if($this->CFDI)
         {
@@ -115,11 +127,8 @@ class LayoutPasivoPartida extends Model
             throw new \Exception("No hay una empresa SAT asociada a la empresa de Contabilidad",500);
         }
 
-
-
         $uuid_cfdi_asociados = $this->CFDI ? $this->CFDI->pluck("uuid")
             ->toArray():[];
-
 
         $uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);
 
@@ -128,11 +137,9 @@ class LayoutPasivoPartida extends Model
             ->pluck("id")
             ->toArray();
 
-
         $importe = $this->importe_factura;
 
         $referencia = $this->folio_factura;
-
 
         $query = CFDSAT::
         join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")

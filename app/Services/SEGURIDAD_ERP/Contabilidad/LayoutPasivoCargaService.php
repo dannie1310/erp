@@ -1,20 +1,14 @@
 <?php
 
-
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Exports\Contabilidad\LayoutPasivosIFSExport;
-use App\Exports\Contabilidad\ListaEmpresasExport;
-use App\Exports\FinanzasGlobal\SolicitudesPagoAplicadasExport;
-use App\Facades\Context;
 use App\Imports\PasivoImport;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCarga;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartida;
-use App\Models\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicada;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaRepository;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\ListaEmpresaRepository as Repository;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
-use App\Utils\ValidacionSistema;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -73,7 +67,7 @@ class LayoutPasivoCargaService{
         unlink($file_xls);
         $celdas = $rows[0];
         if(count($celdas) == 0 ) {
-            abort(400, 'Error al cargar archivo, debe contar con partidas');
+            abort(400, 'Error al cargar archivo, debe contar con al menos una partida');
         }
         try {
             DB::connection('seguridad')->beginTransaction();
@@ -138,6 +132,9 @@ class LayoutPasivoCargaService{
                         "tc_factura" => $pasivo[11],
                         "importe_mxn" => $pasivo[12],
                         "saldo" => $pasivo[13],
+                        "tc_saldo" => $pasivo[14],
+                        "saldo_mxn" => $pasivo[15],
+
                     ]);
                 }
             }
