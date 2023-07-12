@@ -37,7 +37,7 @@ class LayoutPasivoPartida extends Model
         "coincide_rfc_empresa",
         "coincide_rfc_proveedor",
         "coincide_tipo_cambio",
-
+        "inconsistencia_saldo"
     ];
     public $timestamps = false;
 
@@ -119,17 +119,8 @@ class LayoutPasivoPartida extends Model
     {
         $empresa_erp = EmpresaERP::where("AliasBDD","=",$this->bbdd_contpaq)
             ->first();
-        $id_empresa_contpaq = $empresa_erp->IdEmpresaContpaq;
-
-
-        /*if(!$empresa_erp->empresaSAT)
-        {
-            throw new \Exception("No hay una empresa SAT asociada a la empresa de Contabilidad",500);
-        }*/
 
         $uuid_cfdi_asociados = [];
-
-        //$uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);
 
         $id_proveedor_sat = ProveedorSAT::where("rfc", "=",$this->rfc_proveedor)
             ->get()

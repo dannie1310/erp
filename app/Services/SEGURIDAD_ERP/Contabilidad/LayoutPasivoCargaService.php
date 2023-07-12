@@ -124,7 +124,12 @@ class LayoutPasivoCargaService
                     abort(400, 'Error en el formato de fecha de la partida ' . ($key));
                 }
                 $fecha = (date_format($fecha, "Y/m/d"));
-                $guardar_pasivo->partidas()->create([
+
+                $importe_mxn = $pasivo[11] > 0 ? $pasivo[9] * $pasivo[11] : $pasivo[12];
+                $saldo_mxn = $pasivo[14] > 0 ? $pasivo[13] * $pasivo[14] : $pasivo[15];
+                $inconsistencia_saldo = ($importe_mxn - $saldo_mxn) < -1 ? 1 :0;
+
+                    $guardar_pasivo->partidas()->create([
                     "obra" => $empresa->Descripcion != '' ? $empresa->Descripcion : $pasivo[0],
                     "bbdd_contpaq" => $pasivo[1],
                     "rfc_empresa" => $empresa->empresaSAT->rfc,
@@ -137,11 +142,11 @@ class LayoutPasivoCargaService
                     "importe_factura" => $pasivo[9],
                     "moneda_factura" => $pasivo[10],
                     "tc_factura" => $pasivo[11],
-                    "importe_mxn" => $pasivo[11] > 0 ? $pasivo[9] * $pasivo[11] : $pasivo[12],
+                    "importe_mxn" => $importe_mxn,
                     "saldo" => $pasivo[13],
                     "tc_saldo" => $pasivo[14],
-                    "saldo_mxn" => $pasivo[14] > 0 ? $pasivo[13] * $pasivo[14] : $pasivo[15],
-
+                    "saldo_mxn" => $saldo_mxn,
+                    "inconsistencia_saldo" => $inconsistencia_saldo
                 ]);
             }
         }
