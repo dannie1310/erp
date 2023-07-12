@@ -122,15 +122,14 @@ class LayoutPasivoPartida extends Model
         $id_empresa_contpaq = $empresa_erp->IdEmpresaContpaq;
 
 
-        if(!$empresa_erp->empresaSAT)
+        /*if(!$empresa_erp->empresaSAT)
         {
             throw new \Exception("No hay una empresa SAT asociada a la empresa de Contabilidad",500);
-        }
+        }*/
 
-        $uuid_cfdi_asociados = $this->CFDI ? $this->CFDI->pluck("uuid")
-            ->toArray():[];
+        $uuid_cfdi_asociados = [];
 
-        $uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);
+        //$uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);
 
         $id_proveedor_sat = ProveedorSAT::where("rfc", "=",$this->rfc_proveedor)
             ->get()
@@ -195,7 +194,7 @@ class LayoutPasivoPartida extends Model
                     $cfdi->grado_coincidencia += 1;
                     $cfdi->coincide_fecha = 1;
                 }
-                if(strpos($referencia,$cfdi->folio)!==false)
+                if($cfdi->folio != "" && strpos($referencia,$cfdi->folio)!==false)
                 {
                     $cfdi->grado_coincidencia += 1;
                     $cfdi->coincide_folio = 1;
