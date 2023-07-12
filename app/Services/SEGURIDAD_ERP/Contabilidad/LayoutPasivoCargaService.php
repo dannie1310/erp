@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-class LayoutPasivoCargaService{
+class LayoutPasivoCargaService
+{
 
     /**
      * @var Repository
@@ -58,15 +59,16 @@ class LayoutPasivoCargaService{
         return $this->repository->listarPosiblesCFDI($id_pasivo);
     }
 
-    public function procesaLayoutPasivos($data){
-        ini_set('memory_limit', -1) ;
-        ini_set('max_execution_time', '7200') ;
+    public function procesaLayoutPasivos($data)
+    {
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', '7200');
         $partidas_no_validas = false;
         $file_xls = $this->getFileXls($data['name'], $data['file']);
         $rows = Excel::toArray(new PasivoImport, $file_xls);
-        unlink($file_xls);
+        //unlink($file_xls);
         $celdas = $rows[0];
-        if(count($celdas) == 0 ) {
+        if (count($celdas) == 0) {
             abort(400, 'Error al cargar archivo, debe contar con al menos una partida');
         }
         try {
@@ -76,75 +78,76 @@ class LayoutPasivoCargaService{
                 "usuario_cargo" => auth()->id(),
                 "estado" => 1,
             ]);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
-            abort(400, 'Error al registrar la carga del archivo. \n'.$e);
+            abort(400, 'Error al registrar la carga del archivo. \n' . $e);
         }
 
-        try{
-            foreach ($celdas as $key => $pasivo) {
-                if ($key > 0 &&(
-                        ($pasivo[1] != null || $pasivo[1] != '')
-                        || ($pasivo[4] != null || $pasivo[4] != '')
-                        || ($pasivo[7] != null || $pasivo[7] != '')
-                        || ($pasivo[8] != null || $pasivo[8] != '')
-                        || ($pasivo[9] != null || $pasivo[9] != '')
-                        || ($pasivo[10] != null || $pasivo[10] != '')
-                        || ($pasivo[13] != null || $pasivo[13] != '')
-                        || ($pasivo[14] != null || $pasivo[14] != '')
-                        || ($pasivo[15] != null || $pasivo[15] != '')
-                    ))
-                {
-                    if(
-                        ($pasivo[1] == null || $pasivo[1] == '')
-                        || ($pasivo[4] == null || $pasivo[4] == '')
-                        || ($pasivo[7] == null || $pasivo[7] == '')
-                        || ($pasivo[8] == null || $pasivo[8] == '')
-                        || ($pasivo[9] == null || $pasivo[9] == '')
-                        || ($pasivo[10] == null || $pasivo[10] == '')
-                        || ($pasivo[13] == null || $pasivo[13] == '')
-                        || ($pasivo[14] == null || $pasivo[14] == '')
-                        || ($pasivo[15] == null || $pasivo[15] == '')
-                    )
-                    {
-                        abort(404, 'Faltan datos obligatorios en la partida '.($key+1).' para poder realizar la carga.');
-                    }
 
-                    $empresa = Empresa::where('AliasBDD', $pasivo[1])->first();
-                    if ($empresa == null) {
-                        abort(400, 'No se encuentra la empresa en el catálogo de empresas.');
-
-                    }
-                    $fecha = Date::excelToDateTimeObject($pasivo[8]);
-                    $fecha = (date_format($fecha,"Y/m/d"));
-                    $guardar_pasivo->partidas()->create([
-                        "obra" => $empresa->Descripcion!='' ? $empresa->Descripcion : $pasivo[0],
-                        "bbdd_contpaq" => $pasivo[1],
-                        "rfc_empresa" => $empresa->empresaSAT->rfc,
-                        "empresa" => $empresa->empresaSAT->razon_social,
-                        "rfc_proveedor" => $pasivo[4],
-                        "proveedor" => $pasivo[5],
-                        "concepto" => $pasivo[6],
-                        "folio_factura" => $pasivo[7],
-                        "fecha_factura" => $fecha,
-                        "importe_factura" => $pasivo[9],
-                        "moneda_factura" => $pasivo[10],
-                        "tc_factura" => $pasivo[11],
-                        "importe_mxn" => $pasivo[12],
-                        "saldo" => $pasivo[13],
-                        "tc_saldo" => $pasivo[14],
-                        "saldo_mxn" => $pasivo[15],
-
-                    ]);
+        foreach ($celdas as $key => $pasivo) {
+            if ($key > 0 && (
+                    ($pasivo[1] != null || $pasivo[1] != '')
+                    || ($pasivo[4] != null || $pasivo[4] != '')
+                    || ($pasivo[7] != null || $pasivo[7] != '')
+                    || ($pasivo[8] != null || $pasivo[8] != '')
+                    || ($pasivo[9] != null || $pasivo[9] != '')
+                    || ($pasivo[10] != null || $pasivo[10] != '')
+                    || ($pasivo[13] != null || $pasivo[13] != '')
+                    || ($pasivo[14] != null || $pasivo[14] != '')
+                    || ($pasivo[15] != null || $pasivo[15] != '')
+                )) {
+                if (
+                    ($pasivo[1] == null || $pasivo[1] == '')
+                    || ($pasivo[4] == null || $pasivo[4] == '')
+                    || ($pasivo[7] == null || $pasivo[7] == '')
+                    || ($pasivo[8] == null || $pasivo[8] == '')
+                    || ($pasivo[9] == null || $pasivo[9] == '')
+                    || ($pasivo[10] == null || $pasivo[10] == '')
+                    || ($pasivo[13] == null || $pasivo[13] == '')
+                    || ($pasivo[14] == null || $pasivo[14] == '')
+                    || ($pasivo[15] == null || $pasivo[15] == '')
+                ) {
+                    abort(404, 'Faltan datos obligatorios en la partida ' . ($key) . ' para poder realizar la carga.');
                 }
+
+                $empresa = Empresa::where('AliasBDD', "=", $pasivo[1])->first();
+                if ($empresa == null) {
+                    abort(404, 'La base de datos contpaq: ' . $pasivo[1] . ' ingresada en la partida ' . ($key) . ' no existe, favor de verificar y corregir.');
+
+                    abort(400, 'No se encuentra la empresa en el catálogo de empresas.' . $pasivo[1]);
+
+                }
+                try {
+                    $fecha = Date::excelToDateTimeObject($pasivo[8]);
+                } catch (\Exception $e) {
+                    DB::connection('seguridad')->rollBack();
+                    abort(400, 'Error en el formato de fecha de la partida ' . ($key));
+                }
+                $fecha = (date_format($fecha, "Y/m/d"));
+                $guardar_pasivo->partidas()->create([
+                    "obra" => $empresa->Descripcion != '' ? $empresa->Descripcion : $pasivo[0],
+                    "bbdd_contpaq" => $pasivo[1],
+                    "rfc_empresa" => $empresa->empresaSAT->rfc,
+                    "empresa" => $empresa->empresaSAT->razon_social,
+                    "rfc_proveedor" => $pasivo[4],
+                    "proveedor" => $pasivo[5],
+                    "concepto" => $pasivo[6],
+                    "folio_factura" => $pasivo[7],
+                    "fecha_factura" => $fecha,
+                    "importe_factura" => $pasivo[9],
+                    "moneda_factura" => $pasivo[10],
+                    "tc_factura" => $pasivo[11],
+                    "importe_mxn" => $pasivo[11] > 0 ? $pasivo[9] * $pasivo[11] : $pasivo[12],
+                    "saldo" => $pasivo[13],
+                    "tc_saldo" => $pasivo[14],
+                    "saldo_mxn" => $pasivo[14] > 0 ? $pasivo[13] * $pasivo[14] : $pasivo[15],
+
+                ]);
             }
-            DB::connection('seguridad')->commit();
-            return $guardar_pasivo;
-        } catch (\Exception $e){
-            DB::connection('seguridad')->rollBack();
-            abort(400, 'Error al cargar archivo'.$e);
-            throw $e;
         }
+        DB::connection('seguridad')->commit();
+        return $guardar_pasivo;
+
     }
 
     private function getFileXLS($nombre_archivo, $archivo_xls)
@@ -159,7 +162,7 @@ class LayoutPasivoCargaService{
 
     private function generaDirectorios($nombre_archivo)
     {
-        $nombre_archivo= pathinfo($nombre_archivo, PATHINFO_FILENAME);;
+        $nombre_archivo = pathinfo($nombre_archivo, PATHINFO_FILENAME);;
         $nombre = $nombre_archivo . "_" . date("Ymd_his") . ".xlsx";
         $dir_xls = "uploads/contabilidadGeneral/layoutPasivo/";
         $path_xls = $dir_xls . $nombre;
@@ -172,33 +175,32 @@ class LayoutPasivoCargaService{
 
     public function validaDescargarLayoutIFS($id)
     {
-        $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga","=",$id)
-            ->where("coincide_rfc_empresa","=",0)
-            ->orWhere("coincide_rfc_proveedor","=",0)
-            ->orWhere("coincide_folio","=",0)
-            ->orWhere("coincide_fecha","=",0)
-            ->orWhere("coincide_importe","=",0)
-            ->orWhere("coincide_moneda","=",0)
+        $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga", "=", $id)
+            ->where("coincide_rfc_empresa", "=", 0)
+            ->orWhere("coincide_rfc_proveedor", "=", 0)
+            ->orWhere("coincide_folio", "=", 0)
+            ->orWhere("coincide_fecha", "=", 0)
+            ->orWhere("coincide_importe", "=", 0)
+            ->orWhere("coincide_moneda", "=", 0)
             ->count();
-        if($cantidad_pasivos_falta_coincidencia>0)
-        {
-            return ["respuesta"=>false];
-            abort(403,"Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir.");
+        if ($cantidad_pasivos_falta_coincidencia > 0) {
+            return ["respuesta" => false];
+            abort(403, "Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir.");
         }
-        return ["respuesta"=>true];;
+        return ["respuesta" => true];;
     }
 
     public function descargarLayoutIFS($id)
     {
-        $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga","=",$id)
-            ->where("coincide_rfc_empresa","=",0)
-            ->orWhere("coincide_rfc_proveedor","=",0)
-            ->orWhere("coincide_folio","=",0)
-            ->orWhere("coincide_fecha","=",0)
-            ->orWhere("coincide_importe","=",0)
-            ->orWhere("coincide_moneda","=",0)
+        $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga", "=", $id)
+            ->where("coincide_rfc_empresa", "=", 0)
+            ->orWhere("coincide_rfc_proveedor", "=", 0)
+            ->orWhere("coincide_folio", "=", 0)
+            ->orWhere("coincide_fecha", "=", 0)
+            ->orWhere("coincide_importe", "=", 0)
+            ->orWhere("coincide_moneda", "=", 0)
             ->count();
-        if($cantidad_pasivos_falta_coincidencia==0) {
+        if ($cantidad_pasivos_falta_coincidencia == 0) {
             $lista_pasivos = LayoutPasivoPartida::where("id_carga", "=", $id)->get();
             return Excel::download(new LayoutPasivosIFSExport($lista_pasivos), 'pasivos_ifs' . "_" . date('dmY_His') . '.xlsx');
         }
