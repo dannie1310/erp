@@ -31,6 +31,12 @@ class LayoutPasivoCargaRepository extends Repository implements RepositoryInterf
                     $partida->coincide_fecha = $posibles[0]->coincide_fecha;
                     $partida->coincide_importe = $posibles[0]->coincide_importe;
                     $partida->coincide_moneda = $posibles[0]->coincide_moneda;
+
+                    if($posibles[0]->moneda =='Pesos' && $partida->moneda_factura =='MXN'){
+                        $partida->coincide_moneda = 1;
+                        $partida->moneda_factura = $posibles[0]->moneda;
+                    }
+
                     $partida->save();
                 }
             }
