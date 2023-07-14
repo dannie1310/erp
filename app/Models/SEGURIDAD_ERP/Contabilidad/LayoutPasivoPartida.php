@@ -37,7 +37,8 @@ class LayoutPasivoPartida extends Model
         "coincide_rfc_empresa",
         "coincide_rfc_proveedor",
         "coincide_tipo_cambio",
-        "inconsistencia_saldo"
+        "inconsistencia_saldo",
+        "es_moneda_nacional"
     ];
     public $timestamps = false;
 
@@ -199,7 +200,7 @@ class LayoutPasivoPartida extends Model
             }
 
         )
-            ->sortByDesc("grado_coincidencia")
+            ->sortBy("grado_coincidencia")
         ;
 
 
