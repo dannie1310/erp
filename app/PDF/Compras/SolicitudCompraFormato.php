@@ -124,7 +124,7 @@ class SolicitudCompraFormato extends Rotation
         $this->SetRounds(array('1234'));
         $this->SetRadius(array(0.2));
         $this->SetAligns("C");
-        $this->Row(array(utf8_decode($this->obra->nombre)));
+        $this->Row(array(utf8_decode($this->obra->descripcion)));
         $this->Ln(.2);
         $this->SetFont('Arial', '', 10);
         $this->Cell(10);

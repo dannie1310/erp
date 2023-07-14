@@ -77,7 +77,7 @@ class FacturaVarioPDF extends Rotation
       $this->SetRounds(array('1234'));
       $this->SetRadius(array(0.2));
       $this->SetAligns("C");
-      $this->Row(array($this->obra->nombre));
+      $this->Row(array($this->obra->descripcion));
       $this->Ln(.2);
       $y_inicial = $this->getY();
       ###########################
@@ -119,7 +119,7 @@ class FacturaVarioPDF extends Rotation
       $this->Ln(.5);
       $this->setX(11);
       $this->SetFont('Arial', '', 10);
-      $this->Multicell(9.5, .5, $direccion . ' 
+      $this->Multicell(9.5, .5, $direccion . '
 RFC: ' . $this->factura->empresa->rfc, '', 'J');
       $y_final_2 = $this->getY();
       if($y_final_1>=$y_final_2){
@@ -172,7 +172,7 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
       $this->Ln(.5);
       $this->setX(11);
       $this->SetFont('Arial', '', 10);
-      $this->Multicell(9.5, .5, $direccion . ' 
+      $this->Multicell(9.5, .5, $direccion . '
 RFC: ' . $this->factura->empresa->rfc, '', 'J');
 
       $this->Ln(.5);

@@ -117,7 +117,7 @@ class PagoAnticipado extends Rotation
         $this->txtFooterTam = 6;
 
 
-        $this->nombre_obra = $this->obra->nombre;
+        $this->nombre_obra = $this->obra->descripcion;
         $this->razon_social = $this->obra->facturar;
 
         $this->empresa = $this->obra->facturar;

@@ -77,7 +77,7 @@ class SubcontratoFormato extends FPDI
 
             $this->Cell(11.5);
             $this->Cell(2.5,.5, 'OBRA','LT',0,'L');
-            $this->Cell(5.5,.5, $this->obra->nombre.' ','RT',0,'R');
+            $this->Cell(5.5,.5, $this->obra->descripcion.' ','RT',0,'R');
             $this->Ln(.5);
 
 
@@ -160,7 +160,7 @@ class SubcontratoFormato extends FPDI
             $this->Row(array(""));
             $this->setY($y_inicial);
             $this->setX($x_inicial);
-            $this->MultiCell(19.5, 1, 'PROYECTO: '. $this->obra->nombre, '', 'C');
+            $this->MultiCell(19.5, 1, $this->obra->descripcion, '', 'C');
 
             $this->Ln(.3);
             $this->SetFont('Arial', 'B', 13);

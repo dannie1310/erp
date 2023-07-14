@@ -46,7 +46,7 @@ class SolicitudRecepcionCFDIPDF extends Rotation
         $this->Ln(1);
 
         $this->SetFont('Arial', 'B', 13);
-        $this->Cell(19.5, 0.7, 'Proyecto: '.$this->solicitud->obra->nombre . ' ', 1, 1, 'C');
+        $this->Cell(19.5, 0.7, $this->solicitud->obra->descripcion . ' ', 1, 1, 'C');
         $this->Ln(0.5);
     }
     function cfdi(){

@@ -64,7 +64,7 @@ class InventarioMarbete extends Rotation
             $this->SetY($this->GetY() + 0.6);
             $this->SetFont('Arial', 'B', 6);
             $this->Cell(2.2);
-            $this->Cell(5.15, 0.45, utf8_decode($this->inventario->obra->nombre), '', 0, 'C', 1);
+            $this->Cell(5.15, 0.45, utf8_decode($this->inventario->obra->descripcion), '', 0, 'C', 1);
             $this->Cell(2.65);
             $this->Cell(6.8, 0.45, utf8_decode($marbete->almacen->descripcion), '', 0, 'C', 1);
             $this->Cell(2.65);

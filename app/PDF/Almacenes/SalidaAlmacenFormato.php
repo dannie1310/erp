@@ -103,7 +103,7 @@ class SalidaAlmacenFormato extends Rotation
         $this->SetAligns("C");
 
 
-        $this->Row([utf8_decode($this->obra->nombre . '  ' . " ")]);
+        $this->Row([utf8_decode($this->obra->descripcion . '  ' . " ")]);
         $this->Ln(.2);
         if($this->salida->entrega_contratista) {
             $this->SetFont('Arial', 'B', 12);

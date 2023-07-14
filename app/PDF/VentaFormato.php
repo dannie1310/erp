@@ -24,7 +24,7 @@ class VentaFormato extends Rotation
     const MAX_HEIGHT = 180;
 
     /**
-     * 
+     *
      */
     public function __construct(Venta $venta)
     {
@@ -63,7 +63,7 @@ class VentaFormato extends Rotation
         $this->Cell(4.5, .7, 'FOLIO CLIENTE', 'L', 0, 'L');
         $this->Cell(3.5, .7, $this->venta->numero_folio_alt_format, 'R', 0, 'L');
         $this->Ln(.7);
-        
+
         $this->SetX($x_f);
         $this->Cell(4.5, .7, 'FECHA', 'LB', 0, 'L');
         $this->Cell(3.5, .7, $this->venta->fecha_format, 'RB', 1, 'L');
@@ -79,9 +79,9 @@ class VentaFormato extends Rotation
         $this->SetRounds(['1234']);
         $this->SetRadius([0.2]);
         $this->SetAligns("C");
-        $this->Row([utf8_decode($this->obra->nombre . '  ' . " ")]);
+        $this->Row([utf8_decode($this->obra->descripcion . '  ' . " ")]);
         $this->Ln(.2);
- 
+
         $this->SetFont('Arial', '', 10);
         $this->Cell(9.5, .5, utf8_decode("Cliente"), 0, 0, 'L');
         $this->Cell(.5);
@@ -151,7 +151,7 @@ class VentaFormato extends Rotation
         if($this->PageNo()==1){
             $this->tableHeader();
         }
-        
+
         foreach ($this->venta->partidas_total as $i => $partida) {
             if($this->GetY() > 23.5){
                 $this->AddPage();
@@ -189,7 +189,7 @@ class VentaFormato extends Rotation
         $this->Ln(.5);
         $this->SetX(16.5);
         $this->Cell(2, .5, 'Total', 0, 0, 'L');
-        $this->Cell(2, .5, $this->venta->monto_format, 1, 0, 'R'); 
+        $this->Cell(2, .5, $this->venta->monto_format, 1, 0, 'R');
 
         $this->observaciones();
     }
@@ -337,7 +337,7 @@ class VentaFormato extends Rotation
         exit;
 
     }
-    
+
     function RotatedText($x, $y, $txt, $angle)
     {
         //Text rotated around its origin

@@ -88,7 +88,7 @@ class EntradaAlmacenFormato extends Rotation
         $this->SetAligns("C");
 
 
-        $this->Row([utf8_decode($this->obra->nombre . '  ' . " ")]);
+        $this->Row([utf8_decode($this->obra->descripcion . '  ' . " ")]);
         $this->Ln(.5);
         $this->SetFont('Arial', '', 10);
         $this->Cell(9.5, .7, 'Proveedor/Sucursal', 0, 0, 'L');
