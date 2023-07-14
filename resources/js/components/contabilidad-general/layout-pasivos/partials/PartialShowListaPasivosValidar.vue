@@ -27,7 +27,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(partida, i) in layout.partidas.data">
+                            <tr v-for="(partida, i) in pasivos">
                                 <td>{{ i + 1 }}</td>
                                 <td>{{partida.obra}}</td>
                                 <td>{{partida.bbdd_contpaq}}</td>
@@ -130,6 +130,9 @@ export default {
     computed: {
         layout(){
             return this.$store.getters['contabilidadGeneral/layout-pasivo/currentLayout'];
+        },
+        pasivos(){
+            return this.$store.getters['contabilidadGeneral/layout-pasivo-partida/pasivos'];
         },
         actualizando() {
             return this.$store.getters['contabilidadGeneral/layout-pasivo/actualizando'];

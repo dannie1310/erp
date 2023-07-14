@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="show" type="button" class="btn btn-sm btn-outline-primary" title="Editar Pasivo">
+        <button @click="show" type="button" class="btn btn-sm btn-outline-primary" title="Editar Pasivo" :disabled="actualizando">
             <i class="fa fa-pencil"></i>
         </button>
         <div class="modal fade" data-backdrop="static" data-keyboard="false" ref="modal" role="dialog" aria-hidden="true">
@@ -251,18 +251,6 @@
         data() {
             return {
                 es: es,
-                pasivo_store:{
-                    fecha : '',
-                    rfc_proveedor : '',
-                    folio_factura : '',
-                    importe_factura : '',
-                    moneda : '',
-                    tc_factura : '',
-                    importe_mxn : '',
-                    saldo : '',
-                    tc_saldo : '',
-                    saldo_mxn : '',
-                },
                 fecha : '',
                 rfc_proveedor : '',
                 folio_factura : '',
@@ -277,7 +265,10 @@
         },
         computed: {
             pasivo(){
-                return this.$store.getters['contabilidadGeneral/layout-pasivo/currentPasivo'];
+                return this.$store.getters['contabilidadGeneral/layout-pasivo-partida/currentPasivo'];
+            },
+            actualizando() {
+                return this.$store.getters['contabilidadGeneral/layout-pasivo/actualizando'];
             },
         },
         mounted(){
@@ -289,20 +280,20 @@
                 let _self = this;
                 if(this.pasivo == null && this.pasivo_parametro == null){
                     this.cargando = true;
-                    this.$store.commit('contabilidadGeneral/layout-pasivo/SET_PASIVO', null);
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVO', null);
                     return this.$store.dispatch('contabilidadGeneral/layout-pasivo/findPasivo', {
                         id: this.id,
                         params: {
                         }
                     }).then(data => {
-                        this.$store.commit('contabilidadGeneral/layout-pasivo/SET_PASIVO', data);
+                        this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVO', data);
                     }).finally(() => {
                         this.cargando = false;
                     });
                 }
                 else if(this.id > 0 && this.id != this.pasivo.id) {
                     this.cargando = true;
-                    this.$store.commit('contabilidadGeneral/layout-pasivo/SET_PASIVO', null);
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVO', null);
                     return this.$store.dispatch('contabilidadGeneral/layout-pasivo/find', {
                         id: this.id,
                         params: {
@@ -310,29 +301,17 @@
                             id: this.id
                         }
                     }).then(data => {
-                        this.$store.commit('contabilidadGeneral/layout-pasivo/SET_PASIVO', data);
+                        this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVO', data);
                     }).finally(() => {
                         this.cargando = false;
                     });
                 } else if(this.pasivo_parametro != null){
-                    this.$store.commit('contabilidadGeneral/layout-pasivo/SET_PASIVO', this.pasivo_parametro);
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVO', this.pasivo_parametro);
                     this.cargando = false;
                 }
             },
             cleanData(){
-                this.$store.commit('contabilidadGeneral/layout-pasivo/SET_PASIVO', null);
-                this.pasivo_store={
-                    fecha : '',
-                    rfc_proveedor : '',
-                    folio_factura : '',
-                    importe_factura : '',
-                    moneda : '',
-                    tc_factura : '',
-                    importe_mxn : '',
-                    saldo : '',
-                    tc_saldo : '',
-                    saldo_mxn : '',
-                };
+                this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVO', null);
             },
             formatoFecha(date){
                 return moment(date).format('DD-MM-YYYY');
@@ -386,13 +365,24 @@
             },
 
             update(){
-                return this.$store.dispatch('contabilidadGeneral/layout-pasivo/updatePasivo', {
+                return this.$store.dispatch('contabilidadGeneral/layout-pasivo-partida/update', {
                     id: this.pasivo.id,
                     params: {},
-                    data: this.pasivo_store
+                    data: {
+                        fecha : this.fecha,
+                        rfc_proveedor : this.rfc_proveedor,
+                        folio_factura : this.folio_factura,
+                        importe_factura : this.importe_factura,
+                        moneda : this.moneda,
+                        tc_factura : this.tc_factura,
+                        importe_mxn : this.importe_mxn,
+                        saldo : this.saldo,
+                        tc_saldo : this.tc_saldo,
+                        saldo_mxn : this.saldo_mxn,
+                    }
                 })
                 .then(data => {
-                    this.$store.commit('contabilidadGeneral/layout-pasivo/UPDATE_PASIVO', data);
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/UPDATE_PASIVO', data);
                     $(this.$refs.modal).modal('hide');
                 })
             },

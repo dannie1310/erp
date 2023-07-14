@@ -31,6 +31,19 @@ export default {
             state.currentPasivo = state.currentPasivo ? data : null;
         },
 
+        /*
+        * UPDATE_EMPRESA(state, data) {
+            state.listaEmpresas = state.listaEmpresas.map(empresa => {
+                if (empresa.id === data.id) {
+                    return Object.assign({}, empresa, data)
+                }
+                return empresa
+            })
+            state.currentEmpresa = state.currentEmpresa ? data : null;
+        },
+        *
+        * */
+
         SET_PASIVO(state, data) {
             state.currentPasivo = data;
         }

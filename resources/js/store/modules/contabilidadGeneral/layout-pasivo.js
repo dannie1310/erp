@@ -6,7 +6,7 @@ export default {
         currentLayout: null,
         actualizando:false,
         meta: {},
-        currentPasivo : null,
+        //currentPasivo : null,
     },
 
     mutations: {
@@ -36,9 +36,9 @@ export default {
             state.currentLayout = data;
         },
 
-        SET_PASIVO(state, data) {
+        /*SET_PASIVO(state, data) {
             state.currentPasivo = data;
-        }
+        }*/
     },
 
     actions: {
@@ -157,45 +157,6 @@ export default {
             });
         },
 
-        updatePasivo(context, payload) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "¿Está seguro?",
-                    text: "Actualizar Pasivo",
-                    icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Actualizar',
-                            closeModal: false,
-                        }
-                    }
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .patch(URI + payload.id, payload.data,{ params: payload.params } )
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("Pasivo actualizada correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    })
-                                        .then(() => {
-                                            resolve(data);
-                                        })
-                                })
-                                .catch(error => {
-                                    reject(error);
-                                })
-                        }
-                    });
-            });
-        }
     },
 
     getters: {
@@ -215,8 +176,8 @@ export default {
             return state.actualizando
         },
 
-        currentPasivo(state) {
+        /*currentPasivo(state) {
             return state.currentPasivo
-        },
+        },*/
     }
 }

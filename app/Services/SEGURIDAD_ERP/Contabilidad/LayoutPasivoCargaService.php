@@ -127,7 +127,8 @@ class LayoutPasivoCargaService
 
                 $importe_mxn = $pasivo[11] > 0 ? $pasivo[9] * $pasivo[11] : $pasivo[12];
                 $saldo_mxn = $pasivo[14] > 0 ? $pasivo[13] * $pasivo[14] : $pasivo[15];
-                $inconsistencia_saldo = ($importe_mxn - $saldo_mxn) < -1 ? 1 :0;
+                $importe_mxn_con_tc_saldo = $pasivo[14] > 0 ? $pasivo[9] * $pasivo[14] : $pasivo[12];
+                $inconsistencia_saldo = ($importe_mxn_con_tc_saldo - $saldo_mxn) < -1 ? 1 :0;
 
                     $guardar_pasivo->partidas()->create([
                     "obra" => $empresa->Descripcion != '' ? $empresa->Descripcion : $pasivo[0],
@@ -182,16 +183,32 @@ class LayoutPasivoCargaService
     {
         $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga", "=", $id)
             ->where("coincide_rfc_empresa", "=", 0)
-            ->orWhere("coincide_rfc_proveedor", "=", 0)
-            ->orWhere("coincide_folio", "=", 0)
-            ->orWhere("coincide_fecha", "=", 0)
-            ->orWhere("coincide_importe", "=", 0)
-            ->orWhere("coincide_moneda", "=", 0)
+            ->where(
+                function ($q){
+                    $q->orWhere("coincide_rfc_proveedor", "=", 0)
+                        ->orWhere("coincide_folio", "=", 0)
+                        ->orWhere("coincide_fecha", "=", 0)
+                        ->orWhere("coincide_importe", "=", 0)
+                        ->orWhere("coincide_moneda", "=", 0);
+                }
+            )
+            ->get()
             ->count();
+
         if ($cantidad_pasivos_falta_coincidencia > 0) {
             return ["respuesta" => false];
             abort(403, "Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir.");
         }
+
+        $cantidad_pasivos_inconsistencia_saldo = LayoutPasivoPartida::where("id_carga", "=", $id)
+            ->where("inconsistencia_saldo", "=", 1)
+            ->count();
+
+        if ($cantidad_pasivos_inconsistencia_saldo > 0) {
+            return ["respuesta" => false];
+            abort(403, "Algunos pasivos de la carga tienen un saldo mayor al monto de la factura, favor de corregir");
+        }
+
         return ["respuesta" => true];;
     }
 
@@ -199,13 +216,24 @@ class LayoutPasivoCargaService
     {
         $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga", "=", $id)
             ->where("coincide_rfc_empresa", "=", 0)
-            ->orWhere("coincide_rfc_proveedor", "=", 0)
-            ->orWhere("coincide_folio", "=", 0)
-            ->orWhere("coincide_fecha", "=", 0)
-            ->orWhere("coincide_importe", "=", 0)
-            ->orWhere("coincide_moneda", "=", 0)
+            ->where(
+                function ($q){
+                    $q->orWhere("coincide_rfc_proveedor", "=", 0)
+                        ->orWhere("coincide_folio", "=", 0)
+                        ->orWhere("coincide_fecha", "=", 0)
+                        ->orWhere("coincide_importe", "=", 0)
+                        ->orWhere("coincide_moneda", "=", 0);
+                }
+            )
+            ->get()
             ->count();
-        if ($cantidad_pasivos_falta_coincidencia == 0) {
+
+        $cantidad_pasivos_inconsistencia_saldo = LayoutPasivoPartida::where("id_carga", "=", $id)
+            ->where("inconsistencia_saldo", "=", 1)
+            ->get()
+            ->count();
+
+        if ($cantidad_pasivos_falta_coincidencia == 0 && $cantidad_pasivos_inconsistencia_saldo == 0) {
             $lista_pasivos = LayoutPasivoPartida::where("id_carga", "=", $id)->get();
             return Excel::download(new LayoutPasivosIFSExport($lista_pasivos), 'pasivos_ifs' . "_" . date('dmY_His') . '.xlsx');
         }
