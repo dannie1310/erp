@@ -20,56 +20,67 @@
                                 <th >TC</th>
                                 <th >Importe MXN</th>
                                 <th >Saldo</th>
+                                <th >TC Saldo</th>
+                                <th >Saldo MXN</th>
                                 <th >UUID Correspondiente</th>
                                 <th ></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(partida, i) in layout.partidas.data">
+                            <tr v-for="(partida, i) in pasivos">
                                 <td>{{ i + 1 }}</td>
                                 <td>{{partida.obra}}</td>
                                 <td>{{partida.bbdd_contpaq}}</td>
                                 <td>{{partida.rfc_empresa}}
-                                    <i class="fa fa-times-circle" style="color: red" v-if="partida.coincide_rfc_empresa == false"></i>
-                                    <i class="fa fa-check-circle" style="color: green" v-else-if="partida.coincide_rfc_empresa == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_rfc_empresa == false"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_rfc_empresa == true"></i>
                                 </td>
                                 <td>{{partida.empresa}}</td>
                                 <td>{{partida.rfc_proveedor}}
-                                    <i class="fa fa-times-circle" style="color: red" v-if="partida.coincide_rfc_proveedor == false"></i>
-                                    <i class="fa fa-check-circle" style="color: green" v-else-if="partida.coincide_rfc_proveedor == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_rfc_proveedor == false"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_rfc_proveedor == true"></i>
                                 </td>
                                 <td>{{partida.proveedor}}</td>
                                 <td>{{partida.fecha_factura}}
-                                    <i class="fa fa-times-circle" style="color: red" v-if="partida.coincide_fecha == false"></i>
-                                    <i class="fa fa-check-circle" style="color: green" v-else-if="partida.coincide_fecha == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_fecha == false"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_fecha == true"></i>
                                 </td>
                                 <td>{{partida.folio_factura}}
-                                    <i class="fa fa-times-circle" style="color: red" v-if="partida.coincide_folio == false"></i>
-                                    <i class="fa fa-check-circle" style="color: green" v-else-if="partida.coincide_folio == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_folio == false"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_folio == true"></i>
                                 </td>
                                 <td style="text-align: right">{{partida.importe_factura}}
-                                    <i class="fa fa-times-circle" style="color: red" v-if="partida.coincide_importe == false"></i>
-                                    <i class="fa fa-check-circle" style="color: green" v-else-if="partida.coincide_importe == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_importe == false"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_importe == true"></i>
                                 </td>
                                 <td>{{partida.moneda_factura}}
-                                    <i class="fa fa-times-circle" style="color: red" v-if="partida.coincide_moneda == false"></i>
-                                    <i class="fa fa-check-circle" style="color: green" v-else-if="partida.coincide_moneda == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_moneda == false"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_moneda == true"></i>
                                 </td>
                                 <td style="text-align: right">{{partida.tc_factura}}</td>
                                 <td style="text-align: right">{{partida.importe_mxn}}</td>
                                 <td style="text-align: right">{{partida.saldo}}</td>
+                                <td style="text-align: right">{{partida.tc_saldo}}</td>
+                                <td style="text-align: right">{{partida.saldo_mxn}}
+                                    <i class="fa fa-times-circle" style="color: red" v-if="partida.inconsistencia_saldo == true"></i>
+                                    <i class="fa fa-check-circle" style="color: green" v-else-if="partida.inconsistencia_saldo == false"></i>
+                                </td>
                                 <td>
-                                    <CFDI v-if="partida.factura" v-bind:txt="partida.factura.uuid" v-bind:id="partida.factura.id" @click="partida.factura.id" ></CFDI>
+                                    <CFDI v-if="partida.factura" v-bind:txt="partida.factura.uuid" v-bind:id="partida.factura.id" @click="partida.factura.id"
+                                    v-bind:cancelado="partida.factura.cancelado"></CFDI>
                                     <span v-else>
                                         {{partida.uuid}}
                                     </span>
                                 </td>
                                 <td>
+                                    <pasivos-edit
+                                    v-bind:pasivo_parametro="partida"></pasivos-edit>
                                     <!--
                                     <button type="button" class="btn btn-sm btn-outline-success" title="Buscar CFDI" @click="buscaCFDI(partida, $event)" :disabled="actualizando">
                                         <i class="fa fa-file-invoice-dollar"></i>
                                     </button>
                                     -->
+
                                 </td>
                             </tr>
                         </tbody>
@@ -84,10 +95,11 @@
 <script>
 
 import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI.vue";
+import PasivosEdit from "../Edit.vue";
 
 export default {
     name: "layout-partial-show-lista-pasivos-validar",
-    components: {CFDI},
+    components: {PasivosEdit, CFDI},
     props : ['id','layout_parametro'],
     data(){
         return {
@@ -119,6 +131,9 @@ export default {
     computed: {
         layout(){
             return this.$store.getters['contabilidadGeneral/layout-pasivo/currentLayout'];
+        },
+        pasivos(){
+            return this.$store.getters['contabilidadGeneral/layout-pasivo-partida/pasivos'];
         },
         actualizando() {
             return this.$store.getters['contabilidadGeneral/layout-pasivo/actualizando'];

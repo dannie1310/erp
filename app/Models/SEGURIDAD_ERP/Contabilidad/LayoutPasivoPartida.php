@@ -4,6 +4,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\CTPQ\PolizaMovimiento;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa as EmpresaERP;
+use App\Utils\CFD;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
@@ -27,6 +28,8 @@ class LayoutPasivoPartida extends Model
         "tc_factura",
         "importe_mxn",
         "saldo",
+        "tc_saldo",
+        "saldo_mxn",
         "uuid",
         "coincide_fecha",
         "coincide_folio",
@@ -35,7 +38,8 @@ class LayoutPasivoPartida extends Model
         "coincide_rfc_empresa",
         "coincide_rfc_proveedor",
         "coincide_tipo_cambio",
-
+        "inconsistencia_saldo",
+        "es_moneda_nacional"
     ];
     public $timestamps = false;
 
@@ -76,7 +80,17 @@ class LayoutPasivoPartida extends Model
         return number_format($this->tc_factura,4);
     }
 
-    public function getSaldoMxnAttribute()
+    public function getTcSaldoFormatAttribute($key)
+    {
+        return number_format($this->tc_saldo,4);
+    }
+
+    public function getSaldoMxnFormatAttribute($key)
+    {
+        return number_format($this->saldo_mxn,2);
+    }
+
+    public function getSaldoCalculadoMxnAttribute()
     {
         if($this->CFDI)
         {
@@ -107,36 +121,20 @@ class LayoutPasivoPartida extends Model
     {
         $empresa_erp = EmpresaERP::where("AliasBDD","=",$this->bbdd_contpaq)
             ->first();
-        $id_empresa_contpaq = $empresa_erp->IdEmpresaContpaq;
 
-
-        if(!$empresa_erp->empresaSAT)
-        {
-            throw new \Exception("No hay una empresa SAT asociada a la empresa de Contabilidad",500);
-        }
-
-
-
-        $uuid_cfdi_asociados = $this->CFDI ? $this->CFDI->pluck("uuid")
-            ->toArray():[];
-
-
-        $uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);
+        $uuid_cfdi_asociados = [];
 
         $id_proveedor_sat = ProveedorSAT::where("rfc", "=",$this->rfc_proveedor)
             ->get()
             ->pluck("id")
             ->toArray();
 
-
         $importe = $this->importe_factura;
 
         $referencia = $this->folio_factura;
 
-
         $query = CFDSAT::
         join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
-            ->where("cancelado","=",0)
             ->where("tipo_comprobante","=","I")
             ->where("id_empresa_sat","=",$empresa_erp->IdEmpresaSAT);
 
@@ -185,10 +183,26 @@ class LayoutPasivoPartida extends Model
                 }
                 if($cfdi->fecha_cfdi == $this->fecha_factura_format)
                 {
-                    $cfdi->grado_coincidencia += 1;
+                    $cfdi->grado_coincidencia += 3;
                     $cfdi->coincide_fecha = 1;
+                }else{
+                    $fecha_cfdi_exp = explode("/",$cfdi->fecha_cfdi );
+                    $fecha_facrura_exp = explode("/", $this->fecha_factura_format );
+
+                    if($fecha_cfdi_exp[0] == $fecha_facrura_exp[0])
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                    }
+                    if($fecha_cfdi_exp[1] == $fecha_facrura_exp[1])
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                    }
+                    if($fecha_cfdi_exp[2] == $fecha_facrura_exp[2])
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                    }
                 }
-                if(strpos($referencia,$cfdi->folio)!==false)
+                if($cfdi->folio != "" && strpos($referencia,$cfdi->folio)!==false)
                 {
                     $cfdi->grado_coincidencia += 1;
                     $cfdi->coincide_folio = 1;
@@ -202,7 +216,7 @@ class LayoutPasivoPartida extends Model
             }
 
         )
-            ->sortByDesc("grado_coincidencia")
+            ->sortBy("grado_coincidencia")
         ;
 
 
@@ -213,4 +227,106 @@ class LayoutPasivoPartida extends Model
     /**
      * Métodos
      */
+
+    public function actualizaCoincidenciasConCFDI()
+    {
+        if($this->CFDI)
+        {
+            $id_proveedor_sat = ProveedorSAT::where("rfc", "=",$this->rfc_proveedor)
+                ->get()
+                ->pluck("id")
+                ->toArray();
+
+            $cfdi = CFDSAT::where("id","=",$this->CFDI->id)
+                ->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
+            ,cfd_sat.serie, cfd_sat.folio, cfd_sat.fecha, cfd_sat.moneda
+            , FORMAT(cfd_sat.fecha,'dd/MM/yyyy') as fecha_cfdi, 1 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
+                ->orderBy("cfd_sat.total")->first()
+            ;
+
+            if(abs($cfdi->total- $this->importe_factura)<1)
+            {
+                $this->coincide_importe = 1;
+            }
+            if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
+            {
+                $this->coincide_rfc_proveedor = 1;
+            }
+            if($cfdi->fecha_cfdi == $this->fecha_factura_format)
+            {
+                $this->coincide_fecha = 1;
+            }
+            if($cfdi->folio != "" && strpos($this->folio_factura, $cfdi->folio)!==false)
+            {
+                $this->coincide_folio = 1;
+            }
+            if($cfdi->moneda == $this->moneda_factura)
+            {
+                $this->coincide_moneda = 1;
+            }
+
+            $this->save();
+        }
+
+    }
+
+    public function actualizaInconsistenciaSaldo()
+    {
+        $this->inconsistencia_saldo = (($this->importe_factura * $this->tc_saldo) - $this->saldo_mxn) < -1 ? 1 :0;
+        $this->save();
+
+    }
+
+    public function asociaCFDI()
+    {
+        $monedas_nacionales = LayoutPasivoMonedaNacional::all()->pluck("descripcion")->toArray();
+
+        $posibles = $this->posibles_cfdi;
+        if(count($posibles)>0)
+        {
+            $mejor_coincidencia = $posibles[count($posibles)-1];
+
+            $this->uuid = $mejor_coincidencia->uuid;
+            $this->coincide_rfc_empresa = $mejor_coincidencia->coincide_rfc_empresa;
+            $this->coincide_rfc_proveedor = $mejor_coincidencia->coincide_rfc_proveedor;
+            $this->coincide_folio = $mejor_coincidencia->coincide_folio;
+            $this->coincide_fecha = $mejor_coincidencia->coincide_fecha;
+            $this->coincide_importe = $mejor_coincidencia->coincide_importe;
+            $this->coincide_moneda = $mejor_coincidencia->coincide_moneda;
+
+            if(!$mejor_coincidencia->moneda)
+            {
+                $cfd_util = new CFD($mejor_coincidencia->xml);
+                $arreglo_cfd = $cfd_util->getArregloFactura();
+                $cfd_sat = CFDSAT::find($mejor_coincidencia->id);
+
+                try {
+                    if(key_exists("moneda",$arreglo_cfd)){
+                        $cfd_sat->moneda = $arreglo_cfd["moneda"];
+                        $cfd_sat->save();
+                        $mejor_coincidencia->moneda = $arreglo_cfd["moneda"];
+                    }
+                }
+                catch (\Exception $e)
+                {
+                }
+            }
+
+            if(in_array($mejor_coincidencia->moneda, $monedas_nacionales)){
+
+                if(in_array($this->moneda_factura, $monedas_nacionales))
+                {
+                    $this->es_moneda_nacional = 1;
+                    $this->coincide_moneda = 1;
+                    $this->tc_factura = 1;
+                    $this->tc_saldo = 1;
+                    $this->moneda_factura = $mejor_coincidencia->moneda;
+                }
+            }else{
+                $this->es_moneda_nacional = 0;
+            }
+            $this->save();
+        }
+        return $this;
+    }
 }

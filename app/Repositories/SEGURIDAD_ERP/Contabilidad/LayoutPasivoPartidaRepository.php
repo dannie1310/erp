@@ -13,4 +13,15 @@ class LayoutPasivoPartidaRepository extends Repository implements RepositoryInte
         parent::__construct($model);
         $this->model = $model;
     }
+
+    public function asociarCFDI($id)
+    {
+        return $this->show($id)->asociaCFDI();
+    }
+
+    public function listarPosiblesCFDI($id_pasivo)
+    {
+        $pasivo = LayoutPasivoPartida::find($id_pasivo);
+        return $pasivo->posibles_cfdi;
+    }
 }

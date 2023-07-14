@@ -113,7 +113,7 @@
             <li class="nav-item"  v-if="$root.can('consultar_layouts_pasivos', true )">
                 <router-link :to="{name: 'layouts-pasivos'}" class="nav-link" :class="{active: this.$route.name == 'layouts-pasivos'}">
                     &nbsp;<i class="fas fa-file-excel nav-icon"></i>
-                    <p>Layouts Pasivos</p>
+                    <p>Layouts para pasivos IFS</p>
                 </router-link>
             </li>
         </ul>

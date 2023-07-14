@@ -20,11 +20,13 @@
                                 <th >TC</th>
                                 <th >Importe MXN</th>
                                 <th >Saldo</th>
+                                <th >TC Saldo</th>
+                                <th >Saldo MXN</th>
                                 <th >UUID Correspondiente</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(partida, i) in layout.partidas.data">
+                            <tr v-for="(partida, i) in pasivos">
                                 <td>{{ i + 1 }}</td>
                                 <td>{{partida.obra}}</td>
                                 <td>{{partida.bbdd_contpaq}}</td>
@@ -39,7 +41,15 @@
                                 <td style="text-align: right">{{partida.tc_factura}}</td>
                                 <td style="text-align: right">{{partida.importe_mxn}}</td>
                                 <td style="text-align: right">{{partida.saldo}}</td>
-                                <td>{{partida.uuid}}</td>
+                                <td style="text-align: right">{{partida.tc_saldo}}</td>
+                                <td style="text-align: right">{{partida.saldo_mxn}}</td>
+                                <td>
+                                    <CFDI v-if="partida.factura" v-bind:txt="partida.factura.uuid" v-bind:id="partida.factura.id" @click="partida.factura.id"
+                                          v-bind:cancelado="partida.factura.cancelado"></CFDI>
+                                    <span v-else>
+                                        {{partida.uuid}}
+                                    </span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -52,8 +62,11 @@
 
 <script>
 
+import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI.vue";
+
 export default {
     name: "layout-partial-show-lista-pasivos",
+    components: {CFDI},
     props : ['id','layout_parametro'],
     data(){
         return {
@@ -64,6 +77,9 @@ export default {
     computed: {
         layout(){
             return this.$store.getters['contabilidadGeneral/layout-pasivo/currentLayout'];
+        },
+        pasivos(){
+            return this.$store.getters['contabilidadGeneral/layout-pasivo-partida/pasivos'];
         },
     },
 }

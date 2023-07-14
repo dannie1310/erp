@@ -3876,9 +3876,9 @@ export const routes = [
                         name:"layouts-pasivos",
                         component: require('./components/contabilidad-general/layout-pasivos/Index.vue').default,
                         meta: {
-                            title: 'Lista de layouts para carga de pasivos',
+                            title: 'Lista de layouts para carga de pasivos a IFS',
                             breadcrumb: {parent: 'contabilidad-general', name: 'LAYOUTS PASIVOS'},
-                            //middleware: [auth, permission],
+                            middleware: [auth, permission],
                             permission: 'consultar_layouts_pasivos',
                             general: true
                         }
@@ -3891,8 +3891,8 @@ export const routes = [
                         meta: {
                             title: 'Consultar Pasivos por Layout',
                             breadcrumb: {parent: 'layouts-pasivos', name: 'CONSULTAR'},
-                            //middleware: [auth, permission],
-                            permission: 'consultar_layous_pasivos',
+                            middleware: [auth, permission],
+                            permission: 'consultar_layouts_pasivos',
                             general: true
                         }
                     },
@@ -3904,13 +3904,13 @@ export const routes = [
                         meta: {
                             title: 'Validar Pasivos',
                             breadcrumb: {parent: 'layouts-pasivos', name: 'VALIDAR'},
-                            //middleware: [auth, permission],
-                            permission: 'consultar_layous_pasivos',
+                            middleware: [auth, permission],
+                            permission: 'consultar_layouts_pasivos',
                             general: true
                         }
                     },
                     {
-                        path: 'cargar',
+                        path: 'cargar/layout',
                         component: require('./components/contabilidad-general/layout-pasivos/CargarLayout.vue').default,
                         children: [
                             {

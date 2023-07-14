@@ -95,11 +95,15 @@
                         }
                     })
                     .then(data => {
-                            this.data = data;
-                            this.file = null;
-                            this.$validator.errors.clear();
+                            //this.data = data;
+                            //this.file = null;
+                            //this.$validator.errors.clear();
                         this.salir()
                     }).finally(() => {
+                        this.$refs.carga_layout.value = '';
+                        this.file = null;
+                        this.file_name = '';
+                        this.$validator.errors.clear();
 
                     });
             },

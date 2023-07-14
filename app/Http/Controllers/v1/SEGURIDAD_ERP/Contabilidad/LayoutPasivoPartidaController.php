@@ -41,4 +41,18 @@ class LayoutPasivoPartidaController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function asociarCFDI($id)
+    {
+        $item = $this->service->asociarCFDI($id);
+        $this->fractal->parseIncludes(["cfdi","partidas"]);
+        return $this->respondWithItem($item);
+    }
+
+    public function listaPosiblesCFDI($id)
+    {
+        return $this->service->listarPosiblesCFDI($id);
+    }
+
+
 }

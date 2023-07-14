@@ -77,6 +77,7 @@ class CFDSATTransformer extends TransformerAbstract
             'estado_lbl' => $model->cancelado == 1? 'Cancelado':'Vigente',
             'estado_color' => $model->estado_color,
             'total_xls' => (float) $model->total_xls,
+            "cancelado" => $model->cancelado,
         ];
     }
 

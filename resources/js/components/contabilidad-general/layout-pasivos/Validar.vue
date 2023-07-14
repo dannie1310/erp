@@ -54,6 +54,7 @@ export default {
                     }
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/layout-pasivo/SET_LAYOUT', data);
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVOS', data.partidas.data);
                 }).finally(() => {
                     this.cargando = false;
                 });
@@ -61,6 +62,7 @@ export default {
             else if(this.id > 0 && this.id != this.layout.id) {
                 this.cargando = true;
                 this.$store.commit('contabilidadGeneral/layout-pasivo/SET_LAYOUT', null);
+                this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVOS', null);
                 return this.$store.dispatch('contabilidadGeneral/layout-pasivo/find', {
                     id: this.id,
                     params: {
@@ -69,6 +71,7 @@ export default {
                     }
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/layout-pasivo/SET_LAYOUT', data);
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVOS', data.partidas.data);
                 }).finally(() => {
                     this.cargando = false;
                 });
@@ -89,6 +92,8 @@ export default {
                 })
                 .then(data => {
                     this.$store.commit('contabilidadGeneral/layout-pasivo/SET_LAYOUT', data);
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVOS', data.partidas.data);
+
                 }).finally(() => {
                     this.$store.commit('contabilidadGeneral/layout-pasivo/SET_ACTUALIZANDO', false);
                 });
@@ -108,6 +113,9 @@ export default {
     computed: {
         layout(){
             return this.$store.getters['contabilidadGeneral/layout-pasivo/currentLayout'];
+        },
+        pasivos(){
+            return this.$store.getters['contabilidadGeneral/layout-pasivo-partida/pasivos'];
         },
         actualizando() {
             return this.$store.getters['contabilidadGeneral/layout-pasivo/actualizando'];
