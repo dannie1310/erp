@@ -181,11 +181,14 @@ class LayoutPasivoCargaService
 
     public function validaDescargarLayoutIFS($id)
     {
+        $respuesta_coincidencia_con_cfdi = true;
+        $respuesta_inconsistencia_saldo = true;
+
         $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga", "=", $id)
-            ->where("coincide_rfc_empresa", "=", 0)
             ->where(
                 function ($q){
                     $q->orWhere("coincide_rfc_proveedor", "=", 0)
+                        ->orWhere("coincide_rfc_empresa", "=", 0)
                         ->orWhere("coincide_folio", "=", 0)
                         ->orWhere("coincide_fecha", "=", 0)
                         ->orWhere("coincide_importe", "=", 0)
@@ -195,9 +198,11 @@ class LayoutPasivoCargaService
             ->get()
             ->count();
 
+
         if ($cantidad_pasivos_falta_coincidencia > 0) {
-            return ["respuesta" => false];
-            abort(403, "Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir.");
+            $respuesta_coincidencia_con_cfdi = false;
+            //return ["respuesta" => false];
+            //abort(403, "Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir.");
         }
 
         $cantidad_pasivos_inconsistencia_saldo = LayoutPasivoPartida::where("id_carga", "=", $id)
@@ -205,20 +210,22 @@ class LayoutPasivoCargaService
             ->count();
 
         if ($cantidad_pasivos_inconsistencia_saldo > 0) {
-            return ["respuesta" => false];
-            abort(403, "Algunos pasivos de la carga tienen un saldo mayor al monto de la factura, favor de corregir");
+            $respuesta_inconsistencia_saldo = false;
+            //return ["respuesta" => false];
+            //abort(403, "Algunos pasivos de la carga tienen un saldo mayor al monto de la factura, favor de corregir");
         }
 
-        return ["respuesta" => true];;
+        return ["respuesta_inconsistencia_saldo" => $respuesta_inconsistencia_saldo,
+            "respuesta_coincidencia_con_cfdi" => $respuesta_coincidencia_con_cfdi];;
     }
 
     public function descargarLayoutIFS($id)
     {
         $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga", "=", $id)
-            ->where("coincide_rfc_empresa", "=", 0)
             ->where(
                 function ($q){
                     $q->orWhere("coincide_rfc_proveedor", "=", 0)
+                        ->orWhere("coincide_rfc_empresa", "=", 0)
                         ->orWhere("coincide_folio", "=", 0)
                         ->orWhere("coincide_fecha", "=", 0)
                         ->orWhere("coincide_importe", "=", 0)

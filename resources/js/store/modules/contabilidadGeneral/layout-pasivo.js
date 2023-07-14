@@ -136,7 +136,7 @@ export default {
                 axios.get(URI + payload.id+"/valida-descargar-layout-ifs", {})
                     .then(r => r.data)
                     .then(data => {
-                        if(data.respuesta){
+                        if(data.respuesta_inconsistencia_saldo && data.respuesta_coincidencia_con_cfdi){
                             var urr = URI + payload.id + '/descargar-layout-ifs?access_token=' + this._vm.$session.get('jwt');
                             var win = window.open(urr, "_blank");
 
@@ -147,8 +147,15 @@ export default {
                                     buttons: false
                                 })
                             }
-                        }else{
+                        }else if(data.respuesta_inconsistencia_saldo && !data.respuesta_coincidencia_con_cfdi){
                             swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir.", "error")
+
+                        }else if(!data.respuesta_inconsistencia_saldo && data.respuesta_coincidencia_con_cfdi){
+                            swal("Error","Algunos pasivos de la carga tienen un saldo mayor que el monto de la factura, favor de corregir.", "error")
+
+                        }else{
+                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde" +
+                                "y un saldo mayor que el monto de la factura, favor de corregir.", "error")
                         }
                     })
                     .catch(error => {
