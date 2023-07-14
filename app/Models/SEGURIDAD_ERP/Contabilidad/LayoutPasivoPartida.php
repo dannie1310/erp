@@ -135,7 +135,6 @@ class LayoutPasivoPartida extends Model
 
         $query = CFDSAT::
         join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
-            ->where("cancelado","=",0)
             ->where("tipo_comprobante","=","I")
             ->where("id_empresa_sat","=",$empresa_erp->IdEmpresaSAT);
 

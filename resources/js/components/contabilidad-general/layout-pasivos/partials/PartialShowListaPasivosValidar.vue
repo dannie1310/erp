@@ -66,7 +66,8 @@
                                     <i class="fa fa-check-circle" style="color: green" v-else-if="partida.inconsistencia_saldo == false"></i>
                                 </td>
                                 <td>
-                                    <CFDI v-if="partida.factura" v-bind:txt="partida.factura.uuid" v-bind:id="partida.factura.id" @click="partida.factura.id" ></CFDI>
+                                    <CFDI v-if="partida.factura" v-bind:txt="partida.factura.uuid" v-bind:id="partida.factura.id" @click="partida.factura.id"
+                                    v-bind:cancelado="partida.factura.cancelado"></CFDI>
                                     <span v-else>
                                         {{partida.uuid}}
                                     </span>

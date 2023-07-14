@@ -1,6 +1,8 @@
 <template>
     <span>
-            <span v-if="txt" @click="init" style="cursor: pointer; text-decoration: underline; color: #003eff" >{{txt}}</span>
+            <span v-if="txt" @click="init" style="cursor: pointer"
+                  :style="cancelado ==1?`text-decoration: line-through; color: #F00`:`text-decoration: underline; color: #003eff`"
+            >{{txt}}</span>
             <button @click="init" v-else type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato CFDI" :disabled="cargandoEstado">
                 <i class="fa fa-file-invoice-dollar"></i> </button>
 
@@ -29,7 +31,7 @@
 <script>
     export default {
         name: "CFDI",
-        props: ['id','txt'],
+        props: ['id','txt','cancelado'],
         computed: {
             cargandoEstado(){
                 return this.$store.getters['fiscal/cfd-sat/currentEstado'];

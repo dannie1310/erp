@@ -44,7 +44,8 @@
                                 <td style="text-align: right">{{partida.tc_saldo}}</td>
                                 <td style="text-align: right">{{partida.saldo_mxn}}</td>
                                 <td>
-                                    <CFDI v-if="partida.factura" v-bind:txt="partida.factura.uuid" v-bind:id="partida.factura.id" @click="partida.factura.id" ></CFDI>
+                                    <CFDI v-if="partida.factura" v-bind:txt="partida.factura.uuid" v-bind:id="partida.factura.id" @click="partida.factura.id"
+                                          v-bind:cancelado="partida.factura.cancelado"></CFDI>
                                     <span v-else>
                                         {{partida.uuid}}
                                     </span>

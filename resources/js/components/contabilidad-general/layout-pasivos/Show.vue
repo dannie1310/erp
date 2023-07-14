@@ -45,6 +45,8 @@ export default {
                     }
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/layout-pasivo/SET_LAYOUT', data);
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVOS', data.partidas.data);
+
                 }).finally(() => {
                     this.cargando = false;
                 });
@@ -60,12 +62,16 @@ export default {
                     }
                 }).then(data => {
                     this.$store.commit('contabilidadGeneral/layout-pasivo/SET_LAYOUT', data);
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVOS', data.partidas.data);
+
                 }).finally(() => {
                     this.cargando = false;
                 });
             }
             else if(this.layout_parametro != null){
                 this.$store.commit('contabilidadGeneral/layout-pasivo/SET_LAYOUT', this.layout_parametro);
+                this.$store.commit('contabilidadGeneral/layout-pasivo-partida/SET_PASIVOS', this.layout_parametro.partidas.data);
+
                 this.cargando = false;
             }
         }
@@ -73,6 +79,12 @@ export default {
     computed: {
         layout(){
             return this.$store.getters['contabilidadGeneral/layout-pasivo/currentLayout'];
+        },
+        pasivos(){
+            return this.$store.getters['contabilidadGeneral/layout-pasivo-partida/pasivos'];
+        },
+        actualizando() {
+            return this.$store.getters['contabilidadGeneral/layout-pasivo/actualizando'];
         },
     },
 }
