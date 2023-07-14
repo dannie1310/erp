@@ -183,8 +183,24 @@ class LayoutPasivoPartida extends Model
                 }
                 if($cfdi->fecha_cfdi == $this->fecha_factura_format)
                 {
-                    $cfdi->grado_coincidencia += 1;
+                    $cfdi->grado_coincidencia += 3;
                     $cfdi->coincide_fecha = 1;
+                }else{
+                    $fecha_cfdi_exp = explode("/",$cfdi->fecha_cfdi );
+                    $fecha_facrura_exp = explode("/", $this->fecha_factura_format );
+
+                    if($fecha_cfdi_exp[0] == $fecha_facrura_exp[0])
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                    }
+                    if($fecha_cfdi_exp[1] == $fecha_facrura_exp[1])
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                    }
+                    if($fecha_cfdi_exp[2] == $fecha_facrura_exp[2])
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                    }
                 }
                 if($cfdi->folio != "" && strpos($referencia,$cfdi->folio)!==false)
                 {

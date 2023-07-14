@@ -3910,7 +3910,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'cargar',
+                        path: 'cargar/layout',
                         component: require('./components/contabilidad-general/layout-pasivos/CargarLayout.vue').default,
                         children: [
                             {

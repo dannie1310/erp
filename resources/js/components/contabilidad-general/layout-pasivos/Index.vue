@@ -55,7 +55,6 @@
 
         mounted() {
             this.$Progress.start();
-
         },
 
         methods: {

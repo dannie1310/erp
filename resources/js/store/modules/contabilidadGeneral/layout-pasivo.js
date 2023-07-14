@@ -6,6 +6,7 @@ export default {
         currentLayout: null,
         actualizando:false,
         meta: {},
+        currentPasivo : null,
     },
 
     mutations: {
@@ -33,6 +34,10 @@ export default {
 
         SET_LAYOUT(state, data) {
             state.currentLayout = data;
+        },
+
+        SET_PASIVO(state, data) {
+            state.currentPasivo = data;
         }
     },
 
@@ -127,10 +132,6 @@ export default {
             });
         },
         descargaLayoutIFS(context, payload) {
-
-
-
-
             return new Promise((resolve, reject) => {
                 axios.get(URI + payload.id+"/valida-descargar-layout-ifs", {})
                     .then(r => r.data)
@@ -155,6 +156,46 @@ export default {
                     })
             });
         },
+
+        updatePasivo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar Pasivo",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Pasivo actualizada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        }
     },
 
     getters: {
@@ -172,6 +213,10 @@ export default {
 
         actualizando(state) {
             return state.actualizando
-        }
+        },
+
+        currentPasivo(state) {
+            return state.currentPasivo
+        },
     }
 }

@@ -324,6 +324,15 @@ $api->version('v1', function ($api) {
             $api->get('{id}/descargar-layout-ifs', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@descargarLayoutIFS')->where(['id' => '[0-9]+']);
         });
 
+        $api->group(['prefix' => 'layout-pasivo-partida'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@show')->where(['id' => '[0-9]+']);
+            $api->post('{id}/lista-cfdi-asociar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@listaPosiblesCFDI')->where(['id_pasivo' => '[0-9]+']);
+            $api->post('{id}/asociar-cfdi', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@asociarCFDI')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CTPQ\LayoutPasivoPartidaController@update')->where(['id' => '[0-9]+']);
+        });
+
         $api->group(['prefix' => 'contabilidad-electronica'], function ($api) {
             $api->post('xml', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@getDatosXML');
             $api->post('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@descargar');
