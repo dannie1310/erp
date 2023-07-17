@@ -284,7 +284,7 @@ class LayoutPasivoPartida extends Model
         $posibles = $this->posibles_cfdi;
         if(count($posibles)>0)
         {
-            $mejor_coincidencia = $posibles[count($posibles)-1];
+            $mejor_coincidencia = $posibles->last();
 
             $this->uuid = $mejor_coincidencia->uuid;
             $this->coincide_rfc_empresa = $mejor_coincidencia->coincide_rfc_empresa;
