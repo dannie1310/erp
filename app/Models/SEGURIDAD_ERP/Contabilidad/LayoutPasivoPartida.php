@@ -202,7 +202,8 @@ class LayoutPasivoPartida extends Model
                         $cfdi->grado_coincidencia += 1;
                     }
                 }
-                if($cfdi->folio != "" && strpos($referencia,$cfdi->folio)!==false)
+                if($cfdi->folio != "" && (strpos($referencia, $cfdi->folio)!==false
+                        || strpos($cfdi->folio, $referencia)!==false ))
                 {
                     $cfdi->grado_coincidencia += 1;
                     $cfdi->coincide_folio = 1;
@@ -241,7 +242,7 @@ class LayoutPasivoPartida extends Model
                 ->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
             ,cfd_sat.serie, cfd_sat.folio, cfd_sat.fecha, cfd_sat.moneda
             , FORMAT(cfd_sat.fecha,'dd/MM/yyyy') as fecha_cfdi, 1 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
-                ->orderBy("cfd_sat.total")->first()
+                ->first()
             ;
 
             if(abs($cfdi->total- $this->importe_factura)<1)
@@ -256,7 +257,9 @@ class LayoutPasivoPartida extends Model
             {
                 $this->coincide_fecha = 1;
             }
-            if($cfdi->folio != "" && strpos($this->folio_factura, $cfdi->folio)!==false)
+
+            if($cfdi->folio != "" && (strpos($this->folio_factura, $cfdi->folio)!==false
+               || strpos($cfdi->folio, $this->folio_factura)!==false ))
             {
                 $this->coincide_folio = 1;
             }
