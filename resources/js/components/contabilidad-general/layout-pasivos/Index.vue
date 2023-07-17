@@ -36,6 +36,8 @@
                 columns: [
                     { title: '#', field: 'index',tdClass: 'index_corto', sortable: false },
                     { title: 'Nombre Archivo', field: 'nombre_archivo', thComp: require('../../globals/th-Filter').default},
+                    { title: '# Partidas', field: 'cantidad_partidas',tdClass: 'td_c40, right'},
+                    { title: 'Monto Pasivo MXN', field: 'monto_pasivo_format',tdClass: 'td_c40, right'},
                     { title: 'Usuario Cargo', field: 'usuario_carga', thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha / Hora Carga', field: 'fecha_hora_carga',tdClass: 'td_c150', thComp: require('../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons', tdClass: 'td_c90',  thClass: 'th_c90',   tdComp: require('./partials/ActionButtons').default},
@@ -93,6 +95,8 @@
                         nombre_archivo: layout.nombre_archivo,
                         usuario_carga: layout.usuario_carga,
                         fecha_hora_carga: layout.fecha_hora_carga,
+                        cantidad_partidas : layout.cantidad_partidas,
+                        monto_pasivo_format: layout.monto_pasivo_format,
                         buttons: $.extend({}, {
                             id: layout.id,
                         })

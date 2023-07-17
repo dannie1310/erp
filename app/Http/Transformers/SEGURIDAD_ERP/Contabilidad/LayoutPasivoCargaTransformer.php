@@ -27,6 +27,9 @@ class LayoutPasivoCargaTransformer extends TransformerAbstract
             'nombre_archivo' => $model->nombre_archivo,
             'usuario_carga' => $model->usuario->nombre_completo,
             'fecha_hora_carga' => $model->fecha_hora_carga_format,
+            'monto_pasivo' => $model->partidas()->sum("saldo_mxn"),
+            'monto_pasivo_format' => number_format($model->partidas()->sum("saldo_mxn"),2),
+            'cantidad_partidas' =>$model->partidas()->count(),
             'estado' => $model->estado,
         ];
     }
