@@ -141,11 +141,9 @@ class LayoutPasivoPartida extends Model
         if($id_proveedor_sat>0)
         {
             $query->whereIn("id_proveedor_sat",$id_proveedor_sat);
-            $query->Where("total","=",$importe)
             ;
-        }else{
-            $query->orWhere("total","=",$importe);
         }
+        $query->orWhereBetween("total",[$importe-1, $importe+1]);
         $query->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
             ,cfd_sat.serie, cfd_sat.folio, cfd_sat.fecha, cfd_sat.moneda, proveedores_sat.rfc, proveedores_sat.razon_social
             , FORMAT(cfd_sat.fecha,'dd/MM/yyyy') as fecha_cfdi, 1 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
