@@ -75,6 +75,9 @@
                                 <td>
                                     <pasivos-edit
                                     v-bind:pasivo_parametro="partida"></pasivos-edit>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="eliminar(partida, $event)" :disabled="actualizando">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
                                     <!--
                                     <button type="button" class="btn btn-sm btn-outline-success" title="Buscar CFDI" @click="buscaCFDI(partida, $event)" :disabled="actualizando">
                                         <i class="fa fa-file-invoice-dollar"></i>
@@ -107,6 +110,25 @@ export default {
         }
     },
     methods:{
+        eliminar(partida_pasivo) {
+
+            this.$store.commit('contabilidadGeneral/layout-pasivo/SET_ACTUALIZANDO', true);
+
+            return this.$store.dispatch('contabilidadGeneral/layout-pasivo-partida/eliminar',
+                {
+                    id: partida_pasivo.id,
+                    data: {id: partida_pasivo.id},
+                    config: {
+                        params: { _method: 'DELETE'}
+                    }
+                })
+                .then(data => {
+                    this.$store.commit('contabilidadGeneral/layout-pasivo-partida/DELETE_PASIVO', partida_pasivo.id)
+                }).finally(() => {
+                    this.$store.commit('contabilidadGeneral/layout-pasivo/SET_ACTUALIZANDO', false);
+                });
+
+        },
         buscaCFDI(partida_pasivo, event) {
 
             let _self = this;
