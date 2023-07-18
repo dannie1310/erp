@@ -79,7 +79,7 @@ class VentaFormato extends Rotation
         $this->SetRounds(['1234']);
         $this->SetRadius([0.2]);
         $this->SetAligns("C");
-        $this->Row([$this->obra->descripcion != null ? utf8_decode($this->obra->descripcion . '  ' . " ") : utf8_decode($this->obra->nombre . '  ' . " ")]);
+        $this->Row([utf8_decode($this->obra->nombre_obra_formatos . '  ' . " ")]);
         $this->Ln(.2);
 
         $this->SetFont('Arial', '', 10);

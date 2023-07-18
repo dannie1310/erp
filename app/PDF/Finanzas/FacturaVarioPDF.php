@@ -77,7 +77,7 @@ class FacturaVarioPDF extends Rotation
       $this->SetRounds(array('1234'));
       $this->SetRadius(array(0.2));
       $this->SetAligns("C");
-      $this->Row(array( $this->obra->descripcion != null ? $this->obra->descripcion : $this->obra->nombre));
+      $this->Row(array( utf8_decode($this->obra->nombre_obra_formatos)));
       $this->Ln(.2);
       $y_inicial = $this->getY();
       ###########################

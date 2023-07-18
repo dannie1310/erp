@@ -124,7 +124,7 @@ class SolicitudCompraFormato extends Rotation
         $this->SetRounds(array('1234'));
         $this->SetRadius(array(0.2));
         $this->SetAligns("C");
-        $this->Row(array($this->obra->descripcion != null ? utf8_decode($this->obra->descripcion) : utf8_decode($this->obra->nombre)));
+        $this->Row(array(utf8_decode($this->obra->nombre_obra_formatos)));
         $this->Ln(.2);
         $this->SetFont('Arial', '', 10);
         $this->Cell(10);
@@ -133,7 +133,7 @@ class SolicitudCompraFormato extends Rotation
         $y_inicial = $this->getY();
         $this->Cell(10);
         $this->SetFont('Arial', 'B', 10);
-        $this->CellFitScale(9.5, .5, $this->obra->descripcion != null ? utf8_decode($this->obra->descripcion) : utf8_decode($this->obra->nombre), '', 'J');
+        $this->CellFitScale(9.5, .5, utf8_decode($this->obra->nombre_obra_formatos), '', 'J');
         $this->Ln(.5);
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);

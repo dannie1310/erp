@@ -136,6 +136,16 @@ class Obra extends Model
         }
     }
 
+    public function getNombreObraFormatosAttribute()
+    {
+        $nombre =  $this->descripcion != null ? $this->descripcion : $this->nombre;
+        if(strlen($nombre) > 50)
+        {
+            $nombre = substr($nombre, 0, 50) . '..';
+        }
+        return $nombre;
+    }
+
     public function cuentasObra(){
         return $this->hasManyThrough(Cuenta::class,CuentaObra::class,'id_obra','id_cuenta', 'id_obra','id_cuenta');
     }
