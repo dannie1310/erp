@@ -31,18 +31,15 @@ export default {
             state.currentPasivo = state.currentPasivo ? data : null;
         },
 
-        /*
-        * UPDATE_EMPRESA(state, data) {
-            state.listaEmpresas = state.listaEmpresas.map(empresa => {
-                if (empresa.id === data.id) {
-                    return Object.assign({}, empresa, data)
-                }
-                return empresa
-            })
-            state.currentEmpresa = state.currentEmpresa ? data : null;
+        DELETE_PASIVO(state, id) {
+            state.pasivos = state.pasivos.filter(pasivo => {
+                return pasivo.id != id
+            });
         },
-        *
-        * */
+
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentPasivo[data.attribute] = data.value
+        },
 
         SET_PASIVO(state, data) {
             state.currentPasivo = data;
@@ -140,7 +137,50 @@ export default {
                     }
                 });
             });
-        }
+        },
+
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el Pasivo",
+                    text: "¿Está seguro que desea eliminar el pasivo?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Pasivo eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
+
     },
 
     getters: {

@@ -154,8 +154,8 @@ export default {
                             swal("Error","Algunos pasivos de la carga tienen un saldo mayor que el monto de la factura, favor de corregir.", "error")
 
                         }else{
-                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde" +
-                                "y un saldo mayor que el monto de la factura, favor de corregir.", "error")
+                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde " +
+                                "y un saldo mayor al monto de la factura; favor de corregir.", "error")
                         }
                     })
                     .catch(error => {
