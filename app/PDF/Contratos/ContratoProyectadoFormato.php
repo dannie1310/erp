@@ -79,7 +79,7 @@ class ContratoProyectadoFormato extends Rotation
         $this->Row(array(""));
         $this->setY($y_inicial+1.5);
         $this->setX(2);
-        $this->MultiCell(16, 1, $this->obra->descripcion, '', 'C');
+        $this->MultiCell(16, 1, $this->obra->descripcion != null ? $this->obra->descripcion : $this->obra->nombre, '', 'C');
 
         $this->Ln(.6);
         $this->SetFont('Arial', 'B', 10);

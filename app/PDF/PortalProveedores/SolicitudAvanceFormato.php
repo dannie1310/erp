@@ -126,7 +126,7 @@ class SolicitudAvanceFormato extends Rotation
         $this->setXY(0.40, 4.2);
         $this->Cell(0.280 * $this->WidthTotal, 0.5, utf8_decode('Organización:'), 'LRTB', 0, 'L');
         $this->SetFont('Arial', 'B', '#' . 10);
-        $this->Cell(0.720 * $this->WidthTotal, 0.5,utf8_decode($this->obra->descripcion), 'LRTB', 1, 'C');
+        $this->Cell(0.720 * $this->WidthTotal, 0.5, $this->obra->descripcion != null ? utf8_decode($this->obra->descripcion) :  $this->obra->nombre, 'LRTB', 1, 'C');
 
 
         $this->SetFont('Arial', 'B', 9);

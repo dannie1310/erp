@@ -52,7 +52,7 @@ class ContrareciboPDF extends Rotation
 
 
         $this->SetFont('Arial', 'B', 13);
-        $this->Cell(19.5, 0.7, $this->factura->obra->descripcion . ' ', 1, 0, 'C');
+        $this->Cell(19.5, 0.7,  $this->factura->obra->descripcion != null ? $this->factura->obra->descripcion :  $this->factura->obra->nombre. ' ', 1, 0, 'C');
         $this->Ln(1);
 
         $this->SetFont('Arial', '', 10);

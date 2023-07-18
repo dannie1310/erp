@@ -92,7 +92,7 @@ class RequisicionFormato extends Rotation
             $this->SetRadius([0.2]);
             $this->SetAligns("C");
 
-            $this->Row([utf8_decode($this->requisicion->obra->descripcion . '  ' . " ")]);
+            $this->Row([$this->requisicion->obra->descripcion != null ? utf8_decode($this->requisicion->obra->descripcion . '  ' . " ") : utf8_decode($this->requisicion->obra->nombre . '  ' . " ")]);
             $this->Ln(.5);
 
             $this->Ln(.5);

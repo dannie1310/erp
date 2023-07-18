@@ -102,7 +102,7 @@ class OrdenCompraFormato extends FPDI
         $versiones = OrdenCompra::where('id_transaccion', '=', $this->ordenCompra->id_transaccion)->count();
         $this->folio_sao = $this->ordenCompra->numero_folio_format;
         $this->requisicion_folio_sao =str_pad($this->ordenCompra->solicitud->numero_folio_format, 5, '0', STR_PAD_LEFT);
-        $this->obra_nombre = $this->obra->descripcion;
+        $this->obra_nombre = $this->obra->descripcion != null ? $this->obra->descripcion : $this->obra->nombre;
 
 
 
