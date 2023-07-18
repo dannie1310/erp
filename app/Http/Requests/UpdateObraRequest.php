@@ -33,7 +33,6 @@ class UpdateObraRequest extends FormRequest
         return [
             'ciudad' => ['filled', 'max:255', 'string'],
             'cliente' => ['max:255', 'string', 'filled'],
-            'codigo_postal' => ['digits:5'],
             'configuracion' => ['array', 'required'],
 
                 'configuracion.esquema_permisos' => ['integer', 'required'],
@@ -44,7 +43,7 @@ class UpdateObraRequest extends FormRequest
 
             'constructora' => ['max:255', 'string', 'filled'],
             'descripcion' => ['filled', 'max:255', 'string'],
-            'direccion' => ['filled', 'max:255', 'string'],
+            'direccion' => ['max:255', 'string'],
             'estado' => ['filled', 'max:255', 'string'],
             'facturar' => ['max:255', 'string', 'filled'],
             'fecha_final' => ['date_format:"Y-m-d"', 'required'],

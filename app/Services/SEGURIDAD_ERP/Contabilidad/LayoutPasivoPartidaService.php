@@ -68,4 +68,8 @@ class LayoutPasivoPartidaService{
     {
         return $this->repository->listarPosiblesCFDI($id_pasivo);
     }
+    public function delete($data, $id)
+    {
+        $this->repository->delete($data, $id);
+    }
 }
