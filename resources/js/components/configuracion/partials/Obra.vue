@@ -55,7 +55,7 @@
                 <label for="descripcion" class="col-lg-2 col-form-label">Descripción:</label>
                 <div class="col-lg-4">
                     <textarea class="form-control" id="descripcion" v-model="form.descripcion"
-                              v-validate="{required:true, max: 70}"
+                              v-validate="{required:true, max: 50}"
                               name="descripcion"
                               data-vv-as="Descripción"
                               :class="{'is-invalid': errors.has('descripcion')}"
