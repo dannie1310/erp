@@ -77,7 +77,7 @@ class SubcontratoFormato extends FPDI
 
             $this->Cell(11.5);
             $this->Cell(2.5,.5, 'OBRA','LT',0,'L');
-            $this->Cell(5.5,.5,  utf8_decode($this->obra->nombre_obra_formatos) .' ','RT',0,'R');
+            $this->Cell(5.5,.5,  utf8_decode($this->obra->nombre) .' ','RT',0,'R');
             $this->Ln(.5);
 
 
