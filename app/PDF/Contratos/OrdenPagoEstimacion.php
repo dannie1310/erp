@@ -145,7 +145,7 @@ class OrdenPagoEstimacion extends Rotation
         $this->SetXY(6, 1.5);
         $this->SetFont('Arial', 'B', 12);
         $this->Cell(4, 0.4, '', 0, 0);
-        $this->CellFitScale(10, 0.4, $this->obra->nombre, 0, 1, 'C');
+        $this->CellFitScale(10, 0.4,  utf8_decode($this->obra->nombre_obra_formatos), 0, 1, 'C');
         $this->ln(0.25);
 
         $this->SetX(6);

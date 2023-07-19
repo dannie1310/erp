@@ -124,7 +124,7 @@ class InvitacionCotizarFormato extends Rotation
         $this->SetRounds(array('1234'));
         $this->SetRadius(array(0.2));
         $this->SetAligns("C");
-        $this->Row(array(utf8_decode($this->obra->descripcion)));
+        $this->Row(array(utf8_decode($this->obra->nombre_obra_formatos)));
         $this->Ln(.2);
         $this->SetFont('Arial', '', 10);
         $this->Cell(10);
@@ -133,7 +133,7 @@ class InvitacionCotizarFormato extends Rotation
         $y_inicial = $this->getY();
         $this->Cell(10);
         $this->SetFont('Arial', 'B', 10);
-        $this->CellFitScale(9.5, .5, utf8_decode($this->obra->descripcion), '', 'J');
+        $this->CellFitScale(9.5, .5, utf8_decode($this->obra->nombre_obra_formatos), '', 'J');
         $this->Ln(.5);
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);
