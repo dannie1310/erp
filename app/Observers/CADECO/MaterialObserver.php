@@ -30,6 +30,9 @@ class MaterialObserver
 
     public function updating(Material $material)
     {
-        $material->validarModificar('editar');
+        if($material->getOriginal("nivel") == $material->nivel)
+        {
+            $material->validarModificar('editar');
+        }
     }
 }

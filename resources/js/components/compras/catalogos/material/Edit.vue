@@ -18,8 +18,8 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
-                                        <label for="tipo" class="col-sm-2 col-form-label">Familia: </label>
-                                        <div class="col-sm-10">
+                                        <label for="tipo" class="col-md-2 col-form-label">Familia: </label>
+                                        <div class="col-md-10" v-if="$root.can('editar_familia_material')">
                                             <model-list-select
                                                     :disabled="cargando"
                                                     name="tipo"
@@ -32,6 +32,9 @@
                                                     >
                                             </model-list-select>
                                             <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
+                                        </div>
+                                        <div class="col-md-10" v-else>
+                                            <label>{{res.descripcion_familia}}</label>
                                         </div>
                                     </div>
                                 </div>
@@ -106,13 +109,13 @@
                 </div>
             </div>
         </div>
-        
+
     </span>
 </template>
 <script>
         import {ModelListSelect} from 'vue-search-select';
 export default {
-    
+
     name: "material-editar",
     props: ['material', 'update'],
     components: {ModelListSelect},
@@ -129,7 +132,7 @@ export default {
                 tipo: '',
                 unidad: ''
             }
-            
+
         }
     },
     methods: {
@@ -137,7 +140,7 @@ export default {
             if(this.insumo.descripcion == this.res.descripcion && this.insumo.tipo == this.res.nivel_padre && this.insumo.numero_parte == this.res.numero_parte && this.insumo.unidad == this.res.unidad)
             {
                 swal('¡Error!', 'Favor de ingresar datos actualizados.', 'error')
-            }else{                
+            }else{
 
                 return this.$store.dispatch('cadeco/material/update', {
                 id: this.id,
@@ -153,14 +156,14 @@ export default {
                        $(this.$refs.modal).modal('hide');
                    });
             }
-        },       
+        },
         find(material) {
             this.id = '';
             this.getMateriales();
             this.getUnidades();
             this.cargando = true;
             this.res = '';
-            this.id = material;    
+            this.id = material;
 
                 this.$store.commit('cadeco/unidad/SET_UNIDAD', null);
                 return this.$store.dispatch('cadeco/material/find', {
@@ -173,8 +176,8 @@ export default {
                     this.insumo.tipo = this.res.nivel_padre;
                     this.insumo.descripcion = this.res.descripcion;
                     this.insumo.unidad = this.res.unidad;
-                    this.insumo.numero_parte = this.res.numero_parte;                                        
-                    
+                    this.insumo.numero_parte = this.res.numero_parte;
+
                     $(this.$refs.modal).modal('show')
                 }).finally(() => {
                     this.cargando = false;
@@ -193,7 +196,7 @@ export default {
                     params: {sort: 'descripcion',  order: 'asc', scope:'tipo:1'}
                 })
                     .then(data => {
-                        this.materiales = data.data;                        
+                        this.materiales = data.data;
                     })
         },
         validate() {

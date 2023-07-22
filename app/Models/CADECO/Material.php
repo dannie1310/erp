@@ -374,16 +374,28 @@ class Material extends Model
 
     public function nivelConsecutivo()
     {
-        $this->nivel = str_replace ( ".", "", $this->nivel);
-        $num = $this->where('tipo_material','=',$this->tipo_material)->where('nivel','LIKE',$this->nivel.'.%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'desc')->get()->pluck('nivel')->first();
-        if($num == null){
-            $num = 0;
+        $hijos_familia = $this->where('tipo_material','=',$this->tipo_material)->where('nivel','LIKE',$this->nivel.'%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'asc')->get()->pluck('nivel');
+        $num_faltante = $this->buscarConsecutivoFaltante($hijos_familia);
+        $this->nivel = str_replace(".", "", $this->nivel);
+        if($num_faltante == 1000){
+            dd($num_faltante, '999??');
         }else{
-            $num = substr($num, 4,3);
-            $num = $num +1;
+            $num = str_pad($num_faltante, 3, "0", STR_PAD_LEFT);
         }
-        $num = str_pad($num, 3, "0", STR_PAD_LEFT);
         return $this->nivel.'.'.$num.'.';
+    }
+
+    public function buscarConsecutivoFaltante($numeros)
+    {
+        if(count($numeros) <= 999) {
+            foreach ($numeros as $key => $numero) {
+                $num = substr($numero, 4, 3);
+                if ($key != (int)$num) {
+                    return $key; //buscar el faltante del consecutivo de una familia
+                }
+            }
+        }
+        return count($numeros);
     }
 
     public function getSaldoInventarioAttribute()
