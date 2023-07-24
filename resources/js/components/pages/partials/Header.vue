@@ -8,7 +8,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
                 </li>
                 <li v-if="currentObra" class="nav-item d-none d-sm-inline-block">
-                    <router-link :to="{name: 'obras'}" class="nav-link" title="Cambiar Obra">{{ currentObra.nombre }}</router-link>
+                    <router-link :to="{name: 'obras'}" class="nav-link" title="Cambiar Obra">{{ currentObra.nombre }} {{currentObra && currentObra.datos_contables && currentObra.datos_contables.BDContPaq !=='null' ? '('+currentObra.datos_contables.BDContPaq+')' :''}}</router-link>
                 </li>
             </ul>
 

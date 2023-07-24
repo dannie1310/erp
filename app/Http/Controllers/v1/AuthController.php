@@ -109,15 +109,47 @@ class AuthController extends Controller
      */
     public function setContext(SetContextRequest $request)
     {
-        $this->auth->setContext($request->only(['db', 'id_obra']));
+        $this->auth->setContext(["db"=>$request->db
+            , "id_obra"=>$request->id_obra
+            , "db_cntpq"=>""]);
+
         $obra = Obra::query()->find($request->id_obra);
 
         if (! $obra->datosContables) {
             $obra->datosContables()->create();
+        }else{
+            $this->auth->setContext(["db"=>$request->db
+                , "id_obra"=>$request->id_obra
+                , "db_cntpq"=>($obra->datosContables->BDContPaq) ? $obra->datosContables->BDContPaq : '']
+            );
         }
 
+        /*
+         * return response()->json([
+            'obra' => Obra::with(['datosContables', 'configuracion'])->find($request->id_obra),
+        * 'permisos' => auth()->user()->permisos()
+        ]);
+         * */
+
+        $obra2 = Obra::with(['datosContables', 'configuracion'])
+            ->where("id_obra","=",$request->id_obra)
+            ->select('nombre',
+                'constructora',
+                'cliente',
+                'facturar',
+                'responsable',
+                'rfc',
+                'id_moneda',
+                'iva',
+                'fecha_inicial',
+                'fecha_final',
+                'tipo_obra',
+                'descripcion',
+                'id_obra'
+
+                )->first();
         return response()->json([
-            'obra' => Obra::with(['datosContables', 'configuracion'])->find($request->id_obra)/*->pluck("id_obra","nombre")*/,
+            'obra' => $obra2,
             'permisos' => auth()->user()->permisos()
         ]);
     }
@@ -128,7 +160,7 @@ class AuthController extends Controller
     public function getContext()
     {
         return response()->json([
-            'message' => 'context is established',
+            'message' => 'Obra establecida correctamente',
             'obra' => Obra::find(Context::getIdObra()),
             'permisos' => auth()->user()->permisos()
 
