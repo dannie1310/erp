@@ -33,6 +33,10 @@ class MaterialObserver
         if($material->getOriginal("nivel") == $material->nivel)
         {
             $material->validarModificar('editar');
+        }else{
+            if(!auth()->user()->can('editar_familia_material')) {
+                throw new \Exception('No es posible editar el sistema porque no cuenta con el permiso, favor de solicitar la asignación al administrador del sistema.', 403);
+            }
         }
     }
 }
