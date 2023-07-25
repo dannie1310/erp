@@ -188,17 +188,16 @@ class Material extends Model
     public function actualizarInsumo($data)
     {
         try{
-            if($data['tipo'] != $this->nivel_padre)
-            {
-                $this->nivel = $data['tipo'];
-                $nivel = $this->nivelConsecutivo();
-                $this->nivel = $nivel;
-            }
-            $this->numero_parte = $data['numero_parte'];
-            $this->unidad = $data['unidad'];
-            $this->unidad_compra = $data['unidad'];
-            $this->descripcion = $data['descripcion'];
-            $this->save();
+            DB::connection('cadeco')->beginTransaction();
+            $this->nivel = $data['tipo'];
+            $nivel = $this->nivelConsecutivo();
+            $this->update([
+                'nivel' => $nivel,
+                'numero_parte' => $data['numero_parte'],
+                'unidad' => $data['unidad'],
+                'unidad_compra' => $data['unidad'],
+                'descripcion' => $data['descripcion']
+            ]);
             DB::connection('cadeco')->commit();
             return $this;
         } catch(\Exception $e){
@@ -378,7 +377,7 @@ class Material extends Model
     public function nivelConsecutivo()
     {
         $this->nivel = str_replace ( ".", "", $this->nivel);
-        $hijos_familia = $this->where('tipo_material','=',$this->tipo_material)->where('nivel','LIKE',$this->nivel.'.%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'asc')->get()->pluck('nivel');
+        $hijos_familia = $this->where('tipo_material','=',$this->tipo_material)->where('nivel','LIKE',$this->nivel.'.%')->whereRaw('LEN(nivel) = 8')->where('id_material','!=', $this->id_material)->orderBy('nivel', 'asc')->get()->pluck('nivel');
         $num_faltante = $this->buscarConsecutivoFaltante($hijos_familia);
         if($num_faltante == 1000){
             $familia = Familia::where('nivel','=',$this->nivel.'.')->first();
@@ -417,7 +416,7 @@ class Material extends Model
 
     public function buscarConsecutivoFaltante($numeros)
     {
-        if(count($numeros) <= 999) {
+        if(count($numeros) < 999) {
             foreach ($numeros as $key => $numero) {
                 $num = substr($numero, 4, 3);
                 if ($key != (int)$num) {
