@@ -2504,7 +2504,7 @@ export const routes = [
                                 component: require('./components/contabilidad/poliza-cfdi/Index.vue').default,
                                 meta: {
                                     title: 'Pólizas-CFDI',
-                                    breadcrumb: {parent: 'contabilidad', name: 'PÓLIZAS CFDI'},
+                                    breadcrumb: {parent: 'sistema_contable', name: 'PÓLIZAS CFDI'},
                                     middleware: [auth, context, permission],
                                     permission: ['consultar_poliza'],
                                     general: true
@@ -2531,7 +2531,7 @@ export const routes = [
                         component: require('./components/contabilidad/informes/InformeSAT.vue').default,
                         meta: {
                             title: 'Informe CFDI vs Pasivos',
-                            breadcrumb: {name: 'INFORME CFDI vs Pasivos', parent: 'contabilidad'},
+                            breadcrumb: {name: 'INFORME CFDI vs Pasivos', parent: 'sistema_contable'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_sat'],
                             general: true
@@ -2575,9 +2575,26 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'editar_prepolizas_generadas'
                                 }
-                            }
+                            },
                         ]
-                    }
+                    },
+                    {
+                        path: 'poliza-contpaq',
+                        component: require('./components/contabilidad/poliza-contpaq/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"poliza-contpaq-en-sao",
+                                component: require('./components/contabilidad/poliza-contpaq/Index.vue').default,
+                                meta: {
+                                    title: 'Pólizas Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'PÓLIZAS CONTPAQ'},
+                                    middleware: [auth, context/*, permission*/],
+                                    //permission: ['consultar_polizas'],
+                                }
+                            },
+                        ]
+                    },
                 ]
             },
             {
