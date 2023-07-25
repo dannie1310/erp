@@ -187,9 +187,9 @@ class Material extends Model
 
     public function actualizarInsumo($data)
     {
-        $this->nivel = $data['tipo'];
-        $nivel = $this->nivelConsecutivo();
         try{
+            $this->nivel = $data['tipo'];
+            $nivel = $this->nivelConsecutivo();
             $this->numero_parte = $data['numero_parte'];
             $this->unidad = $data['unidad'];
             $this->unidad_compra = $data['unidad'];
@@ -197,7 +197,7 @@ class Material extends Model
             $this->nivel = $nivel;
             $this->save();
             DB::connection('cadeco')->commit();
-            exit;
+            return $this;
         } catch(\Exception $e){
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
@@ -374,15 +374,42 @@ class Material extends Model
 
     public function nivelConsecutivo()
     {
-        $hijos_familia = $this->where('tipo_material','=',$this->tipo_material)->where('nivel','LIKE',$this->nivel.'%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'asc')->get()->pluck('nivel');
+        $this->nivel = str_replace ( ".", "", $this->nivel);
+        $hijos_familia = $this->where('tipo_material','=',$this->tipo_material)->where('nivel','LIKE',$this->nivel.'.%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'asc')->get()->pluck('nivel');
         $num_faltante = $this->buscarConsecutivoFaltante($hijos_familia);
-        $this->nivel = str_replace(".", "", $this->nivel);
         if($num_faltante == 1000){
-            dd($num_faltante, '999??');
+            $familia = Familia::where('nivel','=',$this->nivel.'.')->first();
+            if($familia->nombre_original_familia == null) {
+                 $familia->update([
+                     'consecutivo_familia' => 1,
+                     'nombre_original_familia' => $familia->descripcion
+                 ]);
+                 $nueva_familia= Familia::create([
+                     'tipo_material' => $familia->tipo_material,
+                     'descripcion' => $familia->descripcion .'1'
+                 ]);
+                $nivel_completo = $nueva_familia->nivel.'.000.';
+            }else{
+                $nueva_familia = Familia::where('descripcion','=',$familia->descripcion.$familia->consecutivo_familia)->first();
+                $hijos_familia = self::where('tipo_material','=',$nueva_familia->tipo_material)->where('nivel','LIKE',$nueva_familia->nivel.'%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'asc')->get()->pluck('nivel');
+                $num_faltante = $this->buscarConsecutivoFaltante($hijos_familia);
+                if($num_faltante == 1000){
+                    $familia->update([
+                        'consecutivo_familia' => ((int) $familia->consecutivo_familia+1)
+                    ]);
+                    $nueva_familia = Familia::create([
+                        'tipo_material' => $familia->tipo_material,
+                        'descripcion' => $familia->descripcion . ((int) $familia->consecutivo_familia)
+                    ]);
+                    $nivel_completo = $nueva_familia->nivel . '000.';
+                }else{
+                    $nivel_completo = $nueva_familia->nivel.str_pad($num_faltante, 3, "0", STR_PAD_LEFT).'.';
+                }
+            }
         }else{
-            $num = str_pad($num_faltante, 3, "0", STR_PAD_LEFT);
+            $nivel_completo = $this->nivel.'.'.str_pad($num_faltante, 3, "0", STR_PAD_LEFT).'.';
         }
-        return $this->nivel.'.'.$num.'.';
+        return $nivel_completo;
     }
 
     public function buscarConsecutivoFaltante($numeros)
