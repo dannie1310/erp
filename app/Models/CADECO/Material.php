@@ -188,13 +188,16 @@ class Material extends Model
     public function actualizarInsumo($data)
     {
         try{
-            $this->nivel = $data['tipo'];
-            $nivel = $this->nivelConsecutivo();
+            if($data['tipo'] != $this->nivel_padre)
+            {
+                $this->nivel = $data['tipo'];
+                $nivel = $this->nivelConsecutivo();
+                $this->nivel = $nivel;
+            }
             $this->numero_parte = $data['numero_parte'];
             $this->unidad = $data['unidad'];
             $this->unidad_compra = $data['unidad'];
             $this->descripcion = $data['descripcion'];
-            $this->nivel = $nivel;
             $this->save();
             DB::connection('cadeco')->commit();
             return $this;
