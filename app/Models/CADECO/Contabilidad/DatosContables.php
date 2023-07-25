@@ -30,7 +30,7 @@ class DatosContables extends Model
     ];
 
     protected $appends = ['mask'];
-    protected $dateFormat = 'Y-m-d H:i:s';
+    //protected $dateFormat = 'Y-m-d H:i:s';
 
 
     public function configuracion()

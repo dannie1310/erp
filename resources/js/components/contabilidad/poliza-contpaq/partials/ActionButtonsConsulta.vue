@@ -6,6 +6,8 @@
 
 <script>
     import PDFPoliza from './PDFPolizaConsulta';
+    import PDFPoliza from "../../../contabilidad-general/poliza/partials/PDFPolizaConsulta.vue";
+
     export default {
         name: "action-buttons",
         components:{PDFPoliza},

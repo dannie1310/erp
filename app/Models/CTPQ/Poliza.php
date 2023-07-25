@@ -916,7 +916,7 @@ class Poliza extends Model
 
                 foreach($referencias as $referencia)
                 {
-                    if(strpos($referencia,$cfdi->folio)!==false)
+                    if($cfdi->folio != '' && $referencia !='' && strpos($referencia,$cfdi->folio)!==false)
                     {
                         $cfdi->grado_coincidencia += 1;
                         break;

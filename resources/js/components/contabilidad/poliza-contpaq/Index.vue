@@ -16,12 +16,6 @@
                 <div class="card">
                     <div class="card-header">
                         <span style="font-weight: bold;">{{this.empresa}}</span>
-                        <button @click="descargarZIP" class="btn btn-primary float-right" style="margin-left:5px">
-                            <i class="fa fa-file-excel-o"></i> Descarga Masiva ZIP
-                        </button>
-                        <button @click="abrir" class="btn btn-primary float-right" :disabled="polizas.length == 0">
-                            <i class="fa fa-download"></i> Descargar Formatos
-                        </button>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -236,7 +230,7 @@
             },
             changeSelect(){
                 this.conectando = false;
-                var busqueda = this.empresas.find(x=>x.id === this.id_empresa);
+                var busqueda = this.empresas.find(x=>x.id === this.idEmpresaContabilidad);
                 if(busqueda != undefined)
                 {
                     this.empresa_seleccionada = busqueda;
@@ -282,7 +276,7 @@
                 this.conectando = true;
                 return this.$store.dispatch('contabilidadGeneral/empresa-contpaq/conectar',
                     {
-                        data: {id: this.id_empresa},
+                        data: {id: this.idEmpresaContabilidad},
                         config: {
                             params: { _method: 'POST'}
                         }
@@ -351,7 +345,7 @@
                 var formData = new FormData();
                 formData.append('file',  this.file);
                 formData.append('name', this.nombre);
-                formData.append('id_empresa', this.id_empresa);
+                formData.append('id_empresa', this.idEmpresaContabilidad);
                 formData.append('caida', tipo);
                 return this.$store.dispatch('contabilidadGeneral/poliza/busquedaExcel', {
                     data: formData,

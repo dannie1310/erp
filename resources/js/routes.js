@@ -2593,6 +2593,31 @@ export const routes = [
                                     //permission: ['consultar_polizas'],
                                 }
                             },
+                            {
+                                path: ':id',
+                                name: 'poliza-contpaq-en-sao-show',
+                                props: true,
+                                component: require('./components/contabilidad/poliza-contpaq/Show').default,
+                                meta: {
+                                    title: 'Ver Póliza Contpaq',
+                                    breadcrumb: {parent: 'poliza-contpaq-en-sao', name: 'VER'},
+                                    middleware: [auth, context/*, permission*/],
+                                    //permission: 'consultar_prepolizas_generadas'
+                                }
+                            },
+                            {
+                                path: ':id/asociar-cfdi',
+                                name: 'poliza-contpaq-en-sao-asociar-cfdi',
+                                props: true,
+                                component: require('./components/contabilidad/poliza-contpaq/AsociaCFDI.vue').default,
+                                meta: {
+                                    title: 'Asociar CFDI a Póliza',
+                                    breadcrumb: {parent: 'poliza-contpaq-en-sao', name: 'ASOCIAR CFDI'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_poliza',
+                                    general: true
+                                }
+                            },
                         ]
                     },
                 ]

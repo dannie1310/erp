@@ -4,12 +4,12 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <poliza-partial-show v-bind:id="this.id" v-bind:id_empresa="this.id_empresa"></poliza-partial-show>
+                        <poliza-partial-show v-bind:id="this.id" v-bind:id_empresa="this.idEmpresaContabilidad"></poliza-partial-show>
                     </div>
                     <div class="card-footer">
                         <div class="pull-right">
                             <button type="button" class="btn btn-secondary " v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
-                            <PDFPoliza v-bind:id="this.id" v-bind:id_empresa="this.id_empresa" v-bind:txt_btn="'Ver PDF'"></PDFPoliza>
+                            <PDFPoliza v-bind:id="this.id" v-bind:id_empresa="this.idEmpresaContabilidad" v-bind:txt_btn="'Ver PDF'"></PDFPoliza>
                         </div>
                     </div>
                 </div>
@@ -20,16 +20,16 @@
 
 <script>
 import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
-import PolizaPartialShow from "./partials/PartialShow";
-import PDFPoliza from "./partials/PDFPoliza";
+import PolizaPartialShow from "../../contabilidad-general/poliza/partials/PartialShow";
+import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
 
 export default {
     name: "poliza-show",
-    props : ['id', 'id_empresa'],
+    props : ['id'],
     components: {PDFPoliza, PolizaPartialShow, CFDI},
     methods :{
         regresar() {
-            this.$router.push({name: 'poliza-contpaq', params: {id_empresa: this.id_empresa}});
+            this.$router.push({name: 'poliza-contpaq-en-sao', params: {id_empresa: this.idEmpresaContabilidad}});
         },
     },
     watch:{
@@ -40,7 +40,12 @@ export default {
                 }
             }
         },
-    }
+    },
+    computed: {
+        idEmpresaContabilidad() {
+            return this.$store.getters['auth/idEmpresaContabilidad']
+        }
+    },
 }
 </script>
 <style scoped></style>

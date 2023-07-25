@@ -108,7 +108,7 @@
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
                 <router-link :to="{name: 'poliza-contpaq-en-sao'}" class="nav-link" :class="{active: this.$route.name == 'poliza-contpaq-en-sao'}">
-                    <i class="fa fa-file-code nav-icon"></i>
+                    <i class="fa fa-table nav-icon"></i>
                     <p>Pólizas Contpaq</p>
                 </router-link>
             </li>
