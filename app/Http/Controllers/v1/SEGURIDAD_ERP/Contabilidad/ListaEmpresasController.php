@@ -43,7 +43,7 @@ class ListaEmpresasController extends Controller
      */
     public function __construct(Manager $fractal, ListaEmpresasService $service, ListaEmpresasTransformer $transformer)
     {
-        // $this->middleware( 'auth:api');
+         $this->middleware( 'auth:api');
 
         $this->fractal = $fractal;
         $this->service = $service;

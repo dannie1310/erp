@@ -875,23 +875,22 @@ class Poliza extends Model
 
         $query = CFDSAT::
         join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
-            ->where("cancelado","=",0)
         ->where("id_empresa_sat","=",$empresa_erp->IdEmpresaSAT);
 
         if($id_proveedor_sat>0)
         {
             $query->whereIn("id_proveedor_sat",$id_proveedor_sat);
-            $query->WhereIn("total",$importes)
-            ;
-        }else{
-            $query->orWhereIn("total",$importes)
-                ->orWhereIn("importe_iva",$importes);
         }
-            $query->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
-            ,cfd_sat.serie, cfd_sat.folio, proveedores_sat.rfc, proveedores_sat.razon_social
-            , FORMAT(cfd_sat.fecha,'dd-MM-yyyy') as fecha_cfdi, 0 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
-            ->orderBy("cfd_sat.total")
-            ;
+
+        if($poliza->TipoPol == 3)
+        {
+            $query->where("tipo_comprobante","=",'I');
+        }
+
+        $query->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
+        ,cfd_sat.serie, cfd_sat.folio, proveedores_sat.rfc, proveedores_sat.razon_social
+        , FORMAT(cfd_sat.fecha,'dd-MM-yyyy') as fecha_cfdi, 0 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
+        ->orderBy("cfd_sat.total");
 
         $cfdis = $query->get();
 
@@ -905,10 +904,16 @@ class Poliza extends Model
             function ($cfdi) use ($importes, $id_proveedor_sat, $referencias)
             {
                 $cfdi->seleccionado = false;
-                if(in_array($cfdi->total, $importes) || in_array($cfdi->importe_iva, $importes))
-                {
-                    $cfdi->grado_coincidencia += 1;
+                $importes_unicos = array_unique($importes);
+
+                foreach($importes_unicos as $importe){
+                    if(abs($cfdi->total- $importe)<1)
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        //$cfdi->coincide_importe = 1;
+                    }
                 }
+
                 if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
                 {
                     $cfdi->grado_coincidencia += 1;

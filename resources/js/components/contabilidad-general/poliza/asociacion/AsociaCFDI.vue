@@ -85,13 +85,13 @@
 </template>
 
 <script>
-import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
-import PolizaPartialShow from "./partials/PartialShow";
-import PDFPoliza from "./partials/PDFPoliza";
-import ListaCfdiAsociar from "./ListaCFDI.vue";
+import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
+import PolizaPartialShow from "../partials/PartialShow";
+import PDFPoliza from "../partials/PDFPoliza";
+import ListaCfdiAsociar from "../ListaCFDI.vue";
 
 export default {
-    name: "poliza-asocia-cfdi",
+    name: "poliza-asociacion-asocia-cfdi",
     props : ['id', 'id_empresa'],
     components: {ListaCfdiAsociar, PDFPoliza, PolizaPartialShow, CFDI},
     data() {
@@ -106,7 +106,7 @@ export default {
     },
     methods :{
         regresar() {
-            this.$router.push({name: 'poliza-contpaq', params: {id_empresa: this.id_empresa}});
+            this.$router.push({name: 'poliza-contpaq-asociacion', params: {id_empresa: this.id_empresa}});
         },
         asociar()
         {
@@ -131,7 +131,7 @@ export default {
                 ).then((data) => {
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
                     this.$emit('success');
-                    this.$router.push({name: 'poliza-contpaq-show', params: {id: this.id, id_empresa: this.id_empresa}});
+                    this.$router.push({name: 'poliza-contpaq-asociacion-show', params: {id: this.id, id_empresa: this.id_empresa}});
                 }).finally(() => {
                 });
             }

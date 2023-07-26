@@ -137,7 +137,7 @@ export default {
                 return this.$store.dispatch('contabilidadGeneral/poliza/find', {
                     id: this.id,
                     params: {
-                        include: ['movimientos_poliza.asociacion_cfdi', 'tipo', 'asociacion_cfdi'],
+                        include: ['movimientos_poliza.asociacion_cfdi', 'tipo', 'asociacion_cfdi', 'posibles_cfdi'],
                         id_empresa: this.id_empresa
                     }
                 }).then(data => {

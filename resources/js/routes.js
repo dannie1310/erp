@@ -3593,6 +3593,64 @@ export const routes = [
                 ]
             },
             {
+                path:"seleccionar-empresa-asociacion",
+                name:"seleccionar-empresa-asociacion",
+                component: require('./components/contabilidad-general/poliza/asociacion/SeleccionarEmpresaAsoacion.vue').default,
+                meta: {
+                    title: 'Seleccionar Empresa',
+                    breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
+                    middleware: [auth, permission],
+                    permission: ['editar_poliza','consultar_poliza'],
+                    general: true
+                }
+            },
+            {
+                path: ':id_empresa/polizas-asociacion',
+                props: true,
+                component: require('./components/contabilidad-general/poliza/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"poliza-contpaq-asociacion",
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/asociacion/Index.vue').default,
+                        meta: {
+                            title: 'Pólizas',
+                            breadcrumb: {parent: 'seleccionar-empresa', name: 'ASOCIACIÓN DE PÓLIZAS'},
+                            middleware: [auth, permission],
+                            permission: ['editar_poliza','consultar_poliza'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'poliza-contpaq-asociacion-show',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/asociacion/Show').default,
+                        meta: {
+                            title: 'Consultar Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq-asociacion', name: 'CONSULTAR'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/asociar-cfdi',
+                        name: 'poliza-contpaq-asociacion-asociar-cfdi',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/asociacion/AsociaCFDI.vue').default,
+                        meta: {
+                            title: 'Asociar CFDI a Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq-asociacion', name: 'ASOCIAR CFDI'},
+                            middleware: [auth, permission],
+                            permission: 'editar_poliza',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'poliza-cfdi',
                 component: require('./components/contabilidad-general/poliza-cfdi/Layout.vue').default,
                 children:[

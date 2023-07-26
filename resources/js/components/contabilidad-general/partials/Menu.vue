@@ -10,8 +10,14 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
                         <router-link :to="{name: 'seleccionar-empresa'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-empresa'}">
-                            <i class="fa fa-file-powerpoint nav-icon"></i>
-                            <p>Pólizas</p>
+                            <i class="fa fa-pencil nav-icon"></i>
+                            <p>Editar Pólizas</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+                        <router-link :to="{name: 'seleccionar-empresa-asociacion'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-empresa-asociacion'}">
+                            <i class="fa fa-share-alt nav-icon"></i>
+                            <p>Asociar CFDI a Póliza</p>
                         </router-link>
                     </li>
                     <li class="nav-item"  v-if="$root.can('consultar_solicitud_edicion_poliza_ctpq',true) || true">
