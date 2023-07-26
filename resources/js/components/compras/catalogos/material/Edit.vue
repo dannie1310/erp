@@ -19,7 +19,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="tipo" class="col-md-2 col-form-label">Familia: </label>
-                                        <div class="col-md-10" v-if="$root.can('editar_familia_material')">
+                                        <div class="col-md-10" v-if="$root.can('editar_familia_material') && $root.can('editar_insumo_material')">
                                             <model-list-select
                                                     :disabled="cargando"
                                                     name="tipo"
