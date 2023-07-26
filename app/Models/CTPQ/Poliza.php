@@ -904,28 +904,39 @@ class Poliza extends Model
             function ($cfdi) use ($importes, $id_proveedor_sat, $referencias)
             {
                 $cfdi->seleccionado = false;
+                $cfdi->coincide_importe = 0;
+                $cfdi->coincide_proveedor = 0;
+                $cfdi->coincide_folio = 0;
                 $importes_unicos = array_unique($importes);
 
                 foreach($importes_unicos as $importe){
                     if(abs($cfdi->total- $importe)<1)
                     {
                         $cfdi->grado_coincidencia += 1;
-                        //$cfdi->coincide_importe = 1;
+                        $cfdi->coincide_importe = 1;
                     }
                 }
 
                 if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
                 {
                     $cfdi->grado_coincidencia += 1;
+                    $cfdi->coincide_proveedor = 1;
                 }
 
                 foreach($referencias as $referencia)
                 {
-                    if($cfdi->folio != '' && $referencia !='' && strpos($referencia,$cfdi->folio)!==false)
+                    if($cfdi->folio != "" && $referencia !='' && (strpos($referencia, $cfdi->folio)!==false
+                            || strpos($cfdi->folio, $referencia)!==false ))
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        $cfdi->coincide_folio = 1;
+                    }
+
+                    /*if($cfdi->folio != '' && $referencia !='' && strpos($referencia,$cfdi->folio)!==false)
                     {
                         $cfdi->grado_coincidencia += 1;
                         break;
-                    }
+                    }*/
                 }
                 return $cfdi;
             }
