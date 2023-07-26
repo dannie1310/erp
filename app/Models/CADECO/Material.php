@@ -386,7 +386,7 @@ class Material extends Model
                  ]);
                  $nueva_familia= Familia::create([
                      'tipo_material' => $familia->tipo_material,
-                     'descripcion' => $familia->descripcion .'1'
+                     'descripcion' => $familia->descripcion .' -1'
                  ]);
                 $nivel_completo = $nueva_familia->nivel.'.000.';
             }else{
@@ -399,7 +399,7 @@ class Material extends Model
                     ]);
                     $nueva_familia = Familia::create([
                         'tipo_material' => $familia->tipo_material,
-                        'descripcion' => $familia->descripcion . ((int) $familia->consecutivo_familia)
+                        'descripcion' => $familia->descripcion ." -". ((int) $familia->consecutivo_familia)
                     ]);
                     $nivel_completo = $nueva_familia->nivel . '000.';
                 }else{
