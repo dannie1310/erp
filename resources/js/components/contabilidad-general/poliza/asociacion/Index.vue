@@ -149,7 +149,6 @@
             }
         },
         mounted(){
-            this.getPolizas();
         },
         computed: {
             polizas(){

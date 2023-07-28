@@ -137,7 +137,7 @@ class Poliza extends Model
         return Empresa::find($idEmpresa)->AliasBDD;
     }
 
-    public function getCfdiPorMetadatosAttribute()
+    public function getCfdiAttribute()
     {
         $cfdis =  null;
         foreach($this->expedientes as $expediente)
@@ -149,18 +149,18 @@ class Poliza extends Model
                 $comprobante = Comprobante::where('GuidDocument', $expediente->Guid_Pertenece)->first();
             }catch (\Exception $e)
             {
-                abort(500, "Error de acceso a las bases de metadatos de la empresa.");
-                throw $e;
+                abort(500, "Error de acceso a las bases de metadatos de la empresa. \n".$e->getMessage());
             }
             if ($comprobante->toArray() != []) {
-                $cfdi = CFDSAT::where('uuid', $comprobante->UUID)->first();
-                $cfdis[] = [
-                    'id' => $cfdi->getKey(),
-                    'uuid' => $cfdi->uuid
-                ];
+                $cfdi = CFDSAT::where('uuid',"=", $comprobante->UUID)->first();
+                if($cfdi)
+                {
+                    $cfdis[] = $cfdi;
+                }
             }
         }
-        return $cfdis;
+        $cfdi_col = collect($cfdis);
+        return $cfdi_col;
     }
 
     /**
@@ -873,7 +873,7 @@ class Poliza extends Model
 
         $poliza = $this;
 
-        $uuid_cfdi_asociados = $poliza->asociacionCFDI->pluck("UUID")
+        $uuid_cfdi_asociados = $poliza->cfdi->pluck("uuid")
             ->toArray();
 
         $uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);

@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <button @click="conectar" class="btn btn-primary float-right">
+                <button @click="conectar" class="btn btn-primary float-left">
                     <i class="fa fa-plug"></i> Conectar
                 </button>
             </div>
