@@ -137,6 +137,32 @@ class Poliza extends Model
         return Empresa::find($idEmpresa)->AliasBDD;
     }
 
+    public function getCfdiPorMetadatosAttribute()
+    {
+        $cfdis =  null;
+        foreach($this->expedientes as $expediente)
+        {
+            $base = Parametro::find(1);
+            try {
+                DB::purge('cntpqdm');
+                Config::set('database.connections.cntpqdm.database', 'document_' . $base->GuidDSL . '_metadata');
+                $comprobante = Comprobante::where('GuidDocument', $expediente->Guid_Pertenece)->first();
+            }catch (\Exception $e)
+            {
+                abort(500, "Error de acceso a las bases de metadatos de la empresa.");
+                throw $e;
+            }
+            if ($comprobante->toArray() != []) {
+                $cfdi = CFDSAT::where('uuid', $comprobante->UUID)->first();
+                $cfdis[] = [
+                    'id' => $cfdi->getKey(),
+                    'uuid' => $cfdi->uuid
+                ];
+            }
+        }
+        return $cfdis;
+    }
+
     /**
      * Métodos
      */
