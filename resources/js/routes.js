@@ -4032,6 +4032,103 @@ export const routes = [
         ]
     },
     {
+        path: '/control-recurso',
+        components:  {
+            default: require('./components/control-recursos/partials/Layout.vue').default,
+            menu: require('./components/control-recursos/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'control-recurso',
+                meta: {
+                    title: 'CONTROL RECURSOS',
+                    middleware: [auth],
+                }
+            },
+            {
+                path: 'solicitud-recurso',
+                component: require('./components/control-recursos/solicitud/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"solicitud-recurso",
+                        component: require('./components/control-recursos/solicitud/Index.vue').default,
+                        meta: {
+                            title: 'SOLICITUD',
+                            breadcrumb: {parent: 'control-recurso', name: 'SOLICITUD'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_solicitud_pago_oc'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'pago-oc',
+                        component: require('./components/control-recursos/solicitud/pago-oc/Layout.vue').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'pago-oc',
+                                component: require('./components/control-recursos/solicitud/pago-oc/Index.vue').default,
+                                meta: {
+                                    title: 'Pago OC',
+                                    breadcrumb: {parent: 'solicitud-recurso', name: 'PAGO OC'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_solicitud_pago_oc',
+                                    general: true,
+
+                                }
+                            },
+                           /* {
+                                path: 'create',
+                                name: 'autocorreccion-cfd-efos-create',
+                                component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Create.vue').default,
+                                meta: {
+                                    title: 'Registrar Autocorrección de CFDI EFOS',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
+                                    middleware: [auth, permission],
+                                    permission: ['registrar_autocorreccion_cfd_efo'],
+                                    general: true
+                                }
+                            }*/
+                        ]
+                    },
+                    {
+                        path: 'pago-recurrente',
+                        component: require('./components/control-recursos/solicitud/pago-recurrente/Layout.vue').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'pago-recurrente',
+                                component: require('./components/control-recursos/solicitud/pago-recurrente/Index.vue').default,
+                                meta: {
+                                    title: 'Pago Recurrente',
+                                    breadcrumb: {parent: 'solicitud-recurso', name: 'PAGO RECURRENTE'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_autocorreccion_cfd_efo',
+                                    general: true,
+
+                                }
+                            },
+                            /* {
+                                 path: 'create',
+                                 name: 'autocorreccion-cfd-efos-create',
+                                 component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Create.vue').default,
+                                 meta: {
+                                     title: 'Registrar Autocorrección de CFDI EFOS',
+                                     breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
+                                     middleware: [auth, permission],
+                                     permission: ['registrar_autocorreccion_cfd_efo'],
+                                     general: true
+                                 }
+                             }*/
+                        ]
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/fiscal',
         components:  {
             default: require('./components/fiscal/partials/Layout.vue').default,
