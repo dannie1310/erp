@@ -392,7 +392,7 @@ class Material extends Model
                  ]);
                 $nivel_completo = $nueva_familia->nivel.'000.';
             }else{
-                $nueva_familia = Familia::where('descripcion','=',$familia->descripcion.$familia->consecutivo_familia)->first();
+                $nueva_familia = Familia::where('descripcion','=',$familia->descripcion.' -'.$familia->consecutivo_familia)->first();
                 $hijos_familia = self::where('tipo_material','=',$nueva_familia->tipo_material)->where('nivel','LIKE',$nueva_familia->nivel.'%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'asc')->get()->pluck('nivel');
                 $num_faltante = $this->buscarConsecutivoFaltante($hijos_familia);
                 if($num_faltante == 1000){
