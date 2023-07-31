@@ -18,21 +18,21 @@
 
 <script>
     export default {
-    name: "fechas-inhabiles-sat-index",
+    name: "solicitud-pago-oc-index",
     data() {
         return {
             HeaderSettings: false,
             columns: [
                 { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                { title: 'Fecha Inhábil SAT', thClass: 'fecha_hora', field: 'fecha'},
+              /*  { title: 'Fecha Inhábil SAT', thClass: 'fecha_hora', field: 'fecha'},
                 { title: 'Tipo Fecha', field: 'tipo'},
                 { title: 'Usuario Registró', field: 'usuario'},
                 { title: 'Fecha Hora Registro', thClass: 'fecha_hora', field: 'registro'},
                 { title: '', field: 'buttons', thClass: 'th_index',  tdComp: require('./partials/ActionButtons').default},
-            ],
+            */],
             data: [],
             total: 0,
-            query: {scope: ['vigente'], sort: 'fecha', order: 'desc'},
+            query: { sort: 'concepto', order: 'desc'},
             estado: "",
             cargando: false,
         }
@@ -47,10 +47,10 @@
     methods: {
         paginate() {
             this.cargando = true;
-            return this.$store.dispatch('fiscal/fecha-inhabil-sat/paginate', { params: this.query})
+            return this.$store.dispatch('controlRecursos/solicitud-pago-oc/paginate', { params: this.query})
                 .then(data => {
-                    this.$store.commit('fiscal/fecha-inhabil-sat/SET_FECHAS_INHABILES', data.data);
-                    this.$store.commit('fiscal/fecha-inhabil-sat/SET_META', data.meta);
+                    this.$store.commit('controlRecursos/solicitud-pago-oc/SET_SOLICITUDES', data.data);
+                    this.$store.commit('controlRecursos/solicitud-pago-oc/SET_META', data.meta);
                 })
                 .finally(() => {
                     this.cargando = false;
@@ -58,31 +58,31 @@
         },
     },
     computed: {
-        fechas_inhabiles(){
-            return this.$store.getters['fiscal/fecha-inhabil-sat/fechas_inhabiles'];
+        solicitudes(){
+            return this.$store.getters['controlRecursos/solicitud-pago-oc/solicitudes'];
         },
         meta(){
-            return this.$store.getters['fiscal/fecha-inhabil-sat/meta'];
+            return this.$store.getters['controlRecursos/solicitud-pago-oc/meta'];
         },
         tbodyStyle() {
             return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
         }
     },
     watch: {
-        fechas_inhabiles: {
-            handler(fechas_inhabiles) {
+        solicitudes: {
+            handler(solicitudes) {
                 let self = this
                 self.$data.data = []
-                self.$data.data = fechas_inhabiles.map((fecha, i) => ({
+                self.$data.data = solicitudes.map((solicitud, i) => ({
                     index: (i + 1) + self.query.offset,
-                    fecha: fecha.fecha_format,
+                    /*fecha: fecha.fecha_format,
                     tipo: fecha.tipo_fecha.descripcion,
                     usuario: fecha.usuario_registro_format,
                     registro: fecha.fecha_registro_format,
                     buttons: $.extend({}, {
                         id: fecha.id,
                         eliminar: (self.$root.can('eliminar_fechas_inhabiles_sat',true)) ? true : false,
-                    })
+                    })*/
                 }));
             },
             deep: true

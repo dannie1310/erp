@@ -148,6 +148,9 @@ import tarjeta from './modules/controlPresupuesto/tarjeta';
 import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
 import extraordinario from './modules/controlPresupuesto/extraordinario';
 
+//CONTROL RECURSOS
+import solicitudPagoOc from "./modules/controlRecursos/solicitud-pago-oc";
+
 //ENTREGA CFDI
 import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
 import tipoArchivo from './modules/entregaCFDI/ctg-tipo-archivo';
@@ -367,6 +370,8 @@ export default new Vuex.Store({
         'control-presupuesto/tarjeta': tarjeta,
         'control-presupuesto/concepto-tarjeta': conceptoTarjeta,
         'control-presupuesto/extraordinario': extraordinario,
+
+        'controlRecursos/solicitud-pago-oc' : solicitudPagoOc,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/comprobante-fondo' : comprobanteFondo,
