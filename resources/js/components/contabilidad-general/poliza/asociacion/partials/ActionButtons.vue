@@ -1,12 +1,12 @@
 <template>
     <div class="btn-group">
-        <router-link  :to="{ name: 'poliza-contpaq-show', params: {id: value.id, id_empresa: this.value.id_empresa}}" v-if="$root.can('consultar_poliza_ctpq',1)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+        <router-link  :to="{ name: 'poliza-contpaq-show', params: {id: value.id, id_empresa: this.value.id_empresa}}" v-if="$root.can('consultar_poliza',1)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
             <i class="fa fa-eye"></i>
         </router-link>
-        <router-link  :to="{ name: 'poliza-contpaq-asociacion-asociar-cfdi', params: {id: this.value.id, id_empresa: this.value.id_empresa}}" v-if="$root.can('editar_poliza_ctpq',1)" type="button" class="btn btn-sm btn-outline-warning" title="Asociar CFDI">
+        <router-link  :to="{ name: 'poliza-contpaq-asociacion-asociar-cfdi', params: {id: this.value.id, id_empresa: this.value.id_empresa}}" v-if="$root.can('asociar-cfdi-a-poliza-contpaq',1)" type="button" class="btn btn-sm btn-outline-warning" title="Asociar CFDI">
             <i class="fa fa-share-alt"></i>
         </router-link>
-        <PDFPoliza v-bind:id="value.id" v-bind:id_empresa="value.id_empresa"></PDFPoliza>
+        <PDFPoliza v-bind:id="value.id" v-bind:id_empresa="value.id_empresa" v-if="$root.can('consultar_poliza',1)"></PDFPoliza>
     </div>
 </template>
 

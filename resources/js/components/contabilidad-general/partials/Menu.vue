@@ -1,7 +1,7 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
+            <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true) || $root.can('asociar-cfdi-a-poliza-contpaq',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-file-powerpoint nav-icon"></i>
                     <p>Gestión de Pólizas</p>
@@ -14,7 +14,7 @@
                             <p>Editar Pólizas</p>
                         </router-link>
                     </li>
-                    <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+                    <li class="nav-item"  v-if="$root.can('asociar-cfdi-a-poliza-contpaq',true)">
                         <router-link :to="{name: 'seleccionar-empresa-asociacion'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-empresa-asociacion'}">
                             <i class="fa fa-share-alt nav-icon"></i>
                             <p>Asociar CFDI a Póliza</p>

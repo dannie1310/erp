@@ -2589,8 +2589,8 @@ export const routes = [
                                 meta: {
                                     title: 'Pólizas Contpaq',
                                     breadcrumb: {parent: 'sistema_contable', name: 'PÓLIZAS CONTPAQ'},
-                                    middleware: [auth, context/*, permission*/],
-                                    //permission: ['consultar_polizas'],
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_poliza_ctpq'],
                                 }
                             },
                             {
@@ -2601,8 +2601,8 @@ export const routes = [
                                 meta: {
                                     title: 'Ver Póliza Contpaq',
                                     breadcrumb: {parent: 'poliza-contpaq-en-sao', name: 'VER'},
-                                    middleware: [auth, context/*, permission*/],
-                                    //permission: 'consultar_prepolizas_generadas'
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_poliza_ctpq'
                                 }
                             },
                             {
@@ -2613,9 +2613,8 @@ export const routes = [
                                 meta: {
                                     title: 'Asociar CFDI a Póliza',
                                     breadcrumb: {parent: 'poliza-contpaq-en-sao', name: 'ASOCIAR CFDI'},
-                                    middleware: [auth, permission],
-                                    permission: 'editar_poliza',
-                                    general: true
+                                    middleware: [auth, context, permission],
+                                    permission: 'asociar-cfdi-a-poliza-contpaq-desde-sao',
                                 }
                             },
                         ]
@@ -3586,7 +3585,7 @@ export const routes = [
                             title: 'Asociar CFDI a Póliza',
                             breadcrumb: {parent: 'poliza-contpaq', name: 'ASOCIAR CFDI'},
                             middleware: [auth, permission],
-                            permission: 'editar_poliza',
+                            permission: ['editar_poliza','asociar-cfdi-a-poliza-contpaq'],
                             general: true
                         }
                     },
@@ -3600,7 +3599,7 @@ export const routes = [
                     title: 'Seleccionar Empresa',
                     breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
                     middleware: [auth, permission],
-                    permission: ['editar_poliza','consultar_poliza'],
+                    permission: ['asociar-cfdi-a-poliza-contpaq'],
                     general: true
                 }
             },
@@ -3618,7 +3617,7 @@ export const routes = [
                             title: 'Pólizas',
                             breadcrumb: {parent: 'seleccionar-empresa', name: 'ASOCIACIÓN DE PÓLIZAS'},
                             middleware: [auth, permission],
-                            permission: ['editar_poliza','consultar_poliza'],
+                            permission: ['asociar-cfdi-a-poliza-contpaq'],
                             general: true
                         }
                     },
@@ -3631,7 +3630,7 @@ export const routes = [
                             title: 'Consultar Póliza',
                             breadcrumb: {parent: 'poliza-contpaq-asociacion', name: 'CONSULTAR'},
                             middleware: [auth, permission],
-                            permission: 'consultar_poliza',
+                            permission: 'asociar-cfdi-a-poliza-contpaq',
                             general: true
                         }
                     },
@@ -3644,7 +3643,7 @@ export const routes = [
                             title: 'Asociar CFDI a Póliza',
                             breadcrumb: {parent: 'poliza-contpaq-asociacion', name: 'ASOCIAR CFDI'},
                             middleware: [auth, permission],
-                            permission: 'editar_poliza',
+                            permission: 'asociar-cfdi-a-poliza-contpaq',
                             general: true
                         }
                     },
