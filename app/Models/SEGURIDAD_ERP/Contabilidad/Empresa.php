@@ -191,16 +191,17 @@ class Empresa extends Model
 
     public function scopeEditablePorUsuario($query)
     {
-        if(auth()->user()->idusuario == '180'){
+        /*if(auth()->user()->idusuario == '180'){
             $id_empresas_contpaq = Empresa::all()->pluck("IdEmpresaContpaq");
         }else{
             $usuario = strtoupper(auth()->user()->usuario);
             $empresas = Usuario::with(["empresasUsuario"])->where("codigo","=",$usuario)
                 ->where("EsBaja","=",0)->first();
             $id_empresas_contpaq = $empresas->empresasUsuario->pluck("IdEmpresa");
-        }
+        }*/
 
-        return $query->where('Visible',1)->where('Editable', 1)->whereIn("IdEmpresaContpaq", $id_empresas_contpaq);
+        return $query->join("Contabilidad.empresas_usuarios","empresas_usuarios.id_empresa","ListaEmpresas.Id")
+            ->where("id_usuario","=",auth()->user()->idusuario);
     }
 
     public function scopeParaInformeCostosCFDIvsCostosBza($query)
