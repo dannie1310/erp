@@ -48,6 +48,11 @@ class Documento extends Model
         return $this->belongsTo(Serie::class, 'IdSerie','idseries');
     }
 
+    public function tipo()
+    {
+        return $this->belongsTo(TipoDocto::class,'IdTipoDocto','IdTipoDocto');
+    }
+
     /**
      * Scopes
      */
@@ -63,10 +68,20 @@ class Documento extends Model
     public function getFolioConSerieAttribute()
     {
         try {
-            return $this->serie->Descripcion.' - '.$this->FolioDocto;
+            return $this->FolioDocto;
         }catch (\Exception $e)
         {
-            return $this->FolioDocto;
+            return null;
+        }
+    }
+
+    public function getSerieDescripcionAttribute()
+    {
+        try {
+            return $this->serie->Descripcion;
+        }catch (\Exception $e)
+        {
+            return null;
         }
     }
 
@@ -74,6 +89,16 @@ class Documento extends Model
     {
         try {
             return $this->moneda->moneda;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getTipoDocumentoAttribute()
+    {
+        try {
+            return $this->tipo->Descripcion;
         }catch (\Exception $e)
         {
             return null;

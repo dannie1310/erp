@@ -32,7 +32,9 @@ class FacturaTransformer extends TransformerAbstract
             'concepto' => $model->Concepto,
             'fecha' => $model->Fecha,
             'total_format' => $model->total_format,
-            'moneda' => $model->moneda_descripcion
+            'moneda' => $model->moneda_descripcion,
+            'serie' => $model->serie_descripcion,
+            'tipo_documento' => $model->tipo_documento
         ];
     }
 

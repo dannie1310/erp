@@ -24,11 +24,13 @@
             HeaderSettings: false,
             columns: [
                 { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                { title: 'Folio', field: 'foliodocto',sortable: true},
-                { title: 'Concepto', field: 'concepto',sortable: true,thComp: require('../../globals/th-Filter').default},
+                { title: 'Serie', field: 'idserie',sortable: true, thComp: require('../../globals/th-Filter').default},
+                { title: 'Tipo Documento', field: 'idtipodocto',sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Fecha', thClass: 'fecha_hora', field: 'fecha', sortable: true,thComp: require('../../globals/th-Date').default},
-                { title: 'Total', field: 'total', tdClass: 'money',sortable: true},
-                { title: 'Moneda', field: 'idmoneda',sortable: true},
+                { title: 'Folio', field: 'foliodocto',sortable: true, thComp: require('../../globals/th-Filter').default},
+                { title: 'Concepto', field: 'concepto',sortable: true,thComp: require('../../globals/th-Filter').default},
+                { title: 'Total', field: 'total', tdClass: 'money',sortable: true, thComp: require('../../globals/th-Filter').default},
+                { title: 'Moneda', field: 'idmoneda',sortable: true, thComp: require('../../globals/th-Filter').default},
 
                 //{ title: '', field: 'buttons', thClass: 'th_index',  tdComp: require('./partials/ActionButtons').default},
             ],
@@ -81,7 +83,9 @@
                     concepto: solicitud.concepto,
                     foliodocto: solicitud.folio_format,
                     total: solicitud.total_format,
-                    idmoneda: solicitud.moneda
+                    idmoneda: solicitud.moneda,
+                    idserie: solicitud.serie,
+                    idtipodocto: solicitud.tipo_documento,
                     /* buttons: $.extend({}, {
                         id: fecha.id,
                         eliminar: (self.$root.can('eliminar_fechas_inhabiles_sat',true)) ? true : false,
