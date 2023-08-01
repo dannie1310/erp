@@ -15,7 +15,19 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <span style="font-weight: bold;">{{this.empresa}}</span>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <span style="font-weight: bold;">{{this.empresa}}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="btn-group btn-group-toggle pull-right" data-toggle="buttons">
+                                    <label class="btn btn-primary active">
+                                        <input type="checkbox" autocomplete="off"
+                                               v-model="sin_cfdi"> Sin CFDI
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -145,7 +157,9 @@
                 query: {sort:'fecha',order:'desc'},
                 search: '',
                 file:'',
-                nombre: ''
+                nombre: '',
+                sin_cfdi : false,
+
             }
         },
         mounted(){
@@ -201,6 +215,17 @@
                 },
                 deep: true
             },
+            sin_cfdi(sin_cfdi) {
+                if(sin_cfdi)
+                {
+                    this.query.scope = 'sinCfdi';
+                }else{
+                    this.query.scope = '';
+                }
+                this.query.offset = 0;
+                this.getPolizas();
+            },
+
             search(val) {
                 if (this.timer) {
                     clearTimeout(this.timer);
@@ -363,5 +388,22 @@
 </script>
 
 <style scoped>
+
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 500;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+    color: #ffffff;
+    background-color: #007bff;
+    border-color: #005cbf;
+}
+
+.btn-primary {
+    color: #007bff;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+    box-shadow: none;
+}
 
 </style>

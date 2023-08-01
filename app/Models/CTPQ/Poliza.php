@@ -151,7 +151,7 @@ class Poliza extends Model
             {
                 abort(500, "Error de acceso a las bases de metadatos de la empresa. \n".$e->getMessage());
             }
-            if ($comprobante->toArray() != []) {
+            if ($comprobante) {
                 $cfdi = CFDSAT::where('uuid',"=", $comprobante->UUID)->first();
                 if($cfdi)
                 {
@@ -161,6 +161,14 @@ class Poliza extends Model
         }
         $cfdi_col = collect($cfdis);
         return $cfdi_col;
+    }
+    /**
+     * Scopes
+     */
+
+    public function scopeSinCFDI($query)
+    {
+        return $query->whereNotIn("Guid",Expediente::all()->pluck("Guid_Relacionado")->toArray());
     }
 
     /**
