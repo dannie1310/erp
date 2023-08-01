@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <poliza-partial-show v-bind:id="this.id" v-bind:id_empresa="this.id_empresa"></poliza-partial-show>
+                        <poliza-partial-show v-bind:id="this.id" v-bind:id_empresa="this.idEmpresaContabilidad"></poliza-partial-show>
                         <poliza-contpaq-lista-posibles-cfdi></poliza-contpaq-lista-posibles-cfdi>
                     </div>
                     <div class="card-footer">
@@ -23,14 +23,14 @@
 
 <script>
 import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
-import PolizaPartialShow from "./partials/PartialShow";
-import PDFPoliza from "./partials/PDFPoliza";
-import ListaCfdiAsociar from "./ListaCFDI.vue";
-import PolizaContpaqListaPosiblesCfdi from "../../contabilidad/poliza-contpaq/partials/ListaPosiblesCFDI.vue";
+import PolizaPartialShow from "../../contabilidad-general/poliza/partials/PartialShow";
+import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
+import ListaCfdiAsociar from "../../contabilidad-general/poliza/ListaCFDI.vue";
+import PolizaContpaqListaPosiblesCfdi from "./partials/ListaPosiblesCFDI.vue";
 
 export default {
     name: "poliza-asocia-cfdi",
-    props : ['id', 'id_empresa'],
+    props : ['id'],
     components: {PolizaContpaqListaPosiblesCfdi, ListaCfdiAsociar, PDFPoliza, PolizaPartialShow, CFDI},
     data() {
         return {
@@ -44,7 +44,7 @@ export default {
     },
     methods :{
         regresar() {
-            this.$router.push({name: 'poliza-contpaq', params: {id_empresa: this.id_empresa}});
+            this.$router.push({name: 'poliza-contpaq-en-sao', params: {id_empresa: this.idEmpresaContabilidad}});
         },
         asociar()
         {
@@ -65,11 +65,11 @@ export default {
                 return this.$store.dispatch('contabilidadGeneral/poliza/asociarCFDI',
                     {"cfdi":_self.cfdi_store,
                         "id_poliza":_self.id,
-                        "id_empresa":_self.id_empresa}
+                        "id_empresa":_self.idEmpresaContabilidad}
                 ).then((data) => {
                     this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
                     this.$emit('success');
-                    this.$router.push({name: 'poliza-contpaq-show', params: {id: this.id, id_empresa: this.id_empresa}});
+                    this.$router.push({name: 'poliza-contpaq-en-sao-show', params: {id: this.id, id_empresa: this.idEmpresaContabilidad}});
                 }).finally(() => {
                 });
             }
@@ -106,6 +106,9 @@ export default {
         poliza(){
             return this.$store.getters['contabilidadGeneral/poliza/currentPoliza'];
         },
+        idEmpresaContabilidad() {
+            return this.$store.getters['auth/idEmpresaContabilidad']
+        }
     },
 }
 </script>

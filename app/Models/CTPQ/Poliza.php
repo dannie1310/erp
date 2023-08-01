@@ -137,6 +137,56 @@ class Poliza extends Model
         return Empresa::find($idEmpresa)->AliasBDD;
     }
 
+    public function getCfdiAttribute()
+    {
+        $cfdis =  null;
+        foreach($this->expedientes as $expediente)
+        {
+            $base = Parametro::find(1);
+            try {
+                DB::purge('cntpqdm');
+                Config::set('database.connections.cntpqdm.database', 'document_' . $base->GuidDSL . '_metadata');
+                $comprobante = Comprobante::where('GuidDocument', $expediente->Guid_Pertenece)->first();
+            }catch (\Exception $e)
+            {
+                abort(500, "Error de acceso a las bases de metadatos de la empresa. \n".$e->getMessage());
+            }
+            if ($comprobante) {
+                $cfdi = CFDSAT::where('uuid',"=", $comprobante->UUID)->first();
+                if($cfdi)
+                {
+                    $cfdis[] = $cfdi;
+                }
+            }
+        }
+        $cfdi_col = collect($cfdis);
+        return $cfdi_col;
+    }
+    /**
+     * Scopes
+     */
+
+    public function scopeSinCFDI($query)
+    {
+
+        $base =  Parametro::find(1);
+        DB::purge('cntpqom');
+        Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
+        $bd_exp = Config::get('database.connections.cntpqom.database');
+        return $query->leftJoin($bd_exp.".dbo.Expedientes",$bd_exp.".dbo.Expedientes.Guid_Relacionado","=","polizas.Guid")
+            ->whereNull($bd_exp.".dbo.Expedientes.Guid_Relacionado");
+    }
+
+    public function scopeConCFDI($query)
+    {
+
+        $base =  Parametro::find(1);
+        DB::purge('cntpqom');
+        Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
+        $bd_exp = Config::get('database.connections.cntpqom.database');
+        return $query->Join($bd_exp.".dbo.Expedientes",$bd_exp.".dbo.Expedientes.Guid_Relacionado","=","polizas.Guid");
+    }
+
     /**
      * Métodos
      */
@@ -847,7 +897,7 @@ class Poliza extends Model
 
         $poliza = $this;
 
-        $uuid_cfdi_asociados = $poliza->asociacionCFDI->pluck("UUID")
+        $uuid_cfdi_asociados = $poliza->cfdi->pluck("uuid")
             ->toArray();
 
         $uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);
@@ -875,23 +925,22 @@ class Poliza extends Model
 
         $query = CFDSAT::
         join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
-            ->where("cancelado","=",0)
         ->where("id_empresa_sat","=",$empresa_erp->IdEmpresaSAT);
 
         if($id_proveedor_sat>0)
         {
             $query->whereIn("id_proveedor_sat",$id_proveedor_sat);
-            $query->WhereIn("total",$importes)
-            ;
-        }else{
-            $query->orWhereIn("total",$importes)
-                ->orWhereIn("importe_iva",$importes);
         }
-            $query->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
-            ,cfd_sat.serie, cfd_sat.folio, proveedores_sat.rfc, proveedores_sat.razon_social
-            , FORMAT(cfd_sat.fecha,'dd-MM-yyyy') as fecha_cfdi, 0 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
-            ->orderBy("cfd_sat.total")
-            ;
+
+        if($poliza->TipoPol == 3)
+        {
+            $query->where("tipo_comprobante","=",'I');
+        }
+
+        $query->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
+        ,cfd_sat.serie, cfd_sat.folio, proveedores_sat.rfc, proveedores_sat.razon_social
+        , FORMAT(cfd_sat.fecha,'dd-MM-yyyy') as fecha_cfdi, 0 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
+        ->orderBy("cfd_sat.total");
 
         $cfdis = $query->get();
 
@@ -905,22 +954,39 @@ class Poliza extends Model
             function ($cfdi) use ($importes, $id_proveedor_sat, $referencias)
             {
                 $cfdi->seleccionado = false;
-                if(in_array($cfdi->total, $importes) || in_array($cfdi->importe_iva, $importes))
-                {
-                    $cfdi->grado_coincidencia += 1;
+                $cfdi->coincide_importe = 0;
+                $cfdi->coincide_proveedor = 0;
+                $cfdi->coincide_folio = 0;
+                $importes_unicos = array_unique($importes);
+
+                foreach($importes_unicos as $importe){
+                    if(abs($cfdi->total- $importe)<1)
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        $cfdi->coincide_importe = 1;
+                    }
                 }
+
                 if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
                 {
                     $cfdi->grado_coincidencia += 1;
+                    $cfdi->coincide_proveedor = 1;
                 }
 
                 foreach($referencias as $referencia)
                 {
-                    if(strpos($referencia,$cfdi->folio)!==false)
+                    if($cfdi->folio != "" && $referencia !='' && (strpos($referencia, $cfdi->folio)!==false
+                            || strpos($cfdi->folio, $referencia)!==false ))
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        $cfdi->coincide_folio = 1;
+                    }
+
+                    /*if($cfdi->folio != '' && $referencia !='' && strpos($referencia,$cfdi->folio)!==false)
                     {
                         $cfdi->grado_coincidencia += 1;
                         break;
-                    }
+                    }*/
                 }
                 return $cfdi;
             }

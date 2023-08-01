@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CTPQ;
 
 
+use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CFDSATTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\IncidenteIndividualConsolidadaTransformer;
 use App\Models\CTPQ\AsocCFDI;
 use App\Models\CTPQ\Poliza;
@@ -26,10 +27,11 @@ class PolizaTransformer extends TransformerAbstract
         'incidentes_activos',
         'tipo',
         'asociacion_cfdi',
-        'posibles_cfdi'
+        'posibles_cfdi',
+        'cfdi'
     ];
 
-    protected $defaultIncludes = [];
+    protected $defaultIncludes = ['cfdi'];
 
     public function transform(Poliza $model) {
         return [
@@ -51,7 +53,8 @@ class PolizaTransformer extends TransformerAbstract
             'base_datos' => $model->base_datos,
             'usuario_nombre'=>$model->usuario?$model->usuario->Nombre:"",
             'usuario_codigo'=>$model->usuario?($model->usuario)->Codigo:"",
-            'cantidad_cfdi'=>$model->asociacionCFDI->count() > 0 ? $model->asociacionCFDI->count() : '-'
+            'cantidad_cfdi'=>$model->cfdi && $model->cfdi->count() > 0 ? $model->cfdi->count() : '-',
+            //'cfdi'=>$model->cfdi
         ];
     }
 
@@ -103,6 +106,15 @@ class PolizaTransformer extends TransformerAbstract
         if($items = $poliza->posibles_cfdi)
         {
             return $this->collection($items, new PolizaPosiblesCFDITransformer);
+        }
+        return null;
+    }
+
+    public function includeCfdi(Poliza $poliza)
+    {
+        if($items = $poliza->cfdi)
+        {
+            return $this->collection($items, new CFDSATTransformer);
         }
         return null;
     }

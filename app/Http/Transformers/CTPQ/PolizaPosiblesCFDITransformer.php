@@ -32,6 +32,9 @@ class PolizaPosiblesCFDITransformer extends TransformerAbstract
             'tipo_comprobante' => $model->tipo_comprobante,
             'total' => $model->total,
             'uuid' => $model->uuid,
+            'coincide_importe' => $model->coincide_importe,
+            'coincide_proveedor' => $model->coincide_proveedor,
+            'coincide_folio' => $model->coincide_folio,
         ];
     }
 }

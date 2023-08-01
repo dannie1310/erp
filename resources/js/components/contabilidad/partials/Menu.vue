@@ -94,16 +94,22 @@
                     <p>Enviar CFDI a ADD Contpaq</p>
                 </router-link>
             </li>
-            <li class="nav-item"  v-if="$root.can('asociar_poliza_contpaq_cfdi')">
+            <li class="nav-item"  v-if="$root.can('asociar-cfdi-a-poliza-contpaq-desde-sao')">
                 <router-link :to="{name: 'asociar-poliza-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'asociar-poliza-cfdi'}">
                     <i class="fa fa-share-alt nav-icon"></i>
                     <p>Asociar CFDI con Pólizas Contpaq</p>
                 </router-link>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+            <li class="nav-item"  v-if="$root.can('consultar_poliza_ctpq')">
                 <router-link :to="{name: 'poliza-cfdi-proyecto'}" class="nav-link" :class="{active: this.$route.name == 'poliza-cfdi-proyecto'}">
                     <i class="fa fa-file-code nav-icon"></i>
                     <p>Pólizas CFDI</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_poliza_ctpq')">
+                <router-link :to="{name: 'poliza-contpaq-en-sao'}" class="nav-link" :class="{active: this.$route.name == 'poliza-contpaq-en-sao'}">
+                    <i class="fa fa-table nav-icon"></i>
+                    <p>Pólizas Contpaq</p>
                 </router-link>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_informe_sat')">

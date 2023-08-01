@@ -17,7 +17,7 @@ interface Context
      * @param string $database
      * @param int $id_obra
      */
-    public function setContext(string $database, int $id_obra);
+    public function setContext(string $database, int $id_obra, string $databaseContpaq);
 
     /**
      * Borra la información del contexto guardado en la sesión
@@ -44,4 +44,6 @@ interface Context
      * @return bool
      */
     public function isEstablished();
+
+    public function getDatabaseContpaq();
 }

@@ -32,11 +32,8 @@
                                     {{poliza.tipo.nombre}}
                                 </td>
                                 <td>
-                                    <div  v-for="(uuid, i) in poliza.asociacion_cfdi.data">
-                                        <CFDI v-if="uuid.cfdi" v-bind:txt="uuid.cfdi.uuid" v-bind:id="uuid.cfdi.id" @click="uuid.cfdi.id" ></CFDI>
-                                        <span v-else>
-                                            {{uuid.uuid}}
-                                        </span>
+                                    <div  v-for="(cfdi, i) in poliza.cfdi.data">
+                                        <CFDI v-if="cfdi" v-bind:txt="cfdi.uuid" v-bind:id="cfdi.id" @click="cfdi.id" ></CFDI>
                                     </div>
                                 </td>
                                 <td>
@@ -137,7 +134,7 @@ export default {
                 return this.$store.dispatch('contabilidadGeneral/poliza/find', {
                     id: this.id,
                     params: {
-                        include: ['movimientos_poliza.asociacion_cfdi', 'tipo', 'asociacion_cfdi'],
+                        include: ['movimientos_poliza.asociacion_cfdi', 'tipo', 'asociacion_cfdi', 'posibles_cfdi'],
                         id_empresa: this.id_empresa
                     }
                 }).then(data => {

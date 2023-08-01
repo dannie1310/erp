@@ -16,6 +16,7 @@
                             name="id_empresa"
                             v-model="id_empresa"
                             option-value="id"
+                            option-text="nombre"
                             :custom-text="nombreAliasBDD"
                             :list="empresas"
                             :placeholder="!cargando?'Seleccionar o buscar empresa':'Cargando...'"
@@ -29,9 +30,6 @@
                     <i class="fa fa-plug"></i> Conectar
                 </button>
             </div>
-            <div class="col-md-2">
-
-            </div>
         </div>
     </span>
 
@@ -41,7 +39,7 @@
 
 import {ModelListSelect} from 'vue-search-select';
 export default {
-    name: "SeleccionarEmpresa",
+    name: "SeleccionarEmpresaAsoacion",
     components: {ModelListSelect},
     data() {
         return {
@@ -88,7 +86,7 @@ export default {
                 .then(data => {
                     if(this.empresa_seleccionada.alias_bdd === data){
                         this.conectado = true;
-                        this.$router.push({name: 'poliza-contpaq', params: {id_empresa: this.id_empresa}});
+                        this.$router.push({name: 'poliza-contpaq-asociacion', params: {id_empresa: this.id_empresa}});
                     }
                 }).finally(() => {
                     this.conectando = false;
@@ -101,7 +99,7 @@ export default {
                 params: {
                     sort: 'Nombre',
                     order: 'asc',
-                    scope:'editable',
+                    scope:'editablePorUsuario',
                 }
             })
                 .then(data => {

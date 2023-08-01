@@ -48,6 +48,7 @@ class PolizaController extends Controller
     public function __construct(Manager $fractal, PolizaService $service, PolizaTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('accesoEmpresaContpaq');
         $this->middleware('permisoGlobal:consultar_poliza_ctpq')->only(['show','pdf','pdfCaidaB','descargaZip']);
         $this->middleware('permisoGlobal:editar_poliza_ctpq')->only('update');
 

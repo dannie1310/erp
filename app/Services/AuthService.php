@@ -28,7 +28,7 @@ class AuthService
     }
 
     public function setContext(array $data) {
-        $this->context->setContext($data['db'], $data['id_obra']);
+        $this->context->setContext($data['db'], $data['id_obra'], $data['db_cntpq']);
     }
 
     public function clearContext()
