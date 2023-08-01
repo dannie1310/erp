@@ -3615,7 +3615,7 @@ export const routes = [
                         component: require('./components/contabilidad-general/poliza/asociacion/Index.vue').default,
                         meta: {
                             title: 'Pólizas',
-                            breadcrumb: {parent: 'seleccionar-empresa', name: 'ASOCIACIÓN DE PÓLIZAS'},
+                            breadcrumb: {parent: 'seleccionar-empresa-asociacion', name: 'ASOCIACIÓN DE PÓLIZAS'},
                             middleware: [auth, permission],
                             permission: ['asociar-cfdi-a-poliza-contpaq'],
                             general: true
