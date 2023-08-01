@@ -20,7 +20,7 @@
                             <p>Asociar CFDI a Póliza</p>
                         </router-link>
                     </li>
-                    <li class="nav-item"  v-if="$root.can('consultar_solicitud_edicion_poliza_ctpq',true) || true">
+                    <li class="nav-item"  v-if="$root.can('consultar_solicitud_edicion_poliza_ctpq',true)">
                         <router-link :to="{name: 'solicitud-edicion-poliza'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-edicion-poliza'}">
                             <i class="fa fa-file-contract nav-icon"></i>
                             <p>Solicitud de Edición</p>
