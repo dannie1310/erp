@@ -97,7 +97,7 @@ class Material extends Model
         }
         Storage::disk('lista_insumos')->delete(Storage::disk('lista_insumos')->allFiles());
         $nombre_archivo = 'Lista-Materiales' . date('dmYY_His') . '.csv';
-        (new ListaMaterialesLayout($this))->store($nombre_archivo, 'lista_insumos');
+        (new ListaMaterialesLayout($this,$data))->store($nombre_archivo, 'lista_insumos');
         return Storage::disk('lista_insumos')->download($nombre_archivo);
     }
 
@@ -285,6 +285,13 @@ class Material extends Model
     public function scopeMaterialesParaCompras($query)
     {
         return $query->whereRaw('LEN(nivel) > 4')->where('unidad','<>','jornal')->where('tipo_material', '!=', 8);
+    }
+
+    public function scopeMaterialesPorAlmacen($query, $id_almacen)
+    {
+        return $query->join('items','materiales.id_material', 'items.id_material')
+            ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
+            ->where('inventarios.id_almacen', $id_almacen)->orderBy('materiales.descripcion')->get();
     }
 
     public function validarExistente()
