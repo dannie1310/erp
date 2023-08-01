@@ -2,10 +2,10 @@
 
 namespace App\Http\Transformers\CONTROLRECURSOS;
 
-use App\Models\CONTROL_RECURSOS\SolicitudPagoOC;
+use App\Models\CONTROL_RECURSOS\Factura;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudPagoOCTransformer extends TransformerAbstract
+class FacturaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -25,9 +25,14 @@ class SolicitudPagoOCTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(SolicitudPagoOC $model){
+    public function transform(Factura $model){
         return [
             'id' => $model->getKey(),
+            'folio_format' => $model->folio_con_serie,
+            'concepto' => $model->Concepto,
+            'fecha' => $model->Fecha,
+            'total_format' => $model->total_format,
+            'moneda' => $model->moneda_descripcion
         ];
     }
 

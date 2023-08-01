@@ -2,13 +2,13 @@
 
 namespace App\Repositories\CONTROLRECURSOS;
 
-use App\Models\CONTROL_RECURSOS\SolicitudPagoOC;
+use App\Models\CONTROL_RECURSOS\Factura;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 
-class SolicitudPagoOCRepository extends Repository implements RepositoryInterface
+class FacturaRepository extends Repository implements RepositoryInterface
 {
-    public function __construct(SolicitudPagoOC $model)
+    public function __construct(Factura $model)
     {
         parent::__construct($model);
         $this->model = $model;

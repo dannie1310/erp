@@ -1,4 +1,4 @@
-const URI = '/api/control-recursos/solicitud-pagoOC/';
+const URI = '/api/control-recursos/factura/';
 
 export default {
     namespaced: true,

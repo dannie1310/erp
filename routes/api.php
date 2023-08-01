@@ -2019,8 +2019,8 @@ $api->version('v1', function ($api) {
      * CONTROL RECURSOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'control-recursos'], function ($api) {
-        $api->group(['prefix' => 'solicitud-pagoOC'], function ($api) {
-            $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudPagoOCController@paginate');
+        $api->group(['prefix' => 'factura'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@paginate');
         });
     });
 });
