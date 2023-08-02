@@ -57,6 +57,9 @@ export default {
         }
     },
     mounted(){
+        this.$store.commit('auth/setEmpresa', null);
+        this.$session.remove('id_empresa');
+        this.$session.remove('empresa');
         this.getEmpresas();
     },
 
@@ -81,7 +84,10 @@ export default {
                     }
                 })
                 .then(data => {
-                    if(this.empresa_seleccionada.alias_bdd === data){
+                    this.$session.set('id_empresa', data.Id);
+                    this.$store.commit("auth/setEmpresa", data);
+
+                    if(this.empresa_seleccionada.alias_bdd === data.AliasBDD){
                         this.conectado = true;
                         this.$router.push({name: 'cuentas-proveedor', params: {id_empresa: this.id_empresa}});
                     }

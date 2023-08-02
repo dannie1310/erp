@@ -131,7 +131,7 @@ class AuthController extends Controller
         ]);
          * */
 
-        $obra2 = Obra::with(['datosContables.empresa', 'configuracion'])
+        $obra2 = Obra::with(['datosContables.empresa.empresaContpaq', 'configuracion'])
             ->where("id_obra","=",$request->id_obra)
             ->select('nombre',
                 'constructora',

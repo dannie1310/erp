@@ -3525,7 +3525,7 @@ export const routes = [
                 name:"seleccionar-empresa",
                 component: require('./components/contabilidad-general/poliza/SeleccionarEmpresa.vue').default,
                 meta: {
-                    title: 'Seleccionar Empresa',
+                    title: 'Editar Pólizas',
                     breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
                     middleware: [auth, permission],
                     permission: ['editar_poliza','consultar_poliza'],
@@ -3543,7 +3543,7 @@ export const routes = [
                         props: true,
                         component: require('./components/contabilidad-general/poliza/Index.vue').default,
                         meta: {
-                            title: 'Pólizas',
+                            title: 'Listado de pólizas para edición',
                             breadcrumb: {parent: 'seleccionar-empresa', name: 'PÓLIZAS'},
                             middleware: [auth, permission],
                             permission: ['editar_poliza','consultar_poliza'],
@@ -3941,7 +3941,7 @@ export const routes = [
                         component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/Index.vue').default,
                         meta: {
                             title: 'Asociación Cuenta Proveedor',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'ASOCIACIÓN CTA PROVEEDOR'},
+                            breadcrumb: {parent: 'asociacion-cuenta-proveedor', name: 'ASOCIACIÓN CTA PROVEEDOR'},
                             middleware: [auth],
                             general: true
                         }

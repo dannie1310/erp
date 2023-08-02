@@ -15,7 +15,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <span style="font-weight: bold;">{{this.empresa}}</span>
+                        <span style="font-weight: bold;">{{this.currentEmpresa.Nombre}}</span>
                         <button @click="descargarZIP" class="btn btn-primary float-right" style="margin-left:5px">
                             <i class="fa fa-file-excel-o"></i> Descarga Masiva ZIP
                         </button>
@@ -155,7 +155,10 @@
             }
         },
         mounted(){
-            this.getPolizas();
+            if(parseInt(this.id_empresa) !== parseInt(this.currentEmpresa.Id))
+            {
+                this.$router.push({name: 'seleccionar-empresa'});
+            }
         },
         computed: {
             polizas(){
@@ -166,7 +169,10 @@
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
-            }
+            },
+            currentEmpresa(){
+                return this.$store.getters['auth/currentEmpresa']
+            },
         },
         watch: {
             polizas: {
