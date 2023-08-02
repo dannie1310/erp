@@ -972,6 +972,7 @@ class Poliza extends Model
                     {
                         $cfdi->grado_coincidencia += 1;
                         $cfdi->coincide_importe = 1;
+                        break;
                     }
                 }
 
@@ -988,6 +989,7 @@ class Poliza extends Model
                     {
                         $cfdi->grado_coincidencia += 1;
                         $cfdi->coincide_folio = 1;
+                        break;
                     }
 
                     /*if($cfdi->folio != '' && $referencia !='' && strpos($referencia,$cfdi->folio)!==false)
