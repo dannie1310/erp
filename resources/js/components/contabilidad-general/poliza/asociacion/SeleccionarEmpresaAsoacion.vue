@@ -99,7 +99,7 @@ export default {
                 params: {
                     sort: 'Nombre',
                     order: 'asc',
-                    scope:'editablePorUsuario',
+                    scope:'porUsuario',
                 }
             })
                 .then(data => {

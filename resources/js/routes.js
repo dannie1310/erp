@@ -3596,7 +3596,7 @@ export const routes = [
                 name:"seleccionar-empresa-asociacion",
                 component: require('./components/contabilidad-general/poliza/asociacion/SeleccionarEmpresaAsoacion.vue').default,
                 meta: {
-                    title: 'Seleccionar Empresa',
+                    title: 'Asociación de Pólizas con CFDI',
                     breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
                     middleware: [auth, permission],
                     permission: ['asociar-cfdi-a-poliza-contpaq'],
@@ -3614,7 +3614,7 @@ export const routes = [
                         props: true,
                         component: require('./components/contabilidad-general/poliza/asociacion/Index.vue').default,
                         meta: {
-                            title: 'Pólizas',
+                            title: 'Listado de polizas para asociación con CFDI',
                             breadcrumb: {parent: 'seleccionar-empresa-asociacion', name: 'ASOCIACIÓN DE PÓLIZAS'},
                             middleware: [auth, permission],
                             permission: ['asociar-cfdi-a-poliza-contpaq'],
@@ -3921,7 +3921,7 @@ export const routes = [
                         name:"asociacion-cuenta-proveedor",
                         component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/SeleccionarEmpresa.vue').default,
                         meta: {
-                            title: 'Seleccionar Empresa',
+                            title: 'Asociar Cuentas Con Proveedores',
                             breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
                             middleware: [auth,permission],
                             permission:['asociar_cuentas_contpaq_con_proveedor'],

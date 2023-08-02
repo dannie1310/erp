@@ -5,8 +5,9 @@
                 <h6><i class="fa fa-plug" ></i>Datos de Conexión:</h6>
             </div>
         </div>
-        <div class="row col-md-12">
-            <div class="col-md-6">
+
+        <div class="row">
+            <div class="col-md-10">
                 <div class="form-group row error-content">
                     <label for="id_empresa" class="col-md-2 col-form-label">Empresa:</label>
                     <div class="col-md-10">
@@ -17,6 +18,7 @@
                             v-model="id_empresa"
                             option-value="id"
                             option-text="nombre"
+                            :custom-text="nombreAliasBDD"
                             :list="empresas"
                             :placeholder="!cargando?'Seleccionar o buscar empresa':'Cargando...'"
                             :isError="errors.has(`id_empresa`)">
@@ -25,12 +27,9 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <button @click="conectar" class="btn btn-primary float-right">
+                <button @click="conectar" class="btn btn-primary float-left">
                     <i class="fa fa-plug"></i> Conectar
                 </button>
-            </div>
-            <div class="col-md-2">
-
             </div>
         </div>
     </span>
@@ -90,6 +89,9 @@ export default {
                     this.conectando = false;
                 });
         },
+        nombreAliasBDD (item) {
+            return `${item.nombre} - ${item.alias_bdd}`
+        },
         getEmpresas() {
             this.empresas = [];
             this.cargando = true;
@@ -97,7 +99,7 @@ export default {
                 params: {
                     sort: 'Nombre',
                     order: 'asc',
-                    scope:'editable',
+                    scope:'porUsuario',
                 }
             })
                 .then(data => {

@@ -83,11 +83,6 @@ class Poliza extends Model
         return $this->belongsTo(Usuario::class,"IdUsuario","Id");
     }
 
-    public function cfdi()
-    {
-        return $this->hasMany(CFDSAT::class, 'uuid', 'Guid');
-    }
-
 
     /**
      * Attributos
@@ -139,6 +134,19 @@ class Poliza extends Model
 
     public function getCfdiAttribute()
     {
+        /*$cfdis =  null;
+        foreach($this->asociacionCFDI as $acfdi)
+        {
+            if($acfdi->cfdi)
+            {
+                $cfdis[] = $acfdi->cfdi;
+            }
+
+        }
+        $cfdi_col = collect($cfdis);
+
+        return $cfdi_col;*/
+
         $cfdis =  null;
         foreach($this->expedientes as $expediente)
         {

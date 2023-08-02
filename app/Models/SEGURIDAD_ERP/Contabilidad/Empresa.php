@@ -189,7 +189,7 @@ class Empresa extends Model
         return $query->where('Visible',1)->where('Editable', 1);
     }
 
-    public function scopeEditablePorUsuario($query)
+    public function scopePorUsuario($query)
     {
         /*if(auth()->user()->idusuario == '180'){
             $id_empresas_contpaq = Empresa::all()->pluck("IdEmpresaContpaq");
