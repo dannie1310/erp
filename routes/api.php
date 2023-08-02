@@ -2021,6 +2021,11 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'control-recursos'], function ($api) {
         $api->group(['prefix' => 'factura'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@paginate');
+            $api->post('xml', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@cargaXML');
+        });
+
+        $api->group(['prefix' => 'serie'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SerieController@index');
         });
     });
 });

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CONTROLRECURSOS\FacturaTransformer;
 use App\Services\CONTROLRECURSOS\FacturaService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class FacturaController extends Controller
@@ -40,5 +41,11 @@ class FacturaController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;
+    }
+
+    public function cargaXML(Request $request)
+    {
+        $respuesta = $this->service->cargaXML($request->all());
+        return response()->json($respuesta, 200);
     }
 }

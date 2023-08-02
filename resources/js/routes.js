@@ -4062,6 +4062,18 @@ export const routes = [
                             general: true,
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'factura-recurso-create',
+                        component: require('./components/control-recursos/factura/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Factura',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'factura-recurso'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_autocorreccion_cfd_efo'],
+                            general: true
+                        }
+                    }
                 ]
             },
         ]

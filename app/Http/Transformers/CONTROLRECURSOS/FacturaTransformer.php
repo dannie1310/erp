@@ -37,5 +37,4 @@ class FacturaTransformer extends TransformerAbstract
             'tipo_documento' => $model->tipo_documento
         ];
     }
-
 }

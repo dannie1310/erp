@@ -150,6 +150,7 @@ import extraordinario from './modules/controlPresupuesto/extraordinario';
 
 //CONTROL RECURSOS
 import facturaRecurso from "./modules/controlRecursos/factura";
+import serie from "./modules/controlRecursos/serie";
 
 //ENTREGA CFDI
 import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
@@ -372,6 +373,7 @@ export default new Vuex.Store({
         'control-presupuesto/extraordinario': extraordinario,
 
         'controlRecursos/factura' : facturaRecurso,
+        'controlRecursos/serie' : serie,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/comprobante-fondo' : comprobanteFondo,

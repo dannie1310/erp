@@ -65,4 +65,30 @@ class FacturaService
 
         return $this->repository->paginate($data);
     }
+
+    public function cargaXML(array $data)
+    {dd($data);
+        $archivo_xml = $data["xml"];
+        $tipo = $data["tipo"];
+        $id_empresa = $data["id_empresa"];
+        $arreglo_cfd = $this->getArregloCFD($archivo_xml);
+        if(is_numeric($id_empresa)){
+            $empresa = $this->repository->getEmpresaPorId($id_empresa);
+            if($empresa["rfc"] != $arreglo_cfd["emisor"]["rfc"]){
+                if($arreglo_cfd["tipo_comprobante"] == "E"){
+                    abort(500, "El emisor de los CFDI no coincide, favor de verificar");
+                }
+            }
+        }
+        if($arreglo_cfd["tipo_comprobante"] == "I" && $tipo == 2)
+        {
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo egreso (Nota de Crédito)");
+        }
+        elseif($arreglo_cfd["tipo_comprobante"] == "E" && $tipo == 1)
+        {
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
+        }
+        return $arreglo_cfd;
+    }
+
 }
