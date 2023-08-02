@@ -1,17 +1,18 @@
 <template>
     <footer class="main-footer">
 
-        <div class="float-right d-none d-sm-block" v-if="currentObra">
-            <small>{{ currentObra ? currentObra.direccion : '' }}</small>
-        </div>
-        {{ currentObra ? currentObra.facturar : '' }}
-        {{ currentEmpresa && currentEmpresa.Descripcion !=='null'
+        {{ currentObra && currentObra.descripcion !== undefined ? currentObra.descripcion +' | ' : '' }}
+
+        {{ currentObra && currentObra.facturar !== undefined ? currentObra.facturar +' | ' : '' }}
+
+        {{ !currentObra && currentEmpresa && currentEmpresa.Descripcion !=='null'
     && currentEmpresa.Descripcion !== undefined
-        ? currentEmpresa.Descripcion :''}} -
+        ? currentEmpresa.Descripcion +' | ' :''}}
 
         {{ currentEmpresa && currentEmpresa.Nombre !=='null'
     && currentEmpresa.Nombre !== undefined
         ? currentEmpresa.Nombre :''}}
+
     </footer>
 </template>
 

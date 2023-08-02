@@ -104,8 +104,7 @@
                     <li class="nav-item" v-if="$root.can('asociar_cuentas_contpaq_con_proveedor', true )">
                         <router-link :to="{name: 'asociacion-cuenta-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'asociacion-cuenta-proveedor'}">
                             &nbsp;<i class="fas fa-exchange-alt nav-icon"></i>
-                            <p>Asociación
-                                Cta Proveedor</p>
+                            <p>Asociar Cuenta con Proveedor</p>
                         </router-link>
                     </li>
                 </ul>

@@ -109,6 +109,12 @@
                     <p>Pólizas CFDI</p>
                 </router-link>
             </li>-->
+            <li class="nav-item"  v-if="$root.can('asociar_cuentas_contpaq_con_proveedor')">
+                <router-link :to="{name: 'cuentas-proveedor-en-sao'}" class="nav-link" :class="{active: this.$route.name == 'cuentas-proveedor-en-sao'}">
+                    <i class="fa fa-exchange-alt nav-icon"></i>
+                    <p>Asociar Cuenta con Proveedor</p>
+                </router-link>
+            </li>
             <li class="nav-item"  v-if="$root.can('consultar_poliza_ctpq')">
                 <router-link :to="{name: 'poliza-contpaq-en-sao'}" class="nav-link" :class="{active: this.$route.name == 'poliza-contpaq-en-sao'}">
                     <i class="fa fa-share-alt nav-icon"></i>

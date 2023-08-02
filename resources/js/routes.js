@@ -2495,6 +2495,24 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'cuentas-proveedor',
+                        props:true,
+                        component: require('./components/contabilidad/asociacion-cuenta-proveedor/Index.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"cuentas-proveedor-en-sao",
+                                component: require('./components/contabilidad/asociacion-cuenta-proveedor/Index.vue').default,
+                                meta: {
+                                    title: 'Asociación Cuenta Proveedor',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIACIÓN CTA PROVEEDOR'},
+                                    middleware: [auth,context, permission],
+                                    permission: ['asociar_cuentas_contpaq_con_proveedor'],
+                                }
+                            }
+                        ]
+                    },
+                    {
                         path: 'poliza-cfdi',
                         component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
                         children:[
