@@ -23,11 +23,11 @@
                                 <div class="btn-group btn-group-toggle pull-right" data-toggle="buttons">
                                     <label class="btn btn-primary active">
                                         <input type="checkbox" autocomplete="off"
-                                               v-model="sin_cfdi"> Sin CFDI
+                                               v-model="sin_cfdi" :disabled="cargando"> Sin CFDI
                                     </label>
                                     <label class="btn btn-primary active">
                                         <input type="checkbox" autocomplete="off"
-                                               v-model="con_cfdi"> Con CFDI
+                                               v-model="con_cfdi" :disabled="cargando"> Con CFDI
                                     </label>
                                 </div>
                             </div>
