@@ -41,7 +41,7 @@ class UsuarioProyecto extends Model
 
     public function telefono()
     {
-        return $this->belongsTo(Telefono::class, 'id_usuario_intranet', 'id_checador');
+        return $this->belongsTo(Telefono::class, 'id_usuario_intranet', 'id_checador')->where('estatus',  1);
     }
 
     /**
