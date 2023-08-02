@@ -2,6 +2,11 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
+                <div class="card-header">
+                    <button  type="button" class="btn btn-info float-right" @click="lista">
+                        <i class="fa fa-list-ul "></i> Lista de Materiales
+                    </button>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
@@ -51,7 +56,16 @@ export default {
                 .finally(() => {
                     this.cargando = false;
                 })
-        }
+        },
+        lista(){
+            this.cargando = true;
+            return this.$store.dispatch('cadeco/material/lista_materiales', {scope: 'materialesParaCompras', sort: 'descripcion', order: 'desc'})
+                .then(() => {
+                    this.$emit('success')
+                }).finally(() => {
+                    this.cargando = false;
+                })
+        },
     },
     computed: {
         almacenes(){

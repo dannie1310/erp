@@ -30,6 +30,13 @@ class MaterialObserver
 
     public function updating(Material $material)
     {
-        $material->validarModificar('editar');
+        if(substr($material->getOriginal("nivel"), 0, 3) != substr($material->nivel,0,3) && ($material->getOriginal("numero_parte") == $material->numero_parte && $material->getOriginal("unidad") == $material->unidad && $material->getOriginal("unidad_compra") == $material->unidad_compra && str_replace(' ', '', $material->getOriginal("descripcion")) == str_replace(' ', '',$material->descripcion)))
+        {
+            if(!auth()->user()->can('editar_familia_material') && (!auth()->user()->can('editar_insumo_servicio') || !auth()->user()->can('editar_insumo_material') || !auth()->user()->can('editar_insumo_herramienta_equipo') || !auth()->user()->can('editar_insumo_maquinaria') || !auth()->user()->can('editar_insumo_mano_obra'))) {
+                throw new \Exception('No es posible editar el sistema porque no cuenta con el permiso, favor de solicitar la asignación al administrador del sistema.', 403);
+            }
+        }else{
+            $material->validarModificar('editar');
+        }
     }
 }

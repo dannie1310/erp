@@ -61,12 +61,6 @@ class MaterialService
     }
     public function store(array $data)
     {
-        $niveles = $this->repository->where([['nivel', 'like', $data['tipo'].'___.']])->where([['tipo_material', '=', $data['tipo_material']]])->all();
-
-        if($niveles->count() > 0){
-            $nivel = $niveles->sortByDesc('nivel')->first()->nivel;
-            explode(".", $nivel)[1] == 999?abort(403, "La familia ya esta al limite de insumos permitidos, favor de ingresar una nueva familia y agregar el insumo."):'';
-        }
         $datos = [
             'nivel' => $data['tipo'],
             'unidad' => $data['unidad'],
@@ -77,7 +71,6 @@ class MaterialService
             'marca' => $data['marca']
 
         ];
-
         return $this->repository->create($datos);
     }
 
