@@ -2495,6 +2495,24 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'cuentas-proveedor',
+                        props:true,
+                        component: require('./components/contabilidad/asociacion-cuenta-proveedor/Index.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"cuentas-proveedor-en-sao",
+                                component: require('./components/contabilidad/asociacion-cuenta-proveedor/Index.vue').default,
+                                meta: {
+                                    title: 'Asociación Cuenta Proveedor',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIACIÓN CTA PROVEEDOR'},
+                                    middleware: [auth,context, permission],
+                                    permission: ['asociar_cuentas_contpaq_con_proveedor'],
+                                }
+                            }
+                        ]
+                    },
+                    {
                         path: 'poliza-cfdi',
                         component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
                         children:[
@@ -3525,7 +3543,7 @@ export const routes = [
                 name:"seleccionar-empresa",
                 component: require('./components/contabilidad-general/poliza/SeleccionarEmpresa.vue').default,
                 meta: {
-                    title: 'Seleccionar Empresa',
+                    title: 'Editar Pólizas',
                     breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
                     middleware: [auth, permission],
                     permission: ['editar_poliza','consultar_poliza'],
@@ -3543,7 +3561,7 @@ export const routes = [
                         props: true,
                         component: require('./components/contabilidad-general/poliza/Index.vue').default,
                         meta: {
-                            title: 'Pólizas',
+                            title: 'Listado de pólizas para edición',
                             breadcrumb: {parent: 'seleccionar-empresa', name: 'PÓLIZAS'},
                             middleware: [auth, permission],
                             permission: ['editar_poliza','consultar_poliza'],
@@ -3596,7 +3614,7 @@ export const routes = [
                 name:"seleccionar-empresa-asociacion",
                 component: require('./components/contabilidad-general/poliza/asociacion/SeleccionarEmpresaAsoacion.vue').default,
                 meta: {
-                    title: 'Seleccionar Empresa',
+                    title: 'Asociación de Pólizas con CFDI',
                     breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
                     middleware: [auth, permission],
                     permission: ['asociar-cfdi-a-poliza-contpaq'],
@@ -3614,7 +3632,7 @@ export const routes = [
                         props: true,
                         component: require('./components/contabilidad-general/poliza/asociacion/Index.vue').default,
                         meta: {
-                            title: 'Pólizas',
+                            title: 'Listado de polizas para asociación con CFDI',
                             breadcrumb: {parent: 'seleccionar-empresa-asociacion', name: 'ASOCIACIÓN DE PÓLIZAS'},
                             middleware: [auth, permission],
                             permission: ['asociar-cfdi-a-poliza-contpaq'],
@@ -3921,7 +3939,7 @@ export const routes = [
                         name:"asociacion-cuenta-proveedor",
                         component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/SeleccionarEmpresa.vue').default,
                         meta: {
-                            title: 'Seleccionar Empresa',
+                            title: 'Asociar Cuentas Con Proveedores',
                             breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
                             middleware: [auth,permission],
                             permission:['asociar_cuentas_contpaq_con_proveedor'],
@@ -3941,7 +3959,7 @@ export const routes = [
                         component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/Index.vue').default,
                         meta: {
                             title: 'Asociación Cuenta Proveedor',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'ASOCIACIÓN CTA PROVEEDOR'},
+                            breadcrumb: {parent: 'asociacion-cuenta-proveedor', name: 'ASOCIACIÓN CTA PROVEEDOR'},
                             middleware: [auth],
                             general: true
                         }

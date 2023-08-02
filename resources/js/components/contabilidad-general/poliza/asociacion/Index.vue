@@ -17,17 +17,17 @@
                     <div class="card-header">
                         <div class="row">
                             <div class="col-md-8">
-                                <span style="font-weight: bold;">{{this.empresa}}</span>
+                                <span style="font-weight: bold;">{{this.currentEmpresa.Nombre}}</span>
                             </div>
                             <div class="col-md-4">
                                 <div class="btn-group btn-group-toggle pull-right" data-toggle="buttons">
                                     <label class="btn btn-primary active">
                                         <input type="checkbox" autocomplete="off"
-                                               v-model="sin_cfdi"> Sin CFDI
+                                               v-model="sin_cfdi" :disabled="cargando"> Sin CFDI
                                     </label>
                                     <label class="btn btn-primary active">
                                         <input type="checkbox" autocomplete="off"
-                                               v-model="con_cfdi"> Con CFDI
+                                               v-model="con_cfdi" :disabled="cargando"> Con CFDI
                                     </label>
                                 </div>
                             </div>
@@ -168,6 +168,10 @@
             }
         },
         mounted(){
+            if(parseInt(this.id_empresa) !== parseInt(this.currentEmpresa.Id))
+            {
+                this.$router.push({name: 'seleccionar-empresa-asociacion'});
+            }
         },
         computed: {
             polizas(){
@@ -178,7 +182,10 @@
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
-            }
+            },
+            currentEmpresa(){
+                return this.$store.getters['auth/currentEmpresa']
+            },
         },
         watch: {
             polizas: {
@@ -299,6 +306,7 @@
                     });
             },
             getPolizas(){
+                this.$Progress.start();
                 this.query.id_empresa = this.id_empresa;
                 //this.buscando = true;
                 this.cargando = true;

@@ -15,7 +15,23 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <span style="font-weight: bold;">{{this.empresa}}</span>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <span style="font-weight: bold;">{{this.empresa}}</span>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="btn-group btn-group-toggle pull-right" data-toggle="buttons">
+                                    <label class="btn btn-primary active">
+                                        <input type="checkbox" autocomplete="off"
+                                               v-model="sin_cfdi" :disabled="cargando"> Sin CFDI
+                                    </label>
+                                    <label class="btn btn-primary active">
+                                        <input type="checkbox" autocomplete="off"
+                                               v-model="con_cfdi" :disabled="cargando"> Con CFDI
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -145,7 +161,9 @@
                 query: {sort:'fecha',order:'desc'},
                 search: '',
                 file:'',
-                nombre: ''
+                nombre: '',
+                sin_cfdi : true,
+                con_cfdi : true,
             }
         },
         mounted(){
@@ -205,6 +223,39 @@
                 },
                 deep: true
             },
+            sin_cfdi(sin_cfdi) {
+                if(!sin_cfdi && !this.con_cfdi)
+                {
+                    this.query.scope = '';
+                }else if(!sin_cfdi && this.con_cfdi)
+                {
+                    this.query.scope = 'conCfdi';
+                }else if(sin_cfdi && !this.con_cfdi)
+                {
+                    this.query.scope = 'sinCfdi';
+                }else{
+                    this.query.scope = '';
+                }
+                this.query.offset = 0;
+                this.getPolizas();
+            },
+
+            con_cfdi(con_cfdi) {
+                if(!this.sin_cfdi && !con_cfdi)
+                {
+                    this.query.scope = '';
+                }else if(!this.sin_cfdi && con_cfdi)
+                {
+                    this.query.scope = 'conCfdi';
+                }else if(this.sin_cfdi && !con_cfdi)
+                {
+                    this.query.scope = 'sinCfdi';
+                }else{
+                    this.query.scope = '';
+                }
+                this.query.offset = 0;
+                this.getPolizas();
+            },
             search(val) {
                 if (this.timer) {
                     clearTimeout(this.timer);
@@ -251,7 +302,8 @@
             },
             getPolizas(){
                 this.query.id_empresa = this.idEmpresaContabilidad;
-                this.buscando = true;
+                //this.buscando = true;
+                this.cargando = true;
                 this.$Progress.start();
                 if(this.polizas)
                 {
@@ -267,7 +319,7 @@
                         this.$store.commit('contabilidadGeneral/poliza/SET_POLIZAS', data.data);
                         this.$store.commit('contabilidadGeneral/poliza/SET_META', data.meta);
                     }).finally(() => {
-                        this.buscando = false;
+                        this.cargando = false;
                         this.$Progress.finish();
                     });
 
@@ -367,5 +419,21 @@
 </script>
 
 <style scoped>
+    label:not(.form-check-label):not(.custom-file-label) {
+        font-weight: 500;
+    }
+
+    .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+        color: #ffffff;
+        background-color: #007bff;
+        border-color: #005cbf;
+    }
+
+    .btn-primary {
+        color: #007bff;
+        background-color: #ffffff;
+        border-color: #dee2e6;
+        box-shadow: none;
+    }
 
 </style>

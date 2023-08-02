@@ -88,12 +88,15 @@
                     <p>Prepólizas Generadas</p>
                 </router-link>
             </li>
+
             <li class="nav-item"  v-if="$root.can('consultar-cfdi-pendientes-carga-add')">
                 <router-link :to="{name: 'cfdi-pendientes-carga-add'}" class="nav-link" :class="{active: this.$route.name == 'cfdi-pendientes-carga-add'}">
                     <i class="fa fa-upload nav-icon"></i>
                     <p>Enviar CFDI a ADD Contpaq</p>
                 </router-link>
             </li>
+            <!--
+
             <li class="nav-item"  v-if="$root.can('asociar-cfdi-a-poliza-contpaq-desde-sao')">
                 <router-link :to="{name: 'asociar-poliza-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'asociar-poliza-cfdi'}">
                     <i class="fa fa-share-alt nav-icon"></i>
@@ -105,11 +108,17 @@
                     <i class="fa fa-file-code nav-icon"></i>
                     <p>Pólizas CFDI</p>
                 </router-link>
+            </li>-->
+            <li class="nav-item"  v-if="$root.can('asociar_cuentas_contpaq_con_proveedor')">
+                <router-link :to="{name: 'cuentas-proveedor-en-sao'}" class="nav-link" :class="{active: this.$route.name == 'cuentas-proveedor-en-sao'}">
+                    <i class="fa fa-exchange-alt nav-icon"></i>
+                    <p>Asociar Cuenta con Proveedor</p>
+                </router-link>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_poliza_ctpq')">
                 <router-link :to="{name: 'poliza-contpaq-en-sao'}" class="nav-link" :class="{active: this.$route.name == 'poliza-contpaq-en-sao'}">
-                    <i class="fa fa-table nav-icon"></i>
-                    <p>Pólizas Contpaq</p>
+                    <i class="fa fa-share-alt nav-icon"></i>
+                    <p>Asociar CFDI a Póliza</p>
                 </router-link>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_informe_sat')">

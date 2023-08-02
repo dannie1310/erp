@@ -37,7 +37,7 @@
 <script>
 export default {
     name: "AsociacionCuentaProveedor",
-    props: ['id_empresa'],
+    props: [],
     data() {
         return {
             empresa : '',
@@ -48,25 +48,22 @@ export default {
                 { title: 'Nombre', field: 'nombre', thComp: require('../../globals/th-Filter').default, sortable: true },
                 { title: 'RFC', field: 'rfc', tdClass: 'td_c150', sortable: true },
                 { title: 'Razón Social', field: 'razon_social', sortable: true },
-                { title: 'Acciones', field: 'buttons', tdClass: 'td_money_input',  thClass: 'th_money_input',  tdComp: require('./partials/ActionButtons').default},
+                { title: 'Acciones', field: 'buttons', tdClass: 'td_money_input',  thClass: 'th_money_input',  tdComp: require('../../contabilidad-general/asociacion-cuenta-proveedor/partials/ActionButtons.vue').default},
             ],
             data: [],
             total: 0,
-            query: {scope:'cuentasPasivo:'+this.id_empresa, sort: 'Codigo', order: 'asc', include:["cuenta_contpaq_proveedor_sat"]},
+            query: { sort: 'Codigo', order: 'asc', include:["cuenta_contpaq_proveedor_sat"]},
             search: '',
             cargando: false,
         }
     },
     mounted(){
-        if(parseInt(this.id_empresa) !== parseInt(this.currentEmpresa.Id))
-        {
-            this.$router.push({name: 'asociacion-cuenta-proveedor'});
-        }
     },
     methods: {
         paginate(){
             this.$Progress.start();
-            this.query.id_empresa = this.id_empresa;
+            this.query.id_empresa = this.currentEmpresa.Id;
+            this.query.scope = 'cuentasPasivo:'+this.currentEmpresa.Id;
             this.cargando = true;
             this.$Progress.start();
             this.$store.commit('contabilidadGeneral/cuenta/SET_CUENTAS', []);
@@ -87,7 +84,7 @@ export default {
         {
 
             return this.$store.dispatch('contabilidadGeneral/cuenta/asociarProveedor',
-                {id_empresa: this.id_empresa}
+                {id_empresa: this.currentEmpresa.Id}
             ).then((data) => {
                 this.$store.commit("contabilidadGeneral/cuenta/SET_CUENTA",data)
             }).finally(() => {
@@ -123,7 +120,7 @@ export default {
                         razon_social: cuenta.cuenta_contpaq_proveedor_sat?cuenta.cuenta_contpaq_proveedor_sat.razon_social_proveedor_sat:'',
                         buttons: $.extend({}, {
                             id_cuenta: cuenta.id,
-                            id_empresa: this.id_empresa,
+                            id_empresa: this.currentEmpresa.Id,
                             nombre: cuenta.descripcion,
                             eliminar: cuenta.cuenta_contpaq_proveedor_sat?true:false
                         })
