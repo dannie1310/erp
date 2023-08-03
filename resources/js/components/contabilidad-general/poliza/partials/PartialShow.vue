@@ -82,6 +82,11 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <poliza-contpaq-lista-cfdi-asociados></poliza-contpaq-lista-cfdi-asociados>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     Usuario Registró: <strong>{{poliza.usuario_nombre}}</strong>
                 </div>
 
@@ -93,10 +98,11 @@
 
 <script>
 import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
+import PolizaContpaqListaCfdiAsociados from "./ListaCFDIAsociados.vue";
 export default {
     name: "poliza-partial-show",
     props : ['id', 'id_empresa','poliza_parametro'],
-    components : {CFDI},
+    components : {PolizaContpaqListaCfdiAsociados, CFDI},
     data(){
         return {
             cargando:false,
