@@ -16,26 +16,30 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-md-8">
-                                <span style="font-weight: bold;">{{this.empresa}}</span>
+                            <div class="col-md-9">
+                                <span style="font-weight: bold;">{{this.currentEmpresa.Nombre}}</span>
                             </div>
-                            <div class="col-md-4">
-                                <div class="btn-group btn-group-toggle pull-right" data-toggle="buttons">
-                                    <label class="btn btn-primary active">
-                                        <input type="checkbox" autocomplete="off"
-                                               v-model="sin_cfdi" :disabled="cargando"> Sin CFDI
-                                    </label>
-                                    <label class="btn btn-primary active">
-                                        <input type="checkbox" autocomplete="off"
-                                               v-model="con_cfdi" :disabled="cargando"> Con CFDI
-                                    </label>
+                            <div class="col-md-1" style="text-align: right">
+                                <strong>Ver Pólizas:</strong>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="custom-control custom-switch" :disabled="cargando">
+                                    <input type="checkbox" class="custom-control-input" id="sin_cfdi" v-model="sin_cfdi" :disabled="cargando">
+                                    <label class="custom-control-label" for="sin_cfdi" :disabled="cargando">Sin CFDI</label>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+
+                                <div class="custom-control custom-switch" :disabled="cargando">
+                                    <input type="checkbox" class="custom-control-input" id="con_cfdi" v-model="con_cfdi" :disabled="cargando">
+                                    <label class="custom-control-label" for="con_cfdi" :disabled="cargando">Con CFDI</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
+                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 12px'" />
                         </div>
                     </div>
                 </div>
@@ -150,20 +154,20 @@
                     { title: 'Fecha', field: 'fecha', tdClass: 'td_fecha', thClass: 'th_fecha', sortable: true },
                     { title: 'Tipo', field: 'tipopol', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Folio', field: 'folio', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Monto', field: 'cargos', tdClass: 'td_money', thClass: 'th_money', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Monto', field: 'cargos', tdClass: 'td_money td_c90', thClass: 'th_c90', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Concepto', field: 'concepto',thComp: require('../../globals/th-Filter').default, sortable: false},
                     { title: '# CFDI', field: 'cantidad_cfdi',tdClass: 'right',sortable: false},
-                    { title: 'Usuario', field: 'usuario_codigo',tdClass: 'td_c80',sortable: false},
-                    { title: 'Acciones', field: 'buttons', tdClass: 'td_c150',  thClass: 'th_c150',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Usuario', field: 'usuario_codigo',tdClass: 'td_c90',sortable: false},
+                    { title: 'Acciones', field: 'buttons', tdClass: 'td_c120',  thClass: 'th_c120',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {sort:'fecha',order:'desc'},
+                query: {sort:'fecha',order:'desc', scope:'sinCFDI'},
                 search: '',
                 file:'',
                 nombre: '',
                 sin_cfdi : true,
-                con_cfdi : true,
+                con_cfdi : false,
             }
         },
         mounted(){
@@ -181,7 +185,10 @@
             },
             idEmpresaContabilidad() {
                 return this.$store.getters['auth/idEmpresaContabilidad']
-            }
+            },
+            currentEmpresa(){
+                return this.$store.getters['auth/currentEmpresa']
+            },
         },
         watch: {
             polizas: {
@@ -237,7 +244,6 @@
                     this.query.scope = '';
                 }
                 this.query.offset = 0;
-                this.getPolizas();
             },
 
             con_cfdi(con_cfdi) {
@@ -254,7 +260,6 @@
                     this.query.scope = '';
                 }
                 this.query.offset = 0;
-                this.getPolizas();
             },
             search(val) {
                 if (this.timer) {

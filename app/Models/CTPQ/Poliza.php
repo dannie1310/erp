@@ -14,6 +14,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
+use App\Utils\Util;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
@@ -1035,13 +1036,22 @@ class Poliza extends Model
 
                 foreach($referencias as $referencia)
                 {
-                    if($cfdi->folio != "" && $referencia !='' && (strpos($referencia, $cfdi->folio)!==false
-                            || strpos($cfdi->folio, $referencia)!==false ))
+                    $referencia = Util::soloNumeros($referencia);
+
+                    if($cfdi->folio != "" && $referencia !='' && $referencia == $cfdi->folio)
                     {
                         $cfdi->grado_coincidencia += 1;
                         $cfdi->coincide_folio = 1;
                         break;
                     }
+
+                    /*if($cfdi->folio != "" && $referencia !='' && (strpos($referencia, $cfdi->folio)!==false
+                            ))
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        $cfdi->coincide_folio = 1;
+                        break;
+                    }*/
 
                     /*if($cfdi->folio != '' && $referencia !='' && strpos($referencia,$cfdi->folio)!==false)
                     {

@@ -9,7 +9,7 @@
                     <table class="table table-sm table-fs-sm">
                         <thead>
                             <tr>
-                                <th class="c200">Empresa</th>
+                                <th colspan="3">Empresa</th>
                                 <th class="c90">Fecha de Póliza</th>
                                 <th class="c90">Folio de Poliza</th>
                                 <th class="c90">Tipo de Póliza</th>
@@ -19,7 +19,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>
+                                <td colspan="3">
                                     {{poliza.empresa}}
                                 </td>
                                 <td style="text-align: center">
@@ -40,26 +40,21 @@
                                     {{poliza.concepto}}
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 table-responsive" style="overflow-y: auto;max-height: 600px;">
-                    <table class="table table-sm table-fs-sm">
-                        <thead>
-                            <tr>
-                                <th class="index_corto">#</th>
-                                <th class="no_parte">Cuenta</th>
-                                <th class="no_parte">Descripción</th>
-                                <th class="">Cargo</th>
-                                <th class="">Abono</th>
-                                <th class="">Referencia</th>
-                                <th class="c200">CFDI Asociado</th>
-                                <th class="">Concepto</th>
+                            <tr style="border: none">
+                                <td colspan="8" style="border: none">
+                                    &nbsp;
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
+                            <tr >
+                                <th class="index_corto" style="text-align: center; background-color: #f2f4f5">#</th>
+                                <th class="no_parte" style="text-align: center; background-color: #f2f4f5">Cuenta</th>
+                                <th class="no_parte" style="text-align: center; background-color: #f2f4f5">Descripción</th>
+                                <th style="text-align: center; background-color: #f2f4f5">Cargo</th>
+                                <th style="text-align: center; background-color: #f2f4f5">Abono</th>
+                                <th style="text-align: center; background-color: #f2f4f5">Referencia</th>
+                                <th class="c200" style="text-align: center; background-color: #f2f4f5">CFDI Asociado</th>
+                                <th style="text-align: center; background-color: #f2f4f5">Concepto</th>
+                            </tr>
                             <tr v-for="(movimiento, i) in poliza.movimientos_poliza.data">
                                 <td>{{ i + 1 }}</td>
                                 <td>{{movimiento.cuenta.cuenta_format}}</td>
@@ -87,6 +82,11 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <poliza-contpaq-lista-cfdi-asociados></poliza-contpaq-lista-cfdi-asociados>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     Usuario Registró: <strong>{{poliza.usuario_nombre}}</strong>
                 </div>
 
@@ -98,10 +98,11 @@
 
 <script>
 import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
+import PolizaContpaqListaCfdiAsociados from "./ListaCFDIAsociados.vue";
 export default {
     name: "poliza-partial-show",
     props : ['id', 'id_empresa','poliza_parametro'],
-    components : {CFDI},
+    components : {PolizaContpaqListaCfdiAsociados, CFDI},
     data(){
         return {
             cargando:false,

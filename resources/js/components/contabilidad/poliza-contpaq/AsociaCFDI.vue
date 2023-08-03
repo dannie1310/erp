@@ -26,7 +26,7 @@ import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
 import PolizaPartialShow from "../../contabilidad-general/poliza/partials/PartialShow";
 import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
 import ListaCfdiAsociar from "../../contabilidad-general/poliza/ListaCFDI.vue";
-import PolizaContpaqListaPosiblesCfdi from "./partials/ListaPosiblesCFDI.vue";
+import PolizaContpaqListaPosiblesCfdi from "../../contabilidad-general/poliza/asociacion/partials/ListaPosiblesCFDI.vue";
 
 export default {
     name: "poliza-asocia-cfdi",

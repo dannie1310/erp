@@ -3598,7 +3598,7 @@ export const routes = [
                         path: ':id/asociar-cfdi',
                         name: 'poliza-contpaq-asociar-cfdi',
                         props: true,
-                        component: require('./components/contabilidad-general/poliza/AsociaCFDI.vue').default,
+                        component: require('./components/contabilidad-general/poliza/asociacion/AsociaCFDI.vue').default,
                         meta: {
                             title: 'Asociar CFDI a Póliza',
                             breadcrumb: {parent: 'poliza-contpaq', name: 'ASOCIAR CFDI'},
@@ -3623,7 +3623,6 @@ export const routes = [
             },
             {
                 path: ':id_empresa/polizas-asociacion',
-                props: true,
                 component: require('./components/contabilidad-general/poliza/Layout.vue').default,
                 children:[
                     {

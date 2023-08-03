@@ -273,7 +273,7 @@ class CFDSAT extends Model
         return date_format($date,"d/m/Y H:i:s");
     }
 
-    public function getFechaSencillaFormatAttribute()
+    public function getFechaCortaFormatAttribute()
     {
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
