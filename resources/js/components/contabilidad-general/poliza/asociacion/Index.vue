@@ -16,19 +16,23 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-9">
                                 <span style="font-weight: bold;">{{this.currentEmpresa.Nombre}}</span>
                             </div>
-                            <div class="col-md-4">
-                                <div class="btn-group btn-group-toggle pull-right" data-toggle="buttons">
-                                    <label class="btn btn-primary active">
-                                        <input type="checkbox" autocomplete="off"
-                                               v-model="sin_cfdi" :disabled="cargando"> Sin CFDI
-                                    </label>
-                                    <label class="btn btn-primary active">
-                                        <input type="checkbox" autocomplete="off"
-                                               v-model="con_cfdi" :disabled="cargando"> Con CFDI
-                                    </label>
+                            <div class="col-md-1" style="text-align: right">
+                                <strong>Ver Pólizas:</strong>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="custom-control custom-switch" :disabled="cargando">
+                                    <input type="checkbox" class="custom-control-input" id="sin_cfdi" v-model="sin_cfdi" :disabled="cargando">
+                                    <label class="custom-control-label" for="sin_cfdi" :disabled="cargando">Sin CFDI</label>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+
+                                <div class="custom-control custom-switch" :disabled="cargando">
+                                    <input type="checkbox" class="custom-control-input" id="con_cfdi" v-model="con_cfdi" :disabled="cargando">
+                                    <label class="custom-control-label" for="con_cfdi" :disabled="cargando">Con CFDI</label>
                                 </div>
                             </div>
                         </div>
@@ -76,12 +80,12 @@
                 ],
                 data: [],
                 total: 0,
-                query: {sort:'fecha',order:'desc'},
+                query: {sort:'fecha',order:'desc',scope:'sinCFDI'},
                 search: '',
                 file:'',
                 nombre: '',
                 sin_cfdi : true,
-                con_cfdi : true,
+                con_cfdi : false,
 
             }
         },
@@ -154,7 +158,6 @@
                     this.query.scope = '';
                 }
                 this.query.offset = 0;
-                this.getPolizas();
             },
 
             con_cfdi(con_cfdi) {
@@ -171,7 +174,6 @@
                     this.query.scope = '';
                 }
                 this.query.offset = 0;
-                this.getPolizas();
             },
 
             search(val) {
