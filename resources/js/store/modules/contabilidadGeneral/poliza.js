@@ -5,7 +5,6 @@ export default {
         polizas: [],
         currentPoliza: null,
         meta: {},
-
         posibles_cfdi:[],
         currentPosibleCFDI :null,
     },
@@ -228,6 +227,45 @@ export default {
                     .catch(error => {
                         reject(error)
                     })
+            });
+        },
+        desasociarCFDI(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Desasociar CFDI de la Póliza",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Desasociar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI  + payload.id_poliza + '/desasociar-cfdi', payload, {  })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("CFDI desasociado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
             });
         },
         busquedaExcel(context, payload) {

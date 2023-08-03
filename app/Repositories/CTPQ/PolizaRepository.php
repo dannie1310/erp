@@ -143,4 +143,9 @@ class PolizaRepository extends Repository implements RepositoryInterface
     {
         return $this->model->asociarCFDI($data);
     }
+
+    public function desasociarCFDI($data)
+    {
+        return $this->model->desasociarCFDI($data);
+    }
 }

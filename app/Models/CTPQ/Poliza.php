@@ -734,6 +734,69 @@ class Poliza extends Model
         ]);
     }
 
+    public function desasociarCFDI($data)
+    {
+        $uuid_cfdi = CFDSAT::where("id","=",$data["id_cfdi"])->pluck("uuid")->first();
+        $empresa = EmpresaERP::find($data["id_empresa"]);
+
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+        $poliza = Poliza::find($data["id_poliza"]);
+
+        $base = Parametro::find(1);
+        DB::purge('cntpqom');
+        Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+
+        DB::purge('cntpqdm');
+        Config::set('database.connections.cntpqdm.database', 'document_'.$base->GuidDSL.'_metadata');
+
+        try {
+            if ($poliza) {
+                $guid_poliza = $poliza->Guid;
+                DB::purge('cntpqom');
+                Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+
+                $guid_document = Comprobante::where("UUID", "=", $uuid_cfdi)->get()->pluck("GuidDocument");
+
+                DB::purge('cntpqom');
+                Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+                $expedientes = Expediente::buscarExpediente($guid_poliza, $guid_document)->get();
+
+                foreach ($expedientes as $expediente) {
+                    $expediente->delete();
+                    $expediene_log = ExpedientePolizaLog::create(
+                        [
+                            'guid_pertenece' => $guid_document,
+                            'guid_relacionado' => $guid_poliza,
+                            'uuid' => $uuid_cfdi,
+                            'alias_bdd' => $empresa->AliasBDD,
+                            'id_poliza' => $poliza->Id,
+                            'id_usuario_desasocio' => auth()->id(),
+                        ]
+                    );
+                    if (!$expediene_log) {
+                        DB::connection('seguridad')->rollBack();
+                        DB::connection('cntpqom')->rollBack();
+                        DB::connection('cntpq')->rollBack();
+                        abort(500, "Error al guardar el log de asociación.");
+                    }
+                }
+
+                DB::connection('seguridad')->commit();
+                DB::connection('cntpqom')->commit();
+                DB::connection('cntpq')->commit();
+            }
+        }
+        catch (\Exception $e){
+                DB::connection('seguridad')->rollBack();
+                DB::connection('cntpqom')->rollBack();
+                DB::connection('cntpq')->rollBack();
+                abort(500,"Error al desasociar CFDI de Póliza. \n \n".$e->getMessage()." \n \n Favor de contactar a soporte a aplicaciones.");
+        }
+
+        return $poliza;
+    }
+
     public function asociarCFDI($data)
     {
 
