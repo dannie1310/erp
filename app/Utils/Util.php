@@ -155,6 +155,11 @@ class Util
         return preg_replace( "/\r|\n/", " ", $string );
     }
 
+    public static function soloNumeros($string)
+    {
+       return preg_replace( '/[^0-9]/', "", $string );
+    }
+
     public static function getMesTxt($mes, $tipo = 0)
     {
         $mes = CatalogoMeses::find($mes);
