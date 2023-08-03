@@ -149,7 +149,9 @@ import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
 import extraordinario from './modules/controlPresupuesto/extraordinario';
 
 //CONTROL RECURSOS
+import empresaRecurso from "./modules/controlRecursos/empresa";
 import facturaRecurso from "./modules/controlRecursos/factura";
+import proveedorRecurso from "./modules/controlRecursos/proveedor";
 import serie from "./modules/controlRecursos/serie";
 
 //ENTREGA CFDI
@@ -372,7 +374,9 @@ export default new Vuex.Store({
         'control-presupuesto/concepto-tarjeta': conceptoTarjeta,
         'control-presupuesto/extraordinario': extraordinario,
 
+        'controlRecursos/empresa' : empresaRecurso,
         'controlRecursos/factura' : facturaRecurso,
+        'controlRecursos/proveedor' : proveedorRecurso,
         'controlRecursos/serie' : serie,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,

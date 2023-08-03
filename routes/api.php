@@ -2019,9 +2019,17 @@ $api->version('v1', function ($api) {
      * CONTROL RECURSOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'control-recursos'], function ($api) {
+        $api->group(['prefix' => 'empresa'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\EmpresaController@index');
+        });
+
         $api->group(['prefix' => 'factura'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@paginate');
             $api->post('xml', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@cargaXML');
+        });
+
+        $api->group(['prefix' => 'proveedor'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@index');
         });
 
         $api->group(['prefix' => 'serie'], function ($api) {

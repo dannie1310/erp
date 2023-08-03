@@ -47,7 +47,7 @@ export default {
                     })
             })
         },
-        cargarXML(context, payload) {
+        cargaCFDI(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
                     .post(URI + 'xml', payload.data, payload.config)
