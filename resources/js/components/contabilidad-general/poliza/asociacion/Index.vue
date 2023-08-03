@@ -41,88 +41,6 @@
                 </div>
             </div>
         </span>
-        <span>
-            <!-- <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal"> -->
-                <div class="modal fade" ref="modalZip" data-backdrop="static" data-keyboard="false">
-                <div class="modal-dialog modal-sm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Descargar ZIP Polizas</h4>
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
-                        </div>
-
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <button @click="descargar(1)" type="button" class="btn btn-primary" title="Descargar ZIP">
-                                        <i class="fa fa-file-pdf-o"></i>Descargar ZIP A
-                                    </button>
-                                    <button @click="descargar(2)" type="button" class="btn btn-primary" style="margin-left:5px" title="Descargar ZIP">
-                                        <i class="fa fa-file-pdf-o"></i>Descargar ZIP B
-                                    </button>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </span>
-        <div class="modal fade" ref="modal" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog modal-md">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-file-excel-o"></i> Descarga Masiva ZIP</h5>
-                        <button type="button" class="close" data-dismiss="modal" :disabled="procesando" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>El archivo debe ser en formato xlsx con una sola hoja y que en las primeras 4 columnas de la línea 1 tengan como encabezado "Ejercicio", "Periodo", "Tipo*" y "Folio" como en la siguiente imágen</p>
-                        <img src="../../../../../img/contabilidadGeneral/formato_poliza.png" style="max-width: 400px" class="rounded" alt="Formato de carga de CSV">
-                        <p>*1: Ingreso; 2: Egreso; 3: Diario</p>
-                        <div class="col-md-12">
-                            <label for="carga_layout" class="col-lg-12 col-form-label">
-                                Cargar Excel
-                            </label>
-                            <div class="col-lg-12">
-                                 <input type="file" class="form-control" id="carga_layout"
-                                        accept=".xlsx"
-                                        @change="onFileChange"
-                                        row="3"
-                                        v-validate="{required: true, ext: ['xlsx','xls']}"
-                                        name="carga_layout"
-                                        data-vv-as="Layout"
-                                        ref="carga_layout"
-                                        :class="{'is-invalid': errors.has('carga_layout')}">
-                                <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (xlsx)</div>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row">
-                        <div class="col-md-12">
-                            <button @click="validate(2)" type="button" class="btn btn-primary float-right" :disabled="procesando" style="margin-left:5px" title="Descargar ZIP">
-                                <i class="fa fa-spin fa-spinner" v-if="procesando"></i>
-                                <i class="fa fa-file-pdf-o" v-else></i>Descargar ZIP B
-                            </button>
-                            <button @click="validate(1)" type="button" class="btn btn-primary float-right" :disabled="procesando" title="Descargar ZIP">
-                                <i class="fa fa-spin fa-spinner" v-if="procesando"></i>
-                                <i class="fa fa-file-pdf-o" v-else></i>
-                                Descargar ZIP A
-                            </button>
-                        </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="closeModal()" :disabled="procesando">Cerrar</button>
-
-                    </div>
-                </div>
-            </div>
-        </div>
     </span>
 
 </template>
@@ -132,7 +50,7 @@
     export default {
         name: "index-poliza",
         components: {ModelListSelect},
-        props: ['id_empresa'],
+        props: [],
         data() {
             return {
                 empresa : '',
@@ -167,12 +85,7 @@
 
             }
         },
-        mounted(){
-            if(parseInt(this.id_empresa) !== parseInt(this.currentEmpresa.Id))
-            {
-                this.$router.push({name: 'seleccionar-empresa-asociacion'});
-            }
-        },
+
         computed: {
             polizas(){
                 return this.$store.getters['contabilidadGeneral/poliza/polizas'];
@@ -206,7 +119,7 @@
                         usuario_codigo: poliza.usuario_codigo,
                         buttons: $.extend({}, {
                             id: poliza.id,
-                            id_empresa: this.id_empresa,
+                            id_empresa: this.currentEmpresa.Id,
                             editar:self.$root.can('editar_poliza',true) ? true : undefined,
                         })
 
@@ -280,34 +193,9 @@
             }
         },
         methods: {
-            abrir(){
-                $(this.$refs.modalZip).appendTo('body')
-                $(this.$refs.modalZip).modal('show');
-            },
-            changeSelect(){
-                this.conectando = false;
-                var busqueda = this.empresas.find(x=>x.id === this.id_empresa);
-                if(busqueda != undefined)
-                {
-                    this.empresa_seleccionada = busqueda;
-                }
-            },
-            descargar(tipo){
-                this.cargando = true;
-                return this.$store.dispatch('contabilidadGeneral/poliza/descargaZip',
-                    {
-                        params: this.query,
-                        tipo:tipo
-                    })
-                    .then(data => {
-                        this.$emit('success');
-                    }).finally(() => {
-                        this.cargando = false;
-                    });
-            },
             getPolizas(){
                 this.$Progress.start();
-                this.query.id_empresa = this.id_empresa;
+                this.query.id_empresa = this.currentEmpresa.Id;
                 //this.buscando = true;
                 this.cargando = true;
                 this.$Progress.start();
@@ -330,24 +218,6 @@
                     });
 
             },
-            conectar(){
-                this.conectando = true;
-                return this.$store.dispatch('contabilidadGeneral/empresa-contpaq/conectar',
-                    {
-                        data: {id: this.id_empresa},
-                        config: {
-                            params: { _method: 'POST'}
-                        }
-                    })
-                    .then(data => {
-                        if(this.empresa_seleccionada.alias_bdd === data){
-                            this.conectado = true;
-                            this.getPolizas();
-                        }
-                    }).finally(() => {
-                        this.conectando = false;
-                    });
-            },
             getEmpresas() {
                 this.empresas = [];
                 this.cargando = true;
@@ -362,63 +232,6 @@
                         this.empresas = data.data;
                         this.cargando = false;
                     })
-            },
-            createImage(file, tipo) {
-                var reader = new FileReader();
-                var vm = this;
-
-                reader.onload = (e) => {
-                    vm.file = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            },
-            closeModal() {
-                $(this.$refs.modal).modal('hide');
-            },
-            descargarZIP() {
-                this.$refs.carga_layout.value = '';
-                this.file = null;
-                this.$validator.errors.clear();
-                $(this.$refs.modal).modal('show');
-            },
-            onFileChange(e){
-                this.file = null;
-                var files = e.target.files || e.dataTransfer.files;
-                if (!files.length)
-                    return;
-                this.nombre = files[0].name;
-                if(e.target.id == 'carga_layout') {
-                    this.createImage(files[0]);
-                }
-            },
-            validate(tipo) {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        this.cargaExcel(tipo)
-                    }
-                });
-            },
-            cargaExcel(tipo){
-                this.procesando = true;
-                var formData = new FormData();
-                formData.append('file',  this.file);
-                formData.append('name', this.nombre);
-                formData.append('id_empresa', this.id_empresa);
-                formData.append('caida', tipo);
-                return this.$store.dispatch('contabilidadGeneral/poliza/busquedaExcel', {
-                    data: formData,
-                    config: {
-                        params: { _method: 'POST'}
-                    }
-                }).then((data) => {
-                    // this.encontradas = true;
-                    // this.$store.commit('contabilidadGeneral/poliza/SET_POLIZAS', data.data);
-                    // this.$store.commit('contabilidadGeneral/poliza/SET_META', data.meta);
-                    this.$emit('success');
-                    $(this.$refs.modal).modal('hide');
-                }).finally(()=>{
-                    this.procesando = false;
-                });
             },
         }
     }

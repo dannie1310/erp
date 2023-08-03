@@ -3623,7 +3623,6 @@ export const routes = [
             },
             {
                 path: ':id_empresa/polizas-asociacion',
-                props: true,
                 component: require('./components/contabilidad-general/poliza/Layout.vue').default,
                 children:[
                     {
