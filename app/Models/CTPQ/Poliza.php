@@ -762,6 +762,13 @@ class Poliza extends Model
                 Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
                 $expedientes = Expediente::buscarExpediente($guid_poliza, $guid_document)->get();
 
+                $asociaciones = $this->asociacionCFDI()->where("UUID","=", $uuid_cfdi);
+
+                foreach ($asociaciones as $asociacion)
+                {
+                    $asociacion->delete();
+                }
+
                 foreach ($expedientes as $expediente) {
                     $expediente->delete();
                     $expediene_log = ExpedientePolizaLog::create(
