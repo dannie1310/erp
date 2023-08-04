@@ -75,7 +75,14 @@ export default {
             return state.currentObra ? (state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null) : null
         },
         idEmpresaContabilidad(state){
-            return state.currentObra && state.currentObra.datos_contables && state.currentObra.datos_contables.empresa  ? state.currentObra.datos_contables.empresa.Id : null
+            if(state.currentObra && state.currentObra.datos_contables && state.currentObra.datos_contables.empresa)
+            {
+                return state.currentObra.datos_contables.empresa.Id
+            }else if(state.currentEmpresa)
+            {
+                return state.currentEmpresa.Id;
+            }
+            return null;
         },
         authError(state){
             return state.auth_error;
