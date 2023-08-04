@@ -770,11 +770,14 @@ class Poliza extends Model
                 }
 
                 foreach ($expedientes as $expediente) {
-                    $expediente->delete();
+
+                    Expediente::where("Guid_Relacionado","=",$expediente->Guid_Relacionado)
+                    ->where("Guid_Pertenece","=",$expediente->Guid_Pertenece)->delete();
+
                     $expediene_log = ExpedientePolizaLog::create(
                         [
-                            'guid_pertenece' => $guid_document,
-                            'guid_relacionado' => $guid_poliza,
+                            'guid_pertenece' => $expediente->Guid_Pertenece,
+                            'guid_relacionado' => $expediente->Guid_Relacionado,
                             'uuid' => $uuid_cfdi,
                             'alias_bdd' => $empresa->AliasBDD,
                             'id_poliza' => $poliza->Id,
