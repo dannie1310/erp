@@ -2026,6 +2026,8 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'factura'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@paginate');
             $api->post('xml', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@cargaXML');
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@show')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'proveedor'], function ($api) {

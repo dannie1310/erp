@@ -6,6 +6,8 @@ use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Empresa;
 use App\Models\CONTROL_RECURSOS\Factura;
 use App\Models\CONTROL_RECURSOS\Proveedor;
+use App\Models\SEGURIDAD_ERP\Finanzas\AvisoSATOmitir;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +21,8 @@ class FacturaRepository extends Repository implements RepositoryInterface
     }
 
     public function getProveedor(Array $datos){
-        $proveedor = Proveedor::whereRaw("REPLACE(RFC,'-','') = '".str_replace("-","",$datos["rfc"])."'")->where('Estatus', 1)
+        $proveedor = Proveedor::whereRaw("REPLACE(RFC,'-','') = '".str_replace("-","",$datos["rfc"])."'")
+            //->where('Estatus', 1)
             ->whereIn('TipoProveedor',[1,2])->first();
         $salida = null;
         if($proveedor){
@@ -34,7 +37,9 @@ class FacturaRepository extends Repository implements RepositoryInterface
     }
 
     public function getEmpresa(Array $datos){
-        $empresa = Empresa::where("RFC","=",$datos["rfc"])->first();
+        $empresa = Empresa::where("RFC","=",$datos["rfc"])
+            //->where('Estatus', 1)
+        ->first();
         $salida = null;
 
         if($empresa){
@@ -78,5 +83,46 @@ class FacturaRepository extends Repository implements RepositoryInterface
             ];
         }
         return $datos;
+    }
+
+    public function validaExistenciaRepositorio($uuid)
+    {
+        $factura_repositorio = FacturaRepositorio::whereNotNull("id_transaccion")
+            ->where("uuid","=", $uuid)->first();
+        return $factura_repositorio;
+    }
+
+    public function getBuscarProveedor($id)
+    {
+        return Proveedor::where('IdProveedor',$id)->first();
+    }
+
+    public function getEsOmitido($mensaje, $rfc_emisor, $uuid)
+    {
+        $explode = explode("-",$mensaje);
+        $codigo = trim($explode[0]);
+        $existe = AvisoSATOmitir::where("rfc_emisor",$rfc_emisor)
+            ->where("clave",$codigo)
+            ->where("estado",1)
+            ->count();
+        if($existe == 1){
+            return $existe;
+        } else {
+            $existe = AvisoSATOmitir::where("uuid",$uuid)
+                ->where("clave",$codigo)
+                ->where("estado",1)
+                ->count();
+            return $existe;
+        }
+    }
+
+    public function getArchivoSQL($archivo)
+    {
+        return DB::raw("CONVERT(VARBINARY(MAX), '" . $archivo . "')");
+    }
+
+    public function registrar($data)
+    {
+        return $this->model->registrar($data);
     }
 }

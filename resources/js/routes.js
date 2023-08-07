@@ -4058,7 +4058,7 @@ export const routes = [
                             title: 'Facturas',
                             breadcrumb: {parent: 'control-recurso', name: 'FACTURAS'},
                             middleware: [auth, permission],
-                            permission: 'consultar_solicitud_pago_oc',
+                            permission: ['consultar_factura_recursos','registrar_factura_recursos'],
                             general: true,
                         }
                     },
@@ -4070,10 +4070,23 @@ export const routes = [
                             title: 'Registrar Factura',
                             breadcrumb: {name: 'REGISTRAR', parent: 'factura-recurso'},
                             middleware: [auth, permission],
-                            permission: ['registrar_autocorreccion_cfd_efo'],
+                            permission: ['registrar_factura_recursos'],
                             general: true
                         }
-                    }
+                    },
+                    {
+                        path: ':id',
+                        name: 'factura-recurso-show',
+                        component: require('./components/control-recursos/factura/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Factura',
+                            breadcrumb: { parent: 'factura-recurso', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_factura_recursos',
+                            general: true
+                        }
+                    },
                 ]
             },
         ]

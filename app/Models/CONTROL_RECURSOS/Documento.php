@@ -13,7 +13,28 @@ class Documento extends Model
     public $timestamps = false;
 
     protected $fillable = [
-
+        'FolioDocto',
+        'IdTipoDocto',
+        'TipoDocto',
+        'IdEmpresa',
+        'IdProveedor',
+        'Fecha',
+        'Vencimiento',
+        'Concepto',
+        'Importe',
+        'IVA',
+        'Total',
+        'Retenciones',
+        'TasaIva',
+        'OtrosImpuestos',
+        'IdMoneda',
+        'Alias_Depto',
+        'Departamento',
+        'IdSerie',
+        'TC',
+        'Creo',
+        'Estatus',
+        'Ubicacion'
     ];
 
     protected static function boot()
@@ -105,6 +126,52 @@ class Documento extends Model
         }
     }
 
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->Fecha);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaVencimientoFormatAttribute()
+    {
+        $date = date_create($this->Vencimiento);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getEmpresaDescripcionAttribute()
+    {
+        try {
+            return $this->empresa->RazonSocial;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getProveedorDescripcionAttribute()
+    {
+        try {
+            return $this->proveedor->RazonSocial;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getImporteFormatAttribute()
+    {
+        return '$' . number_format(($this->Importe),2);
+    }
+
+    public function getRetencionesFormatAttribute()
+    {
+        return '$' . number_format(($this->Retenciones),2);
+    }
+
+    public function getIvaFormatAttribute()
+    {
+        return '$' . number_format(($this->IVA),2);
+    }
 
     /**
      * Métodos

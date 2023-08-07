@@ -14,127 +14,62 @@
         <div class="card" v-else>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group row error-content">
-                            <label for="idserie" class="col-md-3 col-form-label">Serie:</label>
-                            <div class="col-md-9">
-                                <select class="form-control"
-                                        data-vv-as="Serie"
-                                        id="idserie"
-                                        name="idserie"
-                                        :error="errors.has('idserie')"
-                                        v-validate="{required: true}"
-                                        v-model="idserie">
-                                    <option value>-- Selecionar --</option>
-                                    <option v-for="(serie) in series" :value="serie.id">{{ serie.descripcion }}</option>
-                                </select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group row error-content">
-                            <label for="tipo" class="col-md-3 col-form-label">Tipo Factura:</label>
-                            <div class="col-md-9">
-                                <select class="form-control"
-                                        data-vv-as="Tipo"
-                                        id="tipo"
-                                        name="tipo"
-                                        :error="errors.has('tipo')"
-                                        v-validate="{required: true}"
-                                        v-model="idtipodocto">
-                                    <option value>-- Selecionar --</option>
-                                    <option value="1">Factura</option>
-                                    <option value="6">Pago Recurrente</option>
-                                </select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-                    <div class="col-md-6">
-                         <div class="col-md-3">
-                            <label for="archivo">Archivo de factura:</label>
-                        </div>
-                        <div class="col-md-9">
-                            <div class="form-group error-content">
-                                <input type="file" class="form-control" id="file_carga" @change="onFileChange"
-                                       row="3"
-                                       v-validate="{required: true,  ext: ['xml'], size: 3072}"
-                                       name="file_carga"
-                                       data-vv-as="Archivo de Factura"
-                                       ref="file_carga"
-                                       :class="{'is-invalid': errors.has('file_carga')}">
-                                <div class="invalid-feedback" v-show="errors.has('file_carga')">{{ errors.first('file_carga') }} (xml)</div>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-                </div>
-                <div class="row" v-if="data">
-                    <div class="col-md-2">
-                        <div class="form-group error-content">
-                            <label for="fecha">Fecha:</label>
-                            <datepicker v-model = "data.fecha"
-                                        name = "fecha"
-                                        :format = "formatoFecha"
-                                        :language = "es"
-                                        :bootstrap-styling = "true"
-                                        class = "form-control"
-                                        v-validate="{required: true}"
-                                        :disabled-dates="fechasDeshabilitadas"
-                                        :class="{'is-invalid': errors.has('fecha')}"
-                            ></datepicker>
-                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row" v-if="data">
                     <div class="col-md-12">
-                        <div class="form-group row error-content">
-                            <div class="form-group error-content">
-                                <label for="proveedor">Proveedor:</label>
-                                <model-list-select
-                                    name="id_proveedor"
-                                    placeholder="Seleccionar o buscar por RFC y razón social"
-                                    data-vv-as="Proveedor"
-                                    v-validate="{required: true}"
-                                    v-model="data.id_proveedor"
-                                    option-value="id"
-                                    :custom-text="rfcAndRazonSocial"
-                                    :list="proveedores"
-                                    :isError="errors.has(`id_proveedor`)">
-                                </model-list-select>
-                            </div>
-                            <label for="proveedor" class="col-md-3 col-form-label">Proveedor:</label>
-                            <label for="proveedor" class="col-md-3 col-form-label">{{data.proveedor_bd.razon_social}} ( {{data.proveedor_bd.rfc}})</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="row" v-if="data">
-                    <div class="col-md-10">
                         <div class="form-group error-content">
-                            <label for="fecha">Empresa:</label>
-                            <model-list-select
-                                name="id_empresa"
-                                placeholder="Seleccionar o buscar por RFC y razón social"
-                                data-vv-as="Empresa"
-                                v-validate="{required: true}"
-                                v-model="data.id_empresa"
-                                option-value="id"
-                                :custom-text="rfcAndRazonSocial"
-                                :list="empresas"
-                                :isError="errors.has(`id_empresa`)">
-                            </model-list-select>
+                            <label for="archivo">Archivo de factura:</label>
+                            <input type="file" class="form-control" id="file_carga" @change="onFileChange"
+                                   row="3"
+                                   v-validate="{required: true,  ext: ['xml'], size: 3072}"
+                                   name="file_carga"
+                                   data-vv-as="Archivo de Factura"
+                                   ref="file_carga"
+                                   :class="{'is-invalid': errors.has('file_carga')}">
+                            <div class="invalid-feedback" v-show="errors.has('file_carga')">{{ errors.first('file_carga') }} (xml)</div>
                         </div>
                     </div>
                 </div>
-                <div class="row" v-if="data">
-                    <div class="col-md-3">
+                <hr />
+                <div class="row">
+                    <div class="col-md-1">
+                        <div class="form-group row error-content">
+                            <label for="idserie" class="col-form-label">Serie:</label>
+                            <select class="form-control"
+                                    data-vv-as="Serie"
+                                    id="idserie"
+                                    name="idserie"
+                                    :error="errors.has('idserie')"
+                                    v-validate="{required: true}"
+                                    v-model="idserie">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(serie) in series" :value="serie.id">{{ serie.descripcion }}</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-1">
+                        <div class="form-group row error-content">
+                            <label for="tipo" class="col-form-label">Tipo Factura:</label>
+                            <select class="form-control"
+                                    data-vv-as="Tipo"
+                                    id="tipo"
+                                    name="tipo"
+                                    :error="errors.has('tipo')"
+                                    v-validate="{required: true}"
+                                    v-model="idtipodocto">
+                                <option value>-- Selecionar --</option>
+                                <option value="1">Factura</option>
+                                <option value="6">Pago Recurrente</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3" v-if="data">
                         <div class="form-group error-content">
                             <label for="folio">Folio:</label>
                             <input class="form-control"
                                    style="width: 100%"
+                                   disabled="true"
                                    placeholder="Folio"
                                    name="folio"
                                    id="folio"
@@ -145,25 +80,34 @@
                             <div class="invalid-feedback" v-show="errors.has('folio')">{{ errors.first('folio') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-6" v-if="data && data.empresa_bd">
                         <div class="form-group error-content">
-                            <label for="fecha">Emisión:</label>
-                            <datepicker v-model = "data.emision"
-                                        name = "emision"
+                            <h6>Empresa: </h6>
+                            <h6>{{data.empresa_bd.razon_social}}</h6>
+                    </div>
+                </div>
+                </div>
+                <div class="row" v-if="data">
+                    <div class="col-md-2">
+                        <div class="form-group error-content">
+                            <label for="fecha">Fecha de Facturación:</label>
+                            <datepicker v-model = "data.fecha"
+                                        name = "fecha"
                                         :format = "formatoFecha"
+                                        disabled="true"
                                         :language = "es"
                                         :bootstrap-styling = "true"
                                         class = "form-control"
                                         v-validate="{required: true}"
                                         :disabled-dates="fechasDeshabilitadas"
-                                        :class="{'is-invalid': errors.has('emision')}"
+                                        :class="{'is-invalid': errors.has('fecha')}"
                             ></datepicker>
-                            <div class="invalid-feedback" v-show="errors.has('emision')">{{ errors.first('emision') }}</div>
+                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group error-content">
-                            <label for="fecha">Vencimiento:</label>
+                            <label for="fecha">Fecha de Vencimiento:</label>
                             <datepicker v-model = "data.vencimiento"
                                         name = "vencimiento"
                                         :format = "formatoFecha"
@@ -176,67 +120,91 @@
                             <div class="invalid-feedback" v-show="errors.has('vencimiento')">{{ errors.first('vencimiento') }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="row" v-if="data">
-                    <div class="col-md-2">
-                        <div class="form-group error-content">
-                            <label for="total">Total:</label>
-                            <input class="form-control"
-                                   style="width: 100%"
-                                   placeholder="Total de Factura"
-                                   name="total"
-                                   id="total"
-                                   data-vv-as="Total"
-                                   v-validate="{required: true, decimal:2}"
-                                   v-model="data.total"
-                                   :class="{'is-invalid': errors.has('total')}"
-                            >
-                            <div class="invalid-feedback" v-show="errors.has('total')">{{ errors.first('total') }}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group error-content">
-                            <label for="total">Moneda:</label>
-                            <select
-                                class="form-control"
-                                name="id_moneda"
-                                data-vv-as="Moneda"
-                                v-validate="{required: true}"
-                                v-model="data.id_moneda">
+                    <div class="col-md-6">
+                        <div class="form-group row error-content">
+                            <label for="id_proveedor">Proveedor:</label>
+                            <select class="form-control"
+                                    data-vv-as="Proveedor"
+                                    id="id_proveedor"
+                                    name="id_proveedor"
+                                    :error="errors.has('id_proveedor')"
+                                    v-validate="{required: true}"
+                                    v-model="data.id_proveedor">
                                 <option value>-- Selecionar --</option>
-                                <option  v-for="(moneda, i) in data.monedas" :value="moneda.id_moneda" >
-                                    {{ moneda.moneda }}
-                                </option>
+                                <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
                             </select>
-                            <div class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                         </div>
                     </div>
                 </div>
-                <hr />
                 <div class="row" v-if="data">
                     <div class="col-md-12">
                         <div class="form-group error-content">
-                            <label for="observaciones">Observaciones:</label>
+                            <label for="concepto">Concepto:</label>
                             <textarea
-                                name="observaciones"
-                                id="observaciones"
+                                name="concepto"
+                                id="concepto"
                                 class="form-control"
-                                v-model="data.observaciones"
+                                v-model="data.concepto"
                                 v-validate="{required: true}"
-                                data-vv-as="Observaciones"
-                                :class="{'is-invalid': errors.has('observaciones')}"
+                                data-vv-as="Concepto"
+                                :class="{'is-invalid': errors.has('concepto')}"
                             ></textarea>
-                            <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                            <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
                         </div>
+                    </div>
+                </div>
+                <div class="row" v-if="data">
+                    <div class="col-md-10">
+                        <div class="form-group error-content float-right"><label for="importe">Importe:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.subtotal).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="form-group error-content float-right"><label for="iva">IVA: {{data.tasa_iva}} %:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.impuesto).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="form-group error-content float-right"><label for="retenciones">Retenciones:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.retencion).formatMoney(2)}}</div>
+                    </div>
+                    <div class="col-md-5"></div>
+
+                    <div class="col-md-5">
+                        <div class="form-group error-content float-right"> <label for="otros">Otros Impuestos:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.otros).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-5"></div>
+
+                    <div class="col-md-5">
+                        <div class="form-group error-content float-right"> <label for="total">Total:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.total).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-5"></div>
+
+                    <div class="col-md-5">
+                        <div class="form-group error-content float-right"> <label for="monesa">Moneda:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right">{{data.moneda}}  </div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-secondary">
+                    <button type="button" class="btn btn-secondary"  v-on:click="salir">
                         <i class="fa fa-angle-left"></i>
                         Regresar</button>
-                    <button type="button" class="btn btn-primary">
+                    <button type="button" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0" >
                         <i class="fa fa-save"></i>
                         Guardar
                     </button>
@@ -251,10 +219,9 @@ import datepicker from 'vuejs-datepicker';
 import vue2Dropzone from 'vue2-dropzone';
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import {es} from 'vuejs-datepicker/dist/locale';
-import {ModelListSelect} from 'vue-search-select';
 export default {
     name: "factura-create",
-    components: {es,datepicker, vueDropzone: vue2Dropzone, ModelListSelect},
+    components: {es,datepicker, vueDropzone: vue2Dropzone},
     data() {
         return {
             dropzoneOptions: {
@@ -291,13 +258,6 @@ export default {
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
         },
-        rfcAndRazonSocial (item){
-            return `[${item.rfc}] - ${item.razon_social}`
-        },
-        rfcAndRazonSocialProveedor(item)
-        {
-            return `[${item.rfc}] - ${item.razon_social}`
-        },
         getSeries() {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/serie/index', {
@@ -312,7 +272,7 @@ export default {
         },
         getEmpresas() {
             return this.$store.dispatch('controlRecursos/empresa/index', {
-                params: {sort: 'RazonSocial', order: 'asc'}
+                params: {sort: 'RazonSocial', order: 'asc', scope:'activo'}
             })
                 .then(data => {
                     this.empresas = data.data;
@@ -370,6 +330,29 @@ export default {
             else{
                 swal('¡Error!', 'Debe seleccionar un archivo (XML).', 'error')
             }
+        },
+        validate() {
+            this.$validator.validate().then(result => {
+                if (result) {
+                    this.store()
+                }
+            });
+        },
+        store() {
+            this.data.idserie = this.idserie;
+            this.data.idtipodocto = this.idtipodocto;
+            this.data.archivo = this.file_carga;
+            this.data.nombre_archivo = this.file_carga_name;
+            return this.$store.dispatch('controlRecursos/factura/store', this.$data.data)
+                .then(data => {
+
+                }).finally( ()=>{
+                    this.cargando = false;
+                });
+        },
+        salir()
+        {
+            this.$router.go(-1);
         },
     },
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'factura-recurso-create'}" class="btn btn-app btn-info float-right" :disabled="cargando">
+            <router-link :to="{name: 'factura-recurso-create'}" v-if="$root.can('registrar_factura_recursos',true)" class="btn btn-app btn-info float-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -38,8 +38,7 @@
                 { title: 'Concepto', field: 'concepto',sortable: true,thComp: require('../../globals/th-Filter').default},
                 { title: 'Total', field: 'total', tdClass: 'money',sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Moneda', field: 'idmoneda',sortable: true, thComp: require('../../globals/th-Filter').default},
-
-                //{ title: '', field: 'buttons', thClass: 'th_index',  tdComp: require('./partials/ActionButtons').default},
+                { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
             total: 0,
@@ -93,10 +92,9 @@
                     idmoneda: solicitud.moneda,
                     idserie: solicitud.serie,
                     idtipodocto: solicitud.tipo_documento,
-                    /* buttons: $.extend({}, {
-                        id: fecha.id,
-                        eliminar: (self.$root.can('eliminar_fechas_inhabiles_sat',true)) ? true : false,
-                    })*/
+                    buttons: $.extend({}, {
+                        id: solicitud.id,
+                    })
                 }));
             },
             deep: true

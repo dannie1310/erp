@@ -36,7 +36,8 @@ class FacturaController extends Controller
     public function __construct(FacturaService $service, FacturaTransformer $transformer, Manager $fractal)
     {
         $this->middleware('auth:api');
-        //$this->middleware('permisoGlobal:autorizar_rechazar_transaccion_proveedor_no_localizado')->only(['autorizar','rechazar']);
+        $this->middleware('permisoGlobal:consultar_factura_recursos')->only(['show','paginate','index']);
+        $this->middleware('permisoGlobal:registrar_factura_recursos')->only(['store']);
 
         $this->service = $service;
         $this->transformer = $transformer;

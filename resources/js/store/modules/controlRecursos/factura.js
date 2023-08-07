@@ -60,10 +60,10 @@ export default {
                     })
             });
         },
-        storeCFDI(context, payload){
+        store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar la Factura",
+                    title: "Registrar Factura",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -76,25 +76,39 @@ export default {
                             closeModal: false,
                         }
                     }
-                }).then((value) => {
-                    if (value) {
-                        axios
-                            .post(URI+ 'CFDI', payload)
-                            .then(r => r.data)
-                            .then(data => {
-                                swal("Factura registrada correctamente", {
-                                    icon: "success",
-                                    timer: 2000,
-                                    buttons: false
-                                }).then(() => {
-                                    resolve(data);
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Factura registrada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
                                 })
-                            })
-                            .catch(error => {
-                                reject(error);
-                            });
-                    }
-                });
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             });
         },
     },

@@ -40,7 +40,8 @@ class FacturaRepositorio extends Model
         'rfc_emisor',
         'rfc_receptor',
         'tipo_comprobante',
-        'tipo_transaccion'
+        'tipo_transaccion',
+        'id_documento_cr'
     ];
 
     public function proyecto()

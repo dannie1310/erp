@@ -31,10 +31,23 @@ class FacturaTransformer extends TransformerAbstract
             'folio_format' => $model->folio_con_serie,
             'concepto' => $model->Concepto,
             'fecha' => $model->Fecha,
+            'fecha_format' => $model->fecha_format,
             'total_format' => $model->total_format,
             'moneda' => $model->moneda_descripcion,
             'serie' => $model->serie_descripcion,
-            'tipo_documento' => $model->tipo_documento
+            'tipo_documento' => $model->tipo_documento,
+            'empresa_descripcion' => $model->empresa_descripcion,
+            'proveedor_descripcion' => $model->proveedor_descripcion,
+            'importe_format' => $model->importe_format,
+            'retencion_format' => $model->importe_format,
+            'tasa_iva' => $model->TasaIVA,
+            'iva_format' => $model->iva_format,
+            'tc' => $model->TC,
+            'ubicacion' => $model->Ubicacion,
+            'departamento' => $model->Departamento,
+            'alias_dep' => $model->Alias_Depto,
+            'uuid' => $model->uuid,
+            'fecha_vencimiento_format' => $model->fecha_vencimiento_format
         ];
     }
 }
