@@ -1,9 +1,10 @@
-import {getLoggedinUser, getObra, getPermisos, getPermisosGenerales } from './partials/auth';
+import {getLoggedinUser, getObra, getPermisos, getPermisosGenerales, getEmpresa } from './partials/auth';
 
 const user = getLoggedinUser();
 const obra = getObra();
 const perms = getPermisos();
 const permsGenerales = getPermisosGenerales();
+const empresa = getEmpresa();
 
 export default {
     namespaced: true,
@@ -11,6 +12,7 @@ export default {
     state: {
         currentUser: user,
         currentObra: obra,
+        currentEmpresa : empresa,
         permisos: perms,
         permisosGenerales: permsGenerales,
         jwt: null,
@@ -44,6 +46,10 @@ export default {
             state.currentObra = Object.assign({}, payload.obra);
             this._vm.$session.set('obra', payload.obra);
         },
+        setEmpresa(state, payload) {
+            state.currentEmpresa = Object.assign({}, payload);
+            this._vm.$session.set('empresa', payload);
+        },
         setPermisos(state, payload) {
                 state.permisos = payload.permisos;
         }
@@ -62,8 +68,14 @@ export default {
         currentObra(state){
             return state.currentObra;
         },
+        currentEmpresa(state){
+            return state.currentEmpresa;
+        },
         datosContables(state){
             return state.currentObra ? (state.currentObra.datos_contables ? state.currentObra.datos_contables.FormatoCuentaRegExp : null) : null
+        },
+        idEmpresaContabilidad(state){
+            return state.currentObra && state.currentObra.datos_contables && state.currentObra.datos_contables.empresa  ? state.currentObra.datos_contables.empresa.Id : null
         },
         authError(state){
             return state.auth_error;

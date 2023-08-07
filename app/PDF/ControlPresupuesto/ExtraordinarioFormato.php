@@ -160,7 +160,7 @@ class ExtraordinarioFormato extends Rotation
         $this->SetX($x);
         $this->Cell(0.125 * $this->WidthTotal, 0.35, utf8_decode('Obra:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.375 * $this->WidthTotal, 0.35, utf8_decode($this->obra->nombre), '', 1, 'L');
+        $this->CellFitScale(0.375 * $this->WidthTotal, 0.35,  utf8_decode($this->obra->nombre_obra_formatos), '', 1, 'L');
 
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->SetX($x);

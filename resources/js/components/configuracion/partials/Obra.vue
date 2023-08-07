@@ -30,7 +30,7 @@
                 <label for="clave" class="col-lg-2 col-form-label">Clave:</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="clave" v-model="form.clave"
-                           v-validate="{required:true, max: 32}"
+                           v-validate="{ max: 32}"
                            name="clave"
                            data-vv-as="Clave"
                            :class="{'is-invalid': errors.has('clave')}"
@@ -55,7 +55,7 @@
                 <label for="descripcion" class="col-lg-2 col-form-label">Descripción:</label>
                 <div class="col-lg-4">
                     <textarea class="form-control" id="descripcion" v-model="form.descripcion"
-                              v-validate="{required:true, max: 255}"
+                              v-validate="{required:true, max: 50}"
                               name="descripcion"
                               data-vv-as="Descripción"
                               :class="{'is-invalid': errors.has('descripcion')}"
@@ -153,7 +153,7 @@
                 <label for="direccion" class="col-lg-2 col-form-label">Dirección para facturación:</label>
                 <div class="col-lg-10">
                     <textarea id="direccion" class="form-control" v-model="form.direccion"
-                              v-validate="{required:true, max: 255}"
+                              v-validate="{ max: 255}"
                               name="direccion"
                               data-vv-as="Dirección"
                               :class="{'is-invalid': errors.has('direccion')}"
@@ -276,7 +276,7 @@
                 <label for="direccion_proyecto" class="col-lg-2 col-form-label">Dirección del Proyecto:</label>
                 <div class="col-lg-10">
                     <textarea id="direccion_proyecto" class="form-control" v-model="form.direccion_proyecto"
-                              v-validate="{required:true, max: 255}"
+                              v-validate="{ max: 255}"
                               name="direccion_proyecto"
                               data-vv-as="Dirección del Proyecto"
                               :class="{'is-invalid': errors.has('direccion_proyecto')}"
@@ -288,7 +288,7 @@
                 <label for="direccion_plataforma_digital" class="col-lg-2 col-form-label">Ubicación en plataforma digital:</label>
                 <div class="col-lg-10">
                     <input id="direccion_plataforma_digital" class="form-control" v-model="form.direccion_plataforma_digital"
-                              v-validate="{required:true, max: 255}"
+                              v-validate="{ max: 255}"
                               placeholder="https://goo.gl/maps/yrVG5u7RwdUJFgU47"
                               name="direccion_plataforma_digital"
                               data-vv-as="Dirección del Proyecto"
@@ -301,7 +301,7 @@
                 <label for="ciudad" class="col-lg-2 col-form-label">Ciudad:</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="ciudad" v-model="form.ciudad"
-                           v-validate="{required:true, max: 255}"
+                           v-validate="{ max: 255}"
                            name="ciudad"
                            data-vv-as="Ciudad"
                            :class="{'is-invalid': errors.has('ciudad')}"
@@ -314,7 +314,7 @@
                 <label for="estado" class="col-lg-2 col-form-label">Estado:</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="estado" v-model="form.estado"
-                           v-validate="{required:true, max: 255}"
+                           v-validate="{ max: 255}"
                            name="estado"
                            data-vv-as="Estado"
                            :class="{'is-invalid': errors.has('estado')}"
@@ -327,7 +327,7 @@
                 <label for="codigo_postal" class="col-lg-2 col-form-label">Código Postal:</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="codigo_postal" v-model="form.codigo_postal"
-                           v-validate="{required:true, integer: true, digits: 5}"
+                           v-validate="{required:true,}"
                            name="codigo_postal"
                            data-vv-as="Código Postal"
                            :class="{'is-invalid': errors.has('codigo_postal')}"

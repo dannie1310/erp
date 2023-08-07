@@ -53,6 +53,7 @@ class CFDSATTransformer extends TransformerAbstract
             'folio'=>$model->folio,
             'referencia'=>$model->serie." ".$model->folio,
             'fecha'=>$model->fecha,
+            'fecha_corta_format' => $model->fecha_corta_format,
             'fecha_format' => $model->fecha_format,
             'rfc_emisor' => $model->rfc_emisor,
             'rfc_receptor' => $model->rfc_receptor,
@@ -77,6 +78,8 @@ class CFDSATTransformer extends TransformerAbstract
             'estado_lbl' => $model->cancelado == 1? 'Cancelado':'Vigente',
             'estado_color' => $model->estado_color,
             'total_xls' => (float) $model->total_xls,
+            "cancelado" => $model->cancelado,
+            "conceptos_txt" => $model->conceptos_txt
         ];
     }
 

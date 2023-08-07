@@ -14,6 +14,10 @@ class Comprobante extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'UUID' => 'string'
+    ];
+
     public function cfdi()
     {
         return $this->belongsTo(CFDSAT::class, 'uuid', 'UUID');

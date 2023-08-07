@@ -34,6 +34,8 @@ class Obra extends Model
 
     public $timestamps = false;
 
+    //protected $dateFormat = 'Y-m-d H:i:s';
+
     protected $fillable = [
         'nombre',
         'constructora',
@@ -134,6 +136,25 @@ class Obra extends Model
         } else {
             return null;
         }
+    }
+
+    public function getNombreObraFormatosAttribute()
+    {
+        $nombre =  $this->descripcion != null ? $this->descripcion : $this->nombre;
+        if(mb_strlen($nombre) > 50)
+        {
+            $nombre = substr($nombre, 0, 50);
+        }
+        return $nombre;
+    }
+
+    public function getBaseDatosContpaqAttribute()
+    {
+        if($this->datosContables)
+        {
+            return $this->datosContables->BDContPaq;
+        }
+        return null;
     }
 
     public function cuentasObra(){

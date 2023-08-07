@@ -5,8 +5,8 @@
                 <h6><i class="fa fa-plug" ></i>Datos de Conexión:</h6>
             </div>
         </div>
-        <div class="row col-md-12">
-            <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-10">
                 <div class="form-group row error-content">
                     <label for="id_empresa" class="col-md-2 col-form-label">Empresa:</label>
                     <div class="col-md-10">
@@ -16,7 +16,7 @@
                             name="id_empresa"
                             v-model="id_empresa"
                             option-value="id"
-                            option-text="nombre"
+                            :custom-text="nombreAliasBDD"
                             :list="empresas"
                             :placeholder="!cargando?'Seleccionar o buscar empresa':'Cargando...'"
                             :isError="errors.has(`id_empresa`)">
@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <button @click="conectar" class="btn btn-primary float-right">
+                <button @click="conectar" class="btn btn-primary float-left">
                     <i class="fa fa-plug"></i> Conectar
                 </button>
             </div>
@@ -58,6 +58,9 @@ export default {
         }
     },
     mounted(){
+        this.$store.commit('auth/setEmpresa', null);
+        this.$session.remove('id_empresa');
+        this.$session.remove('empresa');
         this.getEmpresas();
     },
 
@@ -72,6 +75,10 @@ export default {
             }
         },
 
+        nombreAliasBDD (item) {
+            return `${item.nombre} - ${item.alias_bdd}`
+        },
+
         conectar(){
             this.conectando = true;
             return this.$store.dispatch('contabilidadGeneral/empresa-contpaq/conectar',
@@ -82,7 +89,10 @@ export default {
                     }
                 })
                 .then(data => {
-                    if(this.empresa_seleccionada.alias_bdd === data){
+                    this.$session.set('id_empresa', data.Id);
+                    this.$store.commit("auth/setEmpresa", data);
+
+                    if(this.empresa_seleccionada.alias_bdd === data.AliasBDD){
                         this.conectado = true;
                         this.$router.push({name: 'poliza-contpaq', params: {id_empresa: this.id_empresa}});
                     }

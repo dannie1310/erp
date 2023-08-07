@@ -17,13 +17,14 @@ use DateTime;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Webpatser\Uuid\Uuid;
+use Exception;
 
 class CFD
 {
-    protected $arreglo_factura;
-    protected $log;
-    protected $archivo_xml;
-    protected $logs;
+    public $arreglo_factura;
+    public $log;
+    public $archivo_xml;
+    public $logs;
 
     public function __construct($archivo_xml)
     {
@@ -618,7 +619,7 @@ class CFD
         $xml_array = $this->arreglo_factura;
         $this->logs = [];
 
-        if(in_array($this->arreglo_factura['tipo_comprobante'], ["I", "E"])) {
+        if(in_array($this->arreglo_factura['tipo_comprobante'], ["I", "E", "P"])) {
 
             $xml_split = explode('base64,', $xml_fuente);
             $xml = base64_decode($xml_split[1]);
@@ -653,7 +654,7 @@ class CFD
                 }
                 $duplicado = false;
                 try {
-                    if ($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])) {
+                    if ($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['uuid'])) {
                         $this->logs[] = "CFDI ya existente en ADD";
                     }
                 } catch (Exception $e) {

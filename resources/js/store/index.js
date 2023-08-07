@@ -110,6 +110,9 @@ import polizaCFDIProyecto from './modules/contabilidad/poliza-cfdi';
 import CFDIPolizaProyecto from './modules/contabilidad/cfdi-poliza';
 
 //CONTABILIDAD GRAL
+
+import layoutPasivoPartida from "./modules/contabilidadGeneral/layout-pasivo-partida";
+import layoutPasivo from "./modules/contabilidadGeneral/layout-pasivo";
 import contabilidadElectronica from "./modules/contabilidadGeneral/contabilidad-electronica";
 import cuentaCTPQ from './modules/contabilidadGeneral/cuenta';
 import empresaContabilidad from './modules/contabilidadGeneral/empresa';
@@ -422,6 +425,8 @@ export default new Vuex.Store({
         'contabilidad/poliza-cfdi' : polizaCFDIProyecto,
         'contabilidad/cfdi-poliza' : CFDIPolizaProyecto,
 
+        'contabilidadGeneral/layout-pasivo-partida' : layoutPasivoPartida,
+        'contabilidadGeneral/layout-pasivo' : layoutPasivo,
         'contabilidadGeneral/contabilidad-electronica' : contabilidadElectronica,
         'contabilidadGeneral/cuenta' : cuentaCTPQ,
         'contabilidadGeneral/empresa' :empresaContabilidad,

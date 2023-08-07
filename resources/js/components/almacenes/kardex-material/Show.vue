@@ -15,6 +15,9 @@
             <div class="card" v-if="!historial_cargado">
                  <div class="card-header" v-if="almacen">
                     <h4>{{almacen.descripcion}}</h4>
+                     <button  type="button" v-if="id_almacen" class="btn btn-info float-right" @click="lista">
+                         <i class="fa fa-list-ul "></i> Lista de Materiales
+                     </button>&nbsp;
                 </div>
                 <div class="card-body" v-if="materiales">
 
@@ -149,6 +152,16 @@ export default {
         },
         getKardex(i){
             this.$router.push({name: 'kardex', params: {id_almacen: this.id_almacen, id_material:i}});
+        },
+        lista()
+        {
+            this.cargando = true;
+            return this.$store.dispatch('cadeco/material/lista_materiales', {scope: this.id_almacen})
+                .then(() => {
+                    this.$emit('success')
+                }).finally(() => {
+                    this.cargando = false;
+                })
         },
     },
 }

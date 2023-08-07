@@ -1,32 +1,27 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: EMartinez
- * Date: 19/02/2020
- * Time: 11:56 AM
- */
 
 namespace App\Models\CTPQ;
 
-use App\Facades\Context;
-use App\Models\CADECO\Movimiento;
-use App\Models\CADECO\Obra;
 use App\Models\CTPQ\GeneralesSQL\Usuario;
+use App\Models\CTPQ\OtherMetadata\DocApp;
+use App\Models\CTPQ\OtherMetadata\Documento;
 use App\Models\CTPQ\OtherMetadata\Expediente;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CuentaContpaqProvedorSat;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa as EmpresaERP;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ExpedientePolizaLog;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
+use App\Utils\Util;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Support\Facades\Config;
 use App\Models\CTPQ\DocumentMetadata\Comprobante;
-
 
 class Poliza extends Model
 {
@@ -90,11 +85,6 @@ class Poliza extends Model
         return $this->belongsTo(Usuario::class,"IdUsuario","Id");
     }
 
-    public function cfdi()
-    {
-        return $this->hasMany(CFDSAT::class, 'uuid', 'Guid');
-    }
-
 
     /**
      * Attributos
@@ -142,6 +132,69 @@ class Poliza extends Model
     {
         $idEmpresa = Parametro::find(1)->pluck("IdEmpresa")->first();
         return Empresa::find($idEmpresa)->AliasBDD;
+    }
+
+    public function getCfdiAttribute()
+    {
+        /*$cfdis =  null;
+        foreach($this->asociacionCFDI as $acfdi)
+        {
+            if($acfdi->cfdi)
+            {
+                $cfdis[] = $acfdi->cfdi;
+            }
+
+        }
+        $cfdi_col = collect($cfdis);
+
+        return $cfdi_col;*/
+
+        $cfdis =  null;
+        foreach($this->expedientes as $expediente)
+        {
+            $base = Parametro::find(1);
+            try {
+                DB::purge('cntpqdm');
+                Config::set('database.connections.cntpqdm.database', 'document_' . $base->GuidDSL . '_metadata');
+                $comprobante = Comprobante::where('GuidDocument', $expediente->Guid_Pertenece)->first();
+            }catch (\Exception $e)
+            {
+                abort(500, "Error de acceso a las bases de metadatos de la empresa. \n".$e->getMessage());
+            }
+            if ($comprobante) {
+                $cfdi = CFDSAT::where('uuid',"=", $comprobante->UUID)->first();
+                if($cfdi)
+                {
+                    $cfdis[] = $cfdi;
+                }
+            }
+        }
+        $cfdi_col = collect($cfdis);
+        return $cfdi_col;
+    }
+    /**
+     * Scopes
+     */
+
+    public function scopeSinCFDI($query)
+    {
+
+        $base =  Parametro::find(1);
+        DB::purge('cntpqom');
+        Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
+        $bd_exp = Config::get('database.connections.cntpqom.database');
+        return $query->leftJoin($bd_exp.".dbo.Expedientes",$bd_exp.".dbo.Expedientes.Guid_Relacionado","=","polizas.Guid")
+            ->whereNull($bd_exp.".dbo.Expedientes.Guid_Relacionado");
+    }
+
+    public function scopeConCFDI($query)
+    {
+
+        $base =  Parametro::find(1);
+        DB::purge('cntpqom');
+        Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
+        $bd_exp = Config::get('database.connections.cntpqom.database');
+        return $query->Join($bd_exp.".dbo.Expedientes",$bd_exp.".dbo.Expedientes.Guid_Relacionado","=","polizas.Guid");
     }
 
     /**
@@ -679,5 +732,340 @@ class Poliza extends Model
             'Reconstruir'=>true,
             "Id"=>AsocCFDI::getUltimoFolio()
         ]);
+    }
+
+    public function asociarCFDI($data)
+    {
+
+        $empresa = EmpresaERP::find($data["id_empresa"]);
+
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+        $poliza = Poliza::find($data["id_poliza"]);
+
+        $base = Parametro::find(1);
+        DB::purge('cntpqom');
+        Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+
+        DB::purge('cntpqdm');
+        Config::set('database.connections.cntpqdm.database', 'document_'.$base->GuidDSL.'_metadata');
+
+        $fecha = date('Y-m-d').' 00:00:00';
+        DB::connection('cntpq')->beginTransaction();
+        DB::connection('cntpqom')->beginTransaction();
+        DB::connection('seguridad')->beginTransaction();
+        try {
+            if ($poliza) {
+                $guid_poliza = $poliza->Guid;
+                $tipo = "Poliza de ".$poliza->tipo_poliza->Nombre;
+                DB::purge('cntpqom');
+                Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+                $documento = Documento::where('GuidDocument',"=", $guid_poliza)->first();
+                if (is_null($documento)) {
+                    try{
+                        Documento::create([
+                            'GuidDocument' => $guid_poliza,
+                            'Status' => 'active',
+                            'IdTipoDocumento' => 20,
+                            'Type' => 'Polizas',
+                            'Path' => '',
+                            'Hash' => '',
+                            'MetadataEstatusApp' => '',
+                            'UserResponsibleApp' => '',
+                            'ReferenceApp' => '',
+                            'NotesApp' => '',
+                            'ProcessApp' => '',
+                            'NoPaymentStatusapp' => '',
+                            'ClaveDescripcion' => '',
+                            'SourceFile' => '',
+                            'Type_Otro' => '',
+                            'Type_Ext' => '',
+                            'Period' => 0,
+                            'Year' => 0,
+                            'TotalPayRoll' => 0,
+                            'SalaryType' => '',
+                            'IsAsoContabilidad' => 1
+                        ]);
+                    }catch (\Exception $e){
+                        DB::connection('seguridad')->rollBack();
+                        DB::connection('cntpqom')->rollBack();
+                        DB::connection('cntpq')->rollBack();
+                        abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpqom.database').", no fue posible registrar el Documento en Contpaq. \n \n Favor de contactar a soporte a aplicaciones.");
+                    }
+
+                }
+
+                $doc_app = DocApp::where('GuidDocument',"=", $guid_poliza)->first();
+                if (is_null($doc_app)) {
+                    try{
+                        DocApp::create([
+                            'GuidDocument' => $guid_poliza,
+                            'Fecha' => $fecha,
+                            'Tipo' => 'Polizas',
+                            'Subtipo' => $tipo,
+                            'Ejercicio' => $poliza->Ejercicio,
+                            'Periodo' => $poliza->Periodo,
+                            'Numero' => $poliza->Folio,
+                            'SubTipoNumero' => '',
+                            'Cuenta' => '',
+                            'Folio' => 0,
+                            'Responsable' =>0
+                        ]);
+                    }catch (\Exception $e){
+                        DB::connection('seguridad')->rollBack();
+                        DB::connection('cntpqom')->rollBack();
+                        DB::connection('cntpq')->rollBack();
+                        abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                    }
+                }
+                foreach ($data["cfdi"] as $id_cfdi) {
+                    $cfdi = CFDSAT::find($id_cfdi);
+
+                    //valida si CFDI existe en el ADD de contpaq en caso de que no exista lo agrega
+                    if ($cfdi && !$cfdi->tiene_comprobante_add){
+                        try{
+                            $cfdi->guardarXmlEnADD($empresa);
+                        }catch (\Exception $e){
+                            DB::connection('seguridad')->rollBack();
+                            DB::connection('cntpqom')->rollBack();
+                            DB::connection('cntpq')->rollBack();
+
+                            abort(500,"Error en carga de CFDI a repositorio contpaq (ADD): \n \n".$e->getMessage()." \n \n Favor de contactar a soporte a aplicaciones.");
+                        }
+                    }
+                    //valida si CFDI existe en el ADD de contpaq para continuar
+                    $cfdi->load('comprobanteADD');
+                    if ($cfdi && $cfdi->tiene_comprobante_add) {
+                        $guid_document = $cfdi->comprobanteADD->GuidDocument;
+                        try{
+                            DB::purge('cntpq');
+                            Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+                            $poliza->generaAsociacionCFDI($cfdi->comprobanteADD);
+                        }catch (\Exception $e){
+                            DB::connection('seguridad')->rollBack();
+                            DB::connection('cntpqom')->rollBack();
+                            DB::connection('cntpq')->rollBack();
+                            //$cfdi->estado = -4;
+                            //$cfdi->save();
+                            abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpq.database').", la asociación de póliza con expediente CFDI no pudo ser realizada. \n \n".$e->getMessage()." \n\n Favor de contactar a soporte a aplicaciones.");
+                        }
+                        try{
+                            DB::purge('cntpqom');
+                            Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+                            $expediente = Expediente::buscarExpediente($guid_poliza, $guid_document)->first();
+                        }catch (\Exception $e){
+                            DB::connection('seguridad')->rollBack();
+                            DB::connection('cntpqom')->rollBack();
+                            DB::connection('cntpq')->rollBack();
+                            //$cfdi->estado = -3;
+                            //$cfdi->save();
+                            abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpqom.database').", el expediente no pudo ser buscado. \n \n Favor de contactar a soporte a aplicaciones.");
+                        }
+
+                        if (is_null($expediente)) {
+                            try{
+                                $comentario =$tipo . ", ejercicio: " . $poliza->Ejercicio . ", periodo: " . $poliza->Periodo . ", numero: " . $poliza->Folio . ", empresa: " . $empresa->AliasBDD . ", guid: " . $guid_poliza;
+                                $expediente = Expediente::create([
+                                    'Guid_Relacionado' => $guid_poliza,
+                                    'Guid_Pertenece' => $guid_document,
+                                    'ApplicationType_Exp' => 'Contabilidad',
+                                    'Type_Exp' => 'CFDI',
+                                    'Comment_Exp' => $comentario,
+                                    'TimeStamp_Exp' => $fecha
+                                ]);
+
+                                $expediene_log = ExpedientePolizaLog::create(
+                                    [
+                                        'guid_pertenece' => $guid_document,
+                                        'guid_relacionado' => $guid_poliza,
+                                        'uuid' => $cfdi->uuid,
+                                        'alias_bdd' => $empresa->AliasBDD,
+                                        'id_poliza' => $poliza->Id,
+                                        'id_usuario_asocio' => auth()->id(),
+                                    ]
+                                );
+                                if(!$expediene_log)
+                                {
+                                    DB::connection('seguridad')->rollBack();
+                                    DB::connection('cntpqom')->rollBack();
+                                    DB::connection('cntpq')->rollBack();
+                                    abort(500,"Error al guardar el log de asociación.");
+                                }
+
+                            }catch (\Exception $e){
+                                DB::connection('seguridad')->rollBack();
+                                DB::connection('cntpqom')->rollBack();
+                                DB::connection('cntpq')->rollBack();
+                                abort(500,"Error de escritura en la base de datos: ".Config::get('database.connections.cntpqom.database').", el expediente no pudo ser registrado. \n \n Favor de contactar a soporte a aplicaciones. \n".$e->getMessage());
+                            }
+                        }else{
+
+                            $expediene_log = ExpedientePolizaLog::create(
+                                [
+                                    'guid_pertenece' => $guid_document,
+                                    'guid_relacionado' => $guid_poliza,
+                                    'uuid' => $cfdi->uuid,
+                                    'alias_bdd' => $empresa->AliasBDD,
+                                    'id_poliza' => $poliza->Id,
+                                    'id_usuario_asocio' => auth()->id(),
+                                ]
+                            );
+
+                            if(!$expediene_log)
+                            {
+                                DB::connection('seguridad')->rollBack();
+                                DB::connection('cntpqom')->rollBack();
+                                DB::connection('cntpq')->rollBack();
+                                abort(500,"Error al guardar el log de asociación 2.");
+                            }
+
+                        }
+                    }else{
+                        DB::connection('seguridad')->rollBack();
+                        DB::connection('cntpqom')->rollBack();
+                        DB::connection('cntpq')->rollBack();
+                        abort(500,"Error en carga de CFDI a repositorio contpaq (ADD). \n \n Favor de contactar a soporte a aplicaciones.");
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            DB::connection('cntpqom')->rollBack();
+            DB::connection('cntpq')->rollBack();
+            abort(400, $e->getMessage());
+        }
+
+        DB::connection('seguridad')->commit();
+        DB::connection('cntpqom')->commit();
+        DB::connection('cntpq')->commit();
+
+        return $poliza;
+    }
+
+    public function getPosiblesCFDIAttribute()
+    {
+        $empresa_erp = EmpresaERP::where("AliasBDD","=",Config::get('database.connections.cntpq.database'))
+            ->first();
+        $id_empresa_contpaq = $empresa_erp->IdEmpresaContpaq;
+
+
+        if(!$empresa_erp->empresaSAT)
+        {
+            throw new \Exception("No hay una empresa SAT asociada a la empresa de Contabilidad",500);
+        }
+
+
+        $poliza = $this;
+
+        $uuid_cfdi_asociados = $poliza->cfdi->pluck("uuid")
+            ->toArray();
+
+        $uuid_cfdi_asociados = array_map('strtoupper', $uuid_cfdi_asociados);
+
+        $id_cuentas = $this->movimientos
+            ->pluck("IdCuenta")
+            ->toArray();
+
+        $id_proveedor_sat = CuentaContpaqProvedorSat::whereIn("id_cuenta_contpaq", $id_cuentas)
+            ->where("id_empresa_contpaq","=",$id_empresa_contpaq)
+            ->get()
+            ->pluck("id_proveedor_sat")
+            ->toArray();
+
+        $importes = PolizaMovimiento::where("IdPoliza","=",$poliza->Id)
+            ->get()
+            ->pluck("Importe")->toArray();
+
+        $referencias = PolizaMovimiento::where("IdPoliza","=",$poliza->Id)
+            ->get()
+            ->pluck("Referencia")->toArray();
+
+
+        $referencias = array_unique($referencias);
+
+        $query = CFDSAT::
+        join("Contabilidad.proveedores_sat","proveedores_sat.id","cfd_sat.id_proveedor_sat")
+            ->where("id_empresa_sat","=",$empresa_erp->IdEmpresaSAT);
+
+        if($id_proveedor_sat>0)
+        {
+            $query->whereIn("id_proveedor_sat",$id_proveedor_sat);
+        }
+
+        if($poliza->TipoPol == 3)
+        {
+            $query->where("tipo_comprobante","=",'I');
+        }
+
+        $query->selectRaw("cfd_sat.id_proveedor_sat, cfd_sat.id, cfd_sat.uuid, cfd_sat.importe_iva, cfd_sat.total,cfd_sat.conceptos_txt
+        ,cfd_sat.serie, cfd_sat.folio, proveedores_sat.rfc, proveedores_sat.razon_social
+        , FORMAT(cfd_sat.fecha,'dd-MM-yyyy') as fecha_cfdi, 0 as grado_coincidencia, 0 as seleccionado, cfd_sat.tipo_comprobante")
+            ->orderBy("cfd_sat.total");
+
+        $cfdis = $query->get();
+
+        $nuevos_cfdi = $cfdis->filter(function ($item) use($uuid_cfdi_asociados){
+            if(!in_array(strtoupper($item->uuid),$uuid_cfdi_asociados)){
+                return $item;
+            }
+        });
+
+        $nuevos_cfdi = $nuevos_cfdi->map(
+            function ($cfdi) use ($importes, $id_proveedor_sat, $referencias)
+            {
+                $cfdi->seleccionado = false;
+                $cfdi->coincide_importe = 0;
+                $cfdi->coincide_proveedor = 0;
+                $cfdi->coincide_folio = 0;
+                $importes_unicos = array_unique($importes);
+
+                foreach($importes_unicos as $importe){
+                    if(abs($cfdi->total- $importe)<1)
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        $cfdi->coincide_importe = 1;
+                        break;
+                    }
+                }
+
+                if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
+                {
+                    $cfdi->grado_coincidencia += 1;
+                    $cfdi->coincide_proveedor = 1;
+                }
+
+                foreach($referencias as $referencia)
+                {
+                    $referencia = Util::soloNumeros($referencia);
+
+                    if($cfdi->folio != "" && $referencia !='' && $referencia == $cfdi->folio)
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        $cfdi->coincide_folio = 1;
+                        break;
+                    }
+
+                    /*if($cfdi->folio != "" && $referencia !='' && (strpos($referencia, $cfdi->folio)!==false
+                            ))
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        $cfdi->coincide_folio = 1;
+                        break;
+                    }*/
+
+                    /*if($cfdi->folio != '' && $referencia !='' && strpos($referencia,$cfdi->folio)!==false)
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        break;
+                    }*/
+                }
+                return $cfdi;
+            }
+
+        )
+            ->sortByDesc("grado_coincidencia")
+        ;
+
+        return $nuevos_cfdi;
     }
 }

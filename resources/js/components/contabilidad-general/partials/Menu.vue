@@ -1,8 +1,7 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-
-            <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
+            <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true) || $root.can('asociar-cfdi-a-poliza-contpaq',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-file-powerpoint nav-icon"></i>
                     <p>Gestión de Pólizas</p>
@@ -11,11 +10,17 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
                         <router-link :to="{name: 'seleccionar-empresa'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-empresa'}">
-                            <i class="fa fa-file-powerpoint nav-icon"></i>
-                            <p>Pólizas</p>
+                            <i class="fa fa-pencil nav-icon"></i>
+                            <p>Editar Pólizas</p>
                         </router-link>
                     </li>
-                    <li class="nav-item"  v-if="$root.can('consultar_solicitud_edicion_poliza_ctpq',true) || true">
+                    <li class="nav-item"  v-if="$root.can('asociar-cfdi-a-poliza-contpaq',true)">
+                        <router-link :to="{name: 'seleccionar-empresa-asociacion'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-empresa-asociacion'}">
+                            <i class="fa fa-share-alt nav-icon"></i>
+                            <p>Asociar CFDI a Póliza</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item"  v-if="$root.can('consultar_solicitud_edicion_poliza_ctpq',true)">
                         <router-link :to="{name: 'solicitud-edicion-poliza'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-edicion-poliza'}">
                             <i class="fa fa-file-contract nav-icon"></i>
                             <p>Solicitud de Edición</p>
@@ -23,7 +28,6 @@
                     </li>
                 </ul>
             </li>
-
             <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-not-equal nav-icon"></i>
@@ -99,17 +103,22 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('asociar_cuentas_contpaq_con_proveedor', true )">
                         <router-link :to="{name: 'asociacion-cuenta-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'asociacion-cuenta-proveedor'}">
-                            &nbsp;<i class="fas fa-exchange-alt"></i>
-                            <p>Asociación
-                                Cta Proveedor</p>
+                            &nbsp;<i class="fas fa-exchange-alt nav-icon"></i>
+                            <p>Asociar Cuenta con Proveedor</p>
                         </router-link>
                     </li>
                 </ul>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_contabilidad_electronica', true )">
                 <router-link :to="{name: 'contabilidad-electronica'}" class="nav-link" :class="{active: this.$route.name == 'contabilidad-electronica'}">
-                    &nbsp;<i class="fas fa-exchange-alt"></i>
+                    &nbsp;<i class="fas fa-exchange-alt nav-icon"></i>
                     <p>Lectura de Balanza XML</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_layouts_pasivos', true )">
+                <router-link :to="{name: 'layouts-pasivos'}" class="nav-link" :class="{active: this.$route.name == 'layouts-pasivos'}">
+                    &nbsp;<i class="fas fa-file-excel nav-icon"></i>
+                    <p>Layouts para pasivos IFS</p>
                 </router-link>
             </li>
         </ul>

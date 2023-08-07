@@ -3,6 +3,7 @@
 namespace App\Models\CADECO\Contabilidad;
 
 use App\Models\CADECO\Obra;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
@@ -43,6 +44,11 @@ class DatosContables extends Model
     public function obra()
     {
         return $this->belongsTo(Obra::class, 'id_obra');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, "BDContPaq", "AliasBDD");
     }
 
     public function getMaskAttribute()

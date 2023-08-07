@@ -313,6 +313,27 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad-general'], function ($api) {
 
+        $api->group(['prefix' => 'layout-pasivo'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@show')->where(['id' => '[0-9]+']);
+            $api->post('{id_pasivo}/lista-cfdi-asociar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@listaPosiblesCFDI')->where(['id_pasivo' => '[0-9]+']);
+            $api->post('{id}/asociar-cfdi', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@asociarCFDI')->where(['id' => '[0-9]+']);
+            $api->post('cargar-layout','App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@procesaLayoutPasivos');
+            $api->get('{id}/valida-descargar-layout-ifs', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@validaDescargarLayoutIFS')->where(['id' => '[0-9]+']);
+            $api->get('{id}/descargar-layout-ifs', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@descargarLayoutIFS')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'layout-pasivo-partida'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@show')->where(['id' => '[0-9]+']);
+            $api->post('{id}/lista-cfdi-asociar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@listaPosiblesCFDI')->where(['id_pasivo' => '[0-9]+']);
+            $api->post('{id}/asociar-cfdi', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@asociarCFDI')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@destroy')->where(['id' => '[0-9]+']);
+        });
+
         $api->group(['prefix' => 'contabilidad-electronica'], function ($api) {
             $api->post('xml', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@getDatosXML');
             $api->post('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ContabilidadElectronicaController@descargar');
@@ -343,6 +364,8 @@ $api->version('v1', function ($api) {
             $api->post('busquedaExcel', 'App\Http\Controllers\v1\CTPQ\PolizaController@busquedaExcel');
             $api->get('descargar-zip', 'App\Http\Controllers\v1\CTPQ\PolizaController@getZip');
             $api->post('actualizar-cfdi', 'App\Http\Controllers\v1\CTPQ\PolizaController@getAsociacionCFDI');
+            $api->post('{id}/lista-cfdi-asociar', 'App\Http\Controllers\v1\CTPQ\PolizaController@listarPosiblesCFDI')->where(['id' => '[0-9]+']);
+            $api->post('asociar-cfdi', 'App\Http\Controllers\v1\CTPQ\PolizaController@asociarCFDI');
         });
         $api->group(['prefix' => 'poliza-cfdi'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@index');
