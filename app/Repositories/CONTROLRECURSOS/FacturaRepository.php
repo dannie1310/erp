@@ -22,7 +22,7 @@ class FacturaRepository extends Repository implements RepositoryInterface
 
     public function getProveedor(Array $datos){
         $proveedor = Proveedor::whereRaw("REPLACE(RFC,'-','') = '".str_replace("-","",$datos["rfc"])."'")
-            //->where('Estatus', 1)
+            ->where('Estatus', 1)
             ->whereIn('TipoProveedor',[1,2])->first();
         $salida = null;
         if($proveedor){
@@ -38,8 +38,7 @@ class FacturaRepository extends Repository implements RepositoryInterface
 
     public function getEmpresa(Array $datos){
         $empresa = Empresa::where("RFC","=",$datos["rfc"])
-            //->where('Estatus', 1)
-        ->first();
+            ->where('Estatus', 1)->first();
         $salida = null;
 
         if($empresa){

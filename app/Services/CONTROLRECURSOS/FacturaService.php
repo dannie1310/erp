@@ -143,21 +143,9 @@ class FacturaService
         $efo = $this->repository->getEFO($arreglo_cfd["emisor"]["rfc"]);
         if ($efo) {
             if ($efo->estado == 0) {
-                event(new IncidenciaCI(
-                    ["id_tipo_incidencia" => 8,
-                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
-                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
-                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
-                ));
                 abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
             } else if ($efo->estado == 2) {
-                event(new IncidenciaCI(
-                    ["id_tipo_incidencia" => 9,
-                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
-                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
-                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
-                ));
                 abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
             }
@@ -188,6 +176,7 @@ class FacturaService
         $this->validaFechas($emision, $vencimiento);
         $factura = $this->repository->registrar($data);
         $this->registrarXML($data, $factura);
+        $this->guardarXML($data);
         return $factura;
     }
 
@@ -281,7 +270,7 @@ class FacturaService
     {
         $xml_split = explode('base64,', $datos['xml']);
         $xml = base64_decode($xml_split[1]);
-        Storage::disk('xml_emitidos')->put($datos["uuid"] . ".xml", $xml);
+        Storage::disk('xml_control_recursos')->put($datos["uuid"] . ".xml", $xml);
     }
 
 

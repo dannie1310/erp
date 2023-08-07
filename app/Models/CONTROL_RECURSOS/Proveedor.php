@@ -19,7 +19,7 @@ class Proveedor extends Model
      */
     public function scopePorRFC($query)
     {
-        //return $query->where('Estatus', 1)->whereIn('TipoProveedor',[1,2]);
+        return $query->where('Estatus', 1)->whereIn('TipoProveedor',[1,2]);
     }
 
     /**

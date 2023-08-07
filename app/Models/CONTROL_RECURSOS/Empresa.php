@@ -19,7 +19,7 @@ class Empresa extends Model
      */
     public function scopeActivo($query)
     {
-       // return $query->where('Estatus', 1);
+       return $query->where('Estatus', 1);
     }
 
     /**
