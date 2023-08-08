@@ -79,6 +79,7 @@ class FacturaService
     {
         $archivo_xml = $data["factura"];
         $arreglo_cfd = $this->getArregloCFD($archivo_xml);
+        $this->validaCFDI($arreglo_cfd['uuid']);
         return $arreglo_cfd;
     }
 
@@ -160,6 +161,7 @@ class FacturaService
 
     public function store(array $data)
     {
+        $this->validaCFDI($data['uuid']);
         $arreglo_cfd = $this->getArregloCFD($data["archivo"]);
         $this->validaExistenciaRepositorio($arreglo_cfd);
         $this->validaProveedor($arreglo_cfd, $data["id_proveedor"]);
@@ -168,7 +170,6 @@ class FacturaService
         }
 
         $this->validaTotal($data["total"],$arreglo_cfd["total"],0);
-        $this->validaCFDI($data["complemento"]["uuid"]);
         $emision = New DateTime($data["emision"]);
         $emision->setTimezone(new DateTimeZone('America/Mexico_City'));
 
