@@ -94,6 +94,7 @@
                     idtipodocto: solicitud.tipo_documento,
                     buttons: $.extend({}, {
                         id: solicitud.id,
+                        edit: self.$root.can('editar_factura_recursos') ? true : false,
                     })
                 }));
             },

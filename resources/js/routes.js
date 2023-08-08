@@ -4279,6 +4279,19 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/edit',
+                        name: 'factura-recurso-edit',
+                        props: true,
+                        component: require('./components/control-recursos/factura/Edit').default,
+                        meta: {
+                            title: 'Editar Factura',
+                            breadcrumb: {parent: 'factura-recurso', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: 'editar_factura_recursos',
+                            general: true
+                        }
+                    },
                 ]
             },
         ]
