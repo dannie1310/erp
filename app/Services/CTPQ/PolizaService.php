@@ -351,6 +351,11 @@ class PolizaService
         return $this->repository->asociarCFDI($data);
     }
 
+    public function setDesasociarCFDI($data)
+    {
+        return $this->repository->desasociarCFDI($data);
+    }
+
     public function asociarCFDI()
     {
         $solicitud =SolicitudAsociacionCFDI::getSolicitudActiva();

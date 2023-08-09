@@ -4,7 +4,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <poliza-partial-show v-bind:id="this.id" v-bind:id_empresa="this.idEmpresaContabilidad"></poliza-partial-show>
+                        <poliza-partial-show v-bind:id="this.id" v-bind:id_empresa="this.idEmpresaContabilidad" v-bind:para_eliminar="true"></poliza-partial-show>
                         <poliza-contpaq-lista-posibles-cfdi></poliza-contpaq-lista-posibles-cfdi>
                     </div>
                     <div class="card-footer">
@@ -25,13 +25,12 @@
 import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
 import PolizaPartialShow from "../../contabilidad-general/poliza/partials/PartialShow";
 import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
-import ListaCfdiAsociar from "../../contabilidad-general/poliza/ListaCFDI.vue";
 import PolizaContpaqListaPosiblesCfdi from "../../contabilidad-general/poliza/asociacion/partials/ListaPosiblesCFDI.vue";
 
 export default {
     name: "poliza-asocia-cfdi",
     props : ['id'],
-    components: {PolizaContpaqListaPosiblesCfdi, ListaCfdiAsociar, PDFPoliza, PolizaPartialShow, CFDI},
+    components: {PolizaContpaqListaPosiblesCfdi, PDFPoliza, PolizaPartialShow, CFDI},
     data() {
         return {
             cargando :false,

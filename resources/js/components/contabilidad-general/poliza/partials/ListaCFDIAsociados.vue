@@ -25,7 +25,6 @@
                     </thead>
                     <tbody v-if="poliza.cfdi.data.length > 0">
                         <tr v-for="(cfdi, i) in poliza.cfdi.data" >
-                           <tr v-for="(cfdi, i) in poliza.cfdi.data" >
                             <td>{{parseInt(i)+1}}</td>
                             <td>{{cfdi.tipo_comprobante}}</td>
                             <td>{{cfdi.fecha_corta_format}}</td>
@@ -42,17 +41,18 @@
                                 {{parseFloat(cfdi.total).formatMoney(2)}}
                             </td>
                             <td style="text-align: center">
-
-
+                                <button type="button" class="btn btn-sm btn-danger" title="Desasociar"
+                                        @click="desasociar(cfdi.id)"
+                                        v-if="para_eliminar && ($root.can('asociar-cfdi-a-poliza-contpaq',true) || $root.can('asociar-cfdi-a-poliza-contpaq-desde-sao'))">
+                                    <i class="fa fa-unlink"></i>
+                                </button>
                             </td>
                         </tr>
                     </tbody>
                     <tbody v-else>
                         <tr style="background-color: lightgrey">
                             <td colspan="11" style="text-align: center; font-size: 12px; font-style: italic">
-
                                 <strong>Sin CFDI Asociados</strong>
-
                             </td>
                         </tr>
                     </tbody>
@@ -69,44 +69,33 @@ import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI.vue";
 
 export default {
     name: "poliza-contpaq-lista-cfdi-asociados",
-    props : ['id'],
+    props : ['id','para_eliminar'],
     components: {CFDI},
     data() {
         return {
             cargando :false,
             cfdi_store : [],
-
         }
     },
     mounted() {
     },
     methods :{
-        updateSeleccionado(cfdi) {
-            this.$store.commit('contabilidadGeneral/poliza/SET_POSIBLE_CFDI', cfdi);
-
-            let new_value = false;
-
-
-            if(cfdi.seleccionado === true){
-                new_value = false;
-            } else {
-                new_value = true;
-            }
-            this.$store.commit('contabilidadGeneral/poliza/UPDATE_ATTRIBUTE_POSIBLE_CFDI', {attribute: 'seleccionado', value: new_value});
+        desasociar(id) {
+            this.cargando = true;
+            return this.$store.dispatch('contabilidadGeneral/poliza/desasociarCFDI', {
+                id_empresa: this.idEmpresaContabilidad,
+                id_cfdi: id,
+                id_poliza: this.poliza.id
+            })
+            .then(data => {
+                this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+            })
+            .finally( ()=>{
+                this.cargando = false;
+            });
         },
     },
     watch: {
-        checkbox_toggle(value){
-            if(value == 1){
-                this.cfdis.forEach(function(element) {
-                    element.seleccionado = 1;
-                });
-            } else {
-                this.cfdis.forEach(function(element) {
-                    element.seleccionado = 0;
-                });
-            }
-        },
     },
     computed: {
         poliza(){

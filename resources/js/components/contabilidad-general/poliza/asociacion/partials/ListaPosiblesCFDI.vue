@@ -5,7 +5,7 @@
             <hr>
             <div class="col-md-12 table-responsive" v-if="poliza && poliza.posibles_cfdi">
                 <strong>
-                    Lista de posibles CFDI
+                    Lista de posibles CFDI´s
                 </strong>
                 <table class="table table-sm table-fs-sm table-bordered">
                     <thead>
