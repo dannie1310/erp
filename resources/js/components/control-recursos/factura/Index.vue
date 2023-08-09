@@ -36,7 +36,7 @@
                 { title: 'Fecha', thClass: 'th_c100', field: 'fecha', sortable: true,thComp: require('../../globals/th-Date').default},
                 { title: 'Folio', field: 'foliodocto',sortable: true,thClass: 'th_c100',  thComp: require('../../globals/th-Filter').default},
                 { title: 'Concepto', field: 'concepto',sortable: true,thComp: require('../../globals/th-Filter').default},
-                { title: 'Total', field: 'total', tdClass: 'money th_200',sortable: true, thComp: require('../../globals/th-Filter').default},
+                { title: 'Total', field: 'total', tdClass: 'money th_300',sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Moneda', field: 'idmoneda',thClass: 'th_c150',sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Acciones', field: 'buttons',thClass: 'th_c200', tdComp: require('./partials/ActionButtons').default},
             ],

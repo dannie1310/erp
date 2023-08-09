@@ -31,7 +31,7 @@
                 <hr />
                 <div class="row">
                     <div class="col-md-1">
-                        <div class="form-group row error-content">
+                        <div class="form-group error-content">
                             <label for="idserie" class="col-form-label">Serie:</label>
                             <select class="form-control"
                                     data-vv-as="Serie"
@@ -47,7 +47,7 @@
                         </div>
                     </div>
                     <div class="col-md-1">
-                        <div class="form-group row error-content">
+                        <div class="form-group error-content">
                             <label for="tipo" class="col-form-label">Tipo Factura:</label>
                             <select class="form-control"
                                     data-vv-as="Tipo"
@@ -319,8 +319,6 @@ export default {
                     data: formData, config: {params: {_method: 'POST'}}
                 }).then(data => {
                     this.data = data
-                    this.data.emision = new Date(this.data.fecha);
-                    this.data.vencimiento = new Date(this.data.fecha);
                     this.fechasDeshabilitadas.from= new Date(this.data.fecha);
                 }).finally(() => {
                     this.cargando = false
@@ -333,7 +331,12 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    this.store()
+                    if(moment(this.data.vencimiento).format('YYYY/MM/DD') < moment(this.data.fecha).format('YYYY/MM/DD'))
+                    {
+                        swal('¡Error!', 'La fecha de facturación no puede ser posterior a la fecha de vencimiento.', 'error')
+                    }else {
+                        this.store()
+                    }
                 }
             });
         },

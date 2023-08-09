@@ -95,7 +95,8 @@ class FacturaService
         $arreglo["serie"] = $arreglo_cfd["serie"];
         $arreglo["otros"] = $arreglo_cfd["total_impuestos_retenidos"];
         $arreglo["folio"] = $arreglo_cfd["folio"];
-        $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("Y-m-d");
+        $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("m/d/Y");
+        $arreglo["vencimiento"] = $arreglo_cfd["fecha"]->format("m/d/Y");
         $arreglo["fecha_hora"] = $arreglo_cfd["fecha_hora"];
         $arreglo["version"] = $arreglo_cfd["version"];
         $arreglo["moneda"] = $arreglo_cfd["moneda"];
@@ -170,8 +171,6 @@ class FacturaService
         }
 
         $this->validaTotal($data["total"],$arreglo_cfd["total"],0);
-        $emision = New DateTime($data["emision"]);
-        $emision->setTimezone(new DateTimeZone('America/Mexico_City'));
 
         $vencimiento = New DateTime($data["vencimiento"]);
         $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
@@ -179,7 +178,7 @@ class FacturaService
         $fecha = New DateTime($data["fecha"]);
         $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
 
-        $this->validaFechas($emision, $vencimiento);
+        $this->validaFechas($fecha, $vencimiento);
         $factura = $this->repository->registrar($data);
         $this->registrarXML($data, $factura);
         $this->guardarXML($data);

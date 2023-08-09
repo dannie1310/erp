@@ -29,12 +29,16 @@ class FacturaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'folio_format' => $model->folio_con_serie,
+            'folio' => $model->FolioDocto,
             'concepto' => $model->Concepto,
             'fecha' => $model->Fecha,
             'fecha_format' => $model->fecha_format,
             'total_format' => $model->total_format,
             'moneda' => $model->moneda_descripcion,
             'serie' => $model->serie_descripcion,
+            'id_serie' => $model->IdSerie,
+            'id_tipo' => $model->IdTipoDocto,
+            'id_proveedor' => $model->IdProveedor,
             'tipo_documento' => $model->tipo_documento,
             'empresa_descripcion' => $model->empresa_descripcion,
             'proveedor_descripcion' => $model->proveedor_descripcion,
@@ -47,7 +51,10 @@ class FacturaTransformer extends TransformerAbstract
             'departamento' => $model->Departamento,
             'alias_dep' => $model->Alias_Depto,
             'uuid' => $model->uuid,
-            'fecha_vencimiento_format' => $model->fecha_vencimiento_format
+            'fecha_vencimiento_format' => $model->fecha_vencimiento_format,
+            'vencimiento_editar' => $model->vencimiento_editar,
+            'vencimiento' => $model->Vencimiento,
+            'otros' => $model->OtrosImpuestos
         ];
     }
 }

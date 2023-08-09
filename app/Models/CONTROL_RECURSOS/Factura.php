@@ -40,6 +40,12 @@ class Factura extends Documento
         }
     }
 
+    public function getVencimientoEditarAttribute()
+    {
+        $date = date_create($this->Vencimiento);
+        return date_format($date,"m/d/Y");
+    }
+
     /**
      * Métodos
      */
@@ -47,9 +53,6 @@ class Factura extends Documento
     {
         /** EL front envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
          * */
-        $emision = New DateTime($data["emision"]);
-        $emision->setTimezone(new DateTimeZone('America/Mexico_City'));
-
         $vencimiento = New DateTime($data["vencimiento"]);
         $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
 
@@ -57,6 +60,7 @@ class Factura extends Documento
         $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
 
         $usuario = Usuario::where('idusuario',auth()->id())->first();
+
         return $this->create([
             'FolioDocto' => $data['folio'],
             'IdTipoDocto' => $data['idtipodocto'],
