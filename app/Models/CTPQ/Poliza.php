@@ -189,12 +189,11 @@ class Poliza extends Model
 
     public function scopeConCFDI($query)
     {
-
         $base =  Parametro::find(1);
         DB::purge('cntpqom');
         Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
-        $bd_exp = Config::get('database.connections.cntpqom.database');
-        return $query->Join($bd_exp.".dbo.Expedientes",$bd_exp.".dbo.Expedientes.Guid_Relacionado","=","polizas.Guid");
+        return $query
+        ->Has("expedientes");
     }
 
     /**
