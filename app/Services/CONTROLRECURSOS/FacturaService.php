@@ -288,7 +288,7 @@ class FacturaService
     private function validaFechas($emision, $vencimiento)
     {
         if ($emision > $vencimiento) {
-            abort(500, "La fecha de emisión no puede ser mayor a la fecha de vencimiento");
+            abort(500, "La fecha de facturación no puede ser mayor a la fecha de vencimiento");
         }
     }
 
