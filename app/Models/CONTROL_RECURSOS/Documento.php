@@ -34,7 +34,9 @@ class Documento extends Model
         'TC',
         'Creo',
         'Estatus',
-        'Ubicacion'
+        'Ubicacion',
+        'tipo_cambio_excepcion',
+        'uuid'
     ];
 
     protected static function boot()

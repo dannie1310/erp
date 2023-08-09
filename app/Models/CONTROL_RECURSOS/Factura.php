@@ -82,6 +82,8 @@ class Factura extends Documento
             'Departamento' => $usuario->departamento ? $usuario->departamento->departamento : '',
             'IdSerie' => $data['idserie'],
             'TC' => $data['tipo_cambio'],
+            'tipo_cambio_excepcion'=> $data['tipo_cambio_excepcion'],
+            'uuid' => $data['uuid'],
             'Creo' => auth()->id(),
             'Estatus' => $data['idtipodocto'] == 1 ? 1 : 5,
             'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : ''

@@ -124,4 +124,9 @@ class FacturaRepository extends Repository implements RepositoryInterface
     {
         return $this->model->registrar($data);
     }
+
+    public function buscarDocumentoUuid($uuid)
+    {
+        return Factura::where('uuid', $uuid)->first();
+    }
 }
