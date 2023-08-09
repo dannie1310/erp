@@ -15,6 +15,7 @@ use App\Repositories\CONTROLRECURSOS\FacturaRepository as Repository;
 use App\Utils\CFD;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class FacturaService
@@ -179,10 +180,17 @@ class FacturaService
         $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
 
         $this->validaFechas($fecha, $vencimiento);
-        $factura = $this->repository->registrar($data);
-        $this->registrarXML($data, $factura);
-        $this->guardarXML($data);
-        return $factura;
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $factura = $this->repository->registrar($data);
+            $this->registrarXML($data, $factura);
+            $this->guardarXML($data);
+            DB::connection('controlrec')->commit();
+            return $factura;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 
     private function validaExistenciaRepositorio($arreglo_cfd)
@@ -278,7 +286,6 @@ class FacturaService
         Storage::disk('xml_control_recursos')->put($datos["uuid"] . ".xml", $xml);
     }
 
-
     public function registrarXML($data, $factura)
     {
         CFDSAT::create([
@@ -333,5 +340,10 @@ class FacturaService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->show($id)->editar($data);
     }
 }

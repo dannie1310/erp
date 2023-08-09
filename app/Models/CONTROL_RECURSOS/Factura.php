@@ -6,6 +6,7 @@ use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Support\Facades\DB;
 
 class Factura extends Documento
 {
@@ -85,5 +86,27 @@ class Factura extends Documento
             'Estatus' => $data['idtipodocto'] == 1 ? 1 : 5,
             'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : ''
         ]);
+    }
+
+    public function editar(array $data)
+    {
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $vencimiento = New DateTime($data["vencimiento"]);
+            $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->update([
+                'IdTipoDocto' => $data['id_tipo'],
+                'IdProveedor' => $data["id_proveedor"],
+                "Vencimiento" => $vencimiento->format('Y-m-d'),
+                'Concepto' => $data["concepto"],
+                'IdSerie' => $data['id_serie'],
+                'Estatus' => $data['id_tipo'] == 1 ? 1 : 5
+            ]);
+            DB::connection('controlrec')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 }

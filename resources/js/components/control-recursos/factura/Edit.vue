@@ -20,7 +20,7 @@
                         <h6>{{factura.fecha_format}}</h6>
                     </div>
                 </div>
-                 <div class="col-md-2">
+                 <div class="col-md-1">
                     <div class="form-group error-content">
                         <h6><b>Folio:</b></h6>
                         <h6>{{factura.folio}}</h6>
@@ -42,7 +42,7 @@
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <div class="form-group error-content">
                         <label for="tipo" class="col-form-label">Tipo Factura:</label>
                         <select class="form-control"
@@ -250,13 +250,12 @@ export default {
         },
         update() {
             this.factura.vencimiento = this.factura.vencimiento_editar;
-            return this.$store.dispatch('contratos/estimacion/update', {
+            return this.$store.dispatch('controlRecursos/factura/update', {
                 id: this.id,
                 data: this.factura
+            }).then((data) => {
+                this.salir()
             })
-                .then((data) => {
-                   this.salir()
-                })
         },
     },
 }
