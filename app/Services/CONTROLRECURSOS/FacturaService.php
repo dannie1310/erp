@@ -79,6 +79,7 @@ class FacturaService
     {
         $archivo_xml = $data["factura"];
         $arreglo_cfd = $this->getArregloCFD($archivo_xml);
+        $this->validaCFDI($arreglo_cfd['uuid']);
         return $arreglo_cfd;
     }
 
@@ -128,13 +129,18 @@ class FacturaService
 
         $this->validaEFO($arreglo);
         if (!$arreglo["proveedor_bd"]) {
-            abort(500, "El emisor del comprobante no esta dado de alta en el catálogo de proveedores de control recursos; la factura no puede ser registrada.");
+            abort(500, "El emisor (".$arreglo["emisor"]["rfc"].")del comprobante no esta dado de alta en el catálogo de proveedores de control recursos; la factura no puede ser registrada.");
+        }
+
+        if (!$arreglo["empresa_bd"]) {
+            abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de proveedores de control recursos; la factura no puede ser registrada.");
         }
         $arreglo["id_moneda"] = $this->repository->getMoneda($arreglo["moneda"]);
         $arreglo["monedas"] = $this->repository->getMonedas();
         $arreglo["subtotal"] = $arreglo_cfd["subtotal"];
         $arreglo["descuento"] = $arreglo_cfd["descuento"];
         $arreglo["tasa_iva"] = $arreglo_cfd["tasa_iva"] * 100;
+        $arreglo["uuid"] = $arreglo_cfd["uuid"];
         return $arreglo;
     }
 
@@ -155,6 +161,7 @@ class FacturaService
 
     public function store(array $data)
     {
+        $this->validaCFDI($data['uuid']);
         $arreglo_cfd = $this->getArregloCFD($data["archivo"]);
         $this->validaExistenciaRepositorio($arreglo_cfd);
         $this->validaProveedor($arreglo_cfd, $data["id_proveedor"]);
@@ -163,7 +170,6 @@ class FacturaService
         }
 
         $this->validaTotal($data["total"],$arreglo_cfd["total"],0);
-        $this->validaCFDI($data["complemento"]["uuid"]);
         $emision = New DateTime($data["emision"]);
         $emision->setTimezone(new DateTimeZone('America/Mexico_City'));
 
@@ -200,7 +206,7 @@ class FacturaService
     private function validaProveedor($arreglo_cfd, $id_proveedor_seleccionado)
     {
         $proveedor_seleccionado = $this->repository->getBuscarProveedor($id_proveedor_seleccionado);
-        if ((string) $arreglo_cfd["emisor"]["rfc"] != (string) $proveedor_seleccionado->RFC)
+        if ((string) $arreglo_cfd["emisor"]["rfc"] != (string) str_replace('-','',$proveedor_seleccionado->RFC))
         {
             abort(500, "El proveedor seleccionado (" . $proveedor_seleccionado->RFC . ") no corresponde al RFC del emisor en el comprobante digital (" . $arreglo_cfd["emisor"]["rfc"] . ")");
         }
@@ -268,7 +274,7 @@ class FacturaService
 
     private function guardarXML($datos)
     {
-        $xml_split = explode('base64,', $datos['xml']);
+        $xml_split = explode('base64,', $datos['archivo']);
         $xml = base64_decode($xml_split[1]);
         Storage::disk('xml_control_recursos')->put($datos["uuid"] . ".xml", $xml);
     }

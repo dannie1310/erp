@@ -46,7 +46,6 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-1"></div>
                     <div class="col-md-1">
                         <div class="form-group row error-content">
                             <label for="tipo" class="col-form-label">Tipo Factura:</label>
@@ -141,7 +140,7 @@
                     <div class="col-md-12">
                         <div class="form-group error-content">
                             <label for="concepto">Concepto:</label>
-                            <textarea
+                            <input
                                 name="concepto"
                                 id="concepto"
                                 class="form-control"
@@ -149,7 +148,7 @@
                                 v-validate="{required: true}"
                                 data-vv-as="Concepto"
                                 :class="{'is-invalid': errors.has('concepto')}"
-                            ></textarea>
+                            />
                             <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
                         </div>
                     </div>
@@ -345,7 +344,7 @@ export default {
             this.data.nombre_archivo = this.file_carga_name;
             return this.$store.dispatch('controlRecursos/factura/store', this.$data.data)
                 .then(data => {
-
+                    this.salir();
                 }).finally( ()=>{
                     this.cargando = false;
                 });
