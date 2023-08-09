@@ -25,7 +25,6 @@
                     </thead>
                     <tbody v-if="poliza.cfdi.data.length > 0">
                         <tr v-for="(cfdi, i) in poliza.cfdi.data" >
-                           <tr v-for="(cfdi, i) in poliza.cfdi.data" >
                             <td>{{parseInt(i)+1}}</td>
                             <td>{{cfdi.tipo_comprobante}}</td>
                             <td>{{cfdi.fecha_corta_format}}</td>
@@ -53,9 +52,7 @@
                     <tbody v-else>
                         <tr style="background-color: lightgrey">
                             <td colspan="11" style="text-align: center; font-size: 12px; font-style: italic">
-
                                 <strong>Sin CFDI Asociados</strong>
-
                             </td>
                         </tr>
                     </tbody>
