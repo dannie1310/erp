@@ -160,10 +160,10 @@
                 </div>
                 <div class="col-md-5"></div>
                 <div class="col-md-5">
-                    <div class="form-group error-content float-right"> <label for="monesa">TC:</label></div>
+                    <div class="form-group error-content float-right"> <label for="tipo_cambio">TC:</label></div>
                 </div>
                 <div class="col-md-2">
-                    <div class="form-group error-content float-right">{{factura.tc}}  </div>
+                    <div class="form-group error-content float-right">{{factura.tc}}</div>
                 </div>
             </div>
         </div>

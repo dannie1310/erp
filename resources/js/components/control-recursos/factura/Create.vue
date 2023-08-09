@@ -191,7 +191,7 @@
                     <div class="col-md-5"></div>
 
                     <div class="col-md-5">
-                        <div class="form-group error-content float-right"> <label for="monesa">Moneda:</label></div>
+                        <div class="form-group error-content float-right"> <label for="moneda">Moneda:</label></div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group error-content float-right">{{data.moneda}}  </div>

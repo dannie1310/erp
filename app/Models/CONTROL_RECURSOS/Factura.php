@@ -81,7 +81,7 @@ class Factura extends Documento
             'Alias_Depto' => $usuario->departamento ? $usuario->departamento->departamento_abreviatura : '',
             'Departamento' => $usuario->departamento ? $usuario->departamento->departamento : '',
             'IdSerie' => $data['idserie'],
-            'TC' => 1,
+            'TC' => $data['tipo_cambio'],
             'Creo' => auth()->id(),
             'Estatus' => $data['idtipodocto'] == 1 ? 1 : 5,
             'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : ''

@@ -8,6 +8,7 @@ use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Factura;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\TipoDocto;
+use App\Models\IGH\TipoCambio;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
@@ -138,6 +139,16 @@ class FacturaService
             abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de proveedores de control recursos; la factura no puede ser registrada.");
         }
         $arreglo["id_moneda"] = $this->repository->getMoneda($arreglo["moneda"]);
+        if($arreglo_cfd['tipo_cambio'] == '') {
+            if($arreglo_cfd['moneda'] == 'MXN') {
+                $arreglo['tipo_cambio'] = 1;
+            }else{
+                $tipo_cambio = TipoCambio::where('moneda', $arreglo["id_moneda"])->orderBy('fecha','desc')->first();
+                $arreglo['tipo_cambio'] = $tipo_cambio->tipo_cambio;
+            }
+        }else{
+            $arreglo['tipo_cambio'] = $arreglo_cfd['tipo_cambio'];
+        }
         $arreglo["monedas"] = $this->repository->getMonedas();
         $arreglo["subtotal"] = $arreglo_cfd["subtotal"];
         $arreglo["descuento"] = $arreglo_cfd["descuento"];
