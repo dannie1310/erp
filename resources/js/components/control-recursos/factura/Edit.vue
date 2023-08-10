@@ -84,7 +84,7 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group error-content">
-                        <h6>Proveedor: </h6>
+                        <h6><b>Proveedor:</b></h6>
                         <h6>{{factura.proveedor_descripcion}}</h6>
                     </div>
                 </div>
