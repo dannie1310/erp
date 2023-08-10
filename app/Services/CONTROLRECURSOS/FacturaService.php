@@ -151,7 +151,6 @@ class FacturaService
         }else{
             $arreglo['tipo_cambio'] = $arreglo_cfd['tipo_cambio'];
         }
-        $arreglo["monedas"] = $this->repository->getMonedas();
         $arreglo["subtotal"] = $arreglo_cfd["subtotal"];
         $arreglo["descuento"] = $arreglo_cfd["descuento"];
         $arreglo["tasa_iva"] = $arreglo_cfd["tasa_iva"] * 100;

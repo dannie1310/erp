@@ -81,10 +81,10 @@
                     </div>
                     <div class="col-md-6" v-if="data && data.empresa_bd">
                         <div class="form-group error-content">
-                            <h6>Empresa: </h6>
+                            <h6><b>Empresa:</b></h6>
                             <h6>{{data.empresa_bd.razon_social}}</h6>
+                        </div>
                     </div>
-                </div>
                 </div>
                 <div class="row" v-if="data">
                     <div class="col-md-2">
@@ -119,20 +119,10 @@
                             <div class="invalid-feedback" v-show="errors.has('vencimiento')">{{ errors.first('vencimiento') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="form-group row error-content">
-                            <label for="id_proveedor">Proveedor:</label>
-                            <select class="form-control"
-                                    data-vv-as="Proveedor"
-                                    id="id_proveedor"
-                                    name="id_proveedor"
-                                    :error="errors.has('id_proveedor')"
-                                    v-validate="{required: true}"
-                                    v-model="data.id_proveedor">
-                                <option value>-- Selecionar --</option>
-                                <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
-                            </select>
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
+                    <div class="col-md-6" v-if="data && data.proveedor_bd">
+                        <div class="form-group error-content">
+                            <h6><b>Proveedor:</b></h6>
+                            <h6>{{data.proveedor_bd.razon_social}}</h6>
                         </div>
                     </div>
                 </div>
@@ -234,8 +224,6 @@ export default {
             es: es,
             cargando: false,
             series: [],
-            empresas: [],
-            proveedores: [],
             idserie: '',
             idtipodocto: '',
             file_carga : null,
@@ -249,8 +237,6 @@ export default {
         this.file_carga = null
         this.file_carga_name = null
         this.data = null
-        this.getEmpresas();
-        this.getProveedores();
         this.getSeries();
     },
     methods : {
@@ -267,22 +253,6 @@ export default {
             })
             .finally(() => {
                 this.cargando = false;
-            })
-        },
-        getEmpresas() {
-            return this.$store.dispatch('controlRecursos/empresa/index', {
-                params: {sort: 'RazonSocial', order: 'asc', scope:'activo'}
-            })
-                .then(data => {
-                    this.empresas = data.data;
-                })
-        },
-        getProveedores() {
-            this.cargando = true;
-            return this.$store.dispatch('controlRecursos/proveedor/index', {
-                params: {sort: 'RazonSocial', order: 'asc', scope:'porRFC'}
-            }).then(data => {
-                this.proveedores = data.data;
             })
         },
         createImage(file) {

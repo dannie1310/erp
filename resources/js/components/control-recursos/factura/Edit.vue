@@ -83,19 +83,9 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group row error-content">
-                        <label for="id_proveedor">Proveedor:</label>
-                        <select class="form-control"
-                                data-vv-as="Proveedor"
-                                id="id_proveedor"
-                                name="id_proveedor"
-                                :error="errors.has('id_proveedor')"
-                                v-validate="{required: true}"
-                                v-model="factura.id_proveedor">
-                            <option value>-- Selecionar --</option>
-                            <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
-                        </select>
-                        <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
+                    <div class="form-group error-content">
+                        <h6>Proveedor: </h6>
+                        <h6>{{factura.proveedor_descripcion}}</h6>
                     </div>
                 </div>
             </div>
@@ -196,11 +186,9 @@ export default {
             cargando: false,
             factura : null,
             series: [],
-            proveedores: []
         }
     },
     mounted() {
-        this.getProveedores();
         this.getSeries();
         this.find();
     },
@@ -227,13 +215,6 @@ export default {
                 params: {sort: 'descripcion', order: 'asc'}
             }).then(data => {
                 this.series = data.data;
-            })
-        },
-        getProveedores() {
-            return this.$store.dispatch('controlRecursos/proveedor/index', {
-                params: {sort: 'RazonSocial', order: 'asc', scope:'porRFC'}
-            }).then(data => {
-                this.proveedores = data.data;
             })
         },
         validate() {
