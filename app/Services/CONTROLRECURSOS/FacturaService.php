@@ -48,9 +48,9 @@ class FacturaService
             $this->repository->whereIn(['IdTipoDocto', $tipo]);
         }
 
-        if (isset($data['fecha']))
+        if (isset($data['Fecha']))
         {
-            $this->repository->whereBetween( ['Fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+            $this->repository->whereBetween( ['Fecha', [ request( 'Fecha' )." 00:00:00",request( 'Fecha' )." 23:59:59"]] );
         }
 
         if (isset($data['foliodocto']))
