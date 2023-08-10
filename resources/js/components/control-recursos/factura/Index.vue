@@ -33,7 +33,7 @@
                 { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                 { title: 'Serie', field: 'idserie', thClass: 'th_c80', sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Tipo Documento', field: 'idtipodocto', thClass: 'th_c150',sortable: true, thComp: require('../../globals/th-Filter').default},
-                { title: 'Fecha', thClass: 'th_c100', field: 'fecha', sortable: true,thComp: require('../../globals/th-Date').default},
+                { title: 'Fecha', thClass: 'th_c100', field: 'Fecha', sortable: true,thComp: require('../../globals/th-Date').default},
                 { title: 'Folio', field: 'foliodocto',sortable: true,thClass: 'th_c100',  thComp: require('../../globals/th-Filter').default},
                 { title: 'Concepto', field: 'concepto',sortable: true,thComp: require('../../globals/th-Filter').default},
                 { title: 'Total', field: 'total', tdClass: 'right th_c220', sortable: true, thComp: require('../../globals/th-Filter').default},
@@ -85,7 +85,7 @@
                 self.$data.data = []
                 self.$data.data = solicitudes.map((solicitud, i) => ({
                     index: (i + 1) + self.query.offset,
-                    fecha: solicitud.fecha,
+                    Fecha: solicitud.fecha,
                     concepto: solicitud.concepto,
                     foliodocto: solicitud.folio_format,
                     total: solicitud.total_format,

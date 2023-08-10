@@ -48,9 +48,9 @@ class FacturaService
             $this->repository->whereIn(['IdTipoDocto', $tipo]);
         }
 
-        if (isset($data['fecha']))
+        if (isset($data['Fecha']))
         {
-            $this->repository->whereBetween( ['Fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+            $this->repository->whereBetween( ['Fecha', [ request( 'Fecha' )." 00:00:00",request( 'Fecha' )." 23:59:59"]] );
         }
 
         if (isset($data['foliodocto']))
@@ -151,7 +151,6 @@ class FacturaService
         }else{
             $arreglo['tipo_cambio'] = $arreglo_cfd['tipo_cambio'];
         }
-        $arreglo["monedas"] = $this->repository->getMonedas();
         $arreglo["subtotal"] = $arreglo_cfd["subtotal"];
         $arreglo["descuento"] = $arreglo_cfd["descuento"];
         $arreglo["tasa_iva"] = $arreglo_cfd["tasa_iva"] * 100;
