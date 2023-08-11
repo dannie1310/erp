@@ -152,6 +152,16 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->hasOne(Firmante::class,"id_usuario", "idusuario");
     }
 
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class, 'iddepartamento', 'iddepartamento');
+    }
+
+    public function ubicacion()
+    {
+        return $this->belongsTo(Ubicacion::class, 'idubicacion','idubicacion');
+    }
+
     public function scopeSolicitudEdicion($query, $solicitudes_edicion){
         $arreglo_usuarios = [];
         foreach($solicitudes_edicion as $solicitud)

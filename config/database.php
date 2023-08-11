@@ -324,6 +324,22 @@ return [
             'strict' => true,
             'engine' => null,
         ],
+
+        'controlrec' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_CONTROL_RECURSOS', '127.0.0.1'),
+            'port' => env('DB_PORT_CONTROL_RECURSOS', '3306'),
+            'database' => env('DB_DATABASE_CONTROL_RECURSOS', 'forge'),
+            'username' => env('DB_USERNAME_CONTROL_RECURSOS', 'forge'),
+            'password' => env('DB_PASSWORD_CONTROL_RECURSOS', ''),
+            'unix_socket' => env('DB_SOCKET_CONTROL_RECURSOS', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
     ],
 
     /*

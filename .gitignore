@@ -27,3 +27,4 @@ yarn-error.log
 /composer.lock
 /public/pdf_emitidos
 /public/xml_emitidos
+/public/control_recursos_facturas
