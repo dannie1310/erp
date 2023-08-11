@@ -77,7 +77,8 @@ class Poliza extends Model
         $base =  Parametro::find(1);
         DB::purge('cntpqom');
         Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
-        return $this->hasMany(Expediente::class, 'Guid_Relacionado', 'Guid');
+        return $this->hasMany(Expediente::class, 'Guid_Relacionado', 'Guid')
+            ->where("Type_Exp","=","CFDI");
     }
 
     public function usuario()
@@ -178,13 +179,11 @@ class Poliza extends Model
 
     public function scopeSinCFDI($query)
     {
-
         $base =  Parametro::find(1);
         DB::purge('cntpqom');
         Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
         $bd_exp = Config::get('database.connections.cntpqom.database');
-        return $query->leftJoin($bd_exp.".dbo.Expedientes",$bd_exp.".dbo.Expedientes.Guid_Relacionado","=","polizas.Guid")
-            ->whereNull($bd_exp.".dbo.Expedientes.Guid_Relacionado");
+        return $query->doesntHave('expedientes');
     }
 
     public function scopeConCFDI($query)
