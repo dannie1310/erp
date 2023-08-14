@@ -375,6 +375,7 @@ $api->version('v1', function ($api) {
             $api->get('/egresos-sin-cfdi-xls', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@descargarXLS');
         });
         $api->group(['prefix' => 'proveedor-sat'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ProveedorSATController@index');
             $api->get('buscarProveedoresSat', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ProveedorSATController@buscarProveedorAsociar');
         });
 
