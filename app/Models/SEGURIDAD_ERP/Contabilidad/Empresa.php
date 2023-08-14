@@ -30,6 +30,7 @@ class Empresa extends Model
         'AliasBDD',
         'SincronizacionPolizasCFDI',
         "IdEmpresaContpaq",
+        "IdEmpresaSAT",
         "GuidDSL",
         "con_acceso_other_metadata",
         "con_acceso_other_content",
