@@ -30,6 +30,7 @@ class CuentaTransformer extends TransformerAbstract
             'cuenta' => $model->Codigo,
             'descripcion' => $model->Nombre,
             'cuenta_format' =>$model->cuenta_completa_format,
+            'requiere_proveedor' => $model->requiere_proveedor,
         ];
     }
 
