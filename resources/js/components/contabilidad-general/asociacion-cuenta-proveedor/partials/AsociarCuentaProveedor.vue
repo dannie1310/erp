@@ -1,9 +1,12 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Asociar">
+        <span v-if="txt" @click="find" style="cursor: pointer; text-decoration: underline; color: #003eff" title="Buscar proveedor">
+            {{txt}}
+        </span>
+        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Buscar proveedor" v-else>
             <i class="fas fa-exchange-alt"></i>
         </button>
-        <div class="modal fade" ref="modal" role="dialog">
+        <div class="modal fade" ref="modal_cuenta" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content" >
                     <div class="modal-header">
@@ -67,7 +70,7 @@
 <script>
     export default {
         name: "asociacion-cuenta-proveedor-show",
-        props: ['id_empresa','id_cuenta', 'nombre'],
+        props: ['id_empresa','id_cuenta', 'nombre', 'id_poliza' ,'txt'],
         data() {
             return {
                 cargando: false,
@@ -76,8 +79,8 @@
         },
         methods: {
             find(){
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show');
+                $(this.$refs.modal_cuenta).appendTo('body')
+                $(this.$refs.modal_cuenta).modal('show');
             },
             validate() {
                 this.$validator.validate().then(result => {
@@ -87,6 +90,8 @@
                 });
             },
             asociar(){
+                let _self = this;
+
                 return this.$store.dispatch('contabilidadGeneral/cuenta/asociarCuenta',
                 {
                     params: {
@@ -97,9 +102,26 @@
                 })
                 .then(data => {
                     this.$store.commit('contabilidadGeneral/cuenta/UPDATE_CUENTA', data);
-                    $(this.$refs.modal).modal('hide');
-                }).finally(() => {
 
+                    if(this.id_poliza){
+                        return this.$store.dispatch('contabilidadGeneral/poliza/find', {
+                            id: this.id_poliza,
+                            params: {
+                                include: ['movimientos_poliza.asociacion_cfdi','movimientos_poliza.cuenta.cuenta_contpaq_proveedor_sat', 'tipo', 'asociacion_cfdi', 'posibles_cfdi'],
+                                id_empresa: this.id_empresa
+                            }
+                        }).then(data => {
+                            $(_self.$refs.modal_cuenta).modal('hide');
+                            this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+                        }).finally(() => {
+
+                            this.cargando = false;
+                        });
+                    }
+
+
+                }).finally(() => {
+                        $(this.$refs.modal_cuenta).modal('hide');
                 });
             },
             loadOptions({ action, searchQuery, callback }) {
