@@ -200,7 +200,7 @@ class LayoutPasivoPartida extends Model
                         $cfdi->grado_coincidencia += 1;
                     }
                 }
-                if($cfdi->folio != "" && (strpos($referencia, $cfdi->folio)!==false
+                if($cfdi->folio != "" && $referencia != "" && (strpos($referencia, $cfdi->folio)!==false
                         || strpos($cfdi->folio, $referencia)!==false ))
                 {
                     $cfdi->grado_coincidencia += 1;

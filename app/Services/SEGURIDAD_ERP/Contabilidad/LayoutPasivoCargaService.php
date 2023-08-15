@@ -9,6 +9,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartida;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaRepository;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\ListaEmpresaRepository as Repository;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -87,8 +88,6 @@ class LayoutPasivoCargaService
         foreach ($celdas as $key => $pasivo) {
             if ($key > 0 && (
                     ($pasivo[1] != null || $pasivo[1] != '')
-                    || ($pasivo[4] != null || $pasivo[4] != '')
-                    || ($pasivo[7] != null || $pasivo[7] != '')
                     || ($pasivo[8] != null || $pasivo[8] != '')
                     || ($pasivo[9] != null || $pasivo[9] != '')
                     || ($pasivo[10] != null || $pasivo[10] != '')
@@ -98,8 +97,6 @@ class LayoutPasivoCargaService
                 )) {
                 if (
                     ($pasivo[1] == null || $pasivo[1] == '')
-                    || ($pasivo[4] == null || $pasivo[4] == '')
-                    || ($pasivo[7] == null || $pasivo[7] == '')
                     || ($pasivo[8] == null || $pasivo[8] == '')
                     || ($pasivo[9] == null || $pasivo[9] == '')
                     || ($pasivo[10] == null || $pasivo[10] == '')
@@ -119,11 +116,18 @@ class LayoutPasivoCargaService
                 }
                 try {
                     $fecha = Date::excelToDateTimeObject($pasivo[8]);
+                    $fecha = (date_format($fecha, "Y/m/d"));
                 } catch (\Exception $e) {
-                    DB::connection('seguridad')->rollBack();
-                    abort(400, 'Error en el formato de fecha de la partida ' . ($key));
+                    try{
+                        $fecha = Carbon::createFromFormat('d/m/Y', $pasivo[8]);
+                        $fecha = (date_format($fecha, "Y/m/d"));
+                    }
+                    catch (\Exception $e) {
+                        DB::connection('seguridad')->rollBack();
+                        abort(400, 'Error en el formato de fecha de la partida ' . ($key));
+                    }
                 }
-                $fecha = (date_format($fecha, "Y/m/d"));
+
 
                 $importe_mxn = $pasivo[11] > 0 ? $pasivo[9] * $pasivo[11] : $pasivo[12];
                 $saldo_mxn = $pasivo[14] > 0 ? $pasivo[13] * $pasivo[14] : $pasivo[15];
