@@ -2062,5 +2062,13 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'serie'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SerieController@index');
         });
+
+        $api->group(['prefix' => 'solicitud-recurso'], function ($api) {
+            $api->get('{id}/layout', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudRecursoController@descargaLayout')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'semana-anio'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolRecSemanaAnioController@index');
+        });
     });
 });

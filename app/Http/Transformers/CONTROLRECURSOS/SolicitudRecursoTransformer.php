@@ -2,10 +2,10 @@
 
 namespace App\Http\Transformers\CONTROLRECURSOS;
 
-use App\Models\CONTROL_RECURSOS\Serie;
+use App\Models\CONTROL_RECURSOS\SolRecurso;
 use League\Fractal\TransformerAbstract;
 
-class SerieTransformer extends TransformerAbstract
+class SolicitudRecursoTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -25,10 +25,9 @@ class SerieTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(Serie $model){
+    public function transform(SolRecurso $model){
         return [
             'id' => $model->getKey(),
-            'descripcion' => $model->Descripcion
         ];
     }
 }
