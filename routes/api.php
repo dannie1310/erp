@@ -322,6 +322,8 @@ $api->version('v1', function ($api) {
             $api->post('cargar-layout','App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@procesaLayoutPasivos');
             $api->get('{id}/valida-descargar-layout-ifs', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@validaDescargarLayoutIFS')->where(['id' => '[0-9]+']);
             $api->get('{id}/descargar-layout-ifs', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@descargarLayoutIFS')->where(['id' => '[0-9]+']);
+            $api->get('{hash}/descargar-layout-errores', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@descargarLayoutErrores');
+
         });
 
         $api->group(['prefix' => 'layout-pasivo-partida'], function ($api) {

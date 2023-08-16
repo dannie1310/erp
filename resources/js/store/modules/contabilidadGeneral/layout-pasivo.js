@@ -116,16 +116,29 @@ export default {
                                 .post(URI + 'cargar-layout', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Archivo cargado correctamente", {
-                                        icon: "success",
-                                        timer: 2000,
-                                        buttons: false
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
+                                    if(data.message != 'Error')
+                                    {
+                                        swal("Archivo cargado correctamente", {
+                                            icon: "success",
+                                            timer: 2000,
+                                            buttons: false
+                                        }).then(() => {
+                                            resolve(data);
+                                        })
+                                    }else{
+                                        var urr = URI + data.hash_file+ '/descargar-layout-errores?access_token=' + this._vm.$session.get('jwt');
+                                        var win = window.open(urr, "_blank");
+
+                                        win.onbeforeunload = () => {
+                                            swal("Error", "EL layout cargado tiene errores, favor de revisar el archivo que se descargará a continuación para conocer el detalle.", {
+                                                icon: "error",
+                                            })
+                                        }
+                                    }
+
                                 })
-                                .catch(error => {
-                                    reject('Archivo no procesable');
+                                .catch((error) => {
+                                    reject(error);
                                 })
                         }
                     });

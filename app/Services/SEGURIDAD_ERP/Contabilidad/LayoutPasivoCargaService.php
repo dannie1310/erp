@@ -2,6 +2,8 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use App\CSV\CotizacionLayout;
+use App\Exports\Contabilidad\LayoutPasivosErroresExport;
 use App\Exports\Contabilidad\LayoutPasivosIFSExport;
 use App\Imports\PasivoImport;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCarga;
@@ -64,13 +66,18 @@ class LayoutPasivoCargaService
     {
         ini_set('memory_limit', -1);
         ini_set('max_execution_time', '7200');
-        $partidas_no_validas = false;
         $file_xls = $this->getFileXls($data['name'], $data['file']);
-        $rows = Excel::toArray(new PasivoImport, $file_xls);
-        //unlink($file_xls);
-        $celdas = $rows[0];
-        if (count($celdas) == 0) {
-            abort(400, 'Error al cargar archivo, debe contar con al menos una partida');
+        $excelToArray = Excel::toArray(new PasivoImport, $file_xls);
+
+        $rows = $excelToArray[0];
+
+        $hash = explode(".",basename($file_xls));
+
+        if(is_array($this->validaLayout($rows))) {
+            return response()->json([
+                'message' => 'Error',
+                'hash_file'=>$hash[0]
+            ], 466);
         }
         try {
             DB::connection('seguridad')->beginTransaction();
@@ -85,56 +92,30 @@ class LayoutPasivoCargaService
         }
 
 
-        foreach ($celdas as $key => $pasivo) {
-            if ($key > 0 && (
-                    ($pasivo[1] != null || $pasivo[1] != '')
-                    || ($pasivo[8] != null || $pasivo[8] != '')
-                    || ($pasivo[9] != null || $pasivo[9] != '')
-                    || ($pasivo[10] != null || $pasivo[10] != '')
-                    || ($pasivo[13] != null || $pasivo[13] != '')
-                    || ($pasivo[14] != null || $pasivo[14] != '')
-                    || ($pasivo[15] != null || $pasivo[15] != '')
-                )) {
-                if (
-                    ($pasivo[1] == null || $pasivo[1] == '')
-                    || ($pasivo[8] == null || $pasivo[8] == '')
-                    || ($pasivo[9] == null || $pasivo[9] == '')
-                    || ($pasivo[10] == null || $pasivo[10] == '')
-                    || ($pasivo[13] == null || $pasivo[13] == '')
-                    || ($pasivo[14] == null || $pasivo[14] == '')
-                    || ($pasivo[15] == null || $pasivo[15] == '')
-                ) {
-                    abort(404, 'Faltan datos obligatorios en la partida ' . ($key) . ' para poder realizar la carga.');
-                }
+        foreach ($rows as $key_row => $pasivo) {
+            if ($key_row > 0) {
 
                 $empresa = Empresa::where('AliasBDD', "=", $pasivo[1])->first();
-                if ($empresa == null) {
-                    abort(404, 'La base de datos contpaq: ' . $pasivo[1] . ' ingresada en la partida ' . ($key) . ' no existe, favor de verificar y corregir.');
 
-                    abort(400, 'No se encuentra la empresa en el catálogo de empresas.' . $pasivo[1]);
-
-                }
                 try {
                     $fecha = Date::excelToDateTimeObject($pasivo[8]);
                     $fecha = (date_format($fecha, "Y/m/d"));
                 } catch (\Exception $e) {
-                    try{
+                    try {
                         $fecha = Carbon::createFromFormat('d/m/Y', $pasivo[8]);
                         $fecha = (date_format($fecha, "Y/m/d"));
-                    }
-                    catch (\Exception $e) {
+                    } catch (\Exception $e) {
                         DB::connection('seguridad')->rollBack();
-                        abort(400, 'Error en el formato de fecha de la partida ' . ($key));
+                        abort(400, 'Error en el formato de fecha de la partida ' . ($key_row));
                     }
                 }
-
 
                 $importe_mxn = $pasivo[11] > 0 ? $pasivo[9] * $pasivo[11] : $pasivo[12];
                 $saldo_mxn = $pasivo[14] > 0 ? $pasivo[13] * $pasivo[14] : $pasivo[15];
                 $importe_mxn_con_tc_saldo = $pasivo[14] > 0 ? $pasivo[9] * $pasivo[14] : $pasivo[12];
-                $inconsistencia_saldo = ($importe_mxn_con_tc_saldo - $saldo_mxn) < -1 ? 1 :0;
+                $inconsistencia_saldo = ($importe_mxn_con_tc_saldo - $saldo_mxn) < -1 ? 1 : 0;
 
-                    $guardar_pasivo->partidas()->create([
+                $guardar_pasivo->partidas()->create([
                     "obra" => $empresa->Descripcion != '' ? $empresa->Descripcion : $pasivo[0],
                     "bbdd_contpaq" => $pasivo[1],
                     "rfc_empresa" => $empresa->empresaSAT->rfc,
@@ -155,9 +136,140 @@ class LayoutPasivoCargaService
                 ]);
             }
         }
+
         DB::connection('seguridad')->commit();
         return $guardar_pasivo;
 
+    }
+
+    public function descargarLayoutErrores($hash)
+    {
+        $file_xls = "uploads/contabilidadGeneral/layoutPasivo/".$hash.".xlsx";
+        $excelToArray = Excel::toArray(new PasivoImport, $file_xls);
+        $rows = $excelToArray[0];
+        $pasivos_salida = $this->validaLayout($rows);
+
+        return Excel::download(new LayoutPasivosErroresExport($pasivos_salida), $hash.'_errores.xlsx');
+
+    }
+
+    private function validaLayout($rows)
+    {
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', '7200');
+
+
+        if (count($rows) == 0) {
+            abort(400, 'Error al cargar archivo, debe contar con al menos una partida');
+        }
+
+        $pasivos_salida = [];
+        $partidas_no_validas = false;
+
+        foreach ($rows as $key_row => $pasivo) {
+            foreach ($pasivo as $key_cell => $valor){
+                $pasivos_salida[$key_row][$key_cell]["valor"] = $valor;
+            }
+            if($key_row > 0)
+            {
+                if($pasivo[1] == null || $pasivo[1] == ''){
+                    $partidas_no_validas = true;
+                    $pasivos_salida[$key_row][1]["error"] = "El valor de la base de datos contpaq no fue ingresado";
+                }else{
+                    $empresa = Empresa::where('AliasBDD', "=", $pasivo[1])->first();
+                    if ($empresa == null) {
+                        $partidas_no_validas = true;
+                        $pasivos_salida[$key_row][1]["error"] = "La base de datos contpaq ingresada no existe, favor de corregir.";
+                    }
+                }
+
+                if($pasivo[8] == null || $pasivo[8] == ''){
+                    $partidas_no_validas = true;
+                    $pasivos_salida[$key_row][8]["error"] = "El valor de la fecha no fue ingresado";
+                }else{
+                    try {
+                        $fecha = Date::excelToDateTimeObject($pasivo[8]);
+                        $fecha = (date_format($fecha, "Y/m/d"));
+                    } catch (\Exception $e) {
+                        try{
+                            $fecha = Carbon::createFromFormat('d/m/Y', $pasivo[8]);
+                            $fecha = (date_format($fecha, "Y/m/d"));
+                        }
+                        catch (\Exception $e) {
+                            $partidas_no_validas = true;
+                            $pasivos_salida[$key_row][8]["error"] = "El formato de la fecha es erróneo debe ser dd/mm/yy o dd/mm/yyyy, p. ej. 12/01/22 o 12/01/2022.";
+                        }
+                    }
+                }
+
+                if($pasivo[9] == null || $pasivo[9] == ''){
+                    $partidas_no_validas = true;
+                    $pasivos_salida[$key_row][9]["error"] = "El valor del importe no fue ingresado";
+                }else{
+                    if(!is_numeric($pasivo[9])){
+                        $partidas_no_validas = true;
+                        $pasivos_salida[$key_row][9]["error"] = "El valor del importe no es numérico, verifique que no se haya ingresado una formula";
+                    }
+                }
+
+                if($pasivo[11] == null || $pasivo[11] == ''){
+                    $partidas_no_validas = true;
+                    $pasivos_salida[$key_row][11]["error"] = "El valor del tipo de cambio no fue ingresado";
+                }else{
+                    if(!is_numeric($pasivo[11])){
+                        $partidas_no_validas = true;
+                        $pasivos_salida[$key_row][11]["error"] = "El valor del tipo de cambio no es numérico, verifique que no se haya ingresado una formula";
+                    }
+                }
+
+                if($pasivo[12] == null || $pasivo[12] == ''){
+                    $partidas_no_validas = true;
+                    $pasivos_salida[$key_row][12]["error"] = "El valor del importe en pesos mexicanos no fue ingresado";
+                }else{
+                    if(!is_numeric($pasivo[12])){
+                        $partidas_no_validas = true;
+                        $pasivos_salida[$key_row][12]["error"] = "El valor del importe en pesos mexicanos no es numérico, verifique que no se haya ingresado una formula";
+                    }
+                }
+
+                if($pasivo[13] == null || $pasivo[13] == ''){
+                    $partidas_no_validas = true;
+                    $pasivos_salida[$key_row][13]["error"] = "El valor del saldo no fue ingresado";
+                }else{
+                    if(!is_numeric($pasivo[13])){
+                        $partidas_no_validas = true;
+                        $pasivos_salida[$key_row][13]["error"] = "El valor del saldo no es numérico, verifique que no se haya ingresado una formula";
+                    }
+                }
+
+                if($pasivo[14] == null || $pasivo[14] == ''){
+                    $partidas_no_validas = true;
+                    $pasivos_salida[$key_row][14]["error"] = "El valor del tipo de cambio para calcular el saldo no fue ingresado";
+                }else{
+                    if(!is_numeric($pasivo[14])){
+                        $partidas_no_validas = true;
+                        $pasivos_salida[$key_row][14]["error"] = "El valor del tipo de cambio para calcular el saldo no es numérico, verifique que no se haya ingresado una formula";
+                    }
+                }
+
+                if($pasivo[15] == null || $pasivo[15] == ''){
+                    $partidas_no_validas = true;
+                    $pasivos_salida[$key_row][15]["error"] = "El valor del saldo en pesos mexicanos no fue ingresado";
+                }else{
+                    if(!is_numeric($pasivo[15])){
+                        $partidas_no_validas = true;
+                        $pasivos_salida[$key_row][15]["error"] = "El valor del saldo en pesos mexicanos no es numérico, verifique que no se haya ingresado una formula";
+                    }
+                }
+            }
+        }
+
+        if($partidas_no_validas && count($pasivos_salida)>0)
+        {
+            return $pasivos_salida;
+        }
+
+        return true;
     }
 
     private function getFileXLS($nombre_archivo, $archivo_xls)
@@ -166,13 +278,21 @@ class LayoutPasivoCargaService
         $exp = explode("base64,", $archivo_xls);
         $data = base64_decode($exp[1]);
         $file_xls = public_path($paths["path_xls"]);
+        $nombre_explode = explode(".", $nombre_archivo);
+        $extension = end($nombre_explode);
         file_put_contents($file_xls, $data);
-        return $file_xls;
+        $hashfile = hash_file('sha1', $file_xls)."_".date("Ymdhisu");
+        $hashfile_path = $paths['dir_xls'].$hashfile.".".$extension;
+        if(copy($file_xls, $hashfile_path))
+        {
+            unlink($file_xls);
+        }
+        return $hashfile_path;
     }
 
     private function generaDirectorios($nombre_archivo)
     {
-        $nombre_archivo = pathinfo($nombre_archivo, PATHINFO_FILENAME);;
+        $nombre_archivo = pathinfo($nombre_archivo, PATHINFO_FILENAME);
         $nombre = $nombre_archivo . "_" . date("Ymd_his") . ".xlsx";
         $dir_xls = "uploads/contabilidadGeneral/layoutPasivo/";
         $path_xls = $dir_xls . $nombre;
