@@ -2063,8 +2063,9 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SerieController@index');
         });
 
-        $api->group(['prefix' => 'solicitud-recurso'], function ($api) {
-            $api->get('{id}/layout', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudRecursoController@descargaLayout')->where(['id' => '[0-9]+']);
+        $api->group(['prefix' => 'solicitud-cheque'], function ($api) {
+            $api->get('{id}/layout', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@descargaLayout')->where(['id' => '[0-9]+']);
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@index');
         });
 
         $api->group(['prefix' => 'semana-anio'], function ($api) {

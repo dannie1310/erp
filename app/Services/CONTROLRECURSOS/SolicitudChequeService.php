@@ -3,11 +3,11 @@
 namespace App\Services\CONTROLRECURSOS;
 
 use App\LAYOUT\LayoutBancario;
+use App\Models\CONTROL_RECURSOS\SolCheque;
 use App\Models\CONTROL_RECURSOS\SolrecSemanaAnio;
-use App\Models\CONTROL_RECURSOS\SolRecurso;
 use App\Repositories\Repository;
 
-class SolicitudRecursoService
+class SolicitudChequeService
 {
     /**
      * @var Repository
@@ -15,9 +15,9 @@ class SolicitudRecursoService
     protected $repository;
 
     /**
-     * @param SolRecurso $model
+     * @param SolCheque $model
      */
-    public function __construct(SolRecurso $model)
+    public function __construct(SolCheque $model)
     {
         $this->repository = new Repository($model);
     }
@@ -28,4 +28,7 @@ class SolicitudRecursoService
         return $layout->create();
     }
 
+    public function index(){
+        return $this->repository->all();
+    }
 }

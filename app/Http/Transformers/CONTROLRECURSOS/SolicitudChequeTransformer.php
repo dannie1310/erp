@@ -2,10 +2,10 @@
 
 namespace App\Http\Transformers\CONTROLRECURSOS;
 
-use App\Models\CONTROL_RECURSOS\SolRecurso;
+use App\Models\CONTROL_RECURSOS\SolCheque;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudRecursoTransformer extends TransformerAbstract
+class SolicitudChequeTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -25,9 +25,10 @@ class SolicitudRecursoTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(SolRecurso $model){
+    public function transform(SolCheque $model){
         return [
             'id' => $model->getKey(),
+            'concepto' => $model->concepto
         ];
     }
 }

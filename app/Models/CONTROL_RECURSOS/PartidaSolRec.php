@@ -26,7 +26,7 @@ class PartidaSolRec extends Model
     /**
      * Scopes
      */
-    public function scopeAutorizadas($query)
+    public function scopeAutorizada($query)
     {
         return $query->where('Estatus', 2);
     }

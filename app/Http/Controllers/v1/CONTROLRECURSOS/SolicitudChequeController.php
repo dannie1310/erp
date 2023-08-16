@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\v1\CONTROLRECURSOS;
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CONTROLRECURSOS\SolicitudRecursoTransformer;
-use App\Services\CONTROLRECURSOS\SolicitudRecursoService;
+use App\Http\Transformers\CONTROLRECURSOS\SolicitudChequeTransformer;
+use App\Services\CONTROLRECURSOS\SolicitudChequeService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
 
-class SolicitudRecursoController extends Controller
+class SolicitudChequeController extends Controller
 {
     use ControllerTrait;
 
     /**
-     * @var SolicitudRecursoService
+     * @var SolicitudChequeService
      */
     protected $service;
 
@@ -23,16 +23,16 @@ class SolicitudRecursoController extends Controller
     protected $fractal;
 
     /**
-     * @var SolicitudRecursoTransformer
+     * @var SolicitudChequeTransformer
      */
     protected $transformer;
 
     /**
-     * @param SolicitudRecursoService $service
+     * @param SolicitudChequeService $service
      * @param Manager $fractal
-     * @param SolicitudRecursoTransformer $transformer
+     * @param SolicitudChequeTransformer $transformer
      */
-    public function __construct(SolicitudRecursoService $service, Manager $fractal, SolicitudRecursoTransformer $transformer)
+    public function __construct(SolicitudChequeService $service, Manager $fractal, SolicitudChequeTransformer $transformer)
     {
         $this->middleware('auth:api');
 
@@ -45,5 +45,4 @@ class SolicitudRecursoController extends Controller
     {
         return $this->service->layout($id);
     }
-
 }

@@ -33,6 +33,12 @@ class SolRecurso extends Model
         });
     }
 
+    public function scopePorSemanaAnio($query, $idsemana)
+    {
+        $time = SolrecSemanaAnio::where('idsemana_anio', $idsemana)->first();
+        return $query->autorizadas()->where('Semana', '=', $time->semana)->where('Anio', $time->anio);
+    }
+
     /**
      * Atributos
      */

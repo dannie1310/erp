@@ -37,15 +37,30 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('idsemana')">{{ errors.first('idsemana') }}</div>
                         </div>
                     </div>
-
+                    <div class="col-md-12" v-if="idsemana && solicitudes">
+                        <div class="form-group error-content">
+                            <label for="idsolicitud" class="col-form-label">Solicitudes de Cheque:</label>
+                            <select class="form-control"
+                                    data-vv-as="Solicitud de Recurso"
+                                    id="idsolicitud"
+                                    name="idsolicitud"
+                                    :error="errors.has('idsolicitud')"
+                                    v-validate="{required: true}"
+                                    v-model="idsolicitud">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(s) in solicitudes" :value="s.id">{{s.serie}} - {{s.numero}}</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('idsolicitud')">{{ errors.first('idsolicitud') }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <div class="col-md-12">
-                    <button type="button" class="btn btn-secondary  float-right" v-on:click="salir">
+                <div class="col-md-12 pull-right">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir">
                         <i class="fa fa-angle-left"></i>Regresar
                     </button>
-                    <button type="button" class="btn btn-primary float-right" @click="descargar" :disabled="idsemana == '' ? true : false">
+                    <button type="button" class="btn btn-primary" @click="descargar" :disabled="idsolicitud == '' ? true : false">
                         <i class="fa fa-download"></i>Descargar
                     </button>
                 </div>
@@ -61,7 +76,9 @@ export default {
         return {
             cargando: false,
             semanas: [],
-            idsemana: ''
+            idsemana: '',
+            idsolicitud: '',
+            solicitudes: []
         }
     },
     mounted() {
@@ -87,10 +104,27 @@ export default {
         },
         descargar()
         {
-            return this.$store.dispatch('controlRecursos/solicitud-recurso/descargar', {id: this.idsemana})
+            return this.$store.dispatch('controlRecursos/solicitud-cheque/descargar', {id: this.idsemana})
                 .then(() => {
                     this.salir()
                 })
+        },
+        getSolicitudes() {
+            return this.$store.dispatch('controlRecursos/solicitud-cheque/index', {
+                params: { scope:['porSemanaAnio:'+this.idsemana] }
+            })
+            .then(data => {
+                this.solicitudes = data.data;
+            })
+        },
+    },
+    watch: {
+        idsemana(value)
+        {
+            if(value)
+            {
+                this.getSolicitudes();
+            }
         }
     }
 }
