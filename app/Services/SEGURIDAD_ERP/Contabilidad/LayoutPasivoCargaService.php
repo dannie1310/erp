@@ -74,6 +74,12 @@ class LayoutPasivoCargaService
         $hash = explode(".",basename($file_xls));
 
         if(is_array($this->validaLayout($rows))) {
+            $this->repository->create([
+                "nombre_archivo" => $data['name'],
+                "usuario_cargo" => auth()->id(),
+                "hash"=>$hash[0],
+                "estado" => 0,
+            ]);
             return response()->json([
                 'message' => 'Error',
                 'hash_file'=>$hash[0]
@@ -84,6 +90,7 @@ class LayoutPasivoCargaService
             $guardar_pasivo = $this->repository->create([
                 "nombre_archivo" => $data['name'],
                 "usuario_cargo" => auth()->id(),
+                "hash"=>$hash[0],
                 "estado" => 1,
             ]);
         } catch (\Exception $e) {
