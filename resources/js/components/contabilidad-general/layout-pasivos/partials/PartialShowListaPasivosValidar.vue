@@ -63,7 +63,6 @@
                                 <td style="text-align: right">{{partida.tc_saldo}}</td>
                                 <td style="text-align: right">{{partida.saldo_mxn}}
                                     <i class="fa fa-times-circle" style="color: red" v-if="partida.inconsistencia_saldo == true"></i>
-                                    <i class="fa fa-check-circle" style="color: green" v-else-if="partida.inconsistencia_saldo == false"></i>
                                 </td>
                                 <td>
                                     <CFDI v-if="partida.factura" v-bind:txt="partida.factura.uuid" v-bind:id="partida.factura.id" @click="partida.factura.id"
