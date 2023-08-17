@@ -252,7 +252,7 @@ class LayoutPasivoPartida extends Model
             {
                 $this->coincide_importe = 1;
             }
-            if(in_array($cfdi->id_proveedor_sat, $id_proveedor_sat))
+            if($cfdi->id_proveedor_sat == $id_proveedor_sat)
             {
                 $this->coincide_rfc_proveedor = 1;
             }
