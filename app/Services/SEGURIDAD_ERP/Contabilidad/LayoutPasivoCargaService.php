@@ -93,7 +93,16 @@ class LayoutPasivoCargaService
 
 
         foreach ($rows as $key_row => $pasivo) {
-            if ($key_row > 0) {
+            $con_datos = false;
+            foreach ($pasivo as $key_cell => $valor){
+                $pasivos_salida[$key_row][$key_cell]["valor"] = $valor;
+                if($valor != "" && $valor != null)
+                {
+                    $con_datos = true;
+                }
+
+            }
+            if ($key_row > 0 && $con_datos) {
 
                 $empresa = Empresa::where('AliasBDD', "=", $pasivo[1])->first();
 
@@ -167,10 +176,16 @@ class LayoutPasivoCargaService
         $partidas_no_validas = false;
 
         foreach ($rows as $key_row => $pasivo) {
+            $con_datos = false;
             foreach ($pasivo as $key_cell => $valor){
                 $pasivos_salida[$key_row][$key_cell]["valor"] = $valor;
+                if($valor != "" && $valor != null)
+                {
+                    $con_datos = true;
+                }
+
             }
-            if($key_row > 0)
+            if($key_row > 0 && $con_datos)
             {
                 if($pasivo[1] == null || $pasivo[1] == ''){
                     $partidas_no_validas = true;
