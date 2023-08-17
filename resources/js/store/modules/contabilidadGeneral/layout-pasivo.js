@@ -161,13 +161,13 @@ export default {
                                 })
                             }
                         }else if(data.respuesta_inconsistencia_saldo && !data.respuesta_coincidencia_con_cfdi){
-                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir o indicar que el pasivo no tendrá correspondecia con CFDI indicando el motivo.", "error")
+                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir o indicar que el pasivo no tendrá correspondecia con CFDI seleccionando el motivo.", "error")
 
                         }else if(!data.respuesta_inconsistencia_saldo && data.respuesta_coincidencia_con_cfdi){
                             swal("Error","Algunos pasivos de la carga tienen un saldo mayor que el monto de la factura, favor de corregir.", "error")
 
                         }else{
-                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir o indicar que el pasivo no tendrá correspondecia con CFDI indicando el motivo" +
+                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir o indicar que el pasivo no tendrá correspondecia con CFDI seleccionando el motivo" +
                                 "y un saldo mayor al monto de la factura; favor de corregir.", "error")
                         }
                     })
