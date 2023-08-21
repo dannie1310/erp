@@ -34,6 +34,35 @@ class CuentaProveedor extends Model
     /**
      * Atributos
      */
+    public function getTipoCuentaAttribute()
+    {
+        try {
+            return $this->tipo->Descripcion;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getBancoCuentaAttribute()
+    {
+        try {
+            return $this->banco->Banco;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getBancoCveAttribute()
+    {
+        try {
+            return $this->banco->CVEBanco;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
 
     /**
      * Métodos

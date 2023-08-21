@@ -2,6 +2,9 @@
 
 namespace App\LAYOUT;
 
+use App\Models\CONTROL_RECURSOS\CuentaBancaria;
+use App\Models\CONTROL_RECURSOS\DescargaLayoutBanco;
+use App\Models\CONTROL_RECURSOS\SolrecSemanaAnio;
 use App\Models\CONTROL_RECURSOS\SolRecurso;
 use App\Utils\Util;
 use Chumper\Zipper\Zipper;
@@ -13,16 +16,20 @@ class LayoutBancario
     protected $data_inter = array();
     protected $data_mismo = array();
     private $zip_file_path;
+    protected $datos = array();
+    protected $semana = array();
 
-    public function __construct($semana, $anio)
+    public function __construct($data)
     {
-        $this->solicitudes = SolRecurso::autorizadas()->where('Semana', '=', $semana)->where('Anio', $anio)->get();
-        $this->zip_file_path = config('app.env_variables.SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA');
+        $this->datos = $data;
+        $this->zip_file_path = config('filesystems.disks.bancario_recurso_descarga.root');
+        $this->files_global = config('filesystems.disks.bancario_recurso_descarga_zip.root');
+        $this->semana = SolrecSemanaAnio::where('idsemana_anio', $data['idsemana'])->first();
     }
 
     function create(){
         try {
-            DB::connection('cadeco')->beginTransaction();
+            DB::connection('controlrec')->beginTransaction();
             /* -- revisar si se guarda log del rchivo
              * $reg_layout = DistribucionRecursoRemesaLayout::where('id_distribucion_recurso', '=', $this->id)->first();
             if ($reg_layout) {
@@ -30,7 +37,6 @@ class LayoutBancario
             }
 */
             $this->generar();
-            dd($this->data_inter);
 
             $inter = "";
             $mismo = "";
@@ -41,110 +47,102 @@ class LayoutBancario
             foreach ($this->data_mismo as $dat) {
                 $mismo .= $dat . PHP_EOL;
             }
+            $time =  date('dmYhis');
+            $time_base = date('Y-m-d h:i:s');
+            $descargar = DescargaLayoutBanco::create([
+                'semana' => $this->semana->semana,
+                'anio' => $this->semana->anio,
+                'usuario_descargo' => auth()->id(),
+                'fecha_hora_descarga' => $time_base
+            ]);
 
-            $llave = str_pad($this->id, 5, 0, STR_PAD_LEFT);
-            $file_m_banco = '#' . $llave . '-santander-mismob' . date('dmYhis');
-            $file_interb = '#' . $llave . '-santander-interb' . date('dmYhis');
-            $file_zip = '#' . $llave . '-santander' . date('dmYhis');
-
-            if (count($this->data_mismo) > 0) {
-                $reg_layout = new DistribucionRecursoRemesaLayout();
-                $reg_layout->id_distribucion_recurso = $this->id;
-                $reg_layout->usuario_descarga = auth()->id();
-                $reg_layout->contador_descarga = 1;
-                $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
-                $reg_layout->nombre_archivo = $file_m_banco;
-                $reg_layout->save();
-            }
-            if (count($this->data_inter) > 0) {
-                $reg_layout = new DistribucionRecursoRemesaLayout();
-                $reg_layout->id_distribucion_recurso = $this->id;
-                $reg_layout->usuario_descarga = auth()->id();
-                $reg_layout->contador_descarga = 1;
-                $reg_layout->fecha_hora_descarga = date('Y-m-d h:i:s');
-                $reg_layout->nombre_archivo = $file_interb;
-                $reg_layout->save();
-            }
-
-            $this->remesa->estado = 2;
-            $this->remesa->save();
+            $llave = str_pad($descargar->id, 5, 0, STR_PAD_LEFT);
+            $file_m_banco = '#' . $llave . '-santander-mismob' . $time;
+            $file_interb = '#' . $llave . '-santander-interb' . $time;
+            $file_zip = '#' . $llave . '-santander' . $time;
 
             if (count($this->data_mismo) > 0 && count($this->data_inter) > 0) {
 
-                if(config('filesystems.disks.portal_zip.root') == storage_path())
+                if(config('filesystems.disks.bancario_recurso_descarga.root') == storage_path())
                 {
-                    dd('No existe el directorio destino: SANTANDER_PORTAL_STORAGE_ZIP. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+                    dd('No existe el directorio destino: SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
                 }
-                Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());
+                Storage::disk('bancario_recurso_descarga')->delete(Storage::disk('bancario_recurso_descarga')->allFiles());
 
-                Storage::disk('portal_zip')->put($file_m_banco . '.txt', $mismo);
-                Storage::disk('portal_zip')->put($file_interb . '.txt', $inter);
+                Storage::disk('bancario_recurso_descarga')->put($file_m_banco . '.txt', $mismo);
+                Storage::disk('bancario_recurso_descarga')->put($file_interb . '.txt', $inter);
 
-                $files_global = storage_path($this->files_global . '/*');
-                $zip_file_path = storage_path($this->zip_file_path);
                 $zipper = new Zipper;
-                $files = glob($files_global);
-                $zipper->make($zip_file_path . '/' . $file_zip . '.zip')->add($files)->close();
-
-                Storage::disk('portal_zip')->delete(Storage::disk('portal_zip')->allFiles());
-                DB::connection('cadeco')->commit();
-                return Storage::disk('portal_descarga')->download($file_zip . '.zip');
+                $files = glob(config('filesystems.disks.bancario_recurso_descarga.root').'/*');
+                $zipper->make(config('filesystems.disks.bancario_recurso_descarga_zip.root'). '/' . $file_zip.'.zip')->add($files)->close();
+                Storage::disk('bancario_recurso_descarga')->delete(Storage::disk('bancario_recurso_descarga')->allFiles());
+                DB::connection('controlrec')->commit();
+               // return Storage::disk('bancario_recurso_descarga_zip')->download($file_zip . '.zip');
+               return config('filesystems.disks.bancario_recurso_descarga_zip.root'). '/' . $file_zip.'.zip';
             }else{
-                if(config('filesystems.disks.portal_descarga.root') == storage_path())
+                if(config('filesystems.disks.bancario_recurso_descarga.root') == storage_path())
                 {
-                    dd('No existe el directorio destino: SANTANDER_PORTAL_STORAGE_DESCARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+                    dd('No existe el directorio destino: SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
                 }
                 if (count($this->data_mismo) > 0){
-                    Storage::disk('portal_descarga')->put($file_m_banco . '.txt', $mismo);
+                    Storage::disk('bancario_recurso_descarga')->put($file_m_banco . '.txt', $mismo);
 
-                    DB::connection('cadeco')->commit();
-                    return Storage::disk('portal_descarga')->download($file_m_banco . '.txt');
+                    DB::connection('controlrec')->commit();
+                    return Storage::disk('bancario_recurso_descarga')->download($file_m_banco . '.txt');
                 }
                 if (count($this->data_inter) > 0){
-                    Storage::disk('portal_descarga')->put($file_interb . '.txt', $inter);
+                    Storage::disk('bancario_recurso_descarga')->put($file_interb . '.txt', $inter);
 
-                    DB::connection('cadeco')->commit();
-                    return Storage::disk('portal_descarga')->download($file_interb . '.txt');
+                    DB::connection('controlrec')->commit();
+                    return Storage::disk('bancario_recurso_descarga')->download($file_interb . '.txt');
                 }
             }
-
-            DB::connection('cadeco')->rollBack();
-            return "No se pudo generar el archivo de layout de distribución de recursos de remesa.";
-
+            DB::connection('controlrec')->rollBack();
+            return "No se pudo generar el archivo de layout bancario de control de recursos.";
         }catch (\Exception $e){
-            DB::connection('cadeco')->rollBack();
+            DB::connection('controlrec')->rollBack();
             throw $e;
         }
     }
 
     public function generar(){
 
-        foreach ($this->solicitudes as $solicitud) {
-            foreach ($solicitud->partidas()->autorizadas()->get() as $partida)
+        foreach ($this->datos['data'] as $solicitud) {
+            if(array_key_exists('selected', $solicitud))
             {
-                if($partida->Estatus == 2)
+                $cuenta_empresa = CuentaBancaria::where('IdCuentaBancaria', $solicitud['idcuentaempresa'])->first();
+                if($cuenta_empresa->IdBanco == $solicitud['cuentaProveedor']['id_banco'])
                 {
-                    //dd("aq", $partida->cheque->empresa->cuentasEmpresas->first()->cuenta, $partida->proveedor->cuentasProveedores->first());
-                    $r_social_dep = Util::eliminaCaracteresEspeciales($partida->proveedor->RazonSocial);
+                    $cuenta_cargo = str_pad(substr(str_replace("-","",$cuenta_empresa->Cuenta), 0, 16), 16, ' ', STR_PAD_RIGHT);
+                    $cuenta_abono = str_pad(str_replace("-","",$solicitud['cuentaProveedor']['numero_cuenta']), 16, ' ', STR_PAD_RIGHT);
+                    $importe = str_pad(number_format($solicitud['total'], '2', '.', ''), 13, 0, STR_PAD_LEFT);
+                    $documento = "D" . str_pad($solicitud['id'], 9, 0, STR_PAD_LEFT);
+                    $concepto_rep = Util::eliminaCaracteresEspeciales($solicitud['concepto']);
+                    $concepto = strlen($concepto_rep) > 30 ? substr($concepto_rep, 0, 30) :
+                        str_pad($concepto_rep, 30, ' ', STR_PAD_RIGHT);
+                    $fecha_presentacion = date('dmY');
+                    $this->data_mismo[] = $cuenta_cargo . $cuenta_abono . $importe . $documento . $concepto . $fecha_presentacion;
+                }else {
+                    $r_social_dep = Util::eliminaCaracteresEspeciales($solicitud['proveedor']['razon_social']);
                     $razon_social = strlen($r_social_dep) > 40 ? substr($r_social_dep, 0, 40) :
                         str_pad($r_social_dep, 40, ' ', STR_PAD_RIGHT);
-                    $monto = explode('.', number_format($partida->cheque->Total,2,".",""));
-                    $partida_n = "D" . str_pad($partida->getKey(), 9, 0, STR_PAD_LEFT);
-                    $concepto_rep = Util::eliminaCaracteresEspeciales($partida->cheque->Concepto);
+                    $monto = explode('.', number_format($solicitud['total'], 2, ".", ""));
+                    $partida_n = "D" . str_pad($solicitud['id'], 9, 0, STR_PAD_LEFT);
+                    $concepto_rep = Util::eliminaCaracteresEspeciales($solicitud['concepto']);
                     $concepto = strlen($concepto_rep) > 120 ? substr($concepto_rep, 0, 120) :
                         str_pad($concepto_rep, 120, ' ', STR_PAD_RIGHT);
 
-                    if ($partida->cheque->empresa->cuentasEmpresas->first() == null) {
-                        abort(403, 'La cuenta cargo de la empresa ('.$partida->cheque->empresa->RFC.') no esta dado de alta.');
+                    if ($cuenta_empresa == null) {
+                        abort(403, 'La cuenta cargo de la empresa (' . $solicitud['empresa']['rfc'] . ') no esta dado de alta.');
                     }
 
-                    if ($partida->proveedor->cuentasProveedores->first()== null) {
-                        abort(403, 'La cuenta abono del proveedor ('.$partida->cheque->proveedor->RFC.') no esta dado de alta.');
+                    if ($solicitud['cuentaProveedor'] == null) {
+                        abort(403, 'La cuenta abono del proveedor (' . $solicitud['proveedor']['rfc'] . ') no esta dado de alta.');
                     }
 
-                    $this->data_inter[] = str_pad(substr($partida->cheque->empresa->cuentasEmpresas->first()->cuenta->Cuenta, 0, 16), 16, ' ', STR_PAD_RIGHT)
-                        . str_pad($partida->proveedor->cuentasProveedores->first()->Cuenta, 20, ' ', STR_PAD_RIGHT)
-                        . $partida->proveedor->cuentasProveedores->first()->banco->CVEBanco
+                    $this->data_inter[] = str_pad(substr($cuenta_empresa->Cuenta, 0, 16), 16, ' ', STR_PAD_RIGHT)
+                        . str_pad($solicitud['cuentaProveedor']['numero_cuenta'], 20, ' ', STR_PAD_RIGHT)
+                        . $solicitud['cuentaProveedor']['cve_banco']
                         . $razon_social
                         . str_pad($monto[0], 17, 0, STR_PAD_LEFT) . str_pad($monto[1], 7, 0, STR_PAD_RIGHT)
                         . $partida_n . $concepto

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CONTROLRECURSOS\SolicitudChequeTransformer;
 use App\Services\CONTROLRECURSOS\SolicitudChequeService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class SolicitudChequeController extends Controller
@@ -41,8 +42,15 @@ class SolicitudChequeController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function descargaLayout($id)
+    public function descargaLayout(Request $request)
     {
-        return $this->service->layout($id);
+        $headers = array(
+            'Content-Type: application/zip',
+        );
+        $zip = $this->service->layout($request->all());
+        $zip = str_replace("\\","/",$zip);
+        //dd($zip);
+        return response()->download($zip, 'prueba.zip', $headers);
+        //return $this->service->layout($request->all());
     }
 }

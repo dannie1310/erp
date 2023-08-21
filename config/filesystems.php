@@ -170,5 +170,9 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA')),
         ],
+        'bancario_recurso_descarga_zip' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA_ZIP')),
+        ],
     ],
 ];

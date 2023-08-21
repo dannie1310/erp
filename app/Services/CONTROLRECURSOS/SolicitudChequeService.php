@@ -22,9 +22,9 @@ class SolicitudChequeService
         $this->repository = new Repository($model);
     }
 
-    public function layout($id){
-        $time = SolrecSemanaAnio::where('idsemana_anio', $id)->first();
-        $layout = new LayoutBancario($time->semana, $time->anio);
+    public function layout($data)
+    {
+        $layout = new LayoutBancario($data);
         return $layout->create();
     }
 

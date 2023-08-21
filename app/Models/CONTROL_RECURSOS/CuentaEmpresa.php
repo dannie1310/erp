@@ -25,6 +25,45 @@ class CuentaEmpresa extends Model
     /**
      * Atributos
      */
+    public function getNumeroCuentaAttribute()
+    {
+        try {
+            return $this->cuenta->Cuenta;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getBancoDescripcionAttribute()
+    {
+        try {
+            return $this->cuenta->banco_cuenta;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getTipoCuentaAttribute()
+    {
+        try {
+            return $this->cuenta->tipo->Descripcion;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getIdBancoAttribute()
+    {
+        try {
+            return $this->cuenta->IdBanco;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
 
     /**
      * Métodos

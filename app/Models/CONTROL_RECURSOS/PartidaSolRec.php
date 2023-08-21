@@ -23,6 +23,11 @@ class PartidaSolRec extends Model
         return $this->belongsTo(Proveedor::class, 'IdProveedor', 'IdProveedor');
     }
 
+    public function solicitudRecurso()
+    {
+        return $this->belongsTo(SolRecurso::class, 'IdSolRec', 'IdSolRec');
+    }
+
     /**
      * Scopes
      */

@@ -4303,7 +4303,7 @@ export const routes = [
                         name: 'layout-bancario',
                         component: require('./components/control-recursos/layout-bancario/DescargaLayout').default,
                         meta: {
-                            title: '',
+                            title: 'Descargar Layout Bancario',
                             breadcrumb: {parent: 'control-recurso', name: 'LAYOUT BANCARIO'},
                             middleware: [auth, permission],
                             permission: ['consultar_factura_recursos'],
