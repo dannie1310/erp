@@ -15,6 +15,7 @@ class DescargaLayoutBanco extends Model
         'tipo',
         'semana',
         'anio',
-        'usuario_descargo'
+        'usuario_descargo',
+        'nombre_archivo'
     ];
 }

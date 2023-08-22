@@ -35,7 +35,8 @@ class SolicitudChequeController extends Controller
      */
     public function __construct(SolicitudChequeService $service, Manager $fractal, SolicitudChequeTransformer $transformer)
     {
-        $this->middleware('auth:api');
+        $this->middleware('addAccessToken')->only('descarga');
+        $this->middleware('auth:api')->except(['descarga']);
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -44,13 +45,11 @@ class SolicitudChequeController extends Controller
 
     public function descargaLayout(Request $request)
     {
-        $headers = array(
-            'Content-Type: application/zip',
-        );
-        $zip = $this->service->layout($request->all());
-        $zip = str_replace("\\","/",$zip);
-        //dd($zip);
-        return response()->download($zip, 'prueba.zip', $headers);
-        //return $this->service->layout($request->all());
+        return $this->service->layout($request->all());
+    }
+
+    public function descarga(Request $request, $id)
+    {
+        return $this->service->descarga_layout($id);
     }
 }

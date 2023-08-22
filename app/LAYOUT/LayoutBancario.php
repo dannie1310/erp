@@ -53,7 +53,8 @@ class LayoutBancario
                 'semana' => $this->semana->semana,
                 'anio' => $this->semana->anio,
                 'usuario_descargo' => auth()->id(),
-                'fecha_hora_descarga' => $time_base
+                'fecha_hora_descarga' => $time_base,
+                'nombre_archivo' => ''
             ]);
 
             $llave = str_pad($descargar->id, 5, 0, STR_PAD_LEFT);
@@ -61,14 +62,18 @@ class LayoutBancario
             $file_interb = '#' . $llave . '-santander-interb' . $time;
             $file_zip = '#' . $llave . '-santander' . $time;
 
-            if (count($this->data_mismo) > 0 && count($this->data_inter) > 0) {
+            $descargar->update([
+                'nombre_archivo' => $file_zip . '.zip'
+            ]);
 
-                if(config('filesystems.disks.bancario_recurso_descarga.root') == storage_path())
-                {
-                    dd('No existe el directorio destino: SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
-                }
+            if(config('filesystems.disks.bancario_recurso_descarga.root') == storage_path())
+            {
+                dd('No existe el directorio destino: SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+            }
+
+            if (count($this->data_mismo) > 0 && count($this->data_inter) > 0)
+            {
                 Storage::disk('bancario_recurso_descarga')->delete(Storage::disk('bancario_recurso_descarga')->allFiles());
-
                 Storage::disk('bancario_recurso_descarga')->put($file_m_banco . '.txt', $mismo);
                 Storage::disk('bancario_recurso_descarga')->put($file_interb . '.txt', $inter);
 
@@ -77,24 +82,17 @@ class LayoutBancario
                 $zipper->make(config('filesystems.disks.bancario_recurso_descarga_zip.root'). '/' . $file_zip.'.zip')->add($files)->close();
                 Storage::disk('bancario_recurso_descarga')->delete(Storage::disk('bancario_recurso_descarga')->allFiles());
                 DB::connection('controlrec')->commit();
-               // return Storage::disk('bancario_recurso_descarga_zip')->download($file_zip . '.zip');
-               return config('filesystems.disks.bancario_recurso_descarga_zip.root'). '/' . $file_zip.'.zip';
+                return $descargar->getKey();
             }else{
-                if(config('filesystems.disks.bancario_recurso_descarga.root') == storage_path())
-                {
-                    dd('No existe el directorio destino: SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
-                }
                 if (count($this->data_mismo) > 0){
                     Storage::disk('bancario_recurso_descarga')->put($file_m_banco . '.txt', $mismo);
-
                     DB::connection('controlrec')->commit();
-                    return Storage::disk('bancario_recurso_descarga')->download($file_m_banco . '.txt');
+                    return $descargar->getKey();
                 }
                 if (count($this->data_inter) > 0){
                     Storage::disk('bancario_recurso_descarga')->put($file_interb . '.txt', $inter);
-
                     DB::connection('controlrec')->commit();
-                    return Storage::disk('bancario_recurso_descarga')->download($file_interb . '.txt');
+                    return $descargar->getKey();
                 }
             }
             DB::connection('controlrec')->rollBack();
