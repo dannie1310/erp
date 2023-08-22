@@ -38,6 +38,8 @@ class SolicitudChequeController extends Controller
         $this->middleware('addAccessToken')->only('descarga');
         $this->middleware('auth:api')->except(['descarga']);
 
+        $this->middleware('permisoGlobal:descargar_layout_bancario_recursos')->only(['descargaLayout']);
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;

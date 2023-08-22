@@ -141,6 +141,7 @@ export default {
         {
             return this.$store.dispatch('controlRecursos/solicitud-cheque/descargar', {data: this.solicitudes, idsemana: this.idsemana})
                 .then(() => {
+                    this.salir();
                     this.$emit('success')
                 })
         },

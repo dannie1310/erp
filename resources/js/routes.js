@@ -4306,7 +4306,7 @@ export const routes = [
                             title: 'Descargar Layout Bancario',
                             breadcrumb: {parent: 'control-recurso', name: 'LAYOUT BANCARIO'},
                             middleware: [auth, permission],
-                            permission: ['consultar_factura_recursos'],
+                            permission: ['descargar_layout_bancario_recursos'],
                             general: true,
                         }
                     }

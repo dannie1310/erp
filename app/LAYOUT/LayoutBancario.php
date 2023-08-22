@@ -28,19 +28,16 @@ class LayoutBancario
     }
 
     function create(){
+        $predescarga = DescargaLayoutBanco::where('semana', '=', $this->semana->semana)->where('anio', '=', $this->semana->anio)->first();
+        if ($predescarga) {
+            return 'true';
+        }
+
         try {
             DB::connection('controlrec')->beginTransaction();
-            /* -- revisar si se guarda log del rchivo
-             * $reg_layout = DistribucionRecursoRemesaLayout::where('id_distribucion_recurso', '=', $this->id)->first();
-            if ($reg_layout) {
-                return "Layout de distribución de remesa descargado previamente.";
-            }
-*/
             $this->generar();
-
             $inter = "";
             $mismo = "";
-
             foreach ($this->data_inter as $dat) {
                 $inter .= $dat . PHP_EOL;
             }

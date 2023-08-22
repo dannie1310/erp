@@ -29,21 +29,33 @@ export default {
                     .post(URI + 'layout', { params: payload })
                     .then(r => r.data)
                     .then(data => {
-                        console.log(data);
-
-                            var URL = '/api/control-recursos/solicitud-cheque/' + data +'/descarga?&access_token=' + this._vm.$session.get('jwt');
+                        if(data === true)
+                        {
+                            swal("Layout de bancario control de recursos descargado previemente.", {
+                                icon: "warning",
+                                timer: 3000,
+                                buttons: false
+                            })
+                        }else {
+                            var URL = '/api/control-recursos/solicitud-cheque/' + data + '/descarga?&access_token=' + this._vm.$session.get('jwt');
                             var win = window.open(URL, "_blank");
-                            win.onbeforeunload = ()=> {
+                            win.onbeforeunload = () => {
                                 axios
                                     .get(URI + data, {params: payload.params})
                                     .then(r => r.data)
                                     .then(dat => {
+                                        swal("Layout bancario control de recursos descargado correctamente.", {
+                                            icon: "warning",
+                                            timer: 1500,
+                                            buttons: false
+                                        })
                                         resolve(dat);
                                     })
                                     .catch(error => {
                                         reject(error);
                                     })
                             }
+                        }
                     })
                     .catch(error => {
                         reject(error);
