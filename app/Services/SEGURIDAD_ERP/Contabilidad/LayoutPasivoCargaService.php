@@ -331,6 +331,7 @@ class LayoutPasivoCargaService
         $respuesta_inconsistencia_saldo = true;
 
         $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga", "=", $id)
+            ->whereNull("id_caso_sin_cfdi")
             ->where(
                 function ($q){
                     $q->orWhere("coincide_rfc_proveedor", "=", 0)
@@ -368,6 +369,7 @@ class LayoutPasivoCargaService
     public function descargarLayoutIFS($id)
     {
         $cantidad_pasivos_falta_coincidencia = LayoutPasivoPartida::where("id_carga", "=", $id)
+            ->whereNull("id_caso_sin_cfdi")
             ->where(
                 function ($q){
                     $q->orWhere("coincide_rfc_proveedor", "=", 0)
