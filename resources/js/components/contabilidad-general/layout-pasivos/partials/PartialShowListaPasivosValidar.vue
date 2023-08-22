@@ -22,8 +22,8 @@
                                 <th >Saldo</th>
                                 <th >TC Saldo</th>
                                 <th >Saldo MXN</th>
-                                <th >UUID Correspondiente</th>
-                                <th ></th>
+                                <th >UUID / Caso Sin CFDI</th>
+                                <th style="width: 150px"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,30 +32,30 @@
                                 <td>{{partida.obra}}</td>
                                 <td>{{partida.bbdd_contpaq}}</td>
                                 <td>{{partida.rfc_empresa}}
-                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_rfc_empresa == false"></i>
-                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_rfc_empresa == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_rfc_empresa == false && !partida.id_caso_sin_cfdi > 0"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_rfc_empresa == true && !partida.id_caso_sin_cfdi > 0"></i>
                                 </td>
                                 <td>{{partida.empresa}}</td>
                                 <td>{{partida.rfc_proveedor}}
-                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_rfc_proveedor == false"></i>
-                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_rfc_proveedor == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_rfc_proveedor == false && !partida.id_caso_sin_cfdi > 0"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_rfc_proveedor == true && !partida.id_caso_sin_cfdi > 0"></i>
                                 </td>
                                 <td>{{partida.proveedor}}</td>
                                 <td>{{partida.fecha_factura}}
-                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_fecha == false"></i>
-                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_fecha == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_fecha == false && !partida.id_caso_sin_cfdi > 0"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_fecha == true && !partida.id_caso_sin_cfdi > 0"></i>
                                 </td>
                                 <td>{{partida.folio_factura}}
-                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_folio == false"></i>
-                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_folio == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_folio == false && !partida.id_caso_sin_cfdi > 0"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_folio == true && !partida.id_caso_sin_cfdi > 0"></i>
                                 </td>
                                 <td style="text-align: right">{{partida.importe_factura}}
-                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_importe == false"></i>
-                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_importe == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_importe == false && !partida.id_caso_sin_cfdi > 0"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_importe == true && !partida.id_caso_sin_cfdi > 0"></i>
                                 </td>
                                 <td>{{partida.moneda_factura}}
-                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_moneda == false"></i>
-                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_moneda == true"></i>
+                                    <i class="fa fa-file-invoice" style="color: red" v-if="partida.coincide_moneda == false && !partida.id_caso_sin_cfdi > 0"></i>
+                                    <i class="fa fa-file-invoice" style="color: green" v-else-if="partida.coincide_moneda == true && !partida.id_caso_sin_cfdi > 0"></i>
                                 </td>
                                 <td style="text-align: right">{{partida.tc_factura}}</td>
                                 <td style="text-align: right">{{partida.importe_mxn}}</td>
@@ -63,27 +63,29 @@
                                 <td style="text-align: right">{{partida.tc_saldo}}</td>
                                 <td style="text-align: right">{{partida.saldo_mxn}}
                                     <i class="fa fa-times-circle" style="color: red" v-if="partida.inconsistencia_saldo == true"></i>
-                                    <i class="fa fa-check-circle" style="color: green" v-else-if="partida.inconsistencia_saldo == false"></i>
                                 </td>
                                 <td>
                                     <CFDI v-if="partida.factura" v-bind:txt="partida.factura.uuid" v-bind:id="partida.factura.id" @click="partida.factura.id"
-                                    v-bind:cancelado="partida.factura.cancelado"></CFDI>
+                                    v-bind:cancelado="partida.factura.cancelado" v-bind:corto="true"></CFDI>
                                     <span v-else>
-                                        {{partida.uuid}}
+                                        <span v-if="partida.uuid">
+                                            {{partida.uuid}}
+                                        </span>
+                                        <span v-if="partida.caso_sin_cfdi">
+                                            {{partida.caso_sin_cfdi}}
+                                        </span>
+
                                     </span>
                                 </td>
                                 <td>
-                                    <pasivos-edit
-                                    v-bind:pasivo_parametro="partida"></pasivos-edit>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="eliminar(partida, $event)" :disabled="actualizando">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                    <!--
-                                    <button type="button" class="btn btn-sm btn-outline-success" title="Buscar CFDI" @click="buscaCFDI(partida, $event)" :disabled="actualizando">
-                                        <i class="fa fa-file-invoice-dollar"></i>
-                                    </button>
-                                    -->
-
+                                    <div class="btn-group">
+                                        <pasivos-edit
+                                        v-bind:pasivo_parametro="partida"></pasivos-edit>
+                                        <clasifica-pasivo v-bind:pasivo_parametro="partida" v-if="!partida.factura"></clasifica-pasivo>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" @click="eliminar(partida, $event)" :disabled="actualizando">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
@@ -99,10 +101,11 @@
 
 import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI.vue";
 import PasivosEdit from "../Edit.vue";
+import ClasificaPasivo from "./ClasificaPasivo.vue";
 
 export default {
     name: "layout-partial-show-lista-pasivos-validar",
-    components: {PasivosEdit, CFDI},
+    components: {ClasificaPasivo, PasivosEdit, CFDI},
     props : ['id','layout_parametro'],
     data(){
         return {

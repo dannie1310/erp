@@ -72,4 +72,9 @@ class LayoutPasivoPartidaService{
     {
         $this->repository->delete($data, $id);
     }
+
+    public function getCasosSinCFDI()
+    {
+        return $this->repository->getCasosSinCFDI();
+    }
 }
