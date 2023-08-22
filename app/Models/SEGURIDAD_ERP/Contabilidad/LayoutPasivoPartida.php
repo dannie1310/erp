@@ -175,7 +175,7 @@ class LayoutPasivoPartida extends Model
                 $cfdi->coincide_folio = 0;
                 $cfdi->coincide_moneda = 0;
 
-                if(abs($cfdi->total- $importe)<1)
+                if(abs($cfdi->total- $importe)<=1)
                 {
                     $cfdi->grado_coincidencia += 1;
                     $cfdi->coincide_importe = 1;
@@ -306,6 +306,7 @@ class LayoutPasivoPartida extends Model
         {
             $mejor_coincidencia = $posibles->last();
 
+            $this->id_caso_sin_cfdi = null;
             $this->uuid = $mejor_coincidencia->uuid;
             $this->coincide_rfc_empresa = $mejor_coincidencia->coincide_rfc_empresa;
             $this->coincide_rfc_proveedor = $mejor_coincidencia->coincide_rfc_proveedor;
@@ -313,6 +314,19 @@ class LayoutPasivoPartida extends Model
             $this->coincide_fecha = $mejor_coincidencia->coincide_fecha;
             $this->coincide_importe = $mejor_coincidencia->coincide_importe;
             $this->coincide_moneda = $mejor_coincidencia->coincide_moneda;
+
+
+            if($this->coincide_rfc_empresa &&
+                $this->coincide_rfc_proveedor &&
+                $this->coincide_folio &&
+                $this->coincide_importe &&
+                $this->coincide_moneda &&
+                !$this->coincide_fecha
+            )
+            {
+                $this->coincide_fecha = true;
+                $this->fecha_factura = $mejor_coincidencia->fecha;
+            }
 
             if(!$mejor_coincidencia->moneda)
             {
