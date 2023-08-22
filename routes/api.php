@@ -334,6 +334,9 @@ $api->version('v1', function ($api) {
             $api->post('{id}/asociar-cfdi', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@asociarCFDI')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@update')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('index_casos_sin_cfdi', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@indexCasosSinCFDI');
+            $api->post('{id}/clasifica', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@clasifica')->where(['id' => '[0-9]+']);
+
         });
 
         $api->group(['prefix' => 'contabilidad-electronica'], function ($api) {

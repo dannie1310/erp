@@ -60,6 +60,8 @@ class LayoutPasivoPartidaTransformer extends TransformerAbstract
             'coincide_tipo_cambio'=>$model->coincide_tipo_cambio ==1 ?true:false,
             'inconsistencia_saldo'=>$model->inconsistencia_saldo ==1 ?true:false,
             'es_moneda_nacional'=>$model->es_moneda_nacional ==1 ?true:false,
+            'id_caso_sin_cfdi'=>$model->id_caso_sin_cfdi,
+            'caso_sin_cfdi' => $model->caso_sin_cfdi_txt,
         ];
     }
     public function includeFactura(LayoutPasivoPartida $partida)

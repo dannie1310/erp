@@ -39,7 +39,8 @@ class LayoutPasivoPartida extends Model
         "coincide_rfc_proveedor",
         "coincide_tipo_cambio",
         "inconsistencia_saldo",
-        "es_moneda_nacional"
+        "es_moneda_nacional",
+        "id_caso_sin_cfdi"
     ];
     public $timestamps = false;
 
@@ -55,6 +56,11 @@ class LayoutPasivoPartida extends Model
     public function CFDI()
     {
         return $this->hasOne(CFDSAT::class,"uuid","uuid");
+    }
+
+    public function casoSinCFDI()
+    {
+        return $this->belongsTo(LayoutPasivoCasoSinCFDI::class,"id_caso_sin_cfdi", "id");
     }
 
     /**
@@ -225,6 +231,15 @@ class LayoutPasivoPartida extends Model
 
 
         return $nuevos_cfdi;
+    }
+
+    public function getCasoSinCFDITxtAttribute()
+    {
+        if($this->casoSinCFDI)
+        {
+            return $this->casoSinCFDI->descripcion;
+        }
+        return null;
     }
 
 
