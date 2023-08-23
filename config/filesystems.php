@@ -138,6 +138,10 @@ return [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_EMITIDOS')),
         ],
+        'xml_control_recursos' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_XML_CONTROL_RECURSOS')),
+        ],
         'pdf_emitidos' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_PDF_EMITIDOS')),
