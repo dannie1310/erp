@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="inicia()" class="btn btn-sm btn-outline-primary"><i class="fa fa-boxes" title="Clasificar Pasivo sin CFDI"></i></button>
+        <button type="button" @click="inicia()" class="btn btn-sm btn-outline-primary" :disabled="actualizando"><i class="fa fa-boxes" title="Clasificar Pasivo sin CFDI"></i></button>
         <div class="row">
             <div class="col-md-12">
                 <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">

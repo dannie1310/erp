@@ -315,19 +315,6 @@ class LayoutPasivoPartida extends Model
             $this->coincide_importe = $mejor_coincidencia->coincide_importe;
             $this->coincide_moneda = $mejor_coincidencia->coincide_moneda;
 
-
-            if($this->coincide_rfc_empresa &&
-                $this->coincide_rfc_proveedor &&
-                $this->coincide_folio &&
-                $this->coincide_importe &&
-                $this->coincide_moneda &&
-                !$this->coincide_fecha
-            )
-            {
-                $this->coincide_fecha = true;
-                $this->fecha_factura = $mejor_coincidencia->fecha;
-            }
-
             if(!$mejor_coincidencia->moneda)
             {
                 $cfd_util = new CFD($mejor_coincidencia->xml);
@@ -359,6 +346,19 @@ class LayoutPasivoPartida extends Model
             }else{
                 $this->es_moneda_nacional = 0;
             }
+
+            if($this->coincide_rfc_empresa &&
+                $this->coincide_rfc_proveedor &&
+                $this->coincide_folio &&
+                $this->coincide_importe &&
+                $this->coincide_moneda &&
+                !$this->coincide_fecha
+            )
+            {
+                $this->coincide_fecha = true;
+                $this->fecha_factura = $mejor_coincidencia->fecha;
+            }
+
             $this->save();
         }
         return $this;
