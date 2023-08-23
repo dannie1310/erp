@@ -19,7 +19,7 @@ class SolrecSemanaAnio extends Model
      */
     public function scopeOrdenarPorSemana($query)
     {
-        return $query->orderBy('anio','desc')->orderBy('semana', 'asc');
+        return $query->orderBy('anio','desc')->orderBy('semana', 'desc');
     }
 
     /**

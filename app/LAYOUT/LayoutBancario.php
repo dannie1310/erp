@@ -59,9 +59,7 @@ class LayoutBancario
             $file_interb = '#' . $llave . '-santander-interb' . $time;
             $file_zip = '#' . $llave . '-santander' . $time;
 
-            $descargar->update([
-                'nombre_archivo' => $file_zip . '.zip'
-            ]);
+
 
             if(config('filesystems.disks.bancario_recurso_descarga.root') == storage_path())
             {
@@ -73,7 +71,9 @@ class LayoutBancario
                 Storage::disk('bancario_recurso_descarga')->delete(Storage::disk('bancario_recurso_descarga')->allFiles());
                 Storage::disk('bancario_recurso_descarga')->put($file_m_banco . '.txt', $mismo);
                 Storage::disk('bancario_recurso_descarga')->put($file_interb . '.txt', $inter);
-
+                $descargar->update([
+                    'nombre_archivo' => $file_zip . '.zip'
+                ]);
                 $zipper = new Zipper;
                 $files = glob(config('filesystems.disks.bancario_recurso_descarga.root').'/*');
                 $zipper->make(config('filesystems.disks.bancario_recurso_descarga_zip.root'). '/' . $file_zip.'.zip')->add($files)->close();
@@ -82,12 +82,18 @@ class LayoutBancario
                 return $descargar->getKey();
             }else{
                 if (count($this->data_mismo) > 0){
-                    Storage::disk('bancario_recurso_descarga')->put($file_m_banco . '.txt', $mismo);
+                    $descargar->update([
+                        'nombre_archivo' => $file_m_banco . '.txt'
+                    ]);
+                    Storage::disk('bancario_recurso_descarga_zip')->put($file_m_banco . '.txt', $mismo);
                     DB::connection('controlrec')->commit();
                     return $descargar->getKey();
                 }
                 if (count($this->data_inter) > 0){
-                    Storage::disk('bancario_recurso_descarga')->put($file_interb . '.txt', $inter);
+                    $descargar->update([
+                        'nombre_archivo' => $file_interb . '.txt'
+                    ]);
+                    Storage::disk('bancario_recurso_descarga_zip')->put($file_interb . '.txt', $inter);
                     DB::connection('controlrec')->commit();
                     return $descargar->getKey();
                 }
@@ -102,10 +108,15 @@ class LayoutBancario
 
     public function generar(){
 
-        foreach ($this->datos['data'] as $solicitud) {
+        foreach ($this->datos['data'] as $key => $solicitud) {
             if(array_key_exists('selected', $solicitud))
             {
                 $cuenta_empresa = CuentaBancaria::where('IdCuentaBancaria', $solicitud['idcuentaempresa'])->first();
+                if($cuenta_empresa == null)
+                {
+                    abort(403, 'Falto seleccionar la cuenta cargo [#'.($key+1).'] de la empresa (' . $solicitud['empresa']['rfc'] . ') .');
+                    dd($cuenta_empresa);
+                }
                 if($cuenta_empresa->IdBanco == $solicitud['cuentaProveedor']['id_banco'])
                 {
                     $cuenta_cargo = str_pad(substr(str_replace("-","",$cuenta_empresa->Cuenta), 0, 16), 16, ' ', STR_PAD_RIGHT);

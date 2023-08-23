@@ -45,8 +45,8 @@ export default {
                                     .then(r => r.data)
                                     .then(dat => {
                                         swal("Layout bancario control de recursos descargado correctamente.", {
-                                            icon: "warning",
-                                            timer: 1500,
+                                            icon: "success",
+                                            timer: 2000,
                                             buttons: false
                                         })
                                         resolve(dat);
