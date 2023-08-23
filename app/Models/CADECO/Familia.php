@@ -13,7 +13,9 @@ class Familia extends Material
         'marca',
         'UsuarioRegistro',
         'FechaHoraRegistro',
-        'nivel'
+        'nivel',
+        'nombre_original_familia',
+        'consecutivo_familia'
     ];
     protected static function boot()
     {

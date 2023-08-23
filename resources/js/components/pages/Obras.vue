@@ -51,10 +51,15 @@
 
         mounted() {
             this.$store.commit('auth/setObra', { obra: null });
+            this.$store.commit('auth/setPermisos', { permisos: [] });
+            this.$store.commit('auth/setEmpresa', null);
+
             this.$session.remove('permisos');
             this.$session.remove('db');
             this.$session.remove('id_obra');
             this.$session.remove('sistemas');
+            this.$session.remove('id_empresa');
+            this.$session.remove('empresa');
             this.fetch();
         },
 
@@ -111,6 +116,8 @@
                         this.$session.set('db', database)
                         this.$session.set('id_obra', id_obra)
                         this.$store.commit("auth/setObra", res)
+                        this.$session.set('id_empresa', res.obra.datos_contables.id);
+                        this.$store.commit("auth/setEmpresa", res.obra.datos_contables.empresa);
                         this.$router.push({name: 'home'})
                     })
                     .finally(() => {

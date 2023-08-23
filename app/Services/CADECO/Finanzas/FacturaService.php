@@ -633,7 +633,7 @@ class FacturaService
 
     public function guardarXmlEnADD($xml){
         $xml_arreglo = $this->getArregloCFD($xml);
-        if(in_array($xml_arreglo['tipo_comprobante'], ["I", "E"])){
+        if(in_array($xml_arreglo['tipo_comprobante'], ["I", "E", "P"])){
             return $this->repository->guardarXml($xml, $xml_arreglo);
         }
     }

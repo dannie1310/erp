@@ -11,7 +11,10 @@ namespace App\Http\Controllers\v1\CTPQ;
 
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\CTPQ\PolizaTransformer;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Services\CTPQ\PolizaService;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
@@ -45,6 +48,7 @@ class PolizaController extends Controller
     public function __construct(Manager $fractal, PolizaService $service, PolizaTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('accesoEmpresaContpaq');
         $this->middleware('permisoGlobal:consultar_poliza_ctpq')->only(['show','pdf','pdfCaidaB','descargaZip']);
         $this->middleware('permisoGlobal:editar_poliza_ctpq')->only('update');
 
@@ -86,5 +90,30 @@ class PolizaController extends Controller
     {
         $respuesta =$this->service->asociarCFDI();
         return response()->json($respuesta, 200);
+    }
+
+    public function listarPosiblesCFDI(Request $request)
+    {
+        $empresa = Empresa::find($request->params["id_empresa"]);
+        if($empresa)
+        {
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+        }
+        return $this->service->listarPosiblesCFDI($request->all());
+    }
+
+    public function asociarCFDI(Request $request)
+    {
+        $item = $this->service->setAsociarCFDI($request->all());
+        $this->fractal->parseIncludes(["posibles_cfdi","asociacion_cfdi","cfdi","movimientos_poliza"]);
+        return $this->respondWithItem($item);
+    }
+
+    public function desasociarCFDI(Request $request)
+    {
+        $item = $this->service->setDesasociarCFDI($request->all());
+        $this->fractal->parseIncludes(["posibles_cfdi","asociacion_cfdi","cfdi","movimientos_poliza"]);
+        return $this->respondWithItem($item);
     }
 }

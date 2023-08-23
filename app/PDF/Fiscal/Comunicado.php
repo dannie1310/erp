@@ -163,7 +163,7 @@ class Comunicado extends Fpdi
                 $this->SetAligns(['C','C','C','L','C','R','R','L']);
                 $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
                 $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
-                $this->Row([$i, $item->uuid, $item->fecha_sencilla_format, $item->serie,$item->folio, $item->total_format,$item->monto_pendiente_rep_vw_format,$item->moneda]);
+                $this->Row([$i, $item->uuid, $item->fecha_corta_format, $item->serie,$item->folio, $item->total_format,$item->monto_pendiente_rep_vw_format,$item->moneda]);
                 $total_receptor += $item->total_mxn;
                 $total_emisor += $item->total_mxn;
                 $saldo_receptor += $item->monto_pendiente_rep_vw_mxn;

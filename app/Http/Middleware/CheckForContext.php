@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Contracts\Context;
+use App\Models\CADECO\Obra;
 use Closure;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -51,7 +52,7 @@ class CheckForContext
                 session()->put('db', request()->get('db'));
                 session()->put('id_obra', request()->get('idobra'));
             } else {
-                throw new BadRequestHttpException('No Context Established');
+                throw new BadRequestHttpException('Sin Contexto Establecido');
             }
         }
 
@@ -65,5 +66,15 @@ class CheckForContext
     private function setContext()
     {
         $this->config->set('database.connections.cadeco.database', $this->context->getDatabase());
+        $obra = Obra::query()->find($this->context->getIdObra());
+
+        if ( $obra->datosContables) {
+            $this->context->setContext($this->context->getDatabase()
+                    , $this->context->getIdObra()
+                    , ($obra->datosContables->BDContPaq) ? $obra->datosContables->BDContPaq : ''
+            );
+        }
+
+        $this->config->set('database.connections.cntpq.database', $this->context->getDatabaseContpaq());
     }
 }

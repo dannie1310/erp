@@ -38,6 +38,8 @@ class ListaEmpresasExport implements FromCollection, WithHeadings
                 'con_acceso_other_content'=>$empresa->con_acceso_other_content,
                 'con_acceso_document_content'=>$empresa->con_acceso_document_content,
                 'con_acceso_document_metadata'=>$empresa->con_acceso_document_metadata,
+                'administrada_hermes'=>$empresa->administrada_hermes,
+                'es_catalogo'=>$empresa->es_catalogo,
             );
             $i++;
         }
@@ -67,6 +69,8 @@ class ListaEmpresasExport implements FromCollection, WithHeadings
             "Acceso Other Content",
             "Acceso Document Content",
             "Acceso Document Metadata",
+            "Administrada Hermes",
+            "Es Catálogo"
         ];
     }
 }

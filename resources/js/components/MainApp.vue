@@ -137,6 +137,20 @@
         },
 
         mounted() {
+            if(this.$route.name == 'portal')
+            {
+                this.$store.commit('auth/setObra', { obra: null });
+                this.$store.commit('auth/setPermisos', { permisos: [] });
+                this.$store.commit('auth/setEmpresa', null);
+
+                this.$session.remove('permisos');
+                this.$session.remove('db');
+                this.$session.remove('id_obra');
+                this.$session.remove('sistemas');
+                this.$session.remove('id_empresa');
+                this.$session.remove('empresa');
+            }
+
             this.getAviso();
         },
 
@@ -195,6 +209,9 @@
             },
             currentObra() {
                 return this.$store.getters['auth/currentObra']
+            },
+            currentEmpresa(){
+                return this.$store.getters['auth/currentEmpresa']
             },
             sistemas() {
                 return this.$store.getters['seguridad/sistema/sistemas']

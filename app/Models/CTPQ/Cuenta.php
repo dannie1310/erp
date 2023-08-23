@@ -53,6 +53,25 @@ class Cuenta extends Model
 
     }
 
+    public function getRequiereProveedorAttribute()
+    {
+        $base = Parametro::find(1);
+        $empresa_ctpq_sao = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("IdEmpresaContpaq","=",$base->IdEmpresa)->first();
+        $id_empresa_sat = $empresa_ctpq_sao->IdEmpresaSAT;
+
+        $prefijos_pasivo = PrefijosPasivo::where("id_empresa_sat","=",$id_empresa_sat)
+            ->get()
+            ->pluck("prefijo")
+            ->toArray();
+
+        if( in_array(substr($this->Codigo,0,4),$prefijos_pasivo))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public function cuentaContpaqProvedorSat()
     {
         $db = Config::get('database.connections.cntpq.database');

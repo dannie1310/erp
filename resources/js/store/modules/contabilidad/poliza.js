@@ -192,7 +192,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Asociar CFDI a Pólizas",
-                    text: "¿Está seguro de asociar los CFDI a Pólizas?",
+                    text: "¿Está seguro de asociar los CFDI?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -211,7 +211,7 @@ export default {
                                 .post(URI+"asociar", payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("CFDI asociados a sus correspondientes polizas.", {
+                                    swal("CFDI asociados.", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

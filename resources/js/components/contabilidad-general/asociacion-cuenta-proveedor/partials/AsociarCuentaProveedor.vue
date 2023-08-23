@@ -1,13 +1,16 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Asociar">
+        <span v-if="txt" @click="find" style="cursor: pointer; text-decoration: underline; color: #003eff" title="Buscar proveedor">
+            {{txt}}
+        </span>
+        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Buscar proveedor" v-else>
             <i class="fas fa-exchange-alt"></i>
         </button>
-        <div class="modal fade" ref="modal" role="dialog" v-if="proveedoresSat">
+        <div class="modal fade" ref="modal_cuenta" role="dialog">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content" >
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fas fa-exchange-alt"></i> ASOCIACIÓN CUENTA PROVEEDOR</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fas fa-exchange-alt"></i> Asociación de Cuenta Contable Con Proveedor</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -34,18 +37,20 @@
                                 </div>
                                 <div class="col-md-9">
                                     <div class="form-group">
-                                        <model-list-select
-                                                :disabled="cargando"
-                                                name="id_proveedor"
-                                                :placeholder="!cargando?'Seleccionar o buscar por rfc o razón social':'Cargando...'"
-                                                data-vv-as="ProveedorSat"
-                                                v-model="id_proveedor"
-                                                v-validate="{required: true}"
-                                                option-value="id"
-                                                :custom-text="rfcAndRazonSocial"
-                                                :list="proveedoresSat"
-                                                :isError="errors.has(`id_proveedor`)">
-                                        </model-list-select>
+                                        <treeselect
+                                            :class="{error: errors.has('proveedor')}"
+                                            :async="true"
+                                            :load-options="loadOptions"
+                                            v-model="id_proveedor"
+                                            v-validate="{required: true}"
+                                            data-vv-as="Proveedor"
+                                            name="proveedor"
+                                            loadingText="Cargando..."
+                                            searchPromptText="Escriba para buscar..."
+                                            noResultsText="Sin Resultados"
+                                            placeholder="-- Buscar Proveedor -- "
+                                        >
+                                        </treeselect>
                                         <div class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                                     </div>
                                 </div>
@@ -63,35 +68,19 @@
 </template>
 
 <script>
-    import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "asociacion-cuenta-proveedor-show",
-        props: ['id_empresa','id_cuenta', 'nombre'],
-        components: {ModelListSelect},
+        props: ['id_empresa','id_cuenta', 'nombre', 'id_poliza' ,'txt'],
         data() {
             return {
                 cargando: false,
-                proveedoresSat:[],
-                id_proveedor:'',
+                id_proveedor: null,
             }
         },
         methods: {
-            rfcAndRazonSocial (item) {
-                return `[${item.rfc}] - ${item.razon_social}`
-            },
             find(){
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show');
-                this.$Progress.start();
-                return this.$store.dispatch('contabilidadGeneral/proveedor-sat/buscarProveedoresSat',
-                {
-                    params: {include: ['cuenta_contpaq_proveedor_sat'], nombre:this.nombre}
-                })
-                .then(data => {
-                    this.proveedoresSat = data.data;
-                }).finally(() => {
-                    this.$Progress.finish();
-                });
+                $(this.$refs.modal_cuenta).appendTo('body')
+                $(this.$refs.modal_cuenta).modal('show');
             },
             validate() {
                 this.$validator.validate().then(result => {
@@ -101,6 +90,8 @@
                 });
             },
             asociar(){
+                let _self = this;
+
                 return this.$store.dispatch('contabilidadGeneral/cuenta/asociarCuenta',
                 {
                     params: {
@@ -111,14 +102,48 @@
                 })
                 .then(data => {
                     this.$store.commit('contabilidadGeneral/cuenta/UPDATE_CUENTA', data);
-                    $(this.$refs.modal).modal('hide');
+
+                    if(this.id_poliza){
+                        return this.$store.dispatch('contabilidadGeneral/poliza/find', {
+                            id: this.id_poliza,
+                            params: {
+                                include: ['movimientos_poliza.asociacion_cfdi','movimientos_poliza.cuenta.cuenta_contpaq_proveedor_sat', 'tipo', 'asociacion_cfdi', 'posibles_cfdi'],
+                                id_empresa: this.id_empresa
+                            }
+                        }).then(data => {
+                            $(_self.$refs.modal_cuenta).modal('hide');
+                            this.$store.commit('contabilidadGeneral/poliza/SET_POLIZA', data);
+                        }).finally(() => {
+
+                            this.cargando = false;
+                        });
+                    }
+
+
                 }).finally(() => {
-                    
+                        $(this.$refs.modal_cuenta).modal('hide');
                 });
             },
-
+            loadOptions({ action, searchQuery, callback }) {
+                if(searchQuery.length >= 3) {
+                    return this.$store.dispatch('contabilidadGeneral/proveedor-sat/index', {
+                        params: {
+                            search: searchQuery,
+                            limit: 50,
+                            sort: 'razon_social',
+                            order: 'ASC'
+                        }
+                    })
+                    .then(data => {
+                        const options = data.data.map(i => ({
+                            id: i.id,
+                            label: i.rfc + ' - ' +i.razon_social
+                        }))
+                        callback(null, options)
+                    })
+                }
+            },
         }
-
     }
 </script>
 

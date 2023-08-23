@@ -102,7 +102,7 @@ class OrdenCompraFormato extends FPDI
         $versiones = OrdenCompra::where('id_transaccion', '=', $this->ordenCompra->id_transaccion)->count();
         $this->folio_sao = $this->ordenCompra->numero_folio_format;
         $this->requisicion_folio_sao =str_pad($this->ordenCompra->solicitud->numero_folio_format, 5, '0', STR_PAD_LEFT);
-        $this->obra_nombre = $this->obra->nombre;
+        $this->obra_nombre = $this->obra->nombre_obra_formatos;
 
 
 
@@ -393,7 +393,7 @@ class OrdenCompraFormato extends FPDI
 
                 $this->setX(13.5);
                 $this->Cell(3, .7, utf8_decode('OBRA: '), 'L', 0, 'L');
-                $this->Cell(5, .7, $this->obra_nombre  . ' ', 'R', 0, 'L');
+                $this->Cell(5, .7, utf8_decode($this->obra->nombre)  . ' ', 'R', 0, 'L');
                 $this->Ln(.5);
 
                 $this->SetFont('Arial', 'B', 10);
@@ -423,7 +423,7 @@ class OrdenCompraFormato extends FPDI
 
                 $this->setX(14);
                 $this->Cell(2.5, .4, utf8_decode('OBRA: '), 'L', 0, 'L');
-                $this->Cell(4, .4, $this->obra_nombre  . ' ', 'R', 0, 'L');
+                $this->Cell(4, .4, utf8_decode($this->obra->nombre)  . ' ', 'R', 0, 'L');
                 $this->Ln(.4);
 
                 $this->SetFont('Arial', 'B', 9);

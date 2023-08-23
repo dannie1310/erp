@@ -54,7 +54,7 @@
                                                                 v-validate="{required:true}"
                                                                 :class="{'is-invalid': errors.has(`id_material[${i}]`)}"
                                                                 :id="`descripcion[${i}]`">
-                                                            <div class="invalid-feedback" v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}</div>  
+                                                            <div class="invalid-feedback" v-show="errors.has(`id_material[${i}]`)">{{ errors.first(`id_material[${i}]`) }}</div>
                                                         </td>
                                                         <td>
                                                             {{item.material.unidad}}
@@ -164,7 +164,7 @@
                                 <label for="id_material">Material</label>
                                 <div class="row">
                                     <div class="col-md-10">
-                                        <input 
+                                        <input
                                             type="text"
                                             name="busqueda"
                                             class="form-control"
@@ -176,7 +176,7 @@
 
                                     </div>
                                 </div>
-                                
+
                             </div>
                             <div class="form-group error-content" v-if="resultados.length > 0">
                                 <label for="id_material">Seleccionar</label>
@@ -214,7 +214,7 @@
                                     v-model="descrip_temporal"
                                     v-on:keyup.enter="()"
                                     id="descripcion"> -->
-                                
+
                             </div>
                        </div>
                        <div class="modal-footer">
@@ -268,7 +268,7 @@
                 this.id_seleccion = '';
                 return this.$store.dispatch('cadeco/material/buscarMateriales', {
                     params: {
-                        busqueda:this.busqueda 
+                        busqueda:this.busqueda
                     }
                 })
                 .then(data => {

@@ -1,9 +1,18 @@
 <template>
     <footer class="main-footer">
-        <div class="float-right d-none d-sm-block">
-            <small>{{ currentObra ? currentObra.direccion : '' }}</small>
-        </div>
-        {{ currentObra ? currentObra.facturar : '' }}
+
+        {{ currentObra && currentObra.descripcion !== undefined ? currentObra.descripcion +' | ' : '' }}
+
+        {{ currentObra && currentObra.facturar !== undefined ? currentObra.facturar +' | ' : '' }}
+
+        {{ !currentObra && currentEmpresa && currentEmpresa.Descripcion !=='null'
+    && currentEmpresa.Descripcion !== undefined
+        ? currentEmpresa.Descripcion +' | ' :''}}
+
+        {{ currentEmpresa && currentEmpresa.Nombre !=='null'
+    && currentEmpresa.Nombre !== undefined
+        ? currentEmpresa.Nombre :''}}
+
     </footer>
 </template>
 
@@ -13,7 +22,10 @@
         computed: {
             currentObra() {
                 return this.$store.getters['auth/currentObra']
-            }
+            },
+            currentEmpresa(){
+                return this.$store.getters['auth/currentEmpresa']
+            },
         }
     }
 </script>

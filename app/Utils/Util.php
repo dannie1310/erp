@@ -16,8 +16,8 @@ class Util
     public static function eliminaPalabrasComunes($string)
     {
         $string = str_replace(
-            array('.',',',' SAPI',' SA', ' DE ', ' CV', ' S RL',' SRL',' SR L',' S C'," SC", " Y "," S A C V", " D ECV", " (COMPLEMENTARIA)"," (USD)"," (DOLARES)", "(COMPLEMENTARIA)","(USD)","(DOLARES)"," (COMPLE)","(COMPLE)"),
-            array('','','','', ' ','', '','', '','','',' ',"","","","","","","","",""),
+            array('.',',',' SAPI',' SA', ' DE ', ' CV', ' S RL',' SRL',' SR L',' S C'," SC", " Y "," S A C V", " D ECV", " (COMPLEMENTARIA)"," (USD)"," (DOLARES)", "(COMPLEMENTARIA)","(USD)","(DOLARES)"," (COMPLE)","(DOLAR)","(COMPLEM)","(COMP)"),
+            array('','','','', ' ','', '','', '','','',' ',"","","","","","","","","","",""),
             $string
         );
         return mb_strtoupper(trim($string));
@@ -153,6 +153,11 @@ class Util
         );
 
         return preg_replace( "/\r|\n/", " ", $string );
+    }
+
+    public static function soloNumeros($string)
+    {
+       return preg_replace( '/[^0-9]/', "", $string );
     }
 
     public static function getMesTxt($mes, $tipo = 0)
