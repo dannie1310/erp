@@ -85,7 +85,7 @@
                 self.$data.data = []
                 self.$data.data = solicitudes.map((solicitud, i) => ({
                     index: (i + 1) + self.query.offset,
-                    Fecha: solicitud.fecha,
+                    Fecha: solicitud.fecha_format,
                     concepto: solicitud.concepto,
                     foliodocto: solicitud.folio_format,
                     total: solicitud.total_format,
