@@ -4294,6 +4294,24 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'documento-recurso',
+                component: require('./components/control-recursos/documento/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'documento-recurso',
+                        component: require('./components/control-recursos/documento/Index').default,
+                        meta: {
+                            title: 'Documentos',
+                            breadcrumb: {parent: 'control-recurso', name: 'DOCUMENTOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_factura_recursos'],
+                            general: true,
+                        }
+                    }
+                ]
+            },
         ]
     },
     {

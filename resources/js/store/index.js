@@ -152,6 +152,7 @@ import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
 import extraordinario from './modules/controlPresupuesto/extraordinario';
 
 //CONTROL RECURSOS
+import documentoRecurso from "./modules/controlRecursos/documento";
 import empresaRecurso from "./modules/controlRecursos/empresa";
 import facturaRecurso from "./modules/controlRecursos/factura";
 import proveedorRecurso from "./modules/controlRecursos/proveedor";
@@ -377,6 +378,7 @@ export default new Vuex.Store({
         'control-presupuesto/concepto-tarjeta': conceptoTarjeta,
         'control-presupuesto/extraordinario': extraordinario,
 
+        'controlRecursos/documento' : documentoRecurso,
         'controlRecursos/empresa' : empresaRecurso,
         'controlRecursos/factura' : facturaRecurso,
         'controlRecursos/proveedor' : proveedorRecurso,

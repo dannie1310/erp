@@ -79,6 +79,15 @@ class Documento extends Model
     /**
      * Scopes
      */
+    public function scopePorTipo($query, $tipos)
+    {
+        return $query->whereIn('IdTipoDocto', [$tipos]);
+    }
+
+    public function scopePorEstado($query, $estados)
+    {
+        return $query->whereIn('Estatus', [$estados]);
+    }
 
     /**
      * Atributos
