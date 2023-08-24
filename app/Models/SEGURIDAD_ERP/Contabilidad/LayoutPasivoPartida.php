@@ -360,6 +360,7 @@ class LayoutPasivoPartida extends Model
             }
 
             $this->save();
+            $this->actualizaInconsistenciaSaldo();
         }
         return $this;
     }
