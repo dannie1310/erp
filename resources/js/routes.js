@@ -4224,6 +4224,79 @@ export const routes = [
         ]
     },
     {
+        path: '/control-recursos',
+        components:  {
+            default: require('./components/control-recursos/partials/Layout.vue').default,
+            menu: require('./components/control-recursos/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'control-recursos',
+                meta: {
+                    title: 'CONTROL RECURSOS',
+                    middleware: [auth],
+                }
+            },
+            {
+                path: 'factura-recurso',
+                component: require('./components/control-recursos/factura/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'factura-recurso',
+                        component: require('./components/control-recursos/factura/Index').default,
+                        meta: {
+                            title: 'Facturas',
+                            breadcrumb: {parent: 'control-recursos', name: 'FACTURAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_factura_recursos','registrar_factura_recursos'],
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'factura-recurso-create',
+                        component: require('./components/control-recursos/factura/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Factura',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'factura-recurso'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_factura_recursos'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'factura-recurso-show',
+                        component: require('./components/control-recursos/factura/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Factura',
+                            breadcrumb: { parent: 'factura-recurso', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_factura_recursos',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'factura-recurso-edit',
+                        props: true,
+                        component: require('./components/control-recursos/factura/Edit').default,
+                        meta: {
+                            title: 'Editar Factura',
+                            breadcrumb: {parent: 'factura-recurso', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: 'editar_factura_recursos',
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/fiscal',
         components:  {
             default: require('./components/fiscal/partials/Layout.vue').default,
