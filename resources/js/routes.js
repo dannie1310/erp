@@ -4309,7 +4309,19 @@ export const routes = [
                             permission: ['consultar_factura_recursos'],
                             general: true,
                         }
-                    }
+                    },
+                    {
+                        path: 'create',
+                        name: 'documento-recurso-create',
+                        component: require('./components/control-recursos/documento/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Documento',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'documento-recurso'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_factura_recursos'],
+                            general: true
+                        }
+                    },
                 ]
             },
         ]
