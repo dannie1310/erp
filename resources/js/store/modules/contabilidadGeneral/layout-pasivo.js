@@ -116,16 +116,29 @@ export default {
                                 .post(URI + 'cargar-layout', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Archivo cargado correctamente", {
-                                        icon: "success",
-                                        timer: 2000,
-                                        buttons: false
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
+                                    if(data.message != 'Error')
+                                    {
+                                        swal("Archivo cargado correctamente", {
+                                            icon: "success",
+                                            timer: 2000,
+                                            buttons: false
+                                        }).then(() => {
+                                            resolve(data);
+                                        })
+                                    }else{
+                                        var urr = URI + data.hash_file+ '/descargar-layout-errores?access_token=' + this._vm.$session.get('jwt');
+                                        var win = window.open(urr, "_blank");
+
+                                        win.onbeforeunload = () => {
+                                            swal("Error", "EL layout cargado tiene errores, favor de revisar el archivo que se descargará a continuación para conocer el detalle.", {
+                                                icon: "error",
+                                            })
+                                        }
+                                    }
+
                                 })
-                                .catch(error => {
-                                    reject('Archivo no procesable');
+                                .catch((error) => {
+                                    reject(error);
                                 })
                         }
                     });
@@ -148,13 +161,13 @@ export default {
                                 })
                             }
                         }else if(data.respuesta_inconsistencia_saldo && !data.respuesta_coincidencia_con_cfdi){
-                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir.", "error")
+                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir o indicar que el pasivo no tendrá correspondecia con CFDI clasificando el pasivo en el rubro que le corresponde.", "error")
 
                         }else if(!data.respuesta_inconsistencia_saldo && data.respuesta_coincidencia_con_cfdi){
                             swal("Error","Algunos pasivos de la carga tienen un saldo mayor que el monto de la factura, favor de corregir.", "error")
 
                         }else{
-                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde " +
+                            swal("Error","Algunos pasivos de la carga tienen diferencia en los datos respecto al CFDI que le corresponde, favor de corregir o indicar que el pasivo no tendrá correspondecia con CFDI clasificando el pasivo en el rubro que le corresponde" +
                                 "y un saldo mayor al monto de la factura; favor de corregir.", "error")
                         }
                     })

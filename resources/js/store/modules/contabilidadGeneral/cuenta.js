@@ -121,7 +121,7 @@ export default {
                             .then(data => {
                                 swal("Asociación registrada correctamente", {
                                     icon: "success",
-                                    timer: 2000,
+                                    timer: 3000,
                                     buttons: false
                                 }).then(() => {
                                     resolve(data);

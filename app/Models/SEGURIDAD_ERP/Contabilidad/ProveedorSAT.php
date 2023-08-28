@@ -24,6 +24,11 @@ class ProveedorSAT extends Model
         'regimen_fiscal',
     ];
 
+    public $searchable = [
+        'rfc',
+        'razon_social'
+    ];
+
     public function ubicacionesRep()
     {
         return $this->hasMany(ProveedorREPUbicacion::class, "id_proveedor_sat", "id");

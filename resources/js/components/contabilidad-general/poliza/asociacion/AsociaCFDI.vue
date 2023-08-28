@@ -4,7 +4,8 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
-                        <poliza-partial-show v-bind:id="this.id" v-bind:id_empresa="this.id_empresa" v-bind:para_eliminar="true"></poliza-partial-show>
+                        <poliza-partial-show v-bind:id="this.id" v-bind:id_empresa="this.id_empresa" v-bind:para_eliminar="true"
+                                             v-bind:para_asociar="true"></poliza-partial-show>
                         <poliza-contpaq-lista-posibles-cfdi ></poliza-contpaq-lista-posibles-cfdi>
                     </div>
                     <div class="card-footer">

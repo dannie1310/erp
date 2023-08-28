@@ -137,7 +137,7 @@ class FacturaService
         }
 
         if (!$arreglo["empresa_bd"]) {
-            abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de proveedores de control recursos; la factura no puede ser registrada.");
+            abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de empresas de control recursos; la factura no puede ser registrada.");
         }
         $arreglo["id_moneda"] = $this->repository->getMoneda($arreglo["moneda"]);
         if($arreglo_cfd['tipo_cambio'] == '') {
@@ -300,10 +300,20 @@ class FacturaService
 
     public function registrarXML($data, $factura)
     {
+        $empresa = $this->repository->getEmpresaSat($data["receptor"]["rfc"]);
+        if($empresa == null)
+        {
+            abort(500, "El receptor (".$data["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de ListaEmpresasSAT; la factura no puede ser registrada.");
+        }
+        $provedor = $this->repository->getProveedorSat($data["emisor"]["rfc"]);
+        if($provedor == null)
+        {
+            abort(500, "El emisor (".$data["emisor"]["rfc"].")del comprobante no esta dado de alta en el catálogo de proveedores_sat; la factura no puede ser registrada.");
+        }
         CFDSAT::create([
             'version' => $data['version'],
-            'id_empresa_sat' => $data['id_empresa'],
-            'id_proveedor_sat' => $data['id_proveedor'],
+            'id_empresa_sat' => $empresa->getKey(),
+            'id_proveedor_sat' => $provedor->getKey(),
             'rfc_emisor' => $data['emisor']['rfc'],
             'rfc_receptor' => $data['receptor']['rfc'],
             'xml_file' => $this->repository->getArchivoSQL($data['archivo']),

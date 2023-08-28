@@ -6,6 +6,8 @@ use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Empresa;
 use App\Models\CONTROL_RECURSOS\Factura;
 use App\Models\CONTROL_RECURSOS\Proveedor;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\AvisoSATOmitir;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\Repository;
@@ -128,5 +130,15 @@ class FacturaRepository extends Repository implements RepositoryInterface
     public function buscarDocumentoUuid($uuid)
     {
         return Factura::where('uuid', $uuid)->first();
+    }
+
+    public function getEmpresaSat($rfc)
+    {
+        return EmpresaSAT::where('rfc', $rfc)->first();
+    }
+
+    public function getProveedorSat($rfc)
+    {
+        return ProveedorSAT::where('rfc', $rfc)->first();
     }
 }
