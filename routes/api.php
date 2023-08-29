@@ -2065,6 +2065,10 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@update')->where(['id' => '[0-9]+']);
         });
 
+        $api->group(['prefix' => 'moneda'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\MonedaController@index');
+        });
+
         $api->group(['prefix' => 'proveedor'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@index');
         });

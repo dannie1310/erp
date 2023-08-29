@@ -155,6 +155,7 @@ import extraordinario from './modules/controlPresupuesto/extraordinario';
 import documentoRecurso from "./modules/controlRecursos/documento";
 import empresaRecurso from "./modules/controlRecursos/empresa";
 import facturaRecurso from "./modules/controlRecursos/factura";
+import monedaRecurso from "./modules/controlRecursos/moneda";
 import proveedorRecurso from "./modules/controlRecursos/proveedor";
 import serie from "./modules/controlRecursos/serie";
 
@@ -381,6 +382,7 @@ export default new Vuex.Store({
         'controlRecursos/documento' : documentoRecurso,
         'controlRecursos/empresa' : empresaRecurso,
         'controlRecursos/factura' : facturaRecurso,
+        'controlRecursos/moneda' : monedaRecurso,
         'controlRecursos/proveedor' : proveedorRecurso,
         'controlRecursos/serie' : serie,
 
