@@ -9,9 +9,9 @@
                     </div>
                     <div class="card-footer">
                         <div class="pull-right">
-                             <button type="button" class="btn btn-primary" v-on:click="asociarCFDI" :disabled="actualizando || cargando"><i class="fa fa-file-invoice-dollar" ></i>Asociar CFDI</button>
+                             <button type="button" class="btn btn-secondary " v-on:click="regresar" :disabled="actualizando || cargando"><i class="fa fa-angle-left" ></i>Regresar</button>
+                             <button type="button" class="btn btn-primary" v-on:click="asociarCFDI" :disabled="actualizando || cargando"><i class="fa fa-share-alt" ></i>Asociar CFDI</button>
                              <button type="button" class="btn btn-primary" v-on:click="descargarLayoutIFS" :disabled="actualizando || cargando"><i class="fa fa-download" ></i>Descargar Layout IFS</button>
-                             &nbsp;&nbsp;<button type="button" class="btn btn-secondary " v-on:click="regresar" :disabled="actualizando || cargando"><i class="fa fa-angle-left" ></i>Regresar</button>
                         </div>
                     </div>
                 </div>

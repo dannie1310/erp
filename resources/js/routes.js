@@ -4224,7 +4224,7 @@ export const routes = [
         ]
     },
     {
-        path: '/control-recurso',
+        path: '/control-recursos',
         components:  {
             default: require('./components/control-recursos/partials/Layout.vue').default,
             menu: require('./components/control-recursos/partials/Menu.vue').default
@@ -4232,7 +4232,7 @@ export const routes = [
         children:[
             {
                 path:'',
-                name: 'control-recurso',
+                name: 'control-recursos',
                 meta: {
                     title: 'CONTROL RECURSOS',
                     middleware: [auth],
@@ -4248,7 +4248,7 @@ export const routes = [
                         component: require('./components/control-recursos/factura/Index').default,
                         meta: {
                             title: 'Facturas',
-                            breadcrumb: {parent: 'control-recurso', name: 'FACTURAS'},
+                            breadcrumb: {parent: 'control-recursos', name: 'FACTURAS'},
                             middleware: [auth, permission],
                             permission: ['consultar_factura_recursos','registrar_factura_recursos'],
                             general: true,

@@ -181,6 +181,35 @@ export default {
             });
         },
 
+        index_casos_sin_cfdi (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'index_casos_sin_cfdi', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            })
+        },
+
+        clasifica (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.post(URI + payload.id + '/clasifica', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            })
+        },
+
+
+
     },
 
     getters: {

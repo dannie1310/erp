@@ -98,6 +98,15 @@ axios.interceptors.response.use((response) => {
                     text: message,
                     icon: "error"
                 });
+                break;
+            case (code === 466):
+                swal({
+                    title: "¡Error!",
+                    text: message,
+                    icon: "error"
+                });
+                return error.response;
+                break;
             case (code === 400):
                 swal({
                     title: "Atención",
@@ -120,6 +129,7 @@ axios.interceptors.response.use((response) => {
                     text: message,
                     icon: "error"
                 });
+                break;
         }
     }
 });

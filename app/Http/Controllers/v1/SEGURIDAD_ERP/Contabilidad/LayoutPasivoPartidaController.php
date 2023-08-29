@@ -8,6 +8,7 @@ use App\Services\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaService;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
 
 class LayoutPasivoPartidaController extends Controller
 {
@@ -52,6 +53,23 @@ class LayoutPasivoPartidaController extends Controller
     public function listaPosiblesCFDI($id)
     {
         return $this->service->listarPosiblesCFDI($id);
+    }
+
+    public function indexCasosSinCFDI()
+    {
+        $casos = $this->service->getCasosSinCFDI();
+        return response()->json([
+            'data' => $casos,
+        ]);
+    }
+
+    public function clasifica(Request $request, $id)
+    {
+        $partida = $this->service->show($id);
+        $partida->id_caso_sin_cfdi = $request->params["id_caso_sin_cfdi"];
+        $partida->save();
+        $this->fractal->parseIncludes(["cfdi","partidas"]);
+        return $this->respondWithItem($partida);
     }
 
 

@@ -3,6 +3,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\IGH\Usuario;
+use App\Scopes\EstadoActivoScope;
 use Illuminate\Database\Eloquent\Model;
 
 class LayoutPasivoCarga extends Model
@@ -13,9 +14,15 @@ class LayoutPasivoCarga extends Model
         "nombre_archivo",
         "usuario_cargo",
         "fecha_hora_carga",
+        "hash",
         "estado",
     ];
     public $timestamps = false;
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EstadoActivoScope());
+    }
     /**
      * Relaciones
      */

@@ -16,21 +16,18 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="row">
-                            <div class="col-md-9">
+                            <div class="col-md-8">
                                 <span style="font-weight: bold;">{{this.currentEmpresa.Nombre}}</span>
                             </div>
-                            <div class="col-md-1" style="text-align: right">
-                                <strong>Ver Pólizas:</strong>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="custom-control custom-switch" :disabled="cargando">
+                            <div class="col-md-4" style="text-align: right">
+                                <strong style="display: inline-block" class="mr-2">Ver Pólizas: </strong>
+
+                                <div class="custom-control custom-switch mr-2" :disabled="cargando" style="display: inline-block">
                                     <input type="checkbox" class="custom-control-input" id="sin_cfdi" v-model="sin_cfdi" :disabled="cargando">
                                     <label class="custom-control-label" for="sin_cfdi" :disabled="cargando">Sin CFDI</label>
                                 </div>
-                            </div>
-                            <div class="col-md-1">
 
-                                <div class="custom-control custom-switch" :disabled="cargando">
+                                <div class="custom-control custom-switch" :disabled="cargando" style="display: inline-block">
                                     <input type="checkbox" class="custom-control-input" id="con_cfdi" v-model="con_cfdi" :disabled="cargando">
                                     <label class="custom-control-label" for="con_cfdi" :disabled="cargando">Con CFDI</label>
                                 </div>

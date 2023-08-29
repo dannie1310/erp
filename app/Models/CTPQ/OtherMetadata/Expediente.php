@@ -15,7 +15,7 @@ use App\Models\CTPQ\Parametro;
 class Expediente extends Model
 {
     protected $connection = 'cntpqom';
-    protected $table = 'dbo.Expedientes';
+    public $table = 'dbo.Expedientes';
 
     public $timestamps = false;
 
@@ -27,6 +27,12 @@ class Expediente extends Model
         'Comment_Exp',
         'TimeStamp_Exp'
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table =  Config::get('database.connections.cntpqom.database').'.dbo.Expedientes';
+    }
 
     /**
      * Relaciones

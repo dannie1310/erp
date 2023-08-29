@@ -24,6 +24,11 @@ class ProveedorSATService{
         $this->repository = new ProveedorSATRepository($model);
     }
 
+    public function index($data)
+    {
+        return $this->repository->all($data);
+    }
+
     public function buscarProveedorAsociar($data){
 
         $nombre = Util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($data['nombre'])));
