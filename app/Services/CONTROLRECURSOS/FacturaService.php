@@ -6,6 +6,7 @@ use App\Events\IncidenciaCI;
 use App\Http\Requests\SatQueryRequest;
 use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Factura;
+use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\TipoDocto;
 use App\Models\IGH\TipoCambio;
@@ -40,6 +41,12 @@ class FacturaService
         {
             $serie = Serie::where([['Descripcion', 'LIKE', '%' . $data['idserie'] . '%']])->pluck('idseries');
             $this->repository->whereIn(['IdSerie', $serie]);
+        }
+
+        if (isset($data['IdProveedor']))
+        {
+            $proveedor = Proveedor::where([['RazonSocial', 'LIKE', '%' . $data['IdProveedor'] . '%']])->pluck('IdProveedor');
+            $this->repository->whereIn(['IdProveedor', $proveedor]);
         }
 
         if (isset($data['idtipodocto']))
