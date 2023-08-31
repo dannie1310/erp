@@ -72,8 +72,25 @@ class CFDISATNominaRepository extends Repository implements RepositoryInterface
             ->first();
         if (!$receptor) {
             $receptor = CFDISATNominaReceptor::create(
-                ["rfc" => $datos_receptor["rfc"], "nombre" => $datos_receptor["nombre"]]
+                $datos_receptor
             );
+        }else{
+            if($receptor->nss == '')
+            {
+                if(key_exists("nss",$datos_receptor))
+                {
+                    $receptor->nss = $datos_receptor["nss"];
+                    $receptor->save();
+                }
+            }
+            if($receptor->curp == '')
+            {
+                if(key_exists("curp",$datos_receptor))
+                {
+                    $receptor->curp = $datos_receptor["curp"];
+                    $receptor->save();
+                }
+            }
         }
         return $receptor->id;
     }

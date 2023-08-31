@@ -32,7 +32,10 @@ class CFDISATNomina extends Model
         "regimen_fiscal_receptor",
         "uso_cfdi_receptor",
         "uuid",
-        "conceptos_txt"
+        "conceptos_txt",
+        "departamento",
+        "puesto",
+        'registro_patronal'
     ];
     public $timestamps = false;
 
@@ -60,6 +63,12 @@ class CFDISATNomina extends Model
     public function otros_pagos()
     {
         return $this->hasMany(CFDISATNominaOtroPago::class, "id_cfdi_sat_nomina", "id");
+    }
+
+    public function scopePendienteRegistroPatronal($query)
+    {
+        $query->whereNull("registro_patronal");
+        return $query;
     }
 
 
