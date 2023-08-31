@@ -19,7 +19,8 @@ class CFDISATNominaReceptor extends Model
         "acceso_sao_erp",
         "acceso_modulos_sao",
         "acceso_remesa",
-        "acceso_scr"
+        "acceso_scr",
+        "solicita_gxc_rel"
     ];
     public $timestamps = false;
 
