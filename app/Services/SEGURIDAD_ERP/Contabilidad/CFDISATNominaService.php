@@ -19,6 +19,7 @@ use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\Rol;
 use App\Models\SEGURIDAD_ERP\RoleUser;
 use App\Models\SEGURIDAD_ERP\RoleUserGlobal;
+use App\Models\SEGURIDAD_ERP\VwUsuarioIntranetGxcRel;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDISATNominaRepository;
 use App\Utils\CFDINomina;
 use DateTime;
@@ -59,6 +60,50 @@ class CFDISATNominaService
         $this->log["archivos_no_cargados_error_app"] = 0;
         $this->log["cfd_no_cargados_error_app"] = 0;
         $this->log["errores"] = [];
+    }
+
+    public function llenaSolicitaGxCRel()
+    {
+        $cantidad= VwUsuarioIntranetGxcRel::all()
+            ->count();
+
+        $take = 1000;
+        $ind = 1;
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $usuarios = VwUsuarioIntranetGxcRel::
+                skip($i)
+                ->take($take)
+                ->get();
+
+            foreach ($usuarios as $usuario) {
+                $ind++;
+
+                $usuario_ex = explode(" ",$usuario->RazonSocial);
+                $permutas = $this->permutar($usuario_ex);
+
+                foreach ($permutas as $permuta)
+                {
+
+
+                    print_r($ind." ");
+                    print_r(mb_strtoupper(trim($permuta)."\n"));
+                    $receptor = CFDISATNominaReceptor::where("nombre","like","%".mb_strtoupper(trim($permuta)."%"))
+                        ->first();
+                    //print_r($usuario_intranet2);
+                    if($receptor)
+                    {
+                        print_r($receptor->id.":".$usuario->IdUsuario);
+                        $receptor->solicita_gxc_rel = 1;
+                        $receptor->id_usuario_gxc_rel_scr = $usuario->IdUsuario;
+                        $receptor->save();
+                        break;
+                        //dd(levenshtein($receptor->nombre,$usuario_intranet->Completo));
+                    }
+
+                }
+
+            }
+        }
     }
 
     public function llenaDatosAccesoSistemas()
@@ -252,32 +297,8 @@ class CFDISATNominaService
         }
     }
 
-    private function permutar($input){
-        $miarray = array();
-        $cadena="";
-        //copio el array
-        $temporal=$input;
-        //borro el primer numero del array
-        array_shift($input);
-        //ahora la cuenta esta en que solo quedan 3
-        for($u=0;$u<count($temporal);$u++){
-            for($i=0;$i<count($input);$i++){
-                array_push($input,$input[0]);
-                array_shift($input);
-                for($e=0;$e<count($input);$e++){
-                    $cadena.=$input[$e]." ";
-                }
-                array_push($miarray,$temporal[$u]." ".$cadena);
-                //array_push($miarray,$temporal[$u].strrev($cadena));
-                $cadena="";
 
-            }
-            array_shift($input);
-            array_push($input,$temporal[$u]);
-        }
-        return $miarray;
-    }
-
+    //1.- meter nss y curp
     public function reprocesaLlenadoReceptoresNominas()
     {
 
@@ -333,6 +354,7 @@ class CFDISATNominaService
 
     }
 
+    //2.- meter registro patronal
     public function reprocesaLlenadoEmisorNominas()
     {
 
@@ -380,8 +402,6 @@ class CFDISATNominaService
         }
 
     }
-
-
 
     public function procesaDirectorioZIPCFDI()
     {
@@ -542,7 +562,6 @@ class CFDISATNominaService
         return $fecha_xml->format('Y-m-d H:i:s');
     }
 
-
     public function obtenerListaCFDI($data)
     {
 
@@ -610,5 +629,31 @@ class CFDISATNominaService
                 }
             }
         }
+    }
+
+    private function permutar($input){
+        $miarray = array();
+        $cadena="";
+        //copio el array
+        $temporal=$input;
+        //borro el primer numero del array
+        array_shift($input);
+        //ahora la cuenta esta en que solo quedan 3
+        for($u=0;$u<count($temporal);$u++){
+            for($i=0;$i<count($input);$i++){
+                array_push($input,$input[0]);
+                array_shift($input);
+                for($e=0;$e<count($input);$e++){
+                    $cadena.=$input[$e]." ";
+                }
+                array_push($miarray,$temporal[$u]." ".$cadena);
+                //array_push($miarray,$temporal[$u].strrev($cadena));
+                $cadena="";
+
+            }
+            array_shift($input);
+            array_push($input,$temporal[$u]);
+        }
+        return $miarray;
     }
 }

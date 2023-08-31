@@ -42,8 +42,10 @@ class ProcesaCFDISATNomina extends Command
     public function handle()
     {
         $servicio = new CFDISATNominaService(new CFDISATNomina());
+        //$servicio->procesaDirectorioZIPCFDI();
+        $servicio->llenaSolicitaGxCRel();
         //$servicio->reprocesaLlenadoEmisorNominas();
-        $servicio->llenaDatosAccesoSistemas();
+        //$servicio->llenaDatosAccesoSistemas();
         //$servicio->llenaDatosIntranet();
     }
 }
