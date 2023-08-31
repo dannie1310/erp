@@ -2051,6 +2051,8 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'control-recursos'], function ($api) {
         $api->group(['prefix' => 'documento'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@store');
         });
 
         $api->group(['prefix' => 'empresa'], function ($api) {

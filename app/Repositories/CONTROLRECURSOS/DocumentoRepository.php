@@ -13,4 +13,9 @@ class DocumentoRepository extends Repository implements RepositoryInterface
         parent::__construct($model);
         $this->model = $model;
     }
+
+    public function registrar($data)
+    {
+        return $this->model->registrar($data);
+    }
 }

@@ -135,16 +135,23 @@
                         <div class="form-group error-content float-right"><label for="importe">Importe:</label></div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group error-content float-right"> {{parseFloat(subtotal).formatMoney(2)}} </div>
+                        <div class="form-group error-content float-right">
+                            <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                   name="subtotal"
+                                   data-vv-as="Importe"
+                                   v-on:keyup="calcularTotal"
+                                   v-model="subtotal"
+                                   style="text-align: right"
+                                   v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                   :class="{'is-invalid': errors.has(`subtotal`)}"
+                                   id="subtotal">
+                            <div class="invalid-feedback" v-show="errors.has(`subtotal`)">{{ errors.first(`subtotal`) }}</div>
+                        </div>
                     </div>
                     <div class="col-md-10">
                         <div class="form-group error-content float-right">
-                            <div class="col-md-1">
-                                <label for="iva">IVA:</label>
-                            </div>
-                            <div class="col-md-11">
-                                <select class="form-control"
-                                        data-vv-as="IVA"
+                            <label for="iva">IVA:
+                                <select data-vv-as="IVA"
                                         id="iva"
                                         name="iva"
                                         :error="errors.has('iva')"
@@ -156,17 +163,39 @@
                                     <option value="0">0</option>
                                 </select>
                                 <div style="display:block" class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div> %
-                            </div>
+                            </label>
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group error-content float-right"> {{parseFloat(impuesto).formatMoney(2)}} </div>
+                        <div class="form-group error-content float-right">
+                            <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                   name="impuesto"
+                                   data-vv-as="Impuesto"
+                                   v-on:keyup="calcularImpuesto"
+                                   v-model="impuesto"
+                                   style="text-align: right"
+                                   v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                   :class="{'is-invalid': errors.has(`impuesto`)}"
+                                   id="impuesto">
+                            <div class="invalid-feedback" v-show="errors.has(`impuesto`)">{{ errors.first(`impuesto`) }}</div>
+                        </div>
                     </div>
                     <div class="col-md-10">
                         <div class="form-group error-content float-right"><label for="retenciones">Retenciones:</label></div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group error-content float-right"> {{parseFloat(retencion).formatMoney(2)}}</div>
+                        <div class="form-group error-content float-right">
+                             <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                    name="retencion"
+                                    data-vv-as="Retención"
+                                    v-on:keyup="calcularTotal"
+                                    v-model="retencion"
+                                    style="text-align: right"
+                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                    :class="{'is-invalid': errors.has(`retencion`)}"
+                                    id="impuesto">
+                            <div class="invalid-feedback" v-show="errors.has(`retencion`)">{{ errors.first(`retencion`) }}</div>
+                        </div>
                     </div>
                     <div class="col-md-5"></div>
 
@@ -174,7 +203,18 @@
                         <div class="form-group error-content float-right"> <label for="otros">Otros Impuestos:</label></div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group error-content float-right"> {{parseFloat(otros).formatMoney(2)}} </div>
+                        <div class="form-group error-content float-right">
+                            <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                   name="otros"
+                                   data-vv-as="Otros Impuesto"
+                                   v-on:keyup="calcularTotal"
+                                   v-model="otros"
+                                   style="text-align: right"
+                                   v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                   :class="{'is-invalid': errors.has(`otros`)}"
+                                   id="otros">
+                            <div class="invalid-feedback" v-show="errors.has(`otros`)">{{ errors.first(`otros`) }}</div>
+                        </div>
                     </div>
                     <div class="col-md-5"></div>
 
@@ -191,7 +231,6 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group error-content float-right">
-                            <label for="id_moneda">Moneda:</label>
                             <select class="form-control"
                                     data-vv-as="Moneda"
                                     id="id_moneda"
@@ -200,7 +239,7 @@
                                     v-validate="{required: true}"
                                     v-model="id_moneda">
                                 <option value>-- Selecionar --</option>
-                                <option v-for="(m) in monedas" :value="m.id">{{m.moneda}}({{m.corto}})</option>
+                                <option v-for="(m) in monedas" :value="m.id">{{m.moneda}}</option>
                             </select>
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
                         </div>
@@ -251,7 +290,7 @@ export default {
             impuesto: 0,
             retencion: 0,
             otros: 0,
-            total: 0
+            total: 0,
         }
     },
     mounted() {
@@ -315,11 +354,7 @@ export default {
             });
         },
         store() {
-            this.data.idserie = this.idserie;
-            this.data.idtipodocto = this.idtipodocto;
-            this.data.archivo = this.file_carga;
-            this.data.nombre_archivo = this.file_carga_name;
-            return this.$store.dispatch('controlRecursos/factura/store', this.$data.data)
+            return this.$store.dispatch('controlRecursos/documento/store', this.$data)
                 .then(data => {
                     this.salir();
                 }).finally( ()=>{
@@ -330,7 +365,58 @@ export default {
         {
             this.$router.go(-1);
         },
+        calcularImpuesto()
+        {
+            this.impuesto = (parseFloat(this.subtotal) * parseFloat(this.iva)) / 100;
+        },
+        calcularTotal()
+        {
+            this.total = parseFloat(this.subtotal) + parseFloat(this.impuesto) + parseFloat(this.retencion) + parseFloat(this.otros);
+        }
     },
+    watch: {
+        subtotal(value) {
+            if(value)
+            {
+                this.calcularImpuesto();
+                this.calcularTotal();
+            }
+        },
+        iva(value)
+        {
+            if(value)
+            {
+                this.calcularImpuesto()
+            }
+        },
+        impuesto(value) {
+            if(value)
+            {
+                this.calcularTotal();
+            }
+        },
+        retencion(value)
+        {
+            if(value)
+            {
+                this.calcularTotal();
+            }
+        },
+        otros(value)
+        {
+            if(value)
+            {
+                this.calcularTotal();
+            }
+        },
+        total(value)
+        {
+            if(value)
+            {
+                this.calcularTotal();
+            }
+        }
+    }
 }
 </script>
 

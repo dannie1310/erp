@@ -3,6 +3,7 @@
 namespace App\Models\CONTROL_RECURSOS;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Documento extends Model
 {
@@ -187,5 +188,16 @@ class Documento extends Model
     /**
      * Métodos
      */
-
+    public function registrar($data)
+    {dd($data);
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $factura = $this->repository->registrar($data);
+            DB::connection('controlrec')->commit();
+            return $factura;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
 }

@@ -65,4 +65,30 @@ class DocumentoService
 
         return $this->repository->paginate($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function store(array $data)
+    {dd($data);
+        $vencimiento = new DateTime($data["vencimiento"]);
+        $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $fecha = new DateTime($data["fecha"]);
+        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $this->validaFechas($fecha, $vencimiento);
+        dd($data);
+        return $this->repository->registrar();
+    }
+
+    private function validaFechas($emision, $vencimiento)
+    {
+        if ($emision > $vencimiento) {
+            abort(500, "La fecha de facturación no puede ser mayor a la fecha de vencimiento");
+        }
+    }
+
 }
