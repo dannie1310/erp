@@ -32,6 +32,7 @@
             columns: [
                 { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                 { title: 'Serie', field: 'idserie', thClass: 'th_c80', sortable: true, thComp: require('../../globals/th-Filter').default},
+                { title: 'Proveedor', field: 'IdProveedor', thClass: 'th_c200', sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Tipo Documento', field: 'idtipodocto', thClass: 'th_c150',sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Fecha', thClass: 'th_c100', field: 'Fecha', sortable: true,thComp: require('../../globals/th-Date').default},
                 { title: 'Folio', field: 'foliodocto',sortable: true,thClass: 'th_c100',  thComp: require('../../globals/th-Filter').default},
@@ -86,6 +87,7 @@
                 self.$data.data = documentos.map((documento, i) => ({
                     index: (i + 1) + self.query.offset,
                     Fecha: documento.fecha,
+                    IdProveedor: solicitud.proveedor_descripcion,
                     concepto: documento.concepto,
                     foliodocto: documento.folio_format,
                     total: documento.total_format,

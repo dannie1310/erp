@@ -22,7 +22,7 @@
                                             <tr>
                                                 <td>Folio:</td>
                                                 <td style="text-align: right">
-                                                    <router-link :to="{name: 'factura-seg-show', params:{id : factura.id }}" target="_blank">
+                                                    <router-link :to="{name: 'documento-recurso-show', params:{id : factura.id }}" target="_blank">
                                                         <b><span style="color:black; text-decoration: underline">{{factura.folio_format}}</span></b>
                                                     </router-link>
                                                 </td>
