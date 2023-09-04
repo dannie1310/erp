@@ -2053,6 +2053,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@update')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'empresa'], function ($api) {

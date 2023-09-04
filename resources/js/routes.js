@@ -4322,6 +4322,32 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id',
+                        name: 'documento-recurso-show',
+                        component: require('./components/control-recursos/documento/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Documento',
+                            breadcrumb: { parent: 'documento-recurso', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_factura_recursos',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'documento-recurso-edit',
+                        props: true,
+                        component: require('./components/control-recursos/documento/Edit').default,
+                        meta: {
+                            title: 'Editar Documento',
+                            breadcrumb: {parent: 'documento-recurso', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: 'editar_factura_recursos',
+                            general: true
+                        }
+                    },
                 ]
             },
         ]

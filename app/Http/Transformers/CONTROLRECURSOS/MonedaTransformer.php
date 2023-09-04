@@ -29,7 +29,8 @@ class MonedaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'moneda' => $model->moneda,
-            'corto' => $model->corto
+            'corto' => $model->corto,
+            'tipo_cambio' => $model->tipo_cambio
         ];
     }
 }

@@ -7,6 +7,8 @@ use App\Models\CONTROL_RECURSOS\Documento;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\TipoDocto;
 use App\Repositories\CONTROLRECURSOS\DocumentoRepository as Repository;
+use DateTime;
+use DateTimeZone;
 
 class DocumentoService
 {
@@ -72,7 +74,7 @@ class DocumentoService
     }
 
     public function store(array $data)
-    {dd($data);
+    {
         $vencimiento = new DateTime($data["vencimiento"]);
         $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
 
@@ -80,8 +82,9 @@ class DocumentoService
         $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
 
         $this->validaFechas($fecha, $vencimiento);
-        dd($data);
-        return $this->repository->registrar();
+        $data['vencimiento'] = $vencimiento->format('Y-m-d');
+        $data['fecha'] = $fecha->format('Y-m-d');
+        return $this->repository->registrar($data);
     }
 
     private function validaFechas($emision, $vencimiento)
@@ -91,4 +94,8 @@ class DocumentoService
         }
     }
 
+    public function update(array $data, $id)
+    {
+        return $this->repository->show($id)->editar($data);
+    }
 }

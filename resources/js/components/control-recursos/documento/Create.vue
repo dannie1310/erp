@@ -73,7 +73,6 @@
                                         :bootstrap-styling = "true"
                                         class = "form-control"
                                         v-validate="{required: true}"
-                                        :disabled-dates="fechasDeshabilitadas"
                                         :class="{'is-invalid': errors.has('fecha')}"
                             ></datepicker>
                             <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
@@ -87,7 +86,6 @@
                                         :format = "formatoFecha"
                                         :language = "es"
                                         :bootstrap-styling = "true"
-                                        :disabled-dates="fechasDeshabilitadas"
                                         class = "form-control"
                                         v-validate="{required: true}"
                                         :class="{'is-invalid': errors.has('vencimiento')}"
@@ -290,7 +288,7 @@ export default {
             impuesto: 0,
             retencion: 0,
             otros: 0,
-            total: 0,
+            total: 0
         }
     },
     mounted() {
@@ -344,7 +342,7 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    if(moment(this.data.vencimiento).format('YYYY/MM/DD') < moment(this.data.fecha).format('YYYY/MM/DD'))
+                    if(moment(this.vencimiento).format('YYYY/MM/DD') < moment(this.fecha).format('YYYY/MM/DD'))
                     {
                         swal('¡Error!', 'La fecha de facturación no puede ser posterior a la fecha de vencimiento.', 'error')
                     }else {
@@ -354,7 +352,25 @@ export default {
             });
         },
         store() {
-            return this.$store.dispatch('controlRecursos/documento/store', this.$data)
+            return this.$store.dispatch('controlRecursos/documento/store',
+                {
+                    folio: this.folio,
+                    id_empresa: this.id_empresa,
+                    id_proveedor: this.id_proveedor,
+                    idserie: this.idserie,
+                    idtipodocto: 6,
+                    fecha: moment(this.fecha).format('YYYY-MM-DD'),
+                    vencimiento:  moment(this.vencimiento).format('YYYY-MM-DD'),
+                    id_moneda: this.id_moneda,
+                    concepto: this.concepto,
+                    subtotal: parseFloat(this.subtotal),
+                    iva: this.iva,
+                    impuesto: parseFloat(this.impuesto),
+                    retencion: parseFloat(this.retencion),
+                    otros: parseFloat(this.otros),
+                    total: parseFloat(this.total),
+                    estado: 5
+                })
                 .then(data => {
                     this.salir();
                 }).finally( ()=>{
@@ -364,6 +380,7 @@ export default {
         salir()
         {
             this.$router.go(-1);
+            this.$emit('created', '')
         },
         calcularImpuesto()
         {
@@ -371,8 +388,8 @@ export default {
         },
         calcularTotal()
         {
-            this.total = parseFloat(this.subtotal) + parseFloat(this.impuesto) + parseFloat(this.retencion) + parseFloat(this.otros);
-        }
+            this.total = (parseFloat(this.subtotal) + parseFloat(this.impuesto) + parseFloat(this.otros)) - parseFloat(this.retencion);
+        },
     },
     watch: {
         subtotal(value) {
@@ -403,13 +420,6 @@ export default {
             }
         },
         otros(value)
-        {
-            if(value)
-            {
-                this.calcularTotal();
-            }
-        },
-        total(value)
         {
             if(value)
             {

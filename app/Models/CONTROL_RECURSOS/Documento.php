@@ -4,6 +4,9 @@ namespace App\Models\CONTROL_RECURSOS;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\IGH\Usuario;
+use DateTime;
+use DateTimeZone;
 
 class Documento extends Model
 {
@@ -185,16 +188,82 @@ class Documento extends Model
         return '$' . number_format(($this->IVA),2);
     }
 
+    public function getVencimientoEditarAttribute()
+    {
+        $date = date_create($this->Vencimiento);
+        return date_format($date,"m/d/Y");
+    }
+
     /**
      * Métodos
      */
     public function registrar($data)
-    {dd($data);
+    {
         try {
             DB::connection('controlrec')->beginTransaction();
-            $factura = $this->repository->registrar($data);
+            $usuario = Usuario::where('idusuario',auth()->id())->first();
+            $documento = $this->create([
+                'FolioDocto' => $data['folio'],
+                'IdTipoDocto' => $data['idtipodocto'],
+                'TipoDocto' => 0,
+                "IdEmpresa" => $data["id_empresa"],
+                "IdProveedor" => $data["id_proveedor"],
+                "Fecha" => $data['fecha'],
+                "Vencimiento" => $data["vencimiento"],
+                'Concepto' => $data["concepto"],
+                "Importe" => $data["subtotal"],
+                "IVA" => $data["impuesto"],
+                "Total" => $data["total"],
+                "Retenciones" => $data["retencion"],
+                "TasaIva" => (int) $data['iva'],
+                "OtrosImpuestos" => $data["otros"],
+                "IdMoneda" => $data["id_moneda"],
+                'Alias_Depto' => $usuario->departamento ? $usuario->departamento->departamento_abreviatura : '',
+                'Departamento' => $usuario->departamento ? $usuario->departamento->departamento : '',
+                'IdSerie' => $data['idserie'],
+                'TC' => 0,
+                'Creo' => auth()->id(),
+                'Estatus' => $data['estado'],
+                'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : ''
+            ]);
             DB::connection('controlrec')->commit();
-            return $factura;
+            $documento->update([
+                'TC' => $documento->moneda->tipo_cambio
+            ]);
+            return $documento;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function editar(array $data)
+    {
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $vencimiento = New DateTime($data['vencimiento_editar']);
+            $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->update([
+                'IdEmpresa' => $data["id_empresa"],
+                'IdProveedor' => $data["id_proveedor"],
+                'Vencimiento' => $vencimiento->format('Y-m-d'),
+                'Concepto' => $data["concepto"],
+                'IdSerie' => $data['id_serie'],
+                'FolioDocto' => $data['folio'],
+                'Importe' => $data['importe'],
+                'IVA' => $data['impuesto'],
+                'Total' => $data['total'],
+                'Retenciones' => $data['retencion'],
+                'TasaIva' => (int) $data['iva'],
+                'OtrosImpuestos' => $data['otros'],
+                'IdMoneda' => $data['id_moneda'],
+                'TC' => 0
+            ]);
+            DB::connection('controlrec')->commit();
+            $this->update([
+                'TC' => $this->moneda->tipo_cambio
+            ]);
+            return $this;
         } catch (\Exception $e) {
             DB::connection('controlrec')->rollBack();
             abort(400, $e->getMessage());

@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'documento-recurso-create'}" v-if="$root.can('registrar_factura_recursos',true)" class="btn btn-app btn-info float-right" :disabled="cargando">
+            <router-link :to="{name: 'documento-recurso-create'}" v-if="$root.can('registrar_factura_recursos',true)" class="btn btn-app btn-info float-right" :disabled="cargando" @created="paginate()">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -38,7 +38,7 @@
                 { title: 'Concepto', field: 'concepto',sortable: true,thComp: require('../../globals/th-Filter').default},
                 { title: 'Total', field: 'total', tdClass: 'right th_c220', sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Moneda', field: 'idmoneda',thClass: 'th_c150',sortable: true, thComp: require('../../globals/th-Filter').default},
-             //   { title: 'Acciones', field: 'buttons',thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
+                { title: 'Acciones', field: 'buttons',thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
             total: 0,
@@ -94,7 +94,7 @@
                     idtipodocto: documento.tipo_documento,
                     buttons: $.extend({}, {
                         id: documento.id,
-                        //edit: self.$root.can('editar_factura_recursos', true) ? true : false,
+                        edit: self.$root.can('editar_factura_recursos', true) ? true : false,
                     })
                 }));
             },
