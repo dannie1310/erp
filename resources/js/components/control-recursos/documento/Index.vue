@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'documento-recurso-create'}" v-if="$root.can('registrar_factura_recursos',true)" class="btn btn-app btn-info float-right" :disabled="cargando" @created="paginate()">
+            <router-link :to="{name: 'documento-recurso-create'}" v-if="$root.can('registrar_documento_recursos',true)" class="btn btn-app btn-info float-right" :disabled="cargando" @created="paginate()">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -87,7 +87,7 @@
                 self.$data.data = documentos.map((documento, i) => ({
                     index: (i + 1) + self.query.offset,
                     Fecha: documento.fecha,
-                    IdProveedor: solicitud.proveedor_descripcion,
+                    IdProveedor: documento.proveedor_descripcion,
                     concepto: documento.concepto,
                     foliodocto: documento.folio_format,
                     total: documento.total_format,
@@ -96,7 +96,7 @@
                     idtipodocto: documento.tipo_documento,
                     buttons: $.extend({}, {
                         id: documento.id,
-                        edit: self.$root.can('editar_factura_recursos', true) ? true : false,
+                        edit: self.$root.can('editar_documento_recursos', true) ? true : false,
                     })
                 }));
             },

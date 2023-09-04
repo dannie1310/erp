@@ -4306,7 +4306,7 @@ export const routes = [
                             title: 'Documentos',
                             breadcrumb: {parent: 'control-recurso', name: 'DOCUMENTOS'},
                             middleware: [auth, permission],
-                            permission: ['consultar_factura_recursos'],
+                            permission: ['consultar_documento_recursos','editar_documento_recursos','registrar_documento_recursos'],
                             general: true,
                         }
                     },
@@ -4318,7 +4318,7 @@ export const routes = [
                             title: 'Registrar Documento',
                             breadcrumb: {name: 'REGISTRAR', parent: 'documento-recurso'},
                             middleware: [auth, permission],
-                            permission: ['registrar_factura_recursos'],
+                            permission: ['registrar_documento_recursos'],
                             general: true
                         }
                     },
@@ -4331,7 +4331,7 @@ export const routes = [
                             title: 'Consultar Documento',
                             breadcrumb: { parent: 'documento-recurso', name: 'VER'},
                             middleware: [auth, permission],
-                            permission: 'consultar_factura_recursos',
+                            permission: 'consultar_documento_recursos',
                             general: true
                         }
                     },
@@ -4344,7 +4344,7 @@ export const routes = [
                             title: 'Editar Documento',
                             breadcrumb: {parent: 'documento-recurso', name: 'EDITAR'},
                             middleware: [auth, permission],
-                            permission: 'editar_factura_recursos',
+                            permission: 'editar_documento_recursos',
                             general: true
                         }
                     },

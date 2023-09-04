@@ -35,8 +35,10 @@ class DocumentoController extends Controller
     public function __construct(DocumentoService $service, DocumentoTransformer $transformer, Manager $fractal)
     {
         $this->middleware('auth:api');
-        $this->middleware('permisoGlobal:consultar_factura_recursos')->only(['show','paginate','index']);
-        $this->middleware('permisoGlobal:registrar_factura_recursos')->only(['store']);
+
+        $this->middleware('permisoGlobal:consultar_documento_recursos')->only(['show','paginate','index']);
+        $this->middleware('permisoGlobal:registrar_documento_recursos')->only(['store']);
+        $this->middleware('permisoGlobal:editar_documento_recursos')->only(['update']);
 
         $this->service = $service;
         $this->transformer = $transformer;
