@@ -86,7 +86,7 @@
                 self.$data.data = []
                 self.$data.data = documentos.map((documento, i) => ({
                     index: (i + 1) + self.query.offset,
-                    Fecha: documento.fecha,
+                    Fecha: documento.fecha_format,
                     IdProveedor: documento.proveedor_descripcion,
                     concepto: documento.concepto,
                     foliodocto: documento.folio_format,
