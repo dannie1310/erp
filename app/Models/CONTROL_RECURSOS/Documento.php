@@ -194,11 +194,18 @@ class Documento extends Model
         return date_format($date,"m/d/Y");
     }
 
+    public function getFechaEditarAttribute()
+    {
+        $date = date_create($this->Fecha);
+        return date_format($date,"m/d/Y");
+    }
+
     /**
      * Métodos
      */
     public function registrar($data)
     {
+        $this->validaDocumento($data);
         try {
             DB::connection('controlrec')->beginTransaction();
             $usuario = Usuario::where('idusuario',auth()->id())->first();
@@ -239,15 +246,19 @@ class Documento extends Model
 
     public function editar(array $data)
     {
+        $this->validaDocumento($data);
         try {
             DB::connection('controlrec')->beginTransaction();
             $vencimiento = New DateTime($data['vencimiento_editar']);
             $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha = New DateTime($data['fecha_editar']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             $this->update([
                 'IdEmpresa' => $data["id_empresa"],
                 'IdProveedor' => $data["id_proveedor"],
                 'Vencimiento' => $vencimiento->format('Y-m-d'),
                 'Concepto' => $data["concepto"],
+                'Fecha' => $fecha->format('Y-m-d'),
                 'IdSerie' => $data['id_serie'],
                 'FolioDocto' => $data['folio'],
                 'Importe' => $data['importe'],
@@ -267,6 +278,18 @@ class Documento extends Model
         } catch (\Exception $e) {
             DB::connection('controlrec')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    public function validaDocumento(array $data)
+    {
+        $documento = self::where('FolioDocto', $data['folio'])->where('IdSerie', array_key_exists('id_serie', $data) ? $data['id_serie'] : $data['idserie'])
+            ->where('IdProveedor', $data['id_proveedor'])->where('IdEmpresa', $data['id_empresa'])
+            ->where('Total', $data['total'])->withoutGlobalScopes()->first();
+
+        if($documento)
+        {
+            abort(500, "Este documento ya fue registrado previamente.");
         }
     }
 }

@@ -33,6 +33,7 @@ class DocumentoTransformer extends TransformerAbstract
             'concepto' => $model->Concepto,
             'fecha' => $model->Fecha,
             'fecha_format' => $model->fecha_format,
+            'fecha_editar' => $model->fecha_editar,
             'total_format' => $model->total_format,
             'total' => $model->Total,
             'moneda' => $model->moneda_descripcion,

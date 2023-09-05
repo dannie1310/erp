@@ -14,12 +14,21 @@
        <div class="card" v-else>
         <div class="card-body">
             <div class="row">
-                <div class="col-md-2">
-                    <div class="form-group error-content">
-                        <h6 for="fecha"><b>Fecha de Facturación:</b></h6>
-                        <h6>{{factura.fecha_format}}</h6>
-                    </div>
-                </div>
+                 <div class="col-md-2">
+                     <div class="form-group error-content">
+                         <label for="fecha">Fecha de Facturación:</label>
+                         <datepicker v-model = "factura.fecha_editar"
+                                     name = "fecha"
+                                     :format = "formatoFecha"
+                                     :language = "es"
+                                     :bootstrap-styling = "true"
+                                     class = "form-control"
+                                     v-validate="{required: true}"
+                                     :class="{'is-invalid': errors.has('fecha')}"
+                         ></datepicker>
+                         <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                     </div>
+                 </div>
                  <div class="col-md-3">
                     <div class="form-group error-content">
                         <h6><b>Folio:</b></h6>
@@ -314,7 +323,7 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    if(moment(this.factura.vencimiento_editar).format('YYYY/MM/DD') < moment(this.factura.fecha).format('YYYY/MM/DD'))
+                    if(moment(this.factura.vencimiento_editar).format('YYYY/MM/DD') < moment(this.factura.fecha_editar).format('YYYY/MM/DD'))
                     {
                         swal('¡Error!', 'La fecha no puede ser posterior a la fecha de vencimiento.', 'error')
                     }else{
@@ -361,7 +370,7 @@ export default {
         },
         calcularImpuesto()
         {
-            this.impuesto = (parseFloat(this.importe) * parseFloat(this.iva)) / 100;
+            this.impuesto = parseFloat((parseFloat(this.importe) * parseFloat(this.iva)) / 100).formatMoney(2);
         },
         calcularTotal()
         {
