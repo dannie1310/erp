@@ -4292,6 +4292,19 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/delete',
+                        name: 'factura-recurso-delete',
+                        component: require('./components/control-recursos/factura/Delete').default,
+                        props: true,
+                        meta: {
+                            title: 'Eliminar Factura',
+                            breadcrumb: { parent: 'factura-recurso', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: 'eliminar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
                 ]
             },
             {
@@ -4345,6 +4358,19 @@ export const routes = [
                             breadcrumb: {parent: 'documento-recurso', name: 'EDITAR'},
                             middleware: [auth, permission],
                             permission: 'editar_documento_recursos',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/delete',
+                        name: 'documento-recurso-delete',
+                        component: require('./components/control-recursos/documento/Delete').default,
+                        props: true,
+                        meta: {
+                            title: 'Eliminar Documento',
+                            breadcrumb: { parent: 'documento-recurso', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: 'eliminar_cotizacion_proveedor',
                             general: true
                         }
                     },

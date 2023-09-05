@@ -292,4 +292,22 @@ class Documento extends Model
             abort(500, "Este documento ya fue registrado previamente.");
         }
     }
+
+
+    public function eliminar($motivo)
+    {dd('aqui', $motivo);
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->respaldar($motivo);
+            foreach ($this->items()->get() as $item) {
+                $item->delete();
+            }
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
 }
