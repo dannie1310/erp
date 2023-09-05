@@ -361,7 +361,7 @@ export default {
         },
         calcularImpuesto()
         {
-            this.impuesto = (parseFloat(this.importe) * parseFloat(this.iva)) / 100;
+            this.impuesto = parseFloat((parseFloat(this.importe) * parseFloat(this.iva)) / 100).formatMoney(2);
         },
         calcularTotal()
         {
