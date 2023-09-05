@@ -2,7 +2,6 @@
 
 namespace App\Services\CONTROLRECURSOS;
 
-use App\Events\IncidenciaCI;
 use App\Http\Requests\SatQueryRequest;
 use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Factura;

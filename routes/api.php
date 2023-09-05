@@ -2049,6 +2049,13 @@ $api->version('v1', function ($api) {
      * CONTROL RECURSOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'control-recursos'], function ($api) {
+        $api->group(['prefix' => 'documento'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@update')->where(['id' => '[0-9]+']);
+        });
+
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\EmpresaController@index');
         });
@@ -2059,6 +2066,10 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@update')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'moneda'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\MonedaController@index');
         });
 
         $api->group(['prefix' => 'proveedor'], function ($api) {
