@@ -205,7 +205,7 @@ class Documento extends Model
      */
     public function registrar($data)
     {
-        $this->validaDocumento($data);
+        $this->validaDocumento($data, null);
         try {
             DB::connection('controlrec')->beginTransaction();
             $usuario = Usuario::where('idusuario',auth()->id())->first();
@@ -246,7 +246,7 @@ class Documento extends Model
 
     public function editar(array $data)
     {
-        $this->validaDocumento($data);
+        $this->validaDocumento($data, $this->getKey());
         try {
             DB::connection('controlrec')->beginTransaction();
             $vencimiento = New DateTime($data['vencimiento_editar']);
@@ -281,12 +281,17 @@ class Documento extends Model
         }
     }
 
-    public function validaDocumento(array $data)
+    public function validaDocumento(array $data, $id)
     {
-        $documento = self::where('FolioDocto', $data['folio'])->where('IdSerie', array_key_exists('id_serie', $data) ? $data['id_serie'] : $data['idserie'])
-            ->where('IdProveedor', $data['id_proveedor'])->where('IdEmpresa', $data['id_empresa'])
-            ->where('Total', $data['total'])->withoutGlobalScopes()->first();
-
+        if($id == null) {
+            $documento = self::where('FolioDocto', $data['folio'])->where('IdSerie', array_key_exists('id_serie', $data) ? $data['id_serie'] : $data['idserie'])
+                ->where('IdProveedor', $data['id_proveedor'])->where('IdEmpresa', $data['id_empresa'])
+                ->where('Total', $data['total'])->withoutGlobalScopes()->first();
+        }else{
+            $documento = self::where('FolioDocto', $data['folio'])->where('IdSerie', array_key_exists('id_serie', $data) ? $data['id_serie'] : $data['idserie'])
+                ->where('IdProveedor', $data['id_proveedor'])->where('IdEmpresa', $data['id_empresa'])
+                ->where('Total', $data['total'])->where('IdDocto', '!=', $id)->withoutGlobalScopes()->first();
+        }
         if($documento)
         {
             abort(500, "Este documento ya fue registrado previamente.");
