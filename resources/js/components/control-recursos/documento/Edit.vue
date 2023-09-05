@@ -311,7 +311,7 @@ export default {
             })
         },
         salir() {
-            this.$router.go(-1);
+            this.$router.push({name: 'documento-recurso'});
         },
         getSeries() {
             return this.$store.dispatch('controlRecursos/serie/index', {
