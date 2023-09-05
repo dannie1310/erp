@@ -194,6 +194,12 @@ class Documento extends Model
         return date_format($date,"m/d/Y");
     }
 
+    public function getFechaEditarAttribute()
+    {
+        $date = date_create($this->Fecha);
+        return date_format($date,"m/d/Y");
+    }
+
     /**
      * Métodos
      */
@@ -243,11 +249,14 @@ class Documento extends Model
             DB::connection('controlrec')->beginTransaction();
             $vencimiento = New DateTime($data['vencimiento_editar']);
             $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha = New DateTime($data['fecha_editar']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             $this->update([
                 'IdEmpresa' => $data["id_empresa"],
                 'IdProveedor' => $data["id_proveedor"],
                 'Vencimiento' => $vencimiento->format('Y-m-d'),
                 'Concepto' => $data["concepto"],
+                'Fecha' => $fecha->format('Y-m-d'),
                 'IdSerie' => $data['id_serie'],
                 'FolioDocto' => $data['folio'],
                 'Importe' => $data['importe'],
