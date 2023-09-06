@@ -43,9 +43,9 @@ class ProcesaCFDISATNomina extends Command
     {
         $servicio = new CFDISATNominaService(new CFDISATNomina());
         //$servicio->procesaDirectorioZIPCFDI();
-        $servicio->llenaSolicitaGxCRel();
+        //$servicio->llenaSolicitaGxCRel();
         //$servicio->reprocesaLlenadoEmisorNominas();
-        //$servicio->llenaDatosAccesoSistemas();
+        $servicio->llenaDatosAccesoSistemas();
         //$servicio->llenaDatosIntranet();
     }
 }

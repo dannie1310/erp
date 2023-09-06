@@ -5,6 +5,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Jobs\ProcessCancelacionCFDI;
 
+use App\Models\CADECO\Transaccion;
 use App\Models\CONTROL_RECURSOS\ModuloUsuarioSerie;
 use App\Models\IGH\Usuario;
 use App\Models\IGH\VwUsuario;
@@ -28,6 +29,8 @@ use App\Utils\Files;
 use App\Events\CambioEFOS;
 use Chumper\Zipper\Zipper;
 use App\Events\FinalizaCargaCFD;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class CFDISATNominaService
@@ -113,8 +116,9 @@ class CFDISATNominaService
 
 
         $take = 1000;
+        $j = 0;
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
-            $receptores = CFDISATNominaReceptor::tieneDatosIntranet()
+            $receptores = CFDISATNominaReceptor::noTieneDatosObras()
                 ->skip($i)
                 ->take($take)
                 ->get();
@@ -171,6 +175,8 @@ class CFDISATNominaService
 
                     if(count($obras_erp)>0)
                     {
+                        $j++;
+                        print_r($j.": ".$receptor->id_usuario_intranet);
                         $obras = [];
                         foreach ($obras_erp as $id_obra => $id_proyecto)
                         {
@@ -179,12 +185,26 @@ class CFDISATNominaService
                             ->where("id_obra","=",$id_obra)->first();
                             if($obra)
                             {
-                                $obras[] = $proyecto->base_datos . "->" . $obra->nombre;
+                                DB::purge('cadeco');
+                                Config::set('database.connections.cadeco.database', $proyecto->base_datos);
+                                $transaccion = Transaccion::withoutGlobalScopes()->where("id_usuario","=",$receptor->id_usuario_intranet)
+                                    ->where("id_obra","=",$id_obra)
+                                ->orderBy("FechaHoraRegistro","desc")->first();
+
+                                if($transaccion)
+                                {
+                                    $obra_txt = $proyecto->base_datos . "->" . $obra->nombre;
+                                    $obra_txt .= " ".$transaccion->fecha_hora_registro_format;
+                                    $obras[] = $obra_txt;
+                                }
                             }
                         }
-                        //dd($obras);
-                        $receptor->obras_sao = implode("|", $obras);
-                        $receptor->save();
+                        if(count($obras)>0)
+                        {
+                            print_r($obras);
+                            $receptor->obras_sao = implode("|", $obras);
+                            $receptor->save();
+                        }
                     }
                 }else{
                     $receptor->roles = null;
