@@ -384,7 +384,7 @@ export default {
         },
         calcularImpuesto()
         {
-            this.impuesto = parseFloat((parseFloat(this.subtotal) * parseFloat(this.iva)) / 100).formatMoney(2);
+            this.impuesto = ((parseFloat(this.subtotal) * parseFloat(this.iva)) / 100).toFixed(2);
         },
         calcularTotal()
         {
