@@ -7,7 +7,7 @@
             <i class="fa fa-pencil"></i>
         </router-link>
         <router-link :to="{ name: 'documento-recurso-delete', params: {id: value.id}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-            <i class="fa fa-spinner fa-spin"></i>
+            <i class="fa fa-trash"></i>
         </router-link>
     </div>
 </template>
