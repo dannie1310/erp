@@ -108,6 +108,6 @@ class DocumentoService
 
     public function delete($data, $id)
     {
-        return $this->show($id)->eliminar($data['data']);
+        return $this->show($id)->eliminar();
     }
 }

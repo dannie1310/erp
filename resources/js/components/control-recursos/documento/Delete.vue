@@ -1,46 +1,33 @@
 <template>
     <span>
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <form role="form" @submit.prevent="validate">
-                        <div class="card-body">
-                            <div class="row" >
-                                <div class="col-md-12">
-                                    <encabezado v-bind:factura="factura" />
-                                    <tabla-datos v-bind:factura="factura" />
-                                </div>
-                            </div>
-                            <br />
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="motivo" class="col-md-2 col-form-label">Motivo de eliminación:</label>
-                                        <div class="col-md-10">
-                                            <textarea
-                                                name="motivo"
-                                                id="motivo"
-                                                class="form-control"
-                                                v-model="motivo"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Motivo"
-                                                :class="{'is-invalid': errors.has('motivo')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+        <div class="card" v-if="!factura">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
                         </div>
-                        <div class="card-footer">
-                            <div class="pull-right">
-                                <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
-                                <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0"><i class="fa fa-trash"></i>Eliminar</button>
-                            </div>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
+        </div>
+        <div class="card" v-else>
+            <form role="form" @submit.prevent="validate">
+                <div class="card-body">
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <encabezado v-bind:factura="factura" />
+                            <tabla-datos v-bind:factura="factura" />
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
+                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0"><i class="fa fa-trash"></i>Eliminar</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </span>
 </template>
@@ -55,7 +42,6 @@ export default {
     data() {
         return {
             cargando: false,
-            motivo: '',
             factura : null
         }
     },
@@ -88,7 +74,7 @@ export default {
         destroy() {
             return this.$store.dispatch('controlRecursos/documento/delete', {
                 id: this.id,
-                params: {data: this.motivo}
+                params: {}
             }).then(() => {
                 this.$store.commit('controlRecursos/documento/DELETE_DOCUMENTO', {id: this.id})
                 this.salir();

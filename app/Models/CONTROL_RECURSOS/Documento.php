@@ -80,6 +80,11 @@ class Documento extends Model
         return $this->belongsTo(TipoDocto::class,'IdTipoDocto','IdTipoDocto');
     }
 
+    public function eliminado()
+    {
+        return $this->belongsTo(DocumentoEliminado::class, 'IdDocto','IdDocto');
+    }
+
     /**
      * Scopes
      */
@@ -299,20 +304,24 @@ class Documento extends Model
     }
 
 
-    public function eliminar($motivo)
-    {dd('aqui', $motivo);
+    public function eliminar()
+    {
         try {
-            DB::connection('cadeco')->beginTransaction();
-            $this->respaldar($motivo);
-            foreach ($this->items()->get() as $item) {
-                $item->delete();
-            }
+            DB::connection('controlrec')->beginTransaction();
             $this->delete();
-            DB::connection('cadeco')->commit();
+            $this->respaldo();
+            DB::connection('controlrec')->commit();
         } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
+            DB::connection('controlrec')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
         }
+    }
+
+    private function respaldo()
+    {
+        $this->eliminado->update([
+            'Elimino' => auth()->id()."*". date("d-m-Y") ."/". date("H:i:s"),
+        ]);
     }
 }
