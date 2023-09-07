@@ -6,7 +6,7 @@
         <router-link :to="{ name: 'factura-recurso-edit', params: {id: this.value.id}}" v-if="value.edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
             <i class="fa fa-pencil"></i>
         </router-link>
-        <router-link :to="{ name: 'documento-recurso-delete', params: {id: value.id}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+        <router-link :to="{ name: 'factura-recurso-delete', params: {id: value.id}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
             <i class="fa fa-trash"></i>
         </router-link>
     </div>
