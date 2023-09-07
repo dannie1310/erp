@@ -385,6 +385,6 @@ class FacturaService
 
     public function delete($data, $id)
     {
-        return $this->show($id)->eliminar();
+        return $this->repository->eliminar($id);
     }
 }
