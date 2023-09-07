@@ -38,6 +38,8 @@ class FacturaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('permisoGlobal:consultar_factura_recursos')->only(['show','paginate','index']);
         $this->middleware('permisoGlobal:registrar_factura_recursos')->only(['store']);
+        $this->middleware('permisoGlobal:editar_factura_recursos')->only(['update']);
+        $this->middleware('permisoGlobal:eliminar_factura_recursos')->only(['destroy']);
 
         $this->service = $service;
         $this->transformer = $transformer;

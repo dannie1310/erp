@@ -97,7 +97,7 @@
                     buttons: $.extend({}, {
                         id: documento.id,
                         edit: self.$root.can('editar_documento_recursos', true) ? true : false,
-                        delete: self.$root.can('editar_documento_recursos', true) ? true : false,
+                        delete: self.$root.can('eliminar_documento_recursos', true) ? true : false,
                     })
                 }));
             },

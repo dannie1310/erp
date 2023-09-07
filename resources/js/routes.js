@@ -4301,7 +4301,7 @@ export const routes = [
                             title: 'Eliminar Factura',
                             breadcrumb: { parent: 'factura-recurso', name: 'ELIMINAR'},
                             middleware: [auth, permission],
-                            permission: 'eliminar_cotizacion_proveedor',
+                            permission: 'eliminar_factura_recursos',
                             general: true
                         }
                     },
@@ -4370,7 +4370,7 @@ export const routes = [
                             title: 'Eliminar Documento',
                             breadcrumb: { parent: 'documento-recurso', name: 'ELIMINAR'},
                             middleware: [auth, permission],
-                            permission: 'eliminar_cotizacion_proveedor',
+                            permission: 'eliminar_documento_recursos',
                             general: true
                         }
                     },
