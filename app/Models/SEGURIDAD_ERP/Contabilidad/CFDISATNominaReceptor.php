@@ -44,4 +44,12 @@ class CFDISATNominaReceptor extends Model
             ->whereNotNull("usuario_intranet")
             ;
     }
+
+    public function scopeNoTieneDatosObras($query)
+    {
+        return $query->whereNotNull('id_usuario_intranet')
+            ->whereNotNull("usuario_intranet")
+            ->whereNull("obras_sao")
+            ;
+    }
 }
