@@ -4376,6 +4376,24 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'layout-bancario',
+                component: require('./components/control-recursos/layout-bancario/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'layout-bancario',
+                        component: require('./components/control-recursos/layout-bancario/DescargaLayout').default,
+                        meta: {
+                            title: 'Descargar Layout Bancario',
+                            breadcrumb: {parent: 'control-recurso', name: 'LAYOUT BANCARIO'},
+                            middleware: [auth, permission],
+                            permission: ['descargar_layout_bancario_recursos'],
+                            general: true,
+                        }
+                    }
+                ]
+            },
         ]
     },
     {

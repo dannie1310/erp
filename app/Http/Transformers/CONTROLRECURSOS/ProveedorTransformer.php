@@ -13,7 +13,7 @@ class ProveedorTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'cuentas'
     ];
 
     /**
@@ -31,5 +31,18 @@ class ProveedorTransformer extends TransformerAbstract
             'razon_social' => $model->RazonSocial,
             'rfc' => $model->RFC
         ];
+    }
+
+    /**
+     * @param Proveedor $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeCuentas(Proveedor $model)
+    {
+        if($cuentas = $model->cuentasProveedores)
+        {
+            return $this->collection($cuentas, new CuentaProveedorTransformer);
+        }
+        return null;
     }
 }

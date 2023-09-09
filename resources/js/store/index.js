@@ -158,6 +158,8 @@ import facturaRecurso from "./modules/controlRecursos/factura";
 import monedaRecurso from "./modules/controlRecursos/moneda";
 import proveedorRecurso from "./modules/controlRecursos/proveedor";
 import serie from "./modules/controlRecursos/serie";
+import semanaAnio from "./modules/controlRecursos/semana-anio";
+import solicitudCheque from "./modules/controlRecursos/solicitud-cheque";
 
 //ENTREGA CFDI
 import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
@@ -385,6 +387,8 @@ export default new Vuex.Store({
         'controlRecursos/moneda' : monedaRecurso,
         'controlRecursos/proveedor' : proveedorRecurso,
         'controlRecursos/serie' : serie,
+        'controlRecursos/semana-anio' : semanaAnio,
+        'controlRecursos/solicitud-cheque' : solicitudCheque,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/comprobante-fondo' : comprobanteFondo,

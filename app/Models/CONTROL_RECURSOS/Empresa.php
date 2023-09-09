@@ -13,6 +13,10 @@ class Empresa extends Model
     /**
      * Relaciones
      */
+    public function cuentasEmpresas()
+    {
+        return $this->hasMany(CuentaEmpresa::class,'IdEmpresa','IdEmpresa');
+    }
 
     /**
      * Scopes

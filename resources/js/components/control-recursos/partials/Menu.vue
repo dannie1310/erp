@@ -19,6 +19,12 @@
                     <p>Factura</p>
                 </router-link>
             </li>
+            <li class="nav-item">
+                <router-link :to="{name: 'layout-bancario'}" v-if="$root.can('descargar_layout_bancario_recursos',true)" class="nav-link" :class="{active: this.$route.name == 'layout-bancario'}">
+                    <i class="nav-icon fa fa-file-code-o"></i>
+                    <p>Layout Bancario</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
 </template>

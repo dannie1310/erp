@@ -13,7 +13,7 @@ class EmpresaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'cuentas'
     ];
 
     /**
@@ -31,5 +31,18 @@ class EmpresaTransformer extends TransformerAbstract
             'razon_social' => $model->RazonSocial,
             'rfc' => $model->RFC
         ];
+    }
+
+    /**
+     * @param Empresa $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeCuentas(Empresa $model)
+    {
+        if($cuenta = $model->cuentasEmpresas)
+        {
+            return $this->collection($cuenta, new CuentaEmpresaTransformer);
+        }
+        return null;
     }
 }
