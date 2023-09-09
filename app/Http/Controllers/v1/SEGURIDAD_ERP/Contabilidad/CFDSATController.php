@@ -64,6 +64,10 @@ class CFDSATController extends Controller
         //$servicioCFDINomina->procesaDirectorioZIPCFDI();
         //return response()->json([], 200);
 
+        //$servicioCFDINomina = new CFDISATNominaService(new CFDISATNomina());
+        //$servicioCFDINomina->reprocesaLlenadoReceptoresNominas();
+        //return response()->json([], 200);
+
         //$this->service->reprocesaCFDILlenadoTipoCambioPago();
         //return response()->json([], 200);
 
