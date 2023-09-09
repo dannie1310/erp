@@ -13,6 +13,10 @@ class Proveedor extends Model
     /**
      * Relaciones
      */
+    public function cuentasProveedores()
+    {
+        return $this->hasMany(CuentaProveedor::class, 'IdProveedor', 'IdProveedor');
+    }
 
     /**
      * Scopes

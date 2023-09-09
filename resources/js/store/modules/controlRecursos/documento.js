@@ -1,38 +1,26 @@
-const URI = '/api/control-recursos/factura/';
+const URI = '/api/control-recursos/documento/';
 
 export default {
     namespaced: true,
     state: {
-        solicitudes: [],
-        currentSolicitud: null,
+        documentos: [],
+        currentDocumento: null,
         meta: {}
     },
 
     mutations: {
-        SET_SOLICITUDES(state, data) {
-            state.solicitudes = data
+        SET_DOCUMENTOS(state, data) {
+            state.documentos = data
         },
-        SET_SOLICITUD(state, data)
+        SET_DOCUMENTO(state, data)
         {
-            state.currentSolicitud = data;
+            state.currentDocumento = data;
         },
         SET_META(state, data) {
             state.meta = data;
         },
-        UPDATE_SOLICITUD(state, data){
-            state.solicitudes = state.solicitudes.map(solicitud => {
-                if(solicitud.id === data.id){
-                    return Object.assign({}, solicitud, data)
-                }
-                return solicitud
-            })
-            state.currentSolicitud = data ;
-        },
-        UPDATE_ATTRIBUTE(state, data) {
-            state.currentSolicitud[data.attribute] = data.value
-        },
-        DELETE_SOLICITUD(state, id) {
-            state.solicitudes = state.solicitudes.filter(d => {
+        DELETE_DOCUMENTO(state, id) {
+            state.documentos = state.documentos.filter(d => {
                 return d.id != id
             });
         }
@@ -52,23 +40,10 @@ export default {
                     })
             })
         },
-        cargaCFDI(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .post(URI + 'xml', payload.data, payload.config)
-                    .then(r => r.data)
-                    .then((data) => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error)
-                    })
-            });
-        },
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Factura",
+                    title: "Registrar el Documento",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -88,7 +63,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Factura registrada correctamente", {
+                                    swal("Documento registrado correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
@@ -120,7 +95,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar la Factura",
+                    text: "Actualizar el Documento",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -139,7 +114,7 @@ export default {
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Factura actualizada correctamente", {
+                                    swal("Documento actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -158,8 +133,8 @@ export default {
         delete(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Factura",
-                    text: "¿Está seguro/a de que desea eliminar la factura?",
+                    title: "Eliminar Documento",
+                    text: "¿Está seguro/a de que desea eliminar el documento?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -179,7 +154,7 @@ export default {
                                 .delete(URI + payload.id, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Factura eliminada correctamente", {
+                                    swal("Documento eliminado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -197,14 +172,14 @@ export default {
     },
 
     getters: {
-        solicitudes(state) {
-            return state.solicitudes
+        documentos(state) {
+            return state.documentos
         },
         meta(state) {
             return state.meta
         },
-        currentSolicitud(state) {
-            return state.currentSolicitud;
+        currentDocumento(state) {
+            return state.currentDocumento;
         }
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Services\CONTROLRECURSOS;
 
-use App\Events\IncidenciaCI;
 use App\Http\Requests\SatQueryRequest;
 use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Factura;
@@ -10,7 +9,6 @@ use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\TipoDocto;
 use App\Models\IGH\TipoCambio;
-use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\CONTROLRECURSOS\FacturaRepository as Repository;
@@ -383,5 +381,10 @@ class FacturaService
         {
             abort(500, "El CFDI ".$uuid." fue utilizado anteriormente la factura en control de recursos.");
         }
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->eliminar($id);
     }
 }

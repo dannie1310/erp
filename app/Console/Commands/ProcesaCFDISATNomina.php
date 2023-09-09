@@ -4,8 +4,10 @@ namespace App\Console\Commands;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDISATNomina;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Services\SEGURIDAD_ERP\Contabilidad\CFDISATNominaService;
 use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
+use App\Services\SEGURIDAD_ERP\Contabilidad\ListaEmpresasService;
 use Illuminate\Console\Command;
 
 class ProcesaCFDISATNomina extends Command
@@ -41,11 +43,14 @@ class ProcesaCFDISATNomina extends Command
      */
     public function handle()
     {
-        $servicio = new CFDISATNominaService(new CFDISATNomina());
+        //$servicio = new CFDISATNominaService(new CFDISATNomina());
         //$servicio->procesaDirectorioZIPCFDI();
         //$servicio->llenaSolicitaGxCRel();
         //$servicio->reprocesaLlenadoEmisorNominas();
         $servicio->llenaDatosAccesoSistemas();
         //$servicio->llenaDatosIntranet();
+
+        $servicio = new ListaEmpresasService(new Empresa());
+        $servicio->llenaDatosEmpresas();
     }
 }

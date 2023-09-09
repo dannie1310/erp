@@ -5,7 +5,7 @@
 </template>
 
 <script>
-    export default {
-        name: "layout"
-    }
+export default {
+    name: "layout"
+}
 </script>
