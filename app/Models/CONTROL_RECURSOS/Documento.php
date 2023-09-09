@@ -80,6 +80,11 @@ class Documento extends Model
         return $this->belongsTo(TipoDocto::class,'IdTipoDocto','IdTipoDocto');
     }
 
+    public function eliminado()
+    {
+        return $this->belongsTo(DocumentoEliminado::class, 'IdDocto','IdDocto');
+    }
+
     /**
      * Scopes
      */
@@ -296,5 +301,27 @@ class Documento extends Model
         {
             abort(500, "Este documento ya fue registrado previamente.");
         }
+    }
+
+
+    public function eliminar()
+    {
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $this->delete();
+            $this->respaldo();
+            DB::connection('controlrec')->commit();
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function respaldo()
+    {
+        $this->eliminado->update([
+            'Elimino' => auth()->id()."*". date("d-m-Y") ."/". date("H:i:s"),
+        ]);
     }
 }

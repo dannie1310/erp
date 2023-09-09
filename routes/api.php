@@ -2054,6 +2054,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@store');
             $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@destroy')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'empresa'], function ($api) {
@@ -2066,6 +2067,7 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@destroy')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'moneda'], function ($api) {

@@ -97,6 +97,7 @@
                     buttons: $.extend({}, {
                         id: solicitud.id,
                         edit: self.$root.can('editar_factura_recursos', true) ? true : false,
+                        delete: self.$root.can('eliminar_factura_recursos', true) ? true : false,
                     })
                 }));
             },
