@@ -4294,6 +4294,40 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'gasto-personal',
+                component: require('./components/control-recursos/gastos/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'gasto-personal',
+                        component: require('./components/control-recursos/gastos/Index').default,
+                        meta: {
+                            title: 'Gastos de Personal',
+                            breadcrumb: {parent: 'control-recursos', name: 'GASTOS DE PERSONAL'},
+                            middleware: [auth, permission],
+                            permission: ['editar_factura_recursos'],
+                            general: true,
+
+                        }
+                    },
+                    {
+                        path: 'relacion-gasto',
+                        name: 'relacion-gasto',
+                        component: require('./components/control-recursos/gastos/relacion-gastos/Index').default,
+                        meta: {
+                            title: 'Relaciones de Gastos',
+                            breadcrumb: {
+                                parent: 'gasto-personal',
+                                name: 'RELACIONES DE GASTOS'
+                            },
+                            middleware: [auth, permission],
+                            permission: 'editar_factura_recursos',
+                            general: true,
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
