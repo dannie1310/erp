@@ -1,7 +1,7 @@
 <template>
     <div class="row" v-if="factura">
         <div class="col-md-12">
-            <span><i class="fa fa-envelope"></i>Datos del Factura</span>
+            <span><i class="fa fa-file-invoice"></i>Datos del Factura</span>
             <div class="table-responsive">
                 <table class="table  table-sm">
                     <tr>
@@ -122,13 +122,13 @@
                         <td class="money">
                             {{ factura.tc }}
                         </td>
-                        <td class="money">
+                        <td >
                             {{factura.ubicacion}}
                         </td>
-                        <td class="money">
+                        <td >
                             {{factura.alias_dep}}
                         </td>
-                        <td class="money">
+                        <td >
                             {{factura.departamento}}
                         </td>
                     </tr>
