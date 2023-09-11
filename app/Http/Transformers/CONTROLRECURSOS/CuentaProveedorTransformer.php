@@ -2,10 +2,10 @@
 
 namespace App\Http\Transformers\CONTROLRECURSOS;
 
-use App\Models\CONTROL_RECURSOS\Serie;
+use App\Models\CONTROL_RECURSOS\CuentaProveedor;
 use League\Fractal\TransformerAbstract;
 
-class SerieTransformer extends TransformerAbstract
+class CuentaProveedorTransformer  extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -25,10 +25,13 @@ class SerieTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(Serie $model){
+    public function transform(CuentaProveedor $model){
         return [
             'id' => $model->getKey(),
-            'descripcion' => $model->Descripcion
+            'numero_cuenta' => $model->Cuenta,
+            'banco_nombre' => $model->bancoCuenta,
+            'id_banco' => $model->IdBanco,
+            'cve_banco' => $model->banco_cve
         ];
     }
 }

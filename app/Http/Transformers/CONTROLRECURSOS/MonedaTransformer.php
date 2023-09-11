@@ -2,10 +2,10 @@
 
 namespace App\Http\Transformers\CONTROLRECURSOS;
 
-use App\Models\CONTROL_RECURSOS\Serie;
+use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use League\Fractal\TransformerAbstract;
 
-class SerieTransformer extends TransformerAbstract
+class MonedaTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include
@@ -25,10 +25,12 @@ class SerieTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(Serie $model){
+    public function transform(CtgMoneda $model){
         return [
             'id' => $model->getKey(),
-            'descripcion' => $model->Descripcion
+            'moneda' => $model->moneda,
+            'corto' => $model->corto,
+            'tipo_cambio' => $model->tipo_cambio
         ];
     }
 }
