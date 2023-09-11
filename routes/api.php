@@ -2078,6 +2078,10 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@index');
         });
 
+        $api->group(['prefix' => 'relacion-gasto'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@paginate');
+        });
+
         $api->group(['prefix' => 'serie'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SerieController@index');
         });

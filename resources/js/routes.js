@@ -4413,18 +4413,33 @@ export const routes = [
                     },
                     {
                         path: 'relacion-gasto',
-                        name: 'relacion-gasto',
-                        component: require('./components/control-recursos/gastos/relacion-gastos/Index').default,
-                        meta: {
-                            title: 'Relaciones de Gastos',
-                            breadcrumb: {
-                                parent: 'gasto-personal',
-                                name: 'RELACIONES DE GASTOS'
+                        component: require('./components/control-recursos/gastos/relacion-gastos/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'relacion-gasto',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Index').default,
+                                meta: {
+                                    title: 'Relaciones de Gastos',
+                                    breadcrumb: {parent: 'gasto-personal', name: 'RELACIONES DE GASTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_factura_recursos',
+                                    general: true,
+                                }
                             },
-                            middleware: [auth, permission],
-                            permission: 'editar_factura_recursos',
-                            general: true,
-                        }
+                            {
+                                path: 'create',
+                                name: 'relacion-gasto-create',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Create.vue').default,
+                                meta: {
+                                    title: 'Registrar Relación de Gastos',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'relacion-gasto'},
+                                    middleware: [auth, permission],
+                                    permission: ['registrar_documento_recursos'],
+                                    general: true
+                                }
+                            }
+                        ]
                     },
                 ]
             },

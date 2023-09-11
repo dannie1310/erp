@@ -69,5 +69,4 @@ class RelacionGastoService
        */
         return $this->repository->paginate($data);
     }
-
 }

@@ -3,8 +3,9 @@
 namespace App\Http\Transformers\CONTROLRECURSOS;
 
 use App\Models\CONTROL_RECURSOS\RelacionGasto;
+use League\Fractal\TransformerAbstract;
 
-class RelacionGastoTransformer
+class RelacionGastoTransformer extends TransformerAbstract
 {
     /**
      * List of resources possible to include

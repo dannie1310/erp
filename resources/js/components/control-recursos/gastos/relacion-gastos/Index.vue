@@ -1,6 +1,11 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <button @click="create" v-if="$root.can('registrar_comprobante_fondo')" class="btn btn-app pull-right">
+                <i class="fa fa-plus"></i> Registrar
+            </button>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -33,7 +38,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['empresa', 'tipo','banco'], sort: 'id', order: 'desc'},
+                query: {include: [], sort: 'folio', order: 'desc'},
                 cargando: false
             }
         },
@@ -48,20 +53,23 @@
 
         methods: {
             paginate() {
-               /* this.cargando = true;
-                return this.$store.dispatch('finanzas/cuenta-bancaria-empresa/paginate', { params: this.query})
+                this.cargando = true;
+                return this.$store.dispatch('controlRecursos/relacion-gasto/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('finanzas/cuenta-bancaria-empresa/SET_CUENTAS', data.data);
-                        this.$store.commit('finanzas/cuenta-bancaria-empresa/SET_META', data.meta);
+                        this.$store.commit('controlRecursos/relacion-gasto/SET_RELACIONES', data.data);
+                        this.$store.commit('controlRecursos/relacion-gasto/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
-                    })*/
-            }
+                    })
+            },
+            create() {
+                this.$router.push({name: 'relacion-gasto-create'});
+            },
         },
         computed: {
-            cuentas(){
-                return this.$store.getters['finanzas/cuenta-bancaria-empresa/cuentas'];
+            relaciones(){
+                return this.$store.getters['controlRecursos/relacion-gasto/relaciones'];
             },
             meta(){
                 return this.$store.getters['finanzas/cuenta-bancaria-empresa/meta'];
@@ -71,23 +79,26 @@
             }
         },
         watch: {
-            cuentas: {
-                handler(cuentas) {
+            relaciones: {
+                handler(relaciones) {
                     let self = this
                     self.$data.data = []
-                    cuentas.forEach(function (cuenta, i) {
+                    relaciones.forEach(function (relacion, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            id_empresa: cuenta.empresa.razon_social,
-                            empresa__tipo_empresa: cuenta.empresa.tipo,
-                            id_banco: cuenta.banco.razon_social,
-                            cuenta_clabe: cuenta.cuenta,
-                            estatus: cuenta.estado_format,
-                            buttons: $.extend({}, {
+                            Fecha: documento.fecha_format,
+                            IdProveedor: documento.proveedor_descripcion,
+                            concepto: documento.concepto,
+                            foliodocto: documento.folio_format,
+                            total: documento.total_format,
+                            idmoneda: documento.moneda,
+                            idserie: documento.serie,
+                            idtipodocto: documento.tipo_documento,
+                            /*buttons: $.extend({}, {
                                 show: true,
                                 id: cuenta.id,
                                 estado: cuenta.estado
-                            })
+                            })*/
 
                         })
                     });
