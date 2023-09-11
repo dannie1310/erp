@@ -43,7 +43,7 @@
             ],
             data: [],
             total: 0,
-            query: { scope: ['porTipo:6', 'porEstado:5'],sort: 'Fecha', order: 'desc'},
+            query: { scope: ['porTipo:6'],sort: 'IdDocto', order: 'desc'},
             estado: "",
             cargando: false,
         }

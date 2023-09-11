@@ -43,7 +43,7 @@
             ],
             data: [],
             total: 0,
-            query: { sort: 'Fecha', order: 'desc'},
+            query: { sort: 'IdDocto', order: 'desc'},
             estado: "",
             cargando: false,
         }

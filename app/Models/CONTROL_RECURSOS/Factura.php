@@ -16,7 +16,7 @@ class Factura extends Documento
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->whereIn('IdTipoDocto', [1,6])->whereIn('Estatus',[1,5]);
+            return $query->where('IdTipoDocto', '1');
         });
     }
 
