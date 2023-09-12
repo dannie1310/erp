@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'factura-recurso-create'}" v-if="$root.can('registrar_factura_recursos',true)" class="btn btn-app btn-info float-right" :disabled="cargando">
+            <router-link :to="{name: 'documento-recurso-create'}" v-if="$root.can('registrar_documento_recursos',true)" class="btn btn-app btn-info float-right" :disabled="cargando" @created="paginate()">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -25,7 +25,7 @@
 
 <script>
     export default {
-    name: "factura-index",
+    name: "documento-index",
     data() {
         return {
             HeaderSettings: false,
@@ -43,7 +43,7 @@
             ],
             data: [],
             total: 0,
-            query: { sort: 'Fecha', order: 'desc'},
+            query: { scope: ['porTipo:6', 'porEstado:5'],sort: 'Fecha', order: 'desc'},
             estado: "",
             cargando: false,
         }
@@ -58,10 +58,10 @@
     methods: {
         paginate() {
             this.cargando = true;
-            return this.$store.dispatch('controlRecursos/factura/paginate', { params: this.query})
+            return this.$store.dispatch('controlRecursos/documento/paginate', { params: this.query})
                 .then(data => {
-                    this.$store.commit('controlRecursos/factura/SET_SOLICITUDES', data.data);
-                    this.$store.commit('controlRecursos/factura/SET_META', data.meta);
+                    this.$store.commit('controlRecursos/documento/SET_DOCUMENTOS', data.data);
+                    this.$store.commit('controlRecursos/documento/SET_META', data.meta);
                 })
                 .finally(() => {
                     this.cargando = false;
@@ -69,35 +69,35 @@
         },
     },
     computed: {
-        solicitudes(){
-            return this.$store.getters['controlRecursos/factura/solicitudes'];
+        documentos(){
+            return this.$store.getters['controlRecursos/documento/documentos'];
         },
         meta(){
-            return this.$store.getters['controlRecursos/factura/meta'];
+            return this.$store.getters['controlRecursos/documento/meta'];
         },
         tbodyStyle() {
             return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
         }
     },
     watch: {
-        solicitudes: {
-            handler(solicitudes) {
+        documentos: {
+            handler(documentos) {
                 let self = this
                 self.$data.data = []
-                self.$data.data = solicitudes.map((solicitud, i) => ({
+                self.$data.data = documentos.map((documento, i) => ({
                     index: (i + 1) + self.query.offset,
-                    Fecha: solicitud.fecha_format,
-                    IdProveedor: solicitud.proveedor_descripcion,
-                    concepto: solicitud.concepto,
-                    foliodocto: solicitud.folio_format,
-                    total: solicitud.total_format,
-                    idmoneda: solicitud.moneda,
-                    idserie: solicitud.serie,
-                    idtipodocto: solicitud.tipo_documento,
+                    Fecha: documento.fecha_format,
+                    IdProveedor: documento.proveedor_descripcion,
+                    concepto: documento.concepto,
+                    foliodocto: documento.folio_format,
+                    total: documento.total_format,
+                    idmoneda: documento.moneda,
+                    idserie: documento.serie,
+                    idtipodocto: documento.tipo_documento,
                     buttons: $.extend({}, {
-                        id: solicitud.id,
-                        edit: self.$root.can('editar_factura_recursos', true) ? true : false,
-                        delete: self.$root.can('eliminar_factura_recursos', true) ? true : false,
+                        id: documento.id,
+                        edit: self.$root.can('editar_documento_recursos', true) ? true : false,
+                        delete: self.$root.can('eliminar_documento_recursos', true) ? true : false,
                     })
                 }));
             },

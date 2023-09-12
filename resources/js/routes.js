@@ -4292,6 +4292,106 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/delete',
+                        name: 'factura-recurso-delete',
+                        component: require('./components/control-recursos/factura/Delete').default,
+                        props: true,
+                        meta: {
+                            title: 'Eliminar Factura',
+                            breadcrumb: { parent: 'factura-recurso', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: 'eliminar_factura_recursos',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'documento-recurso',
+                component: require('./components/control-recursos/documento/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'documento-recurso',
+                        component: require('./components/control-recursos/documento/Index').default,
+                        meta: {
+                            title: 'Documentos',
+                            breadcrumb: {parent: 'control-recurso', name: 'DOCUMENTOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_documento_recursos','editar_documento_recursos','registrar_documento_recursos'],
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'documento-recurso-create',
+                        component: require('./components/control-recursos/documento/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Documento',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'documento-recurso'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_documento_recursos'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'documento-recurso-show',
+                        component: require('./components/control-recursos/documento/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Documento',
+                            breadcrumb: { parent: 'documento-recurso', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_documento_recursos',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'documento-recurso-edit',
+                        props: true,
+                        component: require('./components/control-recursos/documento/Edit').default,
+                        meta: {
+                            title: 'Editar Documento',
+                            breadcrumb: {parent: 'documento-recurso', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: 'editar_documento_recursos',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/delete',
+                        name: 'documento-recurso-delete',
+                        component: require('./components/control-recursos/documento/Delete').default,
+                        props: true,
+                        meta: {
+                            title: 'Eliminar Documento',
+                            breadcrumb: { parent: 'documento-recurso', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: 'eliminar_documento_recursos',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'layout-bancario',
+                component: require('./components/control-recursos/layout-bancario/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'layout-bancario',
+                        component: require('./components/control-recursos/layout-bancario/DescargaLayout').default,
+                        meta: {
+                            title: 'Descargar Layout Bancario',
+                            breadcrumb: {parent: 'control-recurso', name: 'LAYOUT BANCARIO'},
+                            middleware: [auth, permission],
+                            permission: ['descargar_layout_bancario_recursos'],
+                            general: true,
+                        }
+                    }
                 ]
             },
         ]

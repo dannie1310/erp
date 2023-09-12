@@ -5,7 +5,7 @@
             <div class="table-responsive">
                 <table class="table  table-sm">
                     <tr>
-                        <th class="encabezado" colspan="3">
+                        <th class="encabezado" colspan="2">
                             Empresa
                         </th>
                         <th class="encabezado" colspan="3">
@@ -13,7 +13,7 @@
                         </th>
                     </tr>
                     <tr>
-                        <th class="encabezado" colspan="3">
+                        <th class="encabezado" colspan="2">
                             {{factura.empresa_descripcion}}
                         </th>
                         <th class="encabezado" colspan="3">
@@ -36,9 +36,7 @@
                         <th class="encabezado">
                             Folio
                         </th>
-                        <th class="encabezado money">
-                            Tipo de Cambio
-                        </th>
+
                     </tr>
                     <tr>
                         <td style="text-align: center">
@@ -56,15 +54,12 @@
                         <td>
                             {{factura.folio_format}}
                         </td>
-                        <td class="money">
-                            {{ factura.tc }}
-                        </td>
                     </tr>
                     <tr>
-                        <th class="encabezado" colspan="6">Concepto</th>
+                        <th class="encabezado" colspan="5">Concepto</th>
                     </tr>
                     <tr>
-                        <td colspan="6">
+                        <td colspan="5">
                             {{ factura.concepto }}
                         </td>
                     </tr>
@@ -84,9 +79,6 @@
                         <th class="encabezado">
                             Total
                         </th>
-                        <th class="encabezado">
-                            Moneda
-                        </th>
                     </tr>
                     <tr>
                         <td class="money">
@@ -104,13 +96,13 @@
                         <td class="money">
                             {{ factura.total_format }}
                         </td>
-                        <td>
-                            {{ factura.moneda }}
-                        </td>
                     </tr>
                     <tr>
-                        <th class="encabezado" colspan="3">
-                            UUID
+                        <th class="encabezado">
+                            Moneda
+                        </th>
+                        <th class="encabezado money">
+                            Tipo de Cambio
                         </th>
                         <th class="encabezado c150">
                             Ubicacion
@@ -124,8 +116,11 @@
 
                     </tr>
                     <tr>
-                        <td style="text-align: right" colspan="3">
-                            {{factura.uuid}}
+                        <td>
+                            {{ factura.moneda }}
+                        </td>
+                        <td class="money">
+                            {{ factura.tc }}
                         </td>
                         <td >
                             {{factura.ubicacion}}
