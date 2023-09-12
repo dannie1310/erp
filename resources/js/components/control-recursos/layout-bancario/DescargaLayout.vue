@@ -40,13 +40,13 @@
                                     <th>#</th>
                                     <th>Serie</th>
                                     <th>Folio</th>
-                                    <th>Concepto</th>
                                     <th>Fecha</th>
                                     <th>Empresa</th>
                                     <th>Cuenta Empresa</th>
-                                    <th>Proveedor</th>
+                                     <th>Proveedor</th>
                                     <th>Cuenta Proveedor</th>
                                     <th>Importe</th>
+                                    <th>Concepto</th>
                                     <th> Seleccionar
                                         <input type="checkbox" v-model="seleccionar">
                                     </th>
@@ -57,7 +57,6 @@
                                     <td>{{i+1}}</td>
                                     <td>{{doc.serie}}</td>
                                     <td>{{doc.folio}}</td>
-                                    <td>{{doc.concepto}}</td>
                                     <td>{{doc.fecha_format}}</td>
                                     <td>{{doc.empresa.razon_social}}</td>
                                     <td style="width: 15%;">
@@ -79,6 +78,7 @@
                                     <td v-if="doc.cuentaProveedor != null">{{doc.cuentaProveedor.numero_cuenta}} ({{doc.cuentaProveedor.banco_nombre}})</td>
                                     <td v-else>{{doc.id}}</td>
                                     <td>{{doc.importe_format}}</td>
+                                    <td>{{doc.concepto}}</td>
                                     <td class="text-center"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                 </tr>
                                 </tbody>
@@ -147,7 +147,7 @@ export default {
         },
         getSolicitudes() {
             return this.$store.dispatch('controlRecursos/solicitud-cheque/index', {
-                params: { scope:['porSemanaAnio:'+this.idsemana], include : ['cuentaProveedor','empresa.cuentas'] }
+                params: { scope:['porSemanaAnio:'+this.idsemana,'ordenaSerieFolio'], include : ['cuentaProveedor','empresa.cuentas'] }
             })
             .then(data => {
                 this.solicitudes = data.data;
