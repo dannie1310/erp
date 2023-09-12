@@ -104,8 +104,8 @@
                     estatus: this.getEstado(documento.estado_descripcion, documento.estado_color),
                     buttons: $.extend({}, {
                         id: documento.id,
-                        edit: self.$root.can('editar_documento_recursos', true) ? true : false,
-                        delete: self.$root.can('eliminar_documento_recursos', true) ? true : false,
+                        edit: self.$root.can('editar_documento_recursos', true) && documento.estado == 5 ? true : false,
+                        delete: self.$root.can('eliminar_documento_recursos', true) && documento.estado != 7? true : false,
                     })
                 }));
             },

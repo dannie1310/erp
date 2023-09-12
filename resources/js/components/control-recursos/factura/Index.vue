@@ -104,8 +104,8 @@
                     estatus: this.getEstado(solicitud.estado_descripcion, solicitud.estado_color),
                     buttons: $.extend({}, {
                         id: solicitud.id,
-                        edit: self.$root.can('editar_factura_recursos', true) ? true : false,
-                        delete: self.$root.can('eliminar_factura_recursos', true) ? true : false,
+                        edit: self.$root.can('editar_factura_recursos', true) && solicitud.estado == 1 ? true : false,
+                        delete: self.$root.can('eliminar_factura_recursos', true) && solicitud.estado != 2 ? true : false,
                     })
                 }));
             },
