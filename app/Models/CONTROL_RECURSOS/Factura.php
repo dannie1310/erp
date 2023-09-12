@@ -47,6 +47,25 @@ class Factura extends Documento
         return date_format($date,"m/d/Y");
     }
 
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->Estatus)
+        {
+            case 1:
+                return '#3386FF';
+                break;
+            case 0:
+                return '#FFEC33';
+                break;
+            case 2:
+                return '#00a65a';
+                break;
+            default:
+                return '#d1cfd1';
+                break;
+        }
+    }
+
     /**
      * Métodos
      */

@@ -85,6 +85,11 @@ class Documento extends Model
         return $this->belongsTo(DocumentoEliminado::class, 'IdDocto','IdDocto');
     }
 
+    public function estado()
+    {
+        return $this->belongsTo(EstatusDocumento::class, 'Estatus', 'Estatus')->where('IdTipoDocto', $this->IdTipoDocto);
+    }
+
     /**
      * Scopes
      */
@@ -203,6 +208,35 @@ class Documento extends Model
     {
         $date = date_create($this->Fecha);
         return date_format($date,"m/d/Y");
+    }
+
+    public function getEstatusDescripcionAttribute()
+    {
+        try {
+            return $this->estado->Descripcion;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->Estatus)
+        {
+            case 5:
+                return '#3386FF';
+                break;
+            case 6:
+                return '#FFEC33';
+                break;
+            case 7:
+                return '#00a65a';
+                break;
+            default:
+                return '#d1cfd1';
+                break;
+        }
     }
 
     /**

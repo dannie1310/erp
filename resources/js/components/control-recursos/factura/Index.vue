@@ -39,6 +39,7 @@
                 { title: 'Concepto', field: 'concepto',sortable: true,thComp: require('../../globals/th-Filter').default},
                 { title: 'Total', field: 'total', tdClass: 'right th_c220', sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Moneda', field: 'idmoneda',thClass: 'th_c150',sortable: true, thComp: require('../../globals/th-Filter').default},
+                { title: 'Estatus', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                 { title: 'Acciones', field: 'buttons',thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
@@ -67,6 +68,12 @@
                     this.cargando = false;
                 })
         },
+        getEstado(estado, color) {
+            return {
+                color: color,
+                descripcion: estado
+            }
+        },
     },
     computed: {
         solicitudes(){
@@ -94,6 +101,7 @@
                     idmoneda: solicitud.moneda,
                     idserie: solicitud.serie,
                     idtipodocto: solicitud.tipo_documento,
+                    estatus: this.getEstado(solicitud.estado_descripcion, solicitud.estado_color),
                     buttons: $.extend({}, {
                         id: solicitud.id,
                         edit: self.$root.can('editar_factura_recursos', true) ? true : false,
