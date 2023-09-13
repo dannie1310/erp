@@ -57,6 +57,11 @@ class SolCheque extends Model
         });
     }
 
+    public function scopeOrdenaSerieFolio($query)
+    {
+        return $query->orderBy('Serie', 'desc')->orderBy('Folio', 'desc');
+    }
+
     /**
      * Atributos
      */

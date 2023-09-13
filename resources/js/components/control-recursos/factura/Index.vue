@@ -39,11 +39,12 @@
                 { title: 'Concepto', field: 'concepto',sortable: true,thComp: require('../../globals/th-Filter').default},
                 { title: 'Total', field: 'total', tdClass: 'right th_c220', sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Moneda', field: 'idmoneda',thClass: 'th_c150',sortable: true, thComp: require('../../globals/th-Filter').default},
+                { title: 'Estatus', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                 { title: 'Acciones', field: 'buttons',thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
             total: 0,
-            query: { sort: 'Fecha', order: 'desc'},
+            query: { sort: 'IdDocto', order: 'desc'},
             estado: "",
             cargando: false,
         }
@@ -66,6 +67,12 @@
                 .finally(() => {
                     this.cargando = false;
                 })
+        },
+        getEstado(estado, color) {
+            return {
+                color: color,
+                descripcion: estado
+            }
         },
     },
     computed: {
@@ -94,10 +101,11 @@
                     idmoneda: solicitud.moneda,
                     idserie: solicitud.serie,
                     idtipodocto: solicitud.tipo_documento,
+                    estatus: this.getEstado(solicitud.estado_descripcion, solicitud.estado_color),
                     buttons: $.extend({}, {
                         id: solicitud.id,
-                        edit: self.$root.can('editar_factura_recursos', true) ? true : false,
-                        delete: self.$root.can('eliminar_factura_recursos', true) ? true : false,
+                        edit: self.$root.can('editar_factura_recursos', true) && solicitud.estado == 1 ? true : false,
+                        delete: self.$root.can('eliminar_factura_recursos', true) && solicitud.estado != 2 ? true : false,
                     })
                 }));
             },
