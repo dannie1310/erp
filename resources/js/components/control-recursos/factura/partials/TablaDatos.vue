@@ -1,7 +1,7 @@
 <template>
     <div class="row" v-if="factura">
         <div class="col-md-12">
-            <span><i class="fa fa-file-invoice"></i>Datos del Factura</span>
+            <span><i class="fa fa-file-invoice"></i>Datos del Documento</span>
             <div class="table-responsive">
                 <table class="table  table-sm">
                     <tr>
