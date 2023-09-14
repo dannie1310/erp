@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="$root.can('registrar_comprobante_fondo')" class="btn btn-app pull-right">
+            <button @click="create" v-if="$root.can('relacion-gasto-create')" class="btn btn-app pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
@@ -86,14 +86,14 @@
                     relaciones.forEach(function (relacion, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            Fecha: documento.fecha_format,
+                           /* Fecha: documento.fecha_format,
                             IdProveedor: documento.proveedor_descripcion,
                             concepto: documento.concepto,
                             foliodocto: documento.folio_format,
                             total: documento.total_format,
                             idmoneda: documento.moneda,
                             idserie: documento.serie,
-                            idtipodocto: documento.tipo_documento,
+                            idtipodocto: documento.tipo_documento,*/
                             /*buttons: $.extend({}, {
                                 show: true,
                                 id: cuenta.id,

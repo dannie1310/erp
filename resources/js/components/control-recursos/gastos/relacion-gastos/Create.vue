@@ -8,7 +8,7 @@
                              <div class="modal-body">
                                  <div class="row">
                                      <div class="col-md-6">
-                                        <div class="form-group row error-content">
+                                        <div class="form-group error-content">
                                             <label for="id_empresa">Empresa:</label>
                                             <select class="form-control"
                                                     data-vv-as="Empresa"
@@ -24,7 +24,7 @@
                                         </div>
                                     </div>
                                      <div class="col-md-6">
-                                        <div class="form-group row error-content">
+                                        <div class="form-group error-content">
                                             <label for="id_empleado">Empleado:</label>
                                             <select class="form-control"
                                                     data-vv-as="Empleado"
@@ -34,7 +34,7 @@
                                                     v-validate="{required: true}"
                                                     v-model="id_empleado">
                                                 <option value>-- Selecionar --</option>
-                                                <option v-for="(e) in empleados" :value="e.id">{{ e.nombre }}</option>
+                                                <option v-for="(e) in empleados" :value="e.id">{{ e.razon_social }} - [ {{empresa.rfc}} ]</option>
                                             </select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
                                         </div>
@@ -42,13 +42,13 @@
                                  </div>
                                  <div class="row">
                                      <div class="col-md-6">
-                                        <div class="form-group row error-content">
+                                        <div class="form-group error-content">
                                             <h6><b>Departamento:</b></h6>
                                             <h6>{{departamento}}</h6>
                                         </div>
                                      </div>
                                      <div class="col-md-6">
-                                        <div class="form-group row error-content">
+                                        <div class="form-group error-content">
                                             <label for="id_empleado">Proyecto:</label>
                                             <select class="form-control"
                                                     data-vv-as="Empresa"
@@ -86,7 +86,9 @@
                                              <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                                          </div>
                                      </div>
-                                     -->
+                                     <div class="col-md-2">
+                                        <i class="fa fa-arrow-right fa-2" aria-hidden="true"></i>
+                                     </div>
                                      <div class="col-md-2">
                                          <div class="form-group error-content">
                                              <datepicker v-model = "fecha_final"
@@ -138,25 +140,30 @@
                                  <hr />
                                  <div class="row">
                                      <div class="col-md-12">
-                                         <button type="button" class="btn btn-success btn-sm pull-right" @click="modalCFDI()" v-if="id_concepto">
+                                         <button type="button" class="btn btn-success btn-sm pull-right" @click="modalCFDI()">
                                              <i class="fa fa-file-code"></i> Cargar x CFDI
                                          </button>
                                      </div>
                                  </div>
                                  <hr />
-                                 <div class="row">
+                                 <!--<div class="row">
                                      <div  class="col-md-12 table-responsive-xl">
                                          <div>
                                              <table class="table table-bordered table-sm">
                                                  <thead>
                                                  <tr>
                                                      <th class="index_corto">#</th>
-                                                     <th>Concepto</th>
-                                                     <th class="c70">Cantidad</th>
-                                                     <th class="c70">Precio</th>
-                                                     <th class="c100">Monto</th>
-                                                     <th class="c100"  v-if="con_descuento">Descuento</th>
-                                                     <th class="c250">Destino</th>
+                                                     <th>Tipo de Documento</th>
+                                                     <th class="c70">Fecha</th>
+                                                     <th class="c70">Folio</th>
+                                                     <th class="c100">Concepto</th>
+                                                     <th class="c100">Importe</th>
+                                                     <th class="c100">IVA</th>
+                                                     <th class="c100">Retenciones</th>
+                                                     <th class="c100">Otros Imp.</th>
+                                                     <th class="c100">Total</th>
+                                                     <th class="c100">No. Personas</th>
+                                                     <th class="c100">Observaciones</th>
                                                      <th class="icono">
                                                          <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando..." :disabled="cargando">
                                                              <i class="fa fa-spin fa-spinner"></i>
@@ -170,7 +177,7 @@
                                                  <tbody>
                                                  <tr v-for="(partida, i) in partidas">
                                                      <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                     <td   v-if="partida.id_concepto_sat>0">
+                                                     <td  v-if="partida.id_concepto_sat>0">
                                                          <c-f-d-i v-bind:id="partida.id_cfdi" v-bind:txt="partida.referencia" :key="i"></c-f-d-i>
                                                      </td>
                                                      <td  v-else>
@@ -306,18 +313,18 @@
                                              </div>
                                          </div>
                                      </div>
-                                 </div>
+                                 </div>-->
                              </div>
                              <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click=""><i class="fa fa-save"></i> Guardar</button>
                              </div>
                          </form>
                      </div>
                  </div>
             </div>
         </nav>
-        <div class="modal fade" ref="modal_cfdi" role="dialog" aria-hidden="true">
+        <!--<div class="modal fade" ref="modal_cfdi" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered modal-lg" >
                     <div class="modal-content">
                         <div class="modal-header">
@@ -378,78 +385,37 @@
                         </form>
                     </div>
                 </div>
-            </div>
-        <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" >
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino General</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form role="form">
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="form-group row error-content">
-                                        <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
-                                        <div class="col-sm-10">
-                                            <from-concepto-select
-                                                v-if="id_concepto"
-                                                v-bind:nivel_id="id_concepto"
-                                                name="id_concepto"
-                                                data-vv-as="Concepto"
-                                                id="id_concepto"
-                                                v-model="id_concepto_temporal"
-                                                :error="errors.has('id_concepto')"
-                                                ref="conceptoSelect"
-                                                :disableBranchNodes="true"
-                                            ></from-concepto-select>
-                                            <div class="error-label" v-show="errors.has('id_concepto_temporal')">{{ errors.first('id_concepto_temporal') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
-                            </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+            </div>-->
     </span>
 </template>
 
 <script>
 import Datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
-import {ModelListSelect} from 'vue-search-select';
-import ConceptoSelect from "../../cadeco/concepto/Select";
-import FromConceptoSelect from "../../cadeco/concepto/SelectFromConcepto.vue";
-import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
-import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
-import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
+//import CfdiShow from "../../../fiscal/cfd/cfd-sat/Show";
+//import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
 export default {
     name: "relacion-gastos-create",
-    components: {CFDI, CfdiShow, ModelListSelect, Datepicker, es, ConceptoSelect, ConceptoSelectHijo, FromConceptoSelect},
+    components: { Datepicker, es},
     data() {
         return {
             cargando : false,
             es : es,
             fechasDeshabilitadas : {},
-            fecha : '',
             fecha_hoy : '',
             id_empresa : '',
             empresas: [],
+            id_empleado: '',
+            empleados: [],
+            departamento: '',
+            fecha_inicial: '',
+            fecha_final: '',
+            motivo: '',
+            id_moneda: '',
+            monedas: [],
 
 
-            id_fondo : '',
-            referencia : '',
-            id_concepto : '',
-            fondos : [],
-            observaciones : '',
+
             partidas: [],
             subtotal : 0,
             iva : 0,
@@ -461,13 +427,10 @@ export default {
             names : [],
             cfdi : null,
             uuid : [],
-            id_concepto_temporal:'',
             p_holder:'',
-            destino:'',
-            con_descuento: false
         }
     },
-    computed: {
+   /* computed: {
         sumaMontos() {
             let iva = 0;
             let result = 0;
@@ -508,22 +471,22 @@ export default {
 
             return result_cfdi.length;
         }
-    },
+    },*/
     mounted() {
         this.$validator.reset()
         this.fecha_hoy = new Date();
-        this.fecha = new Date();
+        this.fecha_inicial = new Date();
+        this.fecha_final = new Date();
         this.fechasDeshabilitadas.from = new Date();
-        this.id_fondo = ''
-        this.getFondos();
+        this.getEmpresas();
+        this.getMonedas();
+        this.getEmpleados();
     },
     methods : {
         init() {
-            this.fecha = new Date();
+            this.fecha_inicial = new Date();
+            this.fecha_final = new Date();
             this.cargando = true;
-        },
-        descripcionFondo (item) {
-            return `[${item.descripcion}]`
         },
         formatoFecha(date)
         {
@@ -537,19 +500,24 @@ export default {
                     this.empresas = data.data;
                 })
         },
-        getFondos() {
-            return this.$store.dispatch('cadeco/fondo/index', {
-                config: {
-                    params: {
-                        sort: 'descripcion',
-                        order: 'asc'
-                    }
-                }
-            }).then(fondos => {
-                this.fondos = fondos.data;
+        getMonedas() {
+            return this.$store.dispatch('controlRecursos/moneda/index', {
+                params: {sort: 'orden', order: 'asc'}
+            }).then(data => {
+                this.monedas = data.data;
             })
         },
-        addPartidas(){
+        getEmpleados() {
+            return this.$store.dispatch('controlRecursos/proveedor/index', {
+                params: {sort: 'RazonSocial', order: 'asc', scope: ['porTipo:2','porEstado:1', 'empleados'] }
+            }).then(data => {
+                this.empleados = data.data;
+            })
+        },
+        salir(){
+            this.$router.push({name: 'relacion-gasto'});
+        },
+       /* addPartidas(){
             this.partidas.splice(this.partidas.length + 1, 0, {
                 referencia : "",
                 cantidad : 0,
@@ -649,9 +617,7 @@ export default {
                     this.salir();
                 });
         },
-        salir(){
-            this.$router.push({name: 'comprobante-fondo'});
-        },
+
         modalCFDI(){
             $(this.$refs.modal_cfdi).modal('show');
         },
@@ -793,41 +759,10 @@ export default {
                 vm.files = unicos;
             };
             reader.readAsDataURL(file);
-        },
-        getConcepto() {
-            return this.$store.dispatch('cadeco/concepto/find', {
-                id: this.id_concepto_temporal,
-                params: {
-                }
-            })
-                .then(data => {
-                    this.destino = data;
-                    this.p_holder = data.clave_concepto_select + ' ' + data.descripcion;
-                    this.replicarConcepto(data);
-                })
-        },
-        replicarConcepto(data){
-            let self = this;
-            self.partidas.forEach(function (partida, i) {
-                if(partida.id_concepto == ""){
-                    partida.id_concepto = self.id_concepto_temporal;
-                    partida.destino = data.clave_concepto_select + ' ' + data.descripcion;
-                    partida.cambio_concepto = 0;
-                }
-
-            });
-            self.cerrarModalDestino();
-        },
-        seleccionarDestino(i){
-            this.partidas[i].cambio_concepto = 2;
-        },
+        },*/
     },
     watch: {
-        id_concepto_temporal(value){
-            if(value !== '' && value !== null && value !== undefined){
-                this.getConcepto();
-            }
-        },
+
     }
 }
 </script>

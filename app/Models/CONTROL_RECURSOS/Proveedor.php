@@ -26,6 +26,21 @@ class Proveedor extends Model
         return $query->where('Estatus', 1)->whereIn('TipoProveedor',[1,2]);
     }
 
+    public function scopePorTipo($query, $tipos)
+    {
+        return $query->whereIn('TipoProveedor', [$tipos]);
+    }
+
+    public function scopePorEstado($query, $estados)
+    {
+        return $query->whereIn('Estatus', [$estados]);
+    }
+
+    public function scopeEmpleados($query)
+    {
+        return $query->where('IdUsuario', '>', 0);
+    }
+
     /**
      * Atributos
      */

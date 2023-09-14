@@ -337,7 +337,6 @@ class Documento extends Model
         }
     }
 
-
     public function eliminar()
     {
         try {
