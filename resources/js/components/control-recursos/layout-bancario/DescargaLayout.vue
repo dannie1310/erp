@@ -40,13 +40,13 @@
                                     <th>#</th>
                                     <th>Serie</th>
                                     <th>Folio</th>
-                                    <th>Concepto</th>
                                     <th>Fecha</th>
                                     <th>Empresa</th>
                                     <th style="min-width: 230px">Cuenta Empresa</th>
                                     <th>Proveedor</th>
                                     <th>Cuenta Proveedor</th>
                                     <th>Importe</th>
+                                    <th>Concepto</th>
                                     <th> Seleccionar
                                         <input type="checkbox" v-model="seleccionar">
                                     </th>
@@ -57,7 +57,6 @@
                                     <td>{{i+1}}</td>
                                     <td>{{doc.serie}}</td>
                                     <td>{{doc.folio}}</td>
-                                    <td>{{doc.concepto}}</td>
                                     <td>{{doc.fecha_format}}</td>
                                     <td>{{doc.empresa.razon_social}}</td>
                                     <td >
@@ -96,9 +95,8 @@
                                     <td v-if="doc.cuentaProveedor && doc.cuentaProveedor != null">{{doc.cuentaProveedor.numero_cuenta}} ({{doc.cuentaProveedor.banco_nombre}})</td>
                                     <td v-else>{{doc.id}}</td>
                                     <td>{{doc.importe_format}}</td>
-                                    <td class="text-center" >
-                                        <input type="checkbox" :value="doc.id" v-model="doc.selected" v-if="doc.empresa.cuentas_pagadoras_santander && doc.empresa.cuentas_pagadoras_santander.data && doc.empresa.cuentas_pagadoras_santander.data.length > 0">
-                                    </td>
+                                    <td>{{doc.concepto}}</td>
+                                    <td class="text-center"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -166,7 +164,7 @@ export default {
         },
         getSolicitudes() {
             return this.$store.dispatch('controlRecursos/solicitud-cheque/index', {
-                params: { scope:['porSemanaAnio:'+this.idsemana], include : ['cuentaProveedor','empresa.cuentas_pagadoras_santander'] }
+                params: { scope:['porSemanaAnio:'+this.idsemana,'ordenaSerieFolio'], include : ['cuentaProveedor','empresa.cuentas_pagadoras_santander'] }
             })
             .then(data => {
                 let _self = this;

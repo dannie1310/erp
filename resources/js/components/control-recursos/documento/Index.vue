@@ -39,11 +39,12 @@
                 { title: 'Concepto', field: 'concepto',sortable: true,thComp: require('../../globals/th-Filter').default},
                 { title: 'Total', field: 'total', tdClass: 'right th_c220', sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Moneda', field: 'idmoneda',thClass: 'th_c150',sortable: true, thComp: require('../../globals/th-Filter').default},
+                { title: 'Estatus', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                 { title: 'Acciones', field: 'buttons',thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
             total: 0,
-            query: { scope: ['porTipo:6', 'porEstado:5'],sort: 'Fecha', order: 'desc'},
+            query: { scope: ['porTipo:6'],sort: 'IdDocto', order: 'desc'},
             estado: "",
             cargando: false,
         }
@@ -66,6 +67,12 @@
                 .finally(() => {
                     this.cargando = false;
                 })
+        },
+        getEstado(estado, color) {
+            return {
+                color: color,
+                descripcion: estado
+            }
         },
     },
     computed: {
@@ -94,10 +101,11 @@
                     idmoneda: documento.moneda,
                     idserie: documento.serie,
                     idtipodocto: documento.tipo_documento,
+                    estatus: this.getEstado(documento.estado_descripcion, documento.estado_color),
                     buttons: $.extend({}, {
                         id: documento.id,
-                        edit: self.$root.can('editar_documento_recursos', true) ? true : false,
-                        delete: self.$root.can('eliminar_documento_recursos', true) ? true : false,
+                        edit: self.$root.can('editar_documento_recursos', true) && documento.estado == 5 ? true : false,
+                        delete: self.$root.can('eliminar_documento_recursos', true) && documento.estado != 7? true : false,
                     })
                 }));
             },
