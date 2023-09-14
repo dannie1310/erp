@@ -23,9 +23,9 @@ class SolCheque extends Model
         return $this->belongsTo(Empresa::class, 'IdEmpresa', 'IdEmpresa');
     }
 
-    public function partida()
+    public function partidasSolicitudRecursos()
     {
-        return $this->belongsTo(PartidaSolRec::class, 'IdSolCheques', 'IdSolCheque');
+        return $this->hasMany(PartidaSolRec::class, 'IdSolCheque', 'IdSolCheques');
     }
 
     public function moneda()
@@ -52,7 +52,7 @@ class SolCheque extends Model
     {
         $time = SolrecSemanaAnio::where('idsemana_anio', $idsemana)->first();
         $solicitudes = SolRecurso::autorizadas()->where('Semana', '=', $time->semana)->where('Anio', $time->anio)->pluck('IdSolRec');
-        return $query->whereHas('partida', function ($q) use ($solicitudes){
+        return $query->whereHas('partidasSolicitudRecursos', function ($q) use ($solicitudes){
             $q->autorizada()->whereIn('IdSolRec', $solicitudes);
         });
     }
