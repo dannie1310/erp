@@ -114,7 +114,7 @@ class LayoutBancario
                 $cuenta_empresa = CuentaBancaria::where('IdCuentaBancaria', $solicitud['idcuentaempresa'])->first();
                 if($cuenta_empresa == null)
                 {
-                    abort(403, 'Falto seleccionar la cuenta cargo [#'.($key+1).'] de la empresa (' . $solicitud['empresa']['rfc'] . ') .');
+                    abort(403, 'Falto seleccionar la cuenta pagadora [#'.($key+1).'] de la empresa con RFC ' . $solicitud['empresa']['rfc'] . '.');
                     dd($cuenta_empresa);
                 }
                 if($cuenta_empresa->IdBanco == $solicitud['cuentaProveedor']['id_banco'])

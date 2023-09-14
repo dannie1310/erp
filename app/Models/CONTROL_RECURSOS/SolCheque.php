@@ -35,7 +35,7 @@ class SolCheque extends Model
 
     public function cuentaProveedor()
     {
-        return $this->belongsTo(CuentaProveedor::class, 'Cuenta2','IdCuenta');
+        return $this->hasOne(CuentaProveedor::class, 'IdCuenta','Cuenta2');
     }
 
     /**
