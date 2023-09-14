@@ -16,7 +16,7 @@ class Factura extends Documento
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->whereIn('IdTipoDocto', [1,6])->whereIn('Estatus',[1,5]);
+            return $query->where('IdTipoDocto', '1');
         });
     }
 
@@ -45,6 +45,25 @@ class Factura extends Documento
     {
         $date = date_create($this->Vencimiento);
         return date_format($date,"m/d/Y");
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->Estatus)
+        {
+            case 1:
+                return '#3386FF';
+                break;
+            case 0:
+                return '#FFEC33';
+                break;
+            case 2:
+                return '#00a65a';
+                break;
+            default:
+                return '#d1cfd1';
+                break;
+        }
     }
 
     /**

@@ -54,7 +54,10 @@ class FacturaTransformer extends TransformerAbstract
             'fecha_vencimiento_format' => $model->fecha_vencimiento_format,
             'vencimiento_editar' => $model->vencimiento_editar,
             'vencimiento' => $model->Vencimiento,
-            'otros' => $model->OtrosImpuestos
+            'otros' => $model->OtrosImpuestos,
+            'estado' => $model->Estatus,
+            'estado_descripcion' => $model->estatus_descripcion,
+            'estado_color' => $model->color_estado
         ];
     }
 }
