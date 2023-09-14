@@ -13,9 +13,19 @@ class Empresa extends Model
     /**
      * Relaciones
      */
-    public function cuentasEmpresas()
+    public function cuentasEmpresa()
     {
         return $this->hasMany(CuentaEmpresa::class,'IdEmpresa','IdEmpresa');
+    }
+
+    public function cuentasPagadorasEmpresa()
+    {
+        return $this->hasMany(CuentaPagadoraEmpresa::class,'IdEmpresa','IdEmpresa');
+    }
+
+    public function cuentasPagadorasSantanderEmpresa()
+    {
+        return $this->hasMany(CuentaPagadoraSantanderEmpresa::class,'IdEmpresa','IdEmpresa');
     }
 
     /**

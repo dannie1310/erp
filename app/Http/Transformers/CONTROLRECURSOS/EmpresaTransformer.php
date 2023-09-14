@@ -13,7 +13,8 @@ class EmpresaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'cuentas'
+        'cuentas',
+        'cuentas_pagadoras_santander'
     ];
 
     /**
@@ -39,7 +40,16 @@ class EmpresaTransformer extends TransformerAbstract
      */
     public function includeCuentas(Empresa $model)
     {
-        if($cuenta = $model->cuentasEmpresas)
+        if($cuenta = $model->cuentasEmpresa)
+        {
+            return $this->collection($cuenta, new CuentaEmpresaTransformer);
+        }
+        return null;
+    }
+
+    public function includeCuentasPagadorasSantander(Empresa $model)
+    {
+        if($cuenta = $model->cuentasPagadorasSantanderEmpresa)
         {
             return $this->collection($cuenta, new CuentaEmpresaTransformer);
         }

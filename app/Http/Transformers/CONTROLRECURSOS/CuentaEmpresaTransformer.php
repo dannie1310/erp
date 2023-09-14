@@ -28,10 +28,10 @@ class CuentaEmpresaTransformer extends TransformerAbstract
     public function transform(CuentaEmpresa $model){
         return [
             'id_cuenta' => $model->IdCuentaBancaria,
-            'numero_cuenta' => $model->numero_cuenta,
-            'banco_descripcion' => $model->banco_descripcion,
-            'tipo_cuenta' => $model->tipo_cuenta,
-            'id_banco' => $model->id_banco
+            'numero_cuenta' => $model->Cuenta,
+            'banco_descripcion' => $model->NombreBanco,
+            'tipo_cuenta' => $model->DescripcionTipoCuenta,
+            'id_banco' => $model->IdBanco
         ];
     }
 }
