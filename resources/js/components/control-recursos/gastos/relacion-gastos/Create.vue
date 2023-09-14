@@ -7,75 +7,133 @@
                          <form role="form" @submit.prevent="validate">
                              <div class="modal-body">
                                  <div class="row">
+                                     <div class="col-md-6">
+                                        <div class="form-group row error-content">
+                                            <label for="id_empresa">Empresa:</label>
+                                            <select class="form-control"
+                                                    data-vv-as="Empresa"
+                                                    id="id_empresa"
+                                                    name="id_empresa"
+                                                    :error="errors.has('id_empresa')"
+                                                    v-validate="{required: true}"
+                                                    v-model="id_empresa">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
+                                        </div>
+                                    </div>
+                                     <div class="col-md-6">
+                                        <div class="form-group row error-content">
+                                            <label for="id_empleado">Empleado:</label>
+                                            <select class="form-control"
+                                                    data-vv-as="Empleado"
+                                                    id="id_empleado"
+                                                    name="id_empleado"
+                                                    :error="errors.has('id_empleado')"
+                                                    v-validate="{required: true}"
+                                                    v-model="id_empleado">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(e) in empleados" :value="e.id">{{ e.nombre }}</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
+                                        </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                     <div class="col-md-6">
+                                        <div class="form-group row error-content">
+                                            <h6><b>Departamento:</b></h6>
+                                            <h6>{{departamento}}</h6>
+                                        </div>
+                                     </div>
+                                     <div class="col-md-6">
+                                        <div class="form-group row error-content">
+                                            <label for="id_empleado">Proyecto:</label>
+                                            <select class="form-control"
+                                                    data-vv-as="Empresa"
+                                                    id="id_empleado"
+                                                    name="id_empleado"
+                                                    :error="errors.has('id_empleado')"
+                                                    v-validate="{required: true}"
+                                                    v-model="id_empleado">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
+                                        </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                     <div class="col-md-1">
+                                         <div class="form-group error-content">
+                                             <label class="col-form-label">Periodo:</label>
+                                         </div>
+                                     </div>
                                      <div class="col-md-2">
                                          <div class="form-group error-content">
-                                             <label class="col-form-label">Fecha:</label>
-                                             <datepicker v-model = "fecha"
-                                                         name = "fecha"
+                                             <datepicker v-model = "fecha_inicial"
+                                                         name = "fecha_inicial"
+                                                         :format = "formatoFecha"
+                                                         data-vv-as="Fecha Inicial"
+                                                         :language = "es"
+                                                         :bootstrap-styling = "true"
+                                                         class = "form-control"
+                                                         v-validate="{required: true}"
+                                                         :disabled-dates="fechasDeshabilitadas"
+                                                         :class="{'is-invalid': errors.has('fecha_inicial')}"
+                                             />
+                                             <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
+                                         </div>
+                                     </div>
+                                     -->
+                                     <div class="col-md-2">
+                                         <div class="form-group error-content">
+                                             <datepicker v-model = "fecha_final"
+                                                         name = "fecha_final"
+                                                         data-vv-as="Fecha Final"
                                                          :format = "formatoFecha"
                                                          :language = "es"
                                                          :bootstrap-styling = "true"
                                                          class = "form-control"
                                                          v-validate="{required: true}"
                                                          :disabled-dates="fechasDeshabilitadas"
-                                                         :class="{'is-invalid': errors.has('fecha')}"
+                                                         :class="{'is-invalid': errors.has('fecha_final')}"
                                              />
-                                             <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                             <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
                                          </div>
                                      </div>
                                  </div>
                                  <div class="row">
-                                     <div class="col-md-7">
+                                     <div class="col-md-6">
                                          <div class="form-group error-content">
-                                            <label for="id_fondo">Fondo:</label>
-                                               <model-list-select
-                                                   name="id_fondo"
-                                                   id="id_fondo"
-                                                   placeholder="Seleccionar o buscar por descripción del fondo"
-                                                   data-vv-as="Fondo"
-                                                   v-model="id_fondo"
-                                                   option-value="id"
-                                                   v-validate="{required: true}"
-                                                   :custom-text="descripcionFondo"
-                                                   :list="fondos"/>
-                                            <div class="error-label" v-show="errors.has('id_fondo')">{{ errors.first('id_fondo') }}</div>
-                                        </div>
+                                             <label for="motivo">Motivo:</label>
+                                             <input
+                                                 name="motivo"
+                                                 id="motivo"
+                                                 class="form-control"
+                                                 v-model="motivo"
+                                                 v-validate="{required: true}"
+                                                 data-vv-as="Motivo"
+                                                 :class="{'is-invalid': errors.has('motivo')}" />
+                                             <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                         </div>
                                      </div>
-                                     <div class="col-md-5">
-                                    <div class="form-group error-content">
-                                        <label for="referencia">Referencia:</label>
-                                        <input
-                                            type="text"
-                                            name="referencia"
-                                            data-vv-as="Referencia"
-                                            v-validate="{required: true}"
-                                            class="form-control"
-                                            id="referencia"
-                                            placeholder="Referencia"
-                                            v-model="referencia"
-                                            :class="{'is-invalid': errors.has('referencia')}">
-                                        <div class="error-label" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
-                                    </div>
+                                     <div class="col-md-6">
+                                         <div class="form-group error-content float-right">
+                                             <select class="form-control"
+                                                    data-vv-as="Moneda"
+                                                    id="id_moneda"
+                                                    name="id_moneda"
+                                                    :error="errors.has('id_moneda')"
+                                                    v-validate="{required: true}"
+                                                    v-model="id_moneda">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(m) in monedas" :value="m.id">{{m.moneda}}</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
+                                         </div>
                                      </div>
-                                 </div>
-                                 <div class="row">
-                                     <div class="col-md-12">
-                                        <div class="form-group error-content">
-                                            <label for="id_concepto">Centro de Costo:</label>
-                                            <concepto-select
-                                                name="id_concepto"
-                                                data-vv-as="Concepto"
-                                                id="id_concepto"
-                                                v-model="id_concepto"
-                                                :error="errors.has('id_concepto')"
-                                                v-validate="{required: true}"
-                                                ref="conceptoSelect"
-                                                :disableBranchNodes="false"
-                                                :class="{'is-invalid': errors.has('id_concepto')}"
-                                            />
-                                            <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
-                                        </div>
-                                    </div>
                                  </div>
                                  <hr />
                                  <div class="row">
@@ -83,13 +141,10 @@
                                          <button type="button" class="btn btn-success btn-sm pull-right" @click="modalCFDI()" v-if="id_concepto">
                                              <i class="fa fa-file-code"></i> Cargar x CFDI
                                          </button>
-                                         <button type="button" class="btn btn-success btn-sm pull-right mr-1" @click="modalDestino()" v-if="id_concepto" :disabled="partidas.length == 0">
-                                             <i class="fa fa-sign-in"></i> Destino
-                                         </button>
                                      </div>
                                  </div>
                                  <hr />
-                                 <div class="row" v-if="id_concepto">
+                                 <div class="row">
                                      <div  class="col-md-12 table-responsive-xl">
                                          <div>
                                              <table class="table table-bordered table-sm">
@@ -386,6 +441,10 @@ export default {
             fechasDeshabilitadas : {},
             fecha : '',
             fecha_hoy : '',
+            id_empresa : '',
+            empresas: [],
+
+
             id_fondo : '',
             referencia : '',
             id_concepto : '',
@@ -469,6 +528,14 @@ export default {
         formatoFecha(date)
         {
             return moment(date).format('DD/MM/YYYY');
+        },
+        getEmpresas() {
+            return this.$store.dispatch('controlRecursos/empresa/index', {
+                params: {sort: 'RazonSocial', order: 'asc', scope:'activo'}
+            })
+                .then(data => {
+                    this.empresas = data.data;
+                })
         },
         getFondos() {
             return this.$store.dispatch('cadeco/fondo/index', {
