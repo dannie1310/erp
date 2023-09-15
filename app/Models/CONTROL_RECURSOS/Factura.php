@@ -130,4 +130,14 @@ class Factura extends Documento
             abort(400, $e->getMessage());
         }
     }
+
+    public function desvinculaFacturaRepositorio()
+    {
+        if ($this->cfd) {
+            $this->cfd->id_documento_cr = null;
+            $this->cfd->usuario_asocio = null;
+            $this->cfd->fecha_hora_asociacion = null;
+            $this->cfd->save();
+        }
+    }
 }
