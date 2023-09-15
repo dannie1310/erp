@@ -68,7 +68,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Factura",
+                    title: "Registrar Documento",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -88,7 +88,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Factura registrada correctamente", {
+                                    swal("Documento registrado correctamente.", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
@@ -120,7 +120,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar la Factura",
+                    text: "Actualizar el Documento",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -139,7 +139,7 @@ export default {
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Factura actualizada correctamente", {
+                                    swal("Documento actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -158,8 +158,8 @@ export default {
         delete(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Factura",
-                    text: "¿Está seguro/a de que desea eliminar la factura?",
+                    title: "Eliminar Documento",
+                    text: "¿Está seguro de que desea eliminar el documento?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -179,7 +179,7 @@ export default {
                                 .delete(URI + payload.id, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Factura eliminada correctamente", {
+                                    swal("Documento eliminado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
