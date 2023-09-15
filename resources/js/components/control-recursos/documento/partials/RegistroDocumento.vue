@@ -13,10 +13,10 @@
             Registrar
         </button>
         <div class="dropdown-menu">
-            <button @click="load" type="button" class="btn btn-sm btn-outline-info dropdown-item" title="Cargar" >
+            <button @click="load" type="button" class="btn btn-sm dropdown-item" title="Cargar" >
                 <i class="fa fa-file-invoice-dollar"></i>Registrar con CFDI
             </button>
-            <button @click="registrar" type="button" class="btn btn-sm btn-outline-info dropdown-item" title="Editar" >
+            <button @click="registrar" type="button" class="btn btn-sm dropdown-item" title="Editar" >
                 <i class="fa fa-pencil"></i>Registrar Manualmente
             </button>
         </div>

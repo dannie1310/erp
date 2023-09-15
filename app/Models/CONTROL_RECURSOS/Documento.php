@@ -316,7 +316,10 @@ class Documento extends Model
                 'TasaIva' => (int) $data['iva'],
                 'OtrosImpuestos' => $data['otros'],
                 'IdMoneda' => $data['id_moneda'],
-                'TC' => 0
+                'TC' => 0,
+                'Estatus' => $data["estado"],
+                'IdTipoDocto' => $data["id_tipo"],
+
             ]);
             DB::connection('controlrec')->commit();
             $this->update([

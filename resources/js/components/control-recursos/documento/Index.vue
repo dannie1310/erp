@@ -50,15 +50,12 @@
         }
     },
     mounted() {
-        this.$Progress.start();
-        this.paginate()
-            .finally(() => {
-                this.$Progress.finish();
-            })
+
     },
     methods: {
         paginate() {
             this.cargando = true;
+            this.$Progress.start();
             return this.$store.dispatch('controlRecursos/documento/paginate', { params: this.query})
                 .then(data => {
                     this.$store.commit('controlRecursos/documento/SET_DOCUMENTOS', data.data);
@@ -66,6 +63,7 @@
                 })
                 .finally(() => {
                     this.cargando = false;
+                    this.$Progress.finish();
                 })
         },
         getEstado(estado, color) {

@@ -4354,7 +4354,7 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Consultar Documento',
-                            breadcrumb: { parent: 'documento-recurso', name: 'VER DOCUMENTO'},
+                            breadcrumb: { parent: 'documento', name: 'VER DOCUMENTO'},
                             middleware: [auth, permission],
                             permission: 'consultar_documento_recursos',
                             general: true

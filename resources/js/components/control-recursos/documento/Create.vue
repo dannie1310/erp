@@ -14,24 +14,6 @@
         <div class="card" v-else>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group row error-content">
-                            <label for="id_empresa">Empresa:</label>
-                            <select class="form-control"
-                                    data-vv-as="Empresa"
-                                    id="id_empresa"
-                                    name="id_empresa"
-                                    :error="errors.has('id_empresa')"
-                                    v-validate="{required: true}"
-                                    v-model="id_empresa">
-                                <option value>-- Selecionar --</option>
-                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
-                            </select>
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="idserie" class="col-form-label">Serie:</label>
@@ -66,7 +48,42 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                         </div>
                     </div>
-
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row error-content">
+                            <label for="id_empresa">Empresa:</label>
+                            <select class="form-control"
+                                    data-vv-as="Empresa"
+                                    id="id_empresa"
+                                    name="id_empresa"
+                                    :error="errors.has('id_empresa')"
+                                    v-validate="{required: true}"
+                                    v-model="id_empresa">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row error-content">
+                            <label for="id_proveedor">Proveedor:</label>
+                            <select class="form-control"
+                                    data-vv-as="Proveedor"
+                                    id="id_proveedor"
+                                    name="id_proveedor"
+                                    :error="errors.has('id_proveedor')"
+                                    v-validate="{required: true}"
+                                    v-model="id_proveedor">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
                     <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="folio">Folio:</label>
@@ -85,7 +102,7 @@
 
                     <div class="col-md-2">
                         <div class="form-group error-content">
-                            <label for="fecha">Fecha de Facturación:</label>
+                            <label for="fecha">Fecha de Emisión:</label>
                             <datepicker v-model = "fecha"
                                         name = "fecha"
                                         :format = "formatoFecha"
@@ -116,27 +133,10 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-group row error-content">
-                            <label for="id_proveedor">Proveedor:</label>
-                            <select class="form-control"
-                                    data-vv-as="Proveedor"
-                                    id="id_proveedor"
-                                    name="id_proveedor"
-                                    :error="errors.has('id_proveedor')"
-                                    v-validate="{required: true}"
-                                    v-model="id_proveedor">
-                                <option value>-- Selecionar --</option>
-                                <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
-                            </select>
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
                         <div class="form-group error-content">
                             <label for="concepto">Concepto:</label>
-                            <input
+                            <textarea
+                                rows="2"
                                 name="concepto"
                                 id="concepto"
                                 class="form-control"
@@ -378,7 +378,7 @@ export default {
                     id_empresa: this.id_empresa,
                     id_proveedor: this.id_proveedor,
                     idserie: this.idserie,
-                    idtipodocto: 6,
+                    idtipodocto: this.idtipodocto,
                     fecha: moment(this.fecha).format('YYYY-MM-DD'),
                     vencimiento:  moment(this.vencimiento).format('YYYY-MM-DD'),
                     id_moneda: this.id_moneda,
@@ -389,7 +389,7 @@ export default {
                     retencion: parseFloat(this.retencion),
                     otros: parseFloat(this.otros),
                     total: parseFloat(this.total),
-                    estado: 5
+                    estado: this.idtipodocto == 1 ? 1 : 5,
                 })
                 .then(data => {
                     this.salir();

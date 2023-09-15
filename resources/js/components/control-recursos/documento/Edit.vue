@@ -14,36 +14,7 @@
        <div class="card" v-else>
         <div class="card-body">
             <div class="row">
-                 <div class="col-md-2">
-                     <div class="form-group error-content">
-                         <label for="fecha">Fecha de Facturación:</label>
-                         <datepicker v-model = "factura.fecha_editar"
-                                     name = "fecha"
-                                     :format = "formatoFecha"
-                                     :language = "es"
-                                     :bootstrap-styling = "true"
-                                     class = "form-control"
-                                     v-validate="{required: true}"
-                                     :class="{'is-invalid': errors.has('fecha')}"
-                         ></datepicker>
-                         <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                     </div>
-                 </div>
-                 <div class="col-md-3">
-                    <div class="form-group error-content">
-                        <h6><b>Folio:</b></h6>
-                         <input
-                             name="folio"
-                             id="folio"
-                             class="form-control"
-                             v-model="factura.folio"
-                             v-validate="{required: true}"
-                             data-vv-as="Folio"
-                             :class="{'is-invalid': errors.has('folio')}"
-                         />
-                    </div>
-                </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <div class="form-group error-content">
                         <label for="idserie" class="col-form-label">Serie:</label>
                         <select class="form-control"
@@ -59,40 +30,43 @@
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                        <div class="form-group row error-content">
-                            <label for="id_empresa">Empresa:</label>
-                            <select class="form-control"
-                                    data-vv-as="Empresa"
-                                    id="id_empresa"
-                                    name="id_empresa"
-                                    :error="errors.has('id_empresa')"
-                                    v-validate="{required: true}"
-                                    v-model="factura.id_empresa">
-                                <option value>-- Selecionar --</option>
-                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
-                            </select>
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
-                        </div>
-                    </div>
-            </div>
-            <div class="row">
-                <div class="col-md-2">
+
+                <div class="col-md-4">
                     <div class="form-group error-content">
-                        <label for="fecha">Fecha de Vencimiento:</label>
-                        <datepicker v-model = "factura.vencimiento_editar"
-                                    name = "vencimiento"
-                                    :format = "formatoFecha"
-                                    :language = "es"
-                                    :bootstrap-styling = "true"
-                                    class = "form-control"
-                                    v-validate="{required: true}"
-                                    :class="{'is-invalid': errors.has('vencimiento')}"
-                        ></datepicker>
-                        <div class="invalid-feedback" v-show="errors.has('vencimiento')">{{ errors.first('vencimiento') }}</div>
+                        <label for="tipo" class="col-form-label">Tipo:</label>
+                        <select class="form-control"
+                                data-vv-as="Tipo"
+                                id="tipo"
+                                name="tipo"
+                                :error="errors.has('tipo')"
+                                v-validate="{required: true}"
+                                v-model="idtipodocto">
+                            <option value>-- Selecionar --</option>
+                            <option value="1">Documento para Solicitud de Pago de Orden de Compra</option>
+                            <option value="6">Documento para Solicitud de Pago Recurrente</option>
+                        </select>
+                        <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                     </div>
                 </div>
-                <div class="col-md-10">
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group row error-content">
+                        <label for="id_empresa">Empresa:</label>
+                        <select class="form-control"
+                                data-vv-as="Empresa"
+                                id="id_empresa"
+                                name="id_empresa"
+                                :error="errors.has('id_empresa')"
+                                v-validate="{required: true}"
+                                v-model="factura.id_empresa">
+                            <option value>-- Selecionar --</option>
+                            <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
+                        </select>
+                        <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
                     <div class="form-group row error-content">
                         <label for="id_proveedor">Proveedor:</label>
                         <select class="form-control"
@@ -110,10 +84,57 @@
                 </div>
             </div>
             <div class="row">
+                 <div class="col-md-2">
+                     <div class="form-group error-content">
+                         <label for="fecha">Fecha de Facturación:</label>
+                         <datepicker v-model = "factura.fecha_editar"
+                                     name = "fecha"
+                                     :format = "formatoFecha"
+                                     :language = "es"
+                                     :bootstrap-styling = "true"
+                                     class = "form-control"
+                                     v-validate="{required: true}"
+                                     :class="{'is-invalid': errors.has('fecha')}"
+                         ></datepicker>
+                         <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                     </div>
+                 </div>
+                <div class="col-md-2">
+                    <div class="form-group error-content">
+                        <label for="fecha">Fecha de Vencimiento:</label>
+                        <datepicker v-model = "factura.vencimiento_editar"
+                                    name = "vencimiento"
+                                    :format = "formatoFecha"
+                                    :language = "es"
+                                    :bootstrap-styling = "true"
+                                    class = "form-control"
+                                    v-validate="{required: true}"
+                                    :class="{'is-invalid': errors.has('vencimiento')}"
+                        ></datepicker>
+                        <div class="invalid-feedback" v-show="errors.has('vencimiento')">{{ errors.first('vencimiento') }}</div>
+                    </div>
+                </div>
+                 <div class="col-md-2">
+                     <div class="form-group error-content">
+                         <label for="folio">Folio:</label>
+                         <input
+                             name="folio"
+                             id="folio"
+                             class="form-control"
+                             v-model="factura.folio"
+                             v-validate="{required: true}"
+                             data-vv-as="Folio"
+                             :class="{'is-invalid': errors.has('folio')}"
+                         />
+                     </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-12">
                     <div class="form-group error-content">
                         <label for="concepto">Concepto:</label>
-                        <input
+                        <textarea
+                            rows="2"
                             name="concepto"
                             id="concepto"
                             class="form-control"
@@ -279,7 +300,8 @@ export default {
             impuesto: 0,
             retencion: 0,
             otros: 0,
-            total: 0
+            total: 0,
+            idtipodocto: '',
         }
     },
     mounted() {
@@ -306,12 +328,13 @@ export default {
                 this.retencion= this.factura.retenciones
                 this.otros= this.factura.otros
                 this.total= this.factura.total
+                this.idtipodocto = this.factura.id_tipo
             }).finally(()=> {
                 this.cargando = false;
             })
         },
         salir() {
-            this.$router.push({name: 'documento-recurso'});
+            this.$router.push({name: 'documento'});
         },
         getSeries() {
             return this.$store.dispatch('controlRecursos/serie/index', {
@@ -339,6 +362,8 @@ export default {
             this.factura.retencion = this.retencion;
             this.factura.otros = this.otros;
             this.factura.total = this.total;
+            this.factura.id_tipo = this.idtipodocto;
+            this.factura.estado = this.idtipodocto == 1 ? 1 : 5;
             return this.$store.dispatch('controlRecursos/documento/update', {
                 id: this.id,
                 data: this.factura
