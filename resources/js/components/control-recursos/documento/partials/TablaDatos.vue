@@ -22,13 +22,13 @@
                     </tr>
                     <tr>
                         <th class="encabezado  c130">
-                           Tipo Documento
+                           Tipo de Documento
                         </th>
                         <th class="encabezado  c130">
-                            Fecha de emisión
+                            Fecha de Emisión
                         </th>
                         <th class="encabezado  c130">
-                            Fecha de vencimiento
+                            Fecha de Vencimiento
                         </th>
                         <th class="encabezado">
                             Serie
@@ -71,7 +71,7 @@
                             Impuesto
                         </th>
                         <th class="encabezado">
-                            Tasa de Iva
+                            Tasa de IVA
                         </th>
                         <th class="encabezado money">
                             Retenciones
@@ -105,10 +105,10 @@
                             Tipo de Cambio
                         </th>
                         <th class="encabezado c150">
-                            Ubicacion
+                            Ubicación
                         </th>
                         <th class="encabezado c150">
-                            Alias Departamento
+                            Alias del Departamento
                         </th>
                         <th class="encabezado c150">
                             Departamento
