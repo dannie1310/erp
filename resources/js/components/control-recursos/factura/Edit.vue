@@ -42,9 +42,9 @@
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <div class="form-group error-content">
-                        <label for="tipo" class="col-form-label">Tipo Factura:</label>
+                        <label for="tipo" class="col-form-label">Tipo de Documento:</label>
                         <select class="form-control"
                                 data-vv-as="Tipo"
                                 id="tipo"
@@ -52,9 +52,9 @@
                                 :error="errors.has('tipo')"
                                 v-validate="{required: true}"
                                 v-model="factura.id_tipo">
-                            <option value>-- Selecionar --</option>
-                            <option value="1">Factura</option>
-                            <option value="6">Pago Recurrente</option>
+                            <option value>-- Seleccionar --</option>
+                            <option value="1">Documento para Solicitud de Pago de Orden de Compra</option>
+                            <option value="6">Documento para Solicitud de Pago Recurrente</option>
                         </select>
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                     </div>
@@ -208,7 +208,7 @@ export default {
             })
         },
         salir() {
-            this.$router.go(-1);
+            this.$router.push({name: 'documento'});
         },
         getSeries() {
             return this.$store.dispatch('controlRecursos/serie/index', {

@@ -62,7 +62,7 @@ export default {
                 })
         },
         salir() {
-            this.$router.go(-1);
+            this.$router.push({name: 'documento'});
         },
         validate() {
             this.$validator.validate().then(result => {

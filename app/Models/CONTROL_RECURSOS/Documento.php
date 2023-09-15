@@ -2,6 +2,7 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Models\IGH\Usuario;
@@ -90,12 +91,18 @@ class Documento extends Model
         return $this->belongsTo(EstatusDocumento::class, 'Estatus', 'Estatus')->where('IdTipoDocto', $this->IdTipoDocto);
     }
 
+    public function CFDI()
+    {
+        return $this->belongsTo(CFDSAT::class, 'uuid','uuid');
+    }
+
+
     /**
      * Scopes
      */
     public function scopePorTipo($query, $tipos)
     {
-        return $query->whereIn('IdTipoDocto', [$tipos]);
+        return $query->whereIn('IdTipoDocto', explode(",", $tipos));
     }
 
     public function scopePorEstado($query, $estados)
@@ -226,16 +233,18 @@ class Documento extends Model
         {
             case 5:
                 return '#3386FF';
-                break;
+            case 1:
+                return '#3386FF';
             case 6:
                 return '#FFEC33';
-                break;
+            case 0:
+                return '#FFEC33';
             case 7:
                 return '#00a65a';
-                break;
+            case 2:
+                return '#00a65a';
             default:
                 return '#d1cfd1';
-                break;
         }
     }
 

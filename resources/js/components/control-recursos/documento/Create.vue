@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="idserie" class="col-form-label">Serie:</label>
                             <select class="form-control"
@@ -48,7 +48,26 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
                         </div>
                     </div>
+
                     <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <label for="tipo" class="col-form-label">Tipo:</label>
+                            <select class="form-control"
+                                    data-vv-as="Tipo"
+                                    id="tipo"
+                                    name="tipo"
+                                    :error="errors.has('tipo')"
+                                    v-validate="{required: true}"
+                                    v-model="idtipodocto">
+                                <option value>-- Selecionar --</option>
+                                <option value="1">Documento para Solicitud de Pago de Orden de Compra</option>
+                                <option value="6">Documento para Solicitud de Pago Recurrente</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="folio">Folio:</label>
                             <input class="form-control"
@@ -63,7 +82,8 @@
                             <div class="invalid-feedback" v-show="errors.has('folio')">{{ errors.first('folio') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+
+                    <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="fecha">Fecha de Facturación:</label>
                             <datepicker v-model = "fecha"
@@ -78,7 +98,7 @@
                             <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="fecha">Fecha Limite de Pago:</label>
                             <datepicker v-model = "vencimiento"
@@ -379,8 +399,7 @@ export default {
         },
         salir()
         {
-            this.$router.go(-1);
-            this.$emit('created', '')
+            this.$router.push({name: 'documento'});
         },
         calcularImpuesto()
         {
