@@ -34,7 +34,7 @@
                                                     v-validate="{required: true}"
                                                     v-model="id_empleado">
                                                 <option value>-- Selecionar --</option>
-                                                <option v-for="(e) in empleados" :value="e.id">{{ e.razon_social }} - [ {{empresa.rfc}} ]</option>
+                                                <option v-for="(e) in empleados" :value="e.id">{{ e.razon_social }} - [ {{e.rfc}} ]</option>
                                             </select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
                                         </div>
