@@ -147,12 +147,7 @@ class FacturaRepository extends Repository implements RepositoryInterface
     {
         $factura = $this->show($id);
         $elimino = $factura->eliminar();
-        if($elimino == [] && $factura->uuid) {
-            $cfdsat = CFDSAT::where('uuid', $factura->uuid)->first();
-            $facRepo = FacturaRepositorio::where('uuid', $factura->uuid)->first();
-            $cfdsat->delete();
-            $facRepo->delete();
-        }
+        $factura->desvinculaFacturaRepositorio();
         return $elimino;
     }
 }
