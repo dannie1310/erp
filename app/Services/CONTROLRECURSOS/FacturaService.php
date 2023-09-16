@@ -96,7 +96,7 @@ class FacturaService
         $arreglo = [];
         $cfd = new CFD($archivo_xml);
         $arreglo_cfd = $cfd->getArregloFactura();
-        $this->validaUUIDDocumento($arreglo_cfd["uuid"]);
+        $this->validaUUIDDocumento($arreglo_cfd["uuid"], $arreglo_cfd["tipo_comprobante"]);
         $arreglo["total"] = $arreglo_cfd["total"];
         $arreglo["impuesto"] = $arreglo_cfd["total_impuestos_trasladados"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
@@ -328,12 +328,16 @@ class FacturaService
         return $this->repository->show($id)->editar($data);
     }
 
-    private function validaUUIDDocumento($uuid)
+    private function validaUUIDDocumento($uuid, $tipo)
     {
         $documentos = $this->repository->buscarDocumentoUuid($uuid);
         if ($documentos)
         {
             abort(500, "El CFDI ".$uuid." fue utilizado anteriormente la factura en control de recursos.");
+        }
+        if($tipo != 'I')
+        {
+            abort(500, 'El CFDI ingresado no es de un tipo válido, favor de subir CFDI’s tipo I (Ingreso) únicamente.');
         }
     }
 
