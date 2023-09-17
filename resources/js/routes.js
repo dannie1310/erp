@@ -4239,10 +4239,10 @@ export const routes = [
                 }
             },
             {
-                path: 'factura-recurso',
+                path: 'documento-cfdi',
                 component: require('./components/control-recursos/factura/Layout.vue').default,
                 children: [
-                    {
+                    /*{
                         path: '/',
                         name: 'factura-recurso',
                         component: require('./components/control-recursos/factura/Index').default,
@@ -4253,27 +4253,27 @@ export const routes = [
                             permission: ['consultar_factura_recursos','registrar_factura_recursos'],
                             general: true,
                         }
-                    },
-                    {
+                    },*/
+                    /*{
                         path: 'create',
                         name: 'factura-recurso-create',
                         component: require('./components/control-recursos/factura/Create.vue').default,
                         meta: {
-                            title: 'Registrar Factura',
-                            breadcrumb: {name: 'REGISTRAR', parent: 'factura-recurso'},
+                            title: 'Registrar Documento con CFDI',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'documento'},
                             middleware: [auth, permission],
                             permission: ['registrar_factura_recursos'],
                             general: true
                         }
-                    },
+                    },*/
                     {
                         path: ':id',
                         name: 'factura-recurso-show',
                         component: require('./components/control-recursos/factura/Show').default,
                         props: true,
                         meta: {
-                            title: 'Consultar Factura',
-                            breadcrumb: { parent: 'factura-recurso', name: 'VER'},
+                            title: 'Consultar Documento con CFDI',
+                            breadcrumb: { parent: 'documento', name: 'VER DOCUMENTO CON CFDI'},
                             middleware: [auth, permission],
                             permission: 'consultar_factura_recursos',
                             general: true
@@ -4285,8 +4285,8 @@ export const routes = [
                         props: true,
                         component: require('./components/control-recursos/factura/Edit').default,
                         meta: {
-                            title: 'Editar Factura',
-                            breadcrumb: {parent: 'factura-recurso', name: 'EDITAR'},
+                            title: 'Editar Documento con CFDI',
+                            breadcrumb: {parent: 'documento', name: 'EDITAR DOCUMENTO CON CFDI'},
                             middleware: [auth, permission],
                             permission: 'editar_factura_recursos',
                             general: true
@@ -4298,8 +4298,8 @@ export const routes = [
                         component: require('./components/control-recursos/factura/Delete').default,
                         props: true,
                         meta: {
-                            title: 'Eliminar Factura',
-                            breadcrumb: { parent: 'factura-recurso', name: 'ELIMINAR'},
+                            title: 'Eliminar Documento con CFDI',
+                            breadcrumb: { parent: 'documento', name: 'ELIMINAR DOCUMENTO CON CFDI'},
                             middleware: [auth, permission],
                             permission: 'eliminar_factura_recursos',
                             general: true
@@ -4308,28 +4308,40 @@ export const routes = [
                 ]
             },
             {
-                path: 'documento-recurso',
+                path: 'documento',
                 component: require('./components/control-recursos/documento/Layout.vue').default,
                 children: [
                     {
                         path: '/',
-                        name: 'documento-recurso',
+                        name: 'documento',
                         component: require('./components/control-recursos/documento/Index').default,
                         meta: {
                             title: 'Documentos',
-                            breadcrumb: {parent: 'control-recurso', name: 'DOCUMENTOS'},
+                            breadcrumb: {parent: 'control-recursos', name: 'DOCUMENTOS'},
                             middleware: [auth, permission],
                             permission: ['consultar_documento_recursos','editar_documento_recursos','registrar_documento_recursos'],
                             general: true,
                         }
                     },
                     {
-                        path: 'create',
-                        name: 'documento-recurso-create',
+                        path: 'create-manual',
+                        name: 'documento-create-manual',
                         component: require('./components/control-recursos/documento/Create.vue').default,
                         meta: {
-                            title: 'Registrar Documento',
-                            breadcrumb: {name: 'REGISTRAR', parent: 'documento-recurso'},
+                            title: 'Registrar Documento Manualmente',
+                            breadcrumb: {name: 'REGISTRAR MANUALMENTE', parent: 'documento'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_documento_recursos'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'create-cfdi',
+                        name: 'documento-create-cfdi',
+                        component: require('./components/control-recursos/factura/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Documento con CFDI',
+                            breadcrumb: {name: 'REGISTRAR CON CFDI', parent: 'documento'},
                             middleware: [auth, permission],
                             permission: ['registrar_documento_recursos'],
                             general: true
@@ -4342,7 +4354,7 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Consultar Documento',
-                            breadcrumb: { parent: 'documento-recurso', name: 'VER'},
+                            breadcrumb: { parent: 'documento', name: 'VER DOCUMENTO'},
                             middleware: [auth, permission],
                             permission: 'consultar_documento_recursos',
                             general: true
@@ -4355,7 +4367,7 @@ export const routes = [
                         component: require('./components/control-recursos/documento/Edit').default,
                         meta: {
                             title: 'Editar Documento',
-                            breadcrumb: {parent: 'documento-recurso', name: 'EDITAR'},
+                            breadcrumb: {parent: 'documento-recurso', name: 'EDITAR DOCUMENTO'},
                             middleware: [auth, permission],
                             permission: 'editar_documento_recursos',
                             general: true
@@ -4368,7 +4380,7 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Eliminar Documento',
-                            breadcrumb: { parent: 'documento-recurso', name: 'ELIMINAR'},
+                            breadcrumb: { parent: 'documento-recurso', name: 'ELIMINAR DOCUMENTO'},
                             middleware: [auth, permission],
                             permission: 'eliminar_documento_recursos',
                             general: true
@@ -4386,7 +4398,7 @@ export const routes = [
                         component: require('./components/control-recursos/layout-bancario/DescargaLayout').default,
                         meta: {
                             title: 'Descargar Layout Bancario',
-                            breadcrumb: {parent: 'control-recurso', name: 'LAYOUT BANCARIO'},
+                            breadcrumb: {parent: 'control-recursos', name: 'LAYOUT BANCARIO'},
                             middleware: [auth, permission],
                             permission: ['descargar_layout_bancario_recursos'],
                             general: true,
