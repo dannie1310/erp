@@ -127,7 +127,8 @@ export default {
             semanas: [],
             idsemana: '',
             solicitudes: null,
-            seleccionar: false
+            seleccionar: false,
+            solicitudes_seleccionadas : [],
         }
     },
     mounted() {
@@ -156,7 +157,17 @@ export default {
         },
         descargar()
         {
-            return this.$store.dispatch('controlRecursos/solicitud-cheque/descargar', {data: this.solicitudes, idsemana: this.idsemana})
+            let _self = this;
+            this.solicitudes.forEach(function (solicitud, i) {
+                if(solicitud.selected)
+                {
+                    _self.solicitudes_seleccionadas.push({'id_solicitud' : solicitud.id, 'id_cuenta_empresa' : solicitud.idcuentaempresa,'numero_partida' : (i+1) });
+                }
+            });
+            return this.$store.dispatch('controlRecursos/solicitud-cheque/descargar',
+                {
+                    data: this.solicitudes_seleccionadas, idsemana: this.idsemana
+                })
                 .then(() => {
                     this.salir();
                     this.$emit('success')
