@@ -92,11 +92,20 @@
                                         </div>
                                     </td>
                                     <td>{{doc.proveedor.razon_social}}</td>
-                                    <td v-if="doc.cuentaProveedor && doc.cuentaProveedor != null">{{doc.cuentaProveedor.numero_cuenta}} ({{doc.cuentaProveedor.banco_nombre}})</td>
-                                    <td v-else>{{doc.id}}</td>
+                                    <td >
+                                        <span v-if="doc.cuentaProveedor && doc.cuentaProveedor != null">
+                                            {{doc.cuentaProveedor.numero_cuenta}} ({{doc.cuentaProveedor.banco_nombre}})
+                                        </span>
+                                        <span v-else style="color: red">
+                                            Sin Cuenta Especificada
+                                        </span>
+                                   </td>
                                     <td>{{doc.importe_format}}</td>
                                     <td>{{doc.concepto}}</td>
-                                    <td class="text-center"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                    <td class="text-center">
+                                        <input type="checkbox" :value="doc.id" v-model="doc.selected"
+                                               v-if="doc.empresa.cuentas_pagadoras_santander && doc.empresa.cuentas_pagadoras_santander.data.length > 0 && doc.cuentaProveedor && doc.cuentaProveedor != null">
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
