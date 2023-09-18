@@ -119,9 +119,10 @@ class LayoutBancario
                 if(!$solicitud->CuentaProveedor){
                     abort(403, 'Error en la cuenta del proveedor de la partida #'.($datos["numero_partida"]).'');
                 }
-                if($cuenta_empresa->IdBanco == $solicitud->CuentaProveedor->IdBanco)
+            $cuenta_cargo = str_replace(" ","",str_replace("-","",$cuenta_empresa->Cuenta));
+
+            if($cuenta_empresa->IdBanco == $solicitud->CuentaProveedor->IdBanco)
                 {
-                    $cuenta_cargo = str_replace(" ","",str_replace("-","",$cuenta_empresa->Cuenta));
                     $cuenta_cargo = str_pad(substr(str_replace("-","",$cuenta_cargo), 0, 16), 16, ' ', STR_PAD_RIGHT);
                     $cuenta_abono = str_pad(str_replace("-","",$solicitud->CuentaProveedor->CuentaBancaElectronica), 16, ' ', STR_PAD_RIGHT);
                     $importe = str_pad(number_format($solicitud->Total, '2', '.', ''), 13, 0, STR_PAD_LEFT);
@@ -148,7 +149,6 @@ class LayoutBancario
                     if ($solicitud->CuentaProveedor->CuentaBancaElectronica == null) {
                         abort(403, 'La cuenta para pago al proveedor '.$solicitud->proveedor->RazonSocial.' (' . $solicitud->proveedor->RFC . ') no esta dada de alta o no se encuentra en las cuentas verificadas de la banca de Santander.');
                     }
-
                     $this->data_inter[] = str_pad(substr($cuenta_cargo, 0, 16), 16, ' ', STR_PAD_RIGHT)
                         . str_pad($solicitud->CuentaProveedor->CuentaBancaElectronica, 20, ' ', STR_PAD_RIGHT)
                         . $solicitud->CuentaProveedor->banco->clave

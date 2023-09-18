@@ -184,7 +184,7 @@ export default {
         },
         getSolicitudes() {
             return this.$store.dispatch('controlRecursos/solicitud-cheque/index', {
-                params: { scope:['porSemanaAnio:'+this.idsemana,'ordenaSerieFolio'], include : ['cuentaProveedor','empresa.cuentas_pagadoras_santander'] }
+                params: { scope:['porSemanaAnio:'+this.idsemana,'ordenaSerieFolio','transferencia'], include : ['cuentaProveedor','empresa.cuentas_pagadoras_santander'] }
             })
             .then(data => {
                 let _self = this;
