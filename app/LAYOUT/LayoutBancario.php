@@ -4,6 +4,7 @@ namespace App\LAYOUT;
 
 use App\Models\CONTROL_RECURSOS\CuentaBancaria;
 use App\Models\CONTROL_RECURSOS\DescargaLayoutBanco;
+use App\Models\CONTROL_RECURSOS\SolCheque;
 use App\Models\CONTROL_RECURSOS\SolrecSemanaAnio;
 use App\Models\CONTROL_RECURSOS\SolRecurso;
 use App\Utils\Util;
@@ -30,7 +31,7 @@ class LayoutBancario
     function create(){
         $predescarga = DescargaLayoutBanco::where('semana', '=', $this->semana->semana)->where('anio', '=', $this->semana->anio)->first();
         if ($predescarga) {
-            return 'true';
+            //return 'true';
         }
 
         try {
@@ -108,53 +109,55 @@ class LayoutBancario
 
     public function generar(){
 
-        foreach ($this->datos['data'] as $key => $solicitud) {
-            if(array_key_exists('selected', $solicitud))
-            {
-                $cuenta_empresa = CuentaBancaria::where('IdCuentaBancaria', $solicitud['idcuentaempresa'])->first();
-                if($cuenta_empresa == null)
+        foreach ($this->datos['data'] as $key => $datos) {
+            $solicitud = SolCheque::find($datos["id_solicitud"]);
+                $cuenta_empresa = CuentaBancaria::where('IdCuentaBancaria', $datos["id_cuenta_empresa"])->first();
+                if(!$cuenta_empresa)
                 {
-                    abort(403, 'Falto seleccionar la cuenta pagadora [#'.($key+1).'] de la empresa con RFC ' . $solicitud['empresa']['rfc'] . '.');
-                    dd($cuenta_empresa);
+                    abort(403, 'Falto seleccionar la cuenta pagadora para la partida #'.($datos["numero_partida"]).' de la empresa ' . $solicitud->empresa->RazonSocial . " (".$solicitud->empresa->RFC . ').');
                 }
-                if($cuenta_empresa->IdBanco == $solicitud['cuentaProveedor']['id_banco'])
+                if(!$solicitud->CuentaProveedor){
+                    abort(403, 'Error en la cuenta del proveedor de la partida #'.($datos["numero_partida"]).'');
+                }
+            $cuenta_cargo = str_replace(" ","",str_replace("-","",$cuenta_empresa->Cuenta));
+
+            if($cuenta_empresa->IdBanco == $solicitud->CuentaProveedor->IdBanco)
                 {
-                    $cuenta_cargo = str_pad(substr(str_replace("-","",$cuenta_empresa->Cuenta), 0, 16), 16, ' ', STR_PAD_RIGHT);
-                    $cuenta_abono = str_pad(str_replace("-","",$solicitud['cuentaProveedor']['numero_cuenta']), 16, ' ', STR_PAD_RIGHT);
-                    $importe = str_pad(number_format($solicitud['total'], '2', '.', ''), 13, 0, STR_PAD_LEFT);
-                    $documento = "D" . str_pad($solicitud['id'], 9, 0, STR_PAD_LEFT);
-                    $concepto_rep = Util::eliminaCaracteresEspeciales($solicitud['concepto']);
+                    $cuenta_cargo = str_pad(substr(str_replace("-","",$cuenta_cargo), 0, 16), 16, ' ', STR_PAD_RIGHT);
+                    $cuenta_abono = str_pad(str_replace("-","",$solicitud->CuentaProveedor->CuentaBancaElectronica), 16, ' ', STR_PAD_RIGHT);
+                    $importe = str_pad(number_format($solicitud->Total, '2', '.', ''), 13, 0, STR_PAD_LEFT);
+                    $documento = "D" . str_pad($solicitud->IdSolCheques, 9, 0, STR_PAD_LEFT);
+                    $concepto_rep = Util::eliminaCaracteresEspeciales($solicitud->Concepto);
                     $concepto = strlen($concepto_rep) > 30 ? substr($concepto_rep, 0, 30) :
                         str_pad($concepto_rep, 30, ' ', STR_PAD_RIGHT);
                     $fecha_presentacion = date('dmY');
                     $this->data_mismo[] = $cuenta_cargo . $cuenta_abono . $importe . $documento . $concepto . $fecha_presentacion;
                 }else {
-                    $r_social_dep = Util::eliminaCaracteresEspeciales($solicitud['proveedor']['razon_social']);
+                    $r_social_dep = Util::eliminaCaracteresEspeciales($solicitud->proveedor->razon_social);
                     $razon_social = strlen($r_social_dep) > 40 ? substr($r_social_dep, 0, 40) :
                         str_pad($r_social_dep, 40, ' ', STR_PAD_RIGHT);
-                    $monto = explode('.', number_format($solicitud['total'], 2, ".", ""));
+                    $monto = explode('.', number_format($solicitud->Total, 2, ".", ""));
                     $partida_n = "D" . str_pad($solicitud['id'], 9, 0, STR_PAD_LEFT);
-                    $concepto_rep = Util::eliminaCaracteresEspeciales($solicitud['concepto']);
+                    $concepto_rep = Util::eliminaCaracteresEspeciales($solicitud->Concepto);
                     $concepto = strlen($concepto_rep) > 120 ? substr($concepto_rep, 0, 120) :
                         str_pad($concepto_rep, 120, ' ', STR_PAD_RIGHT);
 
                     if ($cuenta_empresa == null) {
-                        abort(403, 'La cuenta cargo de la empresa (' . $solicitud['empresa']['rfc'] . ') no esta dado de alta.');
+                        abort(403, 'La cuenta pagadora de la empresa '.$solicitud->empresa->RazonSocial.' (' . $solicitud->empresa->RFC . ') no esta dada de alta.');
                     }
 
-                    if ($solicitud['cuentaProveedor'] == null) {
-                        abort(403, 'La cuenta abono del proveedor (' . $solicitud['proveedor']['rfc'] . ') no esta dado de alta.');
+                    if ($solicitud->CuentaProveedor->CuentaBancaElectronica == null) {
+                        abort(403, 'La cuenta para pago al proveedor '.$solicitud->proveedor->RazonSocial.' (' . $solicitud->proveedor->RFC . ') no esta dada de alta o no se encuentra en las cuentas verificadas de la banca de Santander.');
                     }
-
-                    $this->data_inter[] = str_pad(substr($cuenta_empresa->Cuenta, 0, 16), 16, ' ', STR_PAD_RIGHT)
-                        . str_pad($solicitud['cuentaProveedor']['numero_cuenta'], 20, ' ', STR_PAD_RIGHT)
-                        . $solicitud['cuentaProveedor']['cve_banco']
+                    $this->data_inter[] = str_pad(substr($cuenta_cargo, 0, 16), 16, ' ', STR_PAD_RIGHT)
+                        . str_pad($solicitud->CuentaProveedor->CuentaBancaElectronica, 20, ' ', STR_PAD_RIGHT)
+                        . $solicitud->CuentaProveedor->banco->clave
                         . $razon_social
                         . str_pad($monto[0], 17, 0, STR_PAD_LEFT) . str_pad($monto[1], 7, 0, STR_PAD_RIGHT)
                         . $partida_n . $concepto
                         . str_pad(1, 7, ' ', STR_PAD_RIGHT) . 1;
                 }
-            }
+
         }
     }
 }

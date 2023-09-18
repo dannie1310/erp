@@ -62,6 +62,11 @@ class SolCheque extends Model
         return $query->orderBy('Serie', 'desc')->orderBy('Folio', 'desc');
     }
 
+    public function scopeTransferencia($query)
+    {
+        return $query->where("IdFormaPago","2");
+    }
+
     /**
      * Atributos
      */
