@@ -2095,5 +2095,9 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'semana-anio'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolRecSemanaAnioController@index');
         });
+
+        $api->group(['prefix' => 'ubicacion-relacion'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\UbicacionRelacionController@index');
+        });
     });
 });

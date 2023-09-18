@@ -49,29 +49,29 @@
                                      </div>
                                      <div class="col-md-6">
                                         <div class="form-group error-content">
-                                            <label for="id_empleado">Proyecto:</label>
+                                            <label for="id_proyecto">Proyecto:</label>
                                             <select class="form-control"
-                                                    data-vv-as="Empresa"
-                                                    id="id_empleado"
-                                                    name="id_empleado"
-                                                    :error="errors.has('id_empleado')"
+                                                    data-vv-as="Proyecto"
+                                                    id="id_proyecto"
+                                                    name="id_proyecto"
+                                                    :error="errors.has('id_proyecto')"
                                                     v-validate="{required: true}"
-                                                    v-model="id_empleado">
+                                                    v-model="id_proyecto">
                                                 <option value>-- Selecionar --</option>
-                                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
+                                                <option v-for="(p) in proyectos" :value="p.id">{{ p.ubicacion }}</option>
                                             </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proyecto')">{{ errors.first('id_proyecto') }}</div>
                                         </div>
                                     </div>
                                  </div>
                                  <div class="row">
-                                     <div class="col-md-1">
-                                         <div class="form-group error-content">
+                                     <div class="col-md-12">
+                                         <div class="form-group error-content ">
                                              <label class="col-form-label">Periodo:</label>
-                                         </div>
-                                     </div>
+
                                      <div class="col-md-2">
                                          <div class="form-group error-content">
+                                             <label for="id_empleado">Fecha Inicial:</label>
                                              <datepicker v-model = "fecha_inicial"
                                                          name = "fecha_inicial"
                                                          :format = "formatoFecha"
@@ -81,16 +81,13 @@
                                                          class = "form-control"
                                                          v-validate="{required: true}"
                                                          :disabled-dates="fechasDeshabilitadas"
-                                                         :class="{'is-invalid': errors.has('fecha_inicial')}"
-                                             />
+                                                         :class="{'is-invalid': errors.has('fecha_inicial')}"/>
                                              <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                                          </div>
                                      </div>
                                      <div class="col-md-2">
-                                        <i class="fa fa-arrow-right fa-2" aria-hidden="true"></i>
-                                     </div>
-                                     <div class="col-md-2">
                                          <div class="form-group error-content">
+                                             <label for="id_empleado">Fecha Final:</label>
                                              <datepicker v-model = "fecha_final"
                                                          name = "fecha_final"
                                                          data-vv-as="Fecha Final"
@@ -100,9 +97,10 @@
                                                          class = "form-control"
                                                          v-validate="{required: true}"
                                                          :disabled-dates="fechasDeshabilitadas"
-                                                         :class="{'is-invalid': errors.has('fecha_final')}"
-                                             />
+                                                         :class="{'is-invalid': errors.has('fecha_final')}"/>
                                              <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
+                                         </div>
+                                     </div>
                                          </div>
                                      </div>
                                  </div>
@@ -122,7 +120,8 @@
                                          </div>
                                      </div>
                                      <div class="col-md-6">
-                                         <div class="form-group error-content float-right">
+                                         <div class="form-group error-content">
+                                             <label for="moneda">Moneda:</label>
                                              <select class="form-control"
                                                     data-vv-as="Moneda"
                                                     id="id_moneda"
@@ -324,54 +323,52 @@
                  </div>
             </div>
         </nav>
-        <!--<div class="modal fade" ref="modal_cfdi" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" >
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-file-code"></i> Seleccionar CFDI</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form role="form">
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div >
-                                            <div>
-                                                <label class="col-form-label">Archivos de CFDI (XML):</label>
-                                            </div>
-                                            <div>
-                                                <div class="form-group error-content" >
-                                                    <input type="file" class="form-control" id="archivo" @change="onFileChange" multiple="multiple"
-                                                           row="3"
-                                                           v-validate="{ ext: ['xml'], size: 3072}"
-                                                           name="archivo"
-                                                           data-vv-as="Archivo de CFDI"
-                                                           ref="archivo"
-                                                           :class="{'is-invalid': errors.has('archivo')}"
-                                                    >
-                                                    <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
-                                                </div>
+        <div class="modal fade" ref="modal_cfdi" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-destino"> <i class="fa fa-file-code"></i> Seleccionar CFDI</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div >
+                                        <div>
+                                            <label class="col-form-label">Archivos de CFDI (XML):</label>
+                                        </div>
+                                        <div>
+                                            <div class="form-group error-content" >
+                                                <input type="file" class="form-control" id="archivo" @change="onFileChange" multiple="multiple"
+                                                       row="3"
+                                                       v-validate="{ ext: ['xml'], size: 3072}"
+                                                       name="archivo"
+                                                       data-vv-as="Archivo de CFDI"
+                                                       ref="archivo"
+                                                       :class="{'is-invalid': errors.has('archivo')}">
+                                                <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <cfdi-show v-bind:cfdi="cfdi" v-if="cfdi"></cfdi-show>
-                                        <div class="card" v-else-if="cargando">
-                                            <div class="card-body">
-                                                <div >
-                                                    <div class="row" >
-                                                        <div class="col-md-1">
-                                                            <div class="spinner-border text-success" role="status">
-                                                               <span class="sr-only">Cargando...</span>
-                                                            </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <cfdi-show v-bind:cfdi="cfdi" v-if="cfdi"></cfdi-show>
+                                    <div class="card" v-else-if="cargando">
+                                        <div class="card-body">
+                                            <div >
+                                                <div class="row" >
+                                                    <div class="col-md-1">
+                                                        <div class="spinner-border text-success" role="status">
+                                                            <span class="sr-only">Cargando...</span>
                                                         </div>
-                                                        <div class="col-md-11">
-                                                            <h5>Procesando</h5>
-                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-11">
+                                                        <h5>Procesando</h5>
                                                     </div>
                                                 </div>
                                             </div>
@@ -379,24 +376,25 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalCFDI"><i class="fa fa-close"  ></i> Cerrar</button>
-                             </div>
-                        </form>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalCFDI"><i class="fa fa-close"  ></i> Cerrar</button>
+                        </div>
+                    </form>
                 </div>
-            </div>-->
+            </div>
+        </div>
     </span>
 </template>
 
 <script>
 import Datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
-//import CfdiShow from "../../../fiscal/cfd/cfd-sat/Show";
-//import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
+import CfdiShow from "../../../fiscal/cfd/cfd-sat/Show";
+import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
 export default {
     name: "relacion-gastos-create",
-    components: { Datepicker, es},
+    components: { Datepicker, es, CFDI, CfdiShow},
     data() {
         return {
             cargando : false,
@@ -413,7 +411,8 @@ export default {
             motivo: '',
             id_moneda: '',
             monedas: [],
-
+            id_proyecto: '',
+            proyectos:[],
 
 
             partidas: [],
@@ -481,6 +480,7 @@ export default {
         this.getEmpresas();
         this.getMonedas();
         this.getEmpleados();
+        this.getProyectos();
     },
     methods : {
         init() {
@@ -514,10 +514,27 @@ export default {
                 this.empleados = data.data;
             })
         },
+        getProyectos() {
+            return this.$store.dispatch('controlRecursos/ubicacion-relacion/index', {
+                params: { }
+            }).then(data => {
+                this.proyectos = data.data;
+            })
+        },
         salir(){
             this.$router.push({name: 'relacion-gasto'});
         },
-       /* addPartidas(){
+        getDepartamento() {
+            return this.$store.dispatch('controlRecursos/ubicacion-relacion/index', {
+                params: { }
+            }).then(data => {
+                this.proyectos = data.data;
+            })
+        },
+
+
+
+        addPartidas(){
             this.partidas.splice(this.partidas.length + 1, 0, {
                 referencia : "",
                 cantidad : 0,
@@ -759,10 +776,16 @@ export default {
                 vm.files = unicos;
             };
             reader.readAsDataURL(file);
-        },*/
+        },
     },
     watch: {
+        id_empleado(value)
+        {
+            if(value)
+            {
 
+            }
+        }
     }
 }
 </script>

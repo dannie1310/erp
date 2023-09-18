@@ -2,6 +2,7 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class Proveedor extends Model
@@ -16,6 +17,11 @@ class Proveedor extends Model
     public function cuentasProveedores()
     {
         return $this->hasMany(CuentaProveedor::class, 'IdProveedor', 'IdProveedor');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'IdUsuario', 'idusuario');
     }
 
     /**
