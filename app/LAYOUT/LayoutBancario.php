@@ -31,7 +31,7 @@ class LayoutBancario
     function create(){
         $predescarga = DescargaLayoutBanco::where('semana', '=', $this->semana->semana)->where('anio', '=', $this->semana->anio)->first();
         if ($predescarga) {
-            //return 'true';
+            return 'true';
         }
 
         try {
