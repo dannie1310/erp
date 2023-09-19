@@ -190,6 +190,16 @@ class Documento extends Model
         }
     }
 
+    public function getRfcProveedorAttribute()
+    {
+        try {
+            return $this->proveedor->RFC;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
     public function getImporteFormatAttribute()
     {
         return '$' . number_format(($this->Importe),2);

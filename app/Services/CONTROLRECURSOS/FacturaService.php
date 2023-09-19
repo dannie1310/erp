@@ -330,10 +330,31 @@ class FacturaService
 
     private function validaUUIDDocumento($uuid, $tipo)
     {
-        $documentos = $this->repository->buscarDocumentoUuid($uuid);
-        if ($documentos)
+        $documento = $this->repository->buscarDocumentoUuid($uuid);
+        $repositorio_factura = $this->repository->buscarRepositorioFactura($uuid);
+        if ($documento && $repositorio_factura->id_documento_cr != null)
         {
-            abort(500, "El CFDI ".$uuid." fue utilizado anteriormente la factura en control de recursos.");
+            abort(500, "CFDI utilizado previamente:
+                                Registró: ".$repositorio_factura->usuario->nombre_completo."
+                                Serie: ".$documento->serie_descripcion."
+                                Folio: ".$documento->FolioDocto."
+                                Fecha Registro: ".$documento->fecha_format."
+                                UUID: ".$uuid."
+                                Emisor: ".$documento->proveedor_descripcion."
+                                RFC Emisor: ".$documento->rfc_proveedor);
+        }
+        if ($repositorio_factura && $repositorio_factura->id_transaccion != null)
+        {
+            abort(500, "CFDI utilizado previamente:
+                                Registró: ".$repositorio_factura->usuario->nombre_completo."
+                                DB: ".$repositorio_factura->proyecto->base_datos."
+                                Proyecto: ".$repositorio_factura->obra."
+                                Tipo Transacción: ". $repositorio_factura->transaccion->tipo_transaccion_str."
+                                Folio Transacción: ".$repositorio_factura->transaccion->numero_folio."
+                                Fecha Registro: ".$repositorio_factura->fecha_hora_registro_format ."
+                                UUID: ".$uuid."
+                                Emisor: ".$repositorio_factura->proveedor->razon_social."
+                                RFC Emisor: ".$repositorio_factura->proveedor->rfc);
         }
         if($tipo != 'I')
         {

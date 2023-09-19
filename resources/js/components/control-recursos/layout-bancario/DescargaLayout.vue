@@ -173,14 +173,19 @@ export default {
                     _self.solicitudes_seleccionadas.push({'id_solicitud' : solicitud.id, 'id_cuenta_empresa' : solicitud.idcuentaempresa,'numero_partida' : (i+1) });
                 }
             });
-            return this.$store.dispatch('controlRecursos/solicitud-cheque/descargar',
-                {
-                    data: this.solicitudes_seleccionadas, idsemana: this.idsemana
-                })
-                .then(() => {
-                    this.salir();
-                    this.$emit('success')
-                })
+            if(this.solicitudes_seleccionadas.length == 0)
+            {
+                swal('¡Error!', 'Favor de seleccionar al menos una solicitud.', 'error')
+            }else {
+                return this.$store.dispatch('controlRecursos/solicitud-cheque/descargar',
+                    {
+                        data: this.solicitudes_seleccionadas, idsemana: this.idsemana
+                    })
+                    .then(() => {
+                        this.salir();
+                        this.$emit('success')
+                    })
+            }
         },
         getSolicitudes() {
             return this.$store.dispatch('controlRecursos/solicitud-cheque/index', {

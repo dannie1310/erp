@@ -23,6 +23,10 @@ class LayoutBancario
     public function __construct($data)
     {
         $this->datos = $data;
+        if(config('filesystems.disks.bancario_recurso_descarga.root') == storage_path())
+        {
+            abort(403, 'No existe el directorio destino: SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
+        }
         $this->zip_file_path = config('filesystems.disks.bancario_recurso_descarga.root');
         $this->files_global = config('filesystems.disks.bancario_recurso_descarga_zip.root');
         $this->semana = SolrecSemanaAnio::where('idsemana_anio', $data['idsemana'])->first();
@@ -60,13 +64,6 @@ class LayoutBancario
             $file_interb = '#' . $llave . '-santander-interb' . $time;
             $file_zip = '#' . $llave . '-santander' . $time;
 
-
-
-            if(config('filesystems.disks.bancario_recurso_descarga.root') == storage_path())
-            {
-                dd('No existe el directorio destino: SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA. Favor de comunicarse con el área de Soporte a Aplicaciones.');
-            }
-
             if (count($this->data_mismo) > 0 && count($this->data_inter) > 0)
             {
                 Storage::disk('bancario_recurso_descarga')->delete(Storage::disk('bancario_recurso_descarga')->allFiles());
@@ -100,7 +97,7 @@ class LayoutBancario
                 }
             }
             DB::connection('controlrec')->rollBack();
-            return "No se pudo generar el archivo de layout bancario de control de recursos.";
+            abort(403, "No se pudo generar el archivo de layout bancario de control de recursos.");
         }catch (\Exception $e){
             DB::connection('controlrec')->rollBack();
             throw $e;
