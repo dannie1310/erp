@@ -150,4 +150,10 @@ class FacturaRepository extends Repository implements RepositoryInterface
         $factura->desvinculaFacturaRepositorio();
         return $elimino;
     }
+
+    public function buscarRepositorioFactura($uuid)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=", $uuid)->first();
+        return $factura_repositorio;
+    }
 }
