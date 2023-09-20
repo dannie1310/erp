@@ -51,7 +51,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="form-group row error-content">
+                        <div class="form-group error-content">
                             <label for="id_empresa">Empresa:</label>
                             <select class="form-control"
                                     data-vv-as="Empresa"
@@ -67,9 +67,10 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group row error-content">
+                        <div class="form-group error-content">
                             <label for="id_proveedor">Proveedor:</label>
                             <select class="form-control"
+                                    :disabled="proveedores.length == 0 ? true : false"
                                     data-vv-as="Proveedor"
                                     id="id_proveedor"
                                     name="id_proveedor"
@@ -331,6 +332,10 @@ export default {
             })
             .then(data => {
                 this.series = data.data;
+                if(this.series.length == 1)
+                {
+                    this.idserie = this.series[0].id;
+                }
             })
             .finally(() => {
                 this.cargando = false;
