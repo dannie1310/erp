@@ -41,7 +41,8 @@ class Documento extends Model
         'Estatus',
         'Ubicacion',
         'tipo_cambio_excepcion',
-        'uuid'
+        'uuid',
+        "registro_portal"
     ];
 
     protected static function boot()
@@ -289,7 +290,8 @@ class Documento extends Model
                 'TC' => 0,
                 'Creo' => auth()->id(),
                 'Estatus' => $data['estado'],
-                'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : ''
+                'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
+                "registro_portal" => 1
             ]);
             DB::connection('controlrec')->commit();
             $documento->update([
