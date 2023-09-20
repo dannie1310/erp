@@ -313,7 +313,6 @@ export default {
     },
     mounted() {
         this.$validator.reset()
-        this.getProveedores();
         this.getEmpresas();
         this.getMonedas();
         this.getSeries();
@@ -347,7 +346,7 @@ export default {
         },
         getProveedores() {
             return this.$store.dispatch('controlRecursos/proveedor/index', {
-                params: {sort: 'RazonSocial', order: 'asc', scope:'porRFC'}
+                params: {sort: 'RazonSocial', order: 'asc', scope:['porTipos:1,3','porSerie:'+this.idserie, 'porEstados:1']}
             }).then(data => {
                 this.proveedores = data.data;
             })
@@ -411,6 +410,13 @@ export default {
         },
     },
     watch: {
+        idserie(value)
+        {
+            if(value)
+            {
+                this.getProveedores();
+            }
+        },
         subtotal(value) {
             if(value)
             {
