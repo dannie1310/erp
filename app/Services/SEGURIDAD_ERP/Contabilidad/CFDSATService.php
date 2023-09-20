@@ -296,7 +296,7 @@ class CFDSATService
         return $this->repository->paginate($data);
     }
 
-    private function store($arreglo_factura = null)
+    public function store($arreglo_factura = null)
     {
         if($arreglo_factura){
             $transaccion_cfd = $this->repository->registrar($arreglo_factura);

@@ -92,11 +92,20 @@
                                         </div>
                                     </td>
                                     <td>{{doc.proveedor.razon_social}}</td>
-                                    <td v-if="doc.cuentaProveedor && doc.cuentaProveedor != null">{{doc.cuentaProveedor.numero_cuenta}} ({{doc.cuentaProveedor.banco_nombre}})</td>
-                                    <td v-else>{{doc.id}}</td>
+                                    <td >
+                                        <span v-if="doc.cuentaProveedor && doc.cuentaProveedor != null">
+                                            {{doc.cuentaProveedor.numero_cuenta}} ({{doc.cuentaProveedor.banco_nombre}})
+                                        </span>
+                                        <span v-else style="color: red">
+                                            Sin Cuenta Especificada
+                                        </span>
+                                   </td>
                                     <td>{{doc.importe_format}}</td>
                                     <td>{{doc.concepto}}</td>
-                                    <td class="text-center"><input type="checkbox" :value="doc.id" v-model="doc.selected"></td>
+                                    <td class="text-center">
+                                        <input type="checkbox" :value="doc.id" v-model="doc.selected"
+                                               v-if="doc.empresa.cuentas_pagadoras_santander && doc.empresa.cuentas_pagadoras_santander.data.length > 0 && doc.cuentaProveedor && doc.cuentaProveedor != null">
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -127,7 +136,8 @@ export default {
             semanas: [],
             idsemana: '',
             solicitudes: null,
-            seleccionar: false
+            seleccionar: false,
+            solicitudes_seleccionadas : [],
         }
     },
     mounted() {
@@ -156,15 +166,30 @@ export default {
         },
         descargar()
         {
-            return this.$store.dispatch('controlRecursos/solicitud-cheque/descargar', {data: this.solicitudes, idsemana: this.idsemana})
-                .then(() => {
-                    this.salir();
-                    this.$emit('success')
-                })
+            let _self = this;
+            this.solicitudes.forEach(function (solicitud, i) {
+                if(solicitud.selected)
+                {
+                    _self.solicitudes_seleccionadas.push({'id_solicitud' : solicitud.id, 'id_cuenta_empresa' : solicitud.idcuentaempresa,'numero_partida' : (i+1) });
+                }
+            });
+            if(this.solicitudes_seleccionadas.length == 0)
+            {
+                swal('¡Error!', 'Favor de seleccionar al menos una solicitud.', 'error')
+            }else {
+                return this.$store.dispatch('controlRecursos/solicitud-cheque/descargar',
+                    {
+                        data: this.solicitudes_seleccionadas, idsemana: this.idsemana
+                    })
+                    .then(() => {
+                        this.salir();
+                        this.$emit('success')
+                    })
+            }
         },
         getSolicitudes() {
             return this.$store.dispatch('controlRecursos/solicitud-cheque/index', {
-                params: { scope:['porSemanaAnio:'+this.idsemana,'ordenaSerieFolio'], include : ['cuentaProveedor','empresa.cuentas_pagadoras_santander'] }
+                params: { scope:['porSemanaAnio:'+this.idsemana,'ordenaSerieFolio','transferencia'], include : ['cuentaProveedor','empresa.cuentas_pagadoras_santander'] }
             })
             .then(data => {
                 let _self = this;
