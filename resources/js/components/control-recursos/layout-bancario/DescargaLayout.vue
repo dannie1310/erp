@@ -188,6 +188,9 @@ export default {
             }
         },
         getSolicitudes() {
+            this.solicitudes = null;
+            this.seleccionar = false;
+            this.solicitudes_seleccionadas = [];
             return this.$store.dispatch('controlRecursos/solicitud-cheque/index', {
                 params: { scope:['porSemanaAnio:'+this.idsemana,'ordenaSerieFolio','transferencia'], include : ['cuentaProveedor','empresa.cuentas_pagadoras_santander'] }
             })
