@@ -7,45 +7,58 @@
                          <form role="form" @submit.prevent="validate">
                              <div class="modal-body">
                                  <div class="row">
-                                     <div class="col-md-6">
-                                        <div class="form-group error-content">
-                                            <label for="id_empresa">Empresa:</label>
-                                            <select class="form-control"
-                                                    data-vv-as="Empresa"
-                                                    id="id_empresa"
-                                                    name="id_empresa"
-                                                    :error="errors.has('id_empresa')"
-                                                    v-validate="{required: true}"
-                                                    v-model="id_empresa">
-                                                <option value>-- Selecionar --</option>
-                                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
-                                        </div>
-                                    </div>
-                                     <div class="col-md-6">
-                                        <div class="form-group error-content">
-                                            <label for="id_empleado">Empleado:</label>
-                                            <select class="form-control"
-                                                    data-vv-as="Empleado"
-                                                    id="id_empleado"
-                                                    name="id_empleado"
-                                                    :error="errors.has('id_empleado')"
-                                                    v-validate="{required: true}"
-                                                    v-model="id_empleado">
-                                                <option value>-- Selecionar --</option>
-                                                <option v-for="(e) in empleados" :value="e.id">{{ e.razon_social }} - [ {{e.rfc}} ]</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
-                                        </div>
-                                    </div>
+                                     <div class="col-md-1">
+                                         <label class="col-form-label">Periodo:</label>
+                                     </div>
+                                     <div class="col-md-3">
+                                         <div class="form-group error-content">
+                                             <label for="id_empleado">Fecha Inicial:</label>
+                                             <datepicker v-model = "fecha_inicial"
+                                                         name = "fecha_inicial"
+                                                         :format = "formatoFecha"
+                                                         data-vv-as="Fecha Inicial"
+                                                         :language = "es"
+                                                         :bootstrap-styling = "true"
+                                                         class = "form-control"
+                                                         v-validate="{required: true}"
+                                                         :disabled-dates="fechasDeshabilitadas"
+                                                         :class="{'is-invalid': errors.has('fecha_inicial')}"/>
+                                             <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
+                                         </div>
+                                     </div>
+                                     <div class="col-md-3">
+                                         <div class="form-group error-content">
+                                             <label for="id_empleado">Fecha Final:</label>
+                                             <datepicker v-model = "fecha_final"
+                                                         name = "fecha_final"
+                                                         data-vv-as="Fecha Final"
+                                                         :format = "formatoFecha"
+                                                         :language = "es"
+                                                         :bootstrap-styling = "true"
+                                                         class = "form-control"
+                                                         v-validate="{required: true}"
+                                                         :disabled-dates="fechasDeshabilitadas"
+                                                         :class="{'is-invalid': errors.has('fecha_final')}"/>
+                                             <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
+                                         </div>
+                                     </div>
                                  </div>
                                  <div class="row">
                                      <div class="col-md-6">
-                                        <div class="form-group error-content">
-                                            <h6><b>Departamento:</b></h6>
-                                            <h6>{{departamento}}</h6>
-                                        </div>
+                                         <div class="form-group error-content">
+                                             <label for="id_empresa">Empresa:</label>
+                                             <select class="form-control"
+                                                data-vv-as="Empresa"
+                                                id="id_empresa"
+                                                name="id_empresa"
+                                                :error="errors.has('id_empresa')"
+                                                v-validate="{required: true}"
+                                                v-model="id_empresa">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
+                                             </select>
+                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
+                                         </div>
                                      </div>
                                      <div class="col-md-6">
                                         <div class="form-group error-content">
@@ -65,43 +78,27 @@
                                     </div>
                                  </div>
                                  <div class="row">
-                                     <div class="col-md-12">
-                                         <div class="form-group error-content ">
-                                             <label class="col-form-label">Periodo:</label>
-
-                                     <div class="col-md-2">
-                                         <div class="form-group error-content">
-                                             <label for="id_empleado">Fecha Inicial:</label>
-                                             <datepicker v-model = "fecha_inicial"
-                                                         name = "fecha_inicial"
-                                                         :format = "formatoFecha"
-                                                         data-vv-as="Fecha Inicial"
-                                                         :language = "es"
-                                                         :bootstrap-styling = "true"
-                                                         class = "form-control"
-                                                         v-validate="{required: true}"
-                                                         :disabled-dates="fechasDeshabilitadas"
-                                                         :class="{'is-invalid': errors.has('fecha_inicial')}"/>
-                                             <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
-                                         </div>
-                                     </div>
-                                     <div class="col-md-2">
-                                         <div class="form-group error-content">
-                                             <label for="id_empleado">Fecha Final:</label>
-                                             <datepicker v-model = "fecha_final"
-                                                         name = "fecha_final"
-                                                         data-vv-as="Fecha Final"
-                                                         :format = "formatoFecha"
-                                                         :language = "es"
-                                                         :bootstrap-styling = "true"
-                                                         class = "form-control"
-                                                         v-validate="{required: true}"
-                                                         :disabled-dates="fechasDeshabilitadas"
-                                                         :class="{'is-invalid': errors.has('fecha_final')}"/>
-                                             <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
-                                         </div>
-                                     </div>
-                                         </div>
+                                     <div class="col-md-6">
+                                        <div class="form-group error-content">
+                                            <label for="id_empleado">Empleado:</label>
+                                            <select class="form-control"
+                                                    data-vv-as="Empleado"
+                                                    id="id_empleado"
+                                                    name="id_empleado"
+                                                    :error="errors.has('id_empleado')"
+                                                    v-validate="{required: true}"
+                                                    v-model="id_empleado">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(e) in empleados" :value="e.id">{{ e.razon_social }} - [ {{e.rfc}} ]</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
+                                        </div>
+                                    </div>
+                                     <div class="col-md-6" v-if="empleado != ''">
+                                        <div class="form-group error-content">
+                                            <h6><b>Departamento:</b></h6>
+                                            <h6>{{empleado.usuario.departamento.departamento}}</h6>
+                                        </div>
                                      </div>
                                  </div>
                                  <div class="row">
@@ -119,7 +116,7 @@
                                              <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                                          </div>
                                      </div>
-                                     <div class="col-md-6">
+                                     <div class="col-md-3">
                                          <div class="form-group error-content">
                                              <label for="moneda">Moneda:</label>
                                              <select class="form-control"
@@ -145,7 +142,7 @@
                                      </div>
                                  </div>
                                  <hr />
-                                 <!--<div class="row">
+                                 <div class="row">
                                      <div  class="col-md-12 table-responsive-xl">
                                          <div>
                                              <table class="table table-bordered table-sm">
@@ -176,7 +173,13 @@
                                                  <tbody>
                                                  <tr v-for="(partida, i) in partidas">
                                                      <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                     <td  v-if="partida.id_concepto_sat>0">
+                                                     <td v-if="partida.uuid != ''">
+                                                         {{partida.tipo_documento}}
+                                                     </td>
+                                                     <td v-else>
+
+                                                     </td>
+                                                     <td  v-if="partida.uuid != ''">
                                                          <c-f-d-i v-bind:id="partida.id_cfdi" v-bind:txt="partida.referencia" :key="i"></c-f-d-i>
                                                      </td>
                                                      <td  v-else>
@@ -312,7 +315,7 @@
                                              </div>
                                          </div>
                                      </div>
-                                 </div>-->
+                                 </div>
                              </div>
                              <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
@@ -405,6 +408,7 @@ export default {
             empresas: [],
             id_empleado: '',
             empleados: [],
+            empleado: '',
             departamento: '',
             fecha_inicial: '',
             fecha_final: '',
@@ -429,7 +433,7 @@ export default {
             p_holder:'',
         }
     },
-   /* computed: {
+    computed: {
         sumaMontos() {
             let iva = 0;
             let result = 0;
@@ -470,7 +474,7 @@ export default {
 
             return result_cfdi.length;
         }
-    },*/
+    },
     mounted() {
         this.$validator.reset()
         this.fecha_hoy = new Date();
@@ -509,7 +513,9 @@ export default {
         },
         getEmpleados() {
             return this.$store.dispatch('controlRecursos/proveedor/index', {
-                params: {sort: 'RazonSocial', order: 'asc', scope: ['porTipo:2','porEstado:1', 'empleados'] }
+                params: {
+                    sort: 'RazonSocial', order: 'asc', scope: ['porTipo:2','porEstado:1', 'empleados']
+                }
             }).then(data => {
                 this.empleados = data.data;
             })
@@ -524,11 +530,13 @@ export default {
         salir(){
             this.$router.push({name: 'relacion-gasto'});
         },
-        getDepartamento() {
-            return this.$store.dispatch('controlRecursos/ubicacion-relacion/index', {
-                params: { }
+        buscarEmpleado()
+        {
+            return this.$store.dispatch('controlRecursos/proveedor/find', {
+                id: this.id_empleado,
+                params:{include: [ 'usuario.departamento' ]}
             }).then(data => {
-                this.proyectos = data.data;
+                this.empleado = data
             })
         },
 
@@ -536,65 +544,24 @@ export default {
 
         addPartidas(){
             this.partidas.splice(this.partidas.length + 1, 0, {
-                referencia : "",
-                cantidad : 0,
-                precio : 0,
-                monto : 0,
-                iva : 0,
-                id_concepto : "",
-                id_concepto_sat : "",
-                id_cfdi : "",
+                tipo_documento: "",
+                fecha: "",
+                folio : "",
+                concepto : "",
+                importe : 0,
+                IVA : 0,
+                retenciones : 0,
+                otro_imp : 0,
+                total: 0,
+                no_personas: 0,
+                observaciones: '',
                 uuid : "",
-                cambio_concepto:1,
-                destino:"",
-                descuento:0,
+                cfdi : []
             });
             this.index = this.index+1;
         },
         destroy(index){
-            let _self = this;
-            _self.con_descuento = false;
-            if(this.partidas[index].id_concepto_sat > 0){
-                let id_conceptos_sat_borrar = [];
-                let id_cfdi = this.partidas[index].id_cfdi;
-                let _self = this;
-                let cfdi_borrar = [];
-                this.partidas.forEach(function (partida, i) {
-                    if(partida.id_cfdi == id_cfdi)
-                    {
-                        id_conceptos_sat_borrar.push(partida.id_concepto_sat);
-                        cfdi_borrar.push(partida.uuid);
-                    }
-                });
-
-                id_conceptos_sat_borrar.forEach(function (elemento, i){
-                    _self.partidas.forEach(function (partida, i) {
-                        if(partida.id_concepto_sat == elemento)
-                        {
-                            _self.partidas.splice(i, 1);
-                        }
-                    });
-                });
-
-                const cfdi_borrar_unicos = cfdi_borrar.filter((valor, indice) => {
-                    return cfdi_borrar.indexOf(valor) === indice;
-                });
-
-                cfdi_borrar_unicos.forEach(function(partida, i){
-                    let indice = _self.names.indexOf(partida+".xml");
-                    _self.names.splice(indice, 1);
-                    _self.files.splice(indice, 1);
-                });
-
-            }else {
-                this.partidas.splice(index, 1);
-            }
-            _self.partidas.forEach(function (partida, i) {
-                if(partida.descuento > 0)
-                {
-                    _self.con_descuento = true;
-                }
-            });
+            this.partidas.splice(index, 1);
         },
         monto(partida, key) {
             var monto = 0;
@@ -640,12 +607,6 @@ export default {
         },
         cerrarModalCFDI(){
             $(this.$refs.modal_cfdi).modal('hide');
-        },
-        modalDestino(){
-            $(this.$refs.modal_destino).modal('show');
-        },
-        cerrarModalDestino(){
-            $(this.$refs.modal_destino).modal('hide');
         },
         eliminarPartidasCFDI(){
             let id_conceptos_sat_borrar = [];
@@ -697,28 +658,27 @@ export default {
         },
         agregaPartidasConConceptos(conceptos)
         {
+            console.log("PP#",conceptos)
             let _self = this;
             conceptos.forEach(function (concepto, i) {
-                var busqueda = _self.partidas.find(x=>x.id_concepto_sat === concepto.id);
+                var busqueda = _self.partidas.find(x=>x.uuid === concepto.uuid);
                 if(busqueda == undefined)
                 {
-                    if(concepto.descuento>0)
-                    {
-                        _self.con_descuento = true;
-                    }
                     _self.partidas.splice(_self.partidas.length + 1, 0, {
-                        referencia : concepto.cfdi.serie + concepto.cfdi.folio + "-" + concepto.descripcion,
-                        cantidad : concepto.cantidad,
-                        precio : concepto.valor_unitario,
-                        monto : concepto.importe,
-                        iva : concepto.traslados[0] != undefined ? concepto.traslados[0].impuesto =="002" ? concepto.traslados[0].importe : 0 : 0,
-                        id_concepto_sat : concepto.id,
-                        id_concepto : "",
-                        id_cfdi : concepto.id_cfd_sat,
-                        uuid : concepto.cfdi.uuid,
-                        cambio_concepto:1,
-                        destino:"",
-                        descuento:concepto.descuento,
+                        tipo_documento: concepto.tipo_comprobante,
+                        fecha: concepto.fecha_hora,
+                        folio : concepto.folio,
+                        concepto : concepto.conceptos.[0].descripcion,
+                        importe : concepto.conceptos.[0].importe,
+                        IVA : concepto.importe_iva,
+                        retenciones : 0,
+                        otro_imp : 0,
+                        total: concepto.total,
+                        no_personas: '',
+                        observaciones: '',
+                        uuid : concepto.uuid,
+                        xml : concepto.xml,
+                        contenido_xml : concepto.contenido_xml
                     });
                     _self.index = _self.index+1;
                 }
@@ -729,7 +689,7 @@ export default {
             var formData = new FormData();
             formData.append('xmls',  JSON.stringify(this.files));
             formData.append('nombres_archivo',  JSON.stringify(this.names));
-            return this.$store.dispatch('finanzas/cfdi-sat/cargarXMLComprobacion',
+            return this.$store.dispatch('finanzas/cfdi-sat/cargarXMLComprobacionRecursos',
                 {
                     data: formData,
                     config: {
@@ -783,7 +743,7 @@ export default {
         {
             if(value)
             {
-
+                this.buscarEmpleado();
             }
         }
     }

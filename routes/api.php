@@ -1719,7 +1719,7 @@ $api->version('v1', function ($api) {
             $api->get('descargaLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaLayout');
             $api->post('cargar-xml-comprobacion', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@cargaXMLComprobacion');
             $api->get('cfdi-rep-pendiente-xls', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaCFDIREPPendienteXLS');
-
+            $api->post('cargar-xml-comprobacion-recursos', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@cargaXMLRecursos');
         });
     });
 
@@ -2076,6 +2076,7 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'proveedor'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@show')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'relacion-gasto'], function ($api) {

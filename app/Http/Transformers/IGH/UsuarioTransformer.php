@@ -8,7 +8,6 @@
 
 namespace App\Http\Transformers\IGH;
 
-use App\Models\IGH\Departamento;
 use App\Models\IGH\Usuario;
 use League\Fractal\TransformerAbstract;
 
@@ -50,7 +49,7 @@ class UsuarioTransformer extends TransformerAbstract
     {
         if($depa = $model->departamento)
         {
-            return $this->item($depa, new Departamento);
+            return $this->item($depa, new DepartamentoTransformer);
         }
         return null;
     }

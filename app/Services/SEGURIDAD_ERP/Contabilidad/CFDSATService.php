@@ -2352,4 +2352,51 @@ class CFDSATService
     {
         return $this->repository->getInformeREPEmpresa($data);
     }
+
+    public function cargaXMLComprobacionRecursos(array $data)
+    {
+        $archivos_xml = json_decode($data["xmls"]);
+        $nombres_archivo = json_decode($data["nombres_archivo"]);
+        $conceptos = null;
+        $i = 0;
+        foreach ($archivos_xml as $archivo_xml){
+            $cfd = new CFD($archivo_xml);
+            $arreglo_cfd = $cfd->getArregloFactura();
+            $this->validaReceptorSinContexto($arreglo_cfd, $nombres_archivo[$i]);
+            $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
+            $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
+            $arreglo_cfd["id_proveedor_sat"] = $proveedor["id_proveedor"];
+            $arreglo_cfd["id_empresa_recursos"] = $this->repository->getEmpresaRecursos($arreglo_cfd["receptor"])['id'];
+            $arreglo_cfd["id_proveedor_recursos"] = $this->repository->getProveedorRecursos($arreglo_cfd["emisor"])['id'];
+            $exp = explode("base64,", $archivo_xml);
+            $contenido_xml = base64_decode($exp[1]);
+            $arreglo_cfd["contenido_xml"] = $contenido_xml;
+            $this->validaTipo($arreglo_cfd['tipo_comprobante']);
+            $conceptos[$i] =  $arreglo_cfd;
+            $i++;
+        }
+        return $conceptos;
+    }
+
+    private function validaReceptorSinContexto($arreglo_cfd, $nombre = null)
+    {
+        $empresa = $this->repository->getEmpresaRecursos($arreglo_cfd['receptor']);
+        if(key_exists("receptor",$arreglo_cfd))
+        {
+            if ($arreglo_cfd["receptor"]["rfc"] != $empresa['rfc'])
+            {
+                abort(500, "El RFC de la empresa (" . $empresa['rfc'] . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
+            }
+        }else{
+            abort(500, "Error de lectura del archivo: ".$nombre);
+        }
+    }
+
+    private function validaTipo( $tipo)
+    {
+        if($tipo != 'I')
+        {
+            abort(500, 'El CFDI ingresado no es de un tipo válido, favor de subir CFDI’s tipo I (Ingreso) únicamente.');
+        }
+    }
 }

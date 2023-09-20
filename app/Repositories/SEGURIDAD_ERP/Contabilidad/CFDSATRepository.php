@@ -18,6 +18,8 @@ use App\Informes\Fiscal\PendientesREPEmpresa;
 use App\Informes\Fiscal\PendientesREPEmpresaProveedor;
 use App\Informes\Fiscal\PendientesREPProveedorEmpresa;
 use App\Models\CADECO\Obra;
+use App\Models\CONTROL_RECURSOS\Empresa;
+use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
@@ -301,4 +303,34 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return $informe;
     }
 
+    public function getProveedorRecursos(Array $datos){
+        $proveedor = Proveedor::whereRaw("REPLACE(RFC,'-','') = '".str_replace("-","",$datos["rfc"])."'")
+            ->where('Estatus', 1)
+            ->whereIn('TipoProveedor',[2])->first();
+        $salida = null;
+        if($proveedor){
+            $salida =[
+                "id"=>$proveedor->getKey(),
+                "rfc"=>$proveedor->RFC,
+                "razon_social"=>$proveedor->RazonSocial,
+                "nuevo"=>0,
+            ];
+        }
+        return $salida;
+    }
+
+    public function getEmpresaRecursos(Array $datos){
+        $empresa = Empresa::where("RFC","=",$datos["rfc"])
+            ->where('Estatus', 1)->first();
+        $salida = null;
+
+        if($empresa){
+            $salida =[
+                "id"=>$empresa->getKey(),
+                "rfc"=>$empresa->RFC,
+                "razon_social"=>$empresa->RazonSocial
+            ];
+        }
+        return $salida;
+    }
 }
