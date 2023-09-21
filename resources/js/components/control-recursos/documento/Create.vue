@@ -69,7 +69,9 @@
                     <div class="col-md-6">
                         <div class="form-group error-content">
                             <label for="id_proveedor">Proveedor:</label>
-                            <select class="form-control"
+                            <select
+                                v-if="!cargando_proveedores"
+                                class="form-control"
                                     :disabled="proveedores.length == 0 ? true : false"
                                     data-vv-as="Proveedor"
                                     id="id_proveedor"
@@ -77,9 +79,11 @@
                                     :error="errors.has('id_proveedor')"
                                     v-validate="{required: true}"
                                     v-model="id_proveedor">
+                                 <option value v-if="!this.idserie">Seleccione la serie para cargar los proveedores</option>
                                 <option value>-- Selecionar --</option>
                                 <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
                             </select>
+                            <div v-else style="color:#5a6268;" class="form-control"><i class="fa fa-spinner fa-spin" /> Cargando Proveedores</div>
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                         </div>
                     </div>
@@ -290,6 +294,7 @@ export default {
         return {
             es: es,
             cargando: false,
+            cargando_proveedores : false,
             folio: '',
             empresas: [],
             id_empresa: '',
@@ -350,10 +355,14 @@ export default {
                 })
         },
         getProveedores() {
+            this.cargando_proveedores = true;
+            this.id_proveedor = "";
             return this.$store.dispatch('controlRecursos/proveedor/index', {
                 params: {sort: 'RazonSocial', order: 'asc', scope:['porTipos:1,3','porSerie:'+this.idserie, 'porEstados:1']}
             }).then(data => {
                 this.proveedores = data.data;
+            }).finally(() => {
+                this.cargando_proveedores = false;
             })
         },
         getMonedas() {
