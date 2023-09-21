@@ -4367,7 +4367,7 @@ export const routes = [
                         component: require('./components/control-recursos/documento/Edit').default,
                         meta: {
                             title: 'Editar Documento',
-                            breadcrumb: {parent: 'documento-recurso', name: 'EDITAR DOCUMENTO'},
+                            breadcrumb: {parent: 'documento', name: 'EDITAR DOCUMENTO'},
                             middleware: [auth, permission],
                             permission: 'editar_documento_recursos',
                             general: true
@@ -4380,7 +4380,7 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Eliminar Documento',
-                            breadcrumb: { parent: 'documento-recurso', name: 'ELIMINAR DOCUMENTO'},
+                            breadcrumb: { parent: 'documento', name: 'ELIMINAR DOCUMENTO'},
                             middleware: [auth, permission],
                             permission: 'eliminar_documento_recursos',
                             general: true

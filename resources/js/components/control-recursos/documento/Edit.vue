@@ -23,7 +23,7 @@
                                 name="idserie"
                                 :error="errors.has('idserie')"
                                 v-validate="{required: true}"
-                                v-model="factura.id_serie">
+                                v-model="idserie">
                             <option value>-- Selecionar --</option>
                             <option v-for="(serie) in series" :value="serie.id">{{ serie.descripcion }}</option>
                         </select>
@@ -69,16 +69,18 @@
                 <div class="col-md-6">
                     <div class="form-group row error-content">
                         <label for="id_proveedor">Proveedor:</label>
-                        <select class="form-control"
+                        <select v-if="!this.cargando_proveedores"
+                            class="form-control"
                                 data-vv-as="Proveedor"
                                 id="id_proveedor"
                                 name="id_proveedor"
                                 :error="errors.has('id_proveedor')"
                                 v-validate="{required: true}"
-                                v-model="factura.id_proveedor">
+                                v-model="id_proveedor">
                             <option value>-- Selecionar --</option>
                             <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
                         </select>
+                        <div v-else style="color:#5a6268;" class="form-control"><i class="fa fa-spinner fa-spin" /> Cargando Proveedores</div>
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                     </div>
                 </div>
@@ -159,7 +161,7 @@
                                v-on:keyup="calcularTotal"
                                v-model="importe"
                                style="text-align: right"
-                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                               v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                :class="{'is-invalid': errors.has(`subtotal`)}"
                                id="subtotal">
                         <div class="invalid-feedback" v-show="errors.has(`subtotal`)">{{ errors.first(`subtotal`) }}</div>
@@ -191,7 +193,7 @@
                                v-on:keyup="calcularImpuesto"
                                v-model="impuesto"
                                style="text-align: right"
-                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                               v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                :class="{'is-invalid': errors.has(`impuesto`)}"
                                id="impuesto">
                         <div class="invalid-feedback" v-show="errors.has(`impuesto`)">{{ errors.first(`impuesto`) }}</div>
@@ -208,7 +210,7 @@
                                 v-on:keyup="calcularTotal"
                                 v-model="retencion"
                                 style="text-align: right"
-                                v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                 :class="{'is-invalid': errors.has(`retencion`)}"
                                 id="impuesto">
                         <div class="invalid-feedback" v-show="errors.has(`retencion`)">{{ errors.first(`retencion`) }}</div>
@@ -227,7 +229,7 @@
                                v-on:keyup="calcularTotal"
                                v-model="otros"
                                style="text-align: right"
-                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                               v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                :class="{'is-invalid': errors.has(`otros`)}"
                                id="otros">
                         <div class="invalid-feedback" v-show="errors.has(`otros`)">{{ errors.first(`otros`) }}</div>
@@ -239,7 +241,7 @@
                     <div class="form-group error-content float-right"> <label for="total">Total:</label></div>
                 </div>
                 <div class="col-md-2">
-                    <div class="form-group error-content float-right"> {{parseFloat(total).formatMoney(2)}} </div>
+                    <div class="form-group error-content float-right"> {{total}} </div>
                 </div>
                 <div class="col-md-5"></div>
 
@@ -290,9 +292,11 @@ export default {
         return{
             es: es,
             cargando: false,
+            cargando_proveedores : false,
             factura : null,
             series: [],
             empresas: [],
+            id_proveedor: '',
             proveedores: [],
             monedas: [],
             importe: 0,
@@ -302,12 +306,12 @@ export default {
             otros: 0,
             total: 0,
             idtipodocto: '',
+            idserie: '',
         }
     },
     mounted() {
         this.getSeries();
         this.getEmpresas();
-        this.getProveedores();
         this.getMonedas();
         this.find();
     },
@@ -329,6 +333,8 @@ export default {
                 this.otros= this.factura.otros
                 this.total= this.factura.total
                 this.idtipodocto = this.factura.id_tipo
+                this.idserie = this.factura.id_serie
+                this.id_proveedor = this.factura.id_proveedor
             }).finally(()=> {
                 this.cargando = false;
             })
@@ -356,14 +362,29 @@ export default {
             });
         },
         update() {
-            this.factura.importe = this.importe;
+
+            let importe_sin_comas;
+            let impuesto_sin_comas;
+            let otros_sin_comas;
+            let retencion_sin_comas;
+            let total_sin_comas;
+
+            importe_sin_comas = this.importe.toString().replace(/,/g, '');
+            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
+            otros_sin_comas = this.otros.toString().replace(/,/g, '');
+            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
+            total_sin_comas = this.total.toString().replace(/,/g, '');
+
+            this.factura.importe = importe_sin_comas;
             this.factura.iva = this.iva;
-            this.factura.impuesto = this.impuesto;
-            this.factura.retencion = this.retencion;
-            this.factura.otros = this.otros;
-            this.factura.total = this.total;
+            this.factura.impuesto = impuesto_sin_comas;
+            this.factura.retencion = retencion_sin_comas;
+            this.factura.otros = otros_sin_comas;
+            this.factura.total = total_sin_comas;
             this.factura.id_tipo = this.idtipodocto;
             this.factura.estado = this.idtipodocto == 1 ? 1 : 5;
+            this.factura.id_serie = this.idserie;
+            this.factura.id_proveedor = this.id_proveedor;
             return this.$store.dispatch('controlRecursos/documento/update', {
                 id: this.id,
                 data: this.factura
@@ -380,10 +401,17 @@ export default {
                 })
         },
         getProveedores() {
+            this.cargando_proveedores = true;
+            if(this.factura.id_serie != this.idserie)
+            {
+                this.id_proveedor = "";
+            }
             return this.$store.dispatch('controlRecursos/proveedor/index', {
-                params: {sort: 'RazonSocial', order: 'asc', scope:'porRFC'}
+                params: {sort: 'RazonSocial', order: 'asc', scope:['porTipos:1,3','porSerie:'+this.idserie, 'porEstados:1']}
             }).then(data => {
                 this.proveedores = data.data;
+            }).finally(() => {
+                this.cargando_proveedores = false;
             })
         },
         getMonedas() {
@@ -395,17 +423,39 @@ export default {
         },
         calcularImpuesto()
         {
-            this.impuesto = ((parseFloat(this.importe) * parseFloat(this.iva)) / 100).toFixed(2);
+            let importe_sin_comas;
+            importe_sin_comas = this.importe.toString().replace(/,/g, '');
+            this.impuesto = ((parseFloat(importe_sin_comas) * parseFloat(this.iva)) / 100).toString().formatearkeyUp();
         },
         calcularTotal()
         {
-            this.total = (parseFloat(this.importe) + parseFloat(this.impuesto) + parseFloat(this.otros)) - parseFloat(this.retencion);
+            let importe_sin_comas;
+            let impuesto_sin_comas;
+            let otros_sin_comas;
+            let retencion_sin_comas;
+
+            importe_sin_comas = this.importe.toString().replace(/,/g, '');
+            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
+            otros_sin_comas = this.otros.toString().replace(/,/g, '');
+            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
+
+            this.total = (parseFloat(importe_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toString().formatearkeyUp();
         },
     },
     watch: {
+        idserie(value)
+        {
+            if(value)
+            {
+                this.getProveedores();
+            }
+        },
         importe(value) {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.importe = cifra_formateada;
                 this.calcularImpuesto();
                 this.calcularTotal();
             }
@@ -420,6 +470,9 @@ export default {
         impuesto(value) {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.impuesto = cifra_formateada;
                 this.calcularTotal();
             }
         },
@@ -427,6 +480,9 @@ export default {
         {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.retencion = cifra_formateada;
                 this.calcularTotal();
             }
         },
@@ -434,6 +490,9 @@ export default {
         {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.otros = cifra_formateada;
                 this.calcularTotal();
             }
         }
