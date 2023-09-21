@@ -2097,6 +2097,10 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolRecSemanaAnioController@index');
         });
 
+        $api->group(['prefix' => 'tipo-doc-comp'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\TipoDocCompController@index');
+        });
+
         $api->group(['prefix' => 'ubicacion-relacion'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\UbicacionRelacionController@index');
         });
