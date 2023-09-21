@@ -6,6 +6,7 @@ use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Empresa;
 use App\Models\CONTROL_RECURSOS\Factura;
 use App\Models\CONTROL_RECURSOS\Proveedor;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\AvisoSATOmitir;
@@ -140,5 +141,19 @@ class FacturaRepository extends Repository implements RepositoryInterface
     public function getProveedorSat($rfc)
     {
         return ProveedorSAT::where('rfc', $rfc)->first();
+    }
+
+    public function eliminar($id)
+    {
+        $factura = $this->show($id);
+        $elimino = $factura->eliminar();
+        $factura->desvinculaFacturaRepositorio();
+        return $elimino;
+    }
+
+    public function buscarRepositorioFactura($uuid)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=", $uuid)->first();
+        return $factura_repositorio;
     }
 }

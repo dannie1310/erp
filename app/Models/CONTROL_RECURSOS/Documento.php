@@ -2,7 +2,12 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use App\Models\IGH\Usuario;
+use DateTime;
+use DateTimeZone;
 
 class Documento extends Model
 {
@@ -36,7 +41,8 @@ class Documento extends Model
         'Estatus',
         'Ubicacion',
         'tipo_cambio_excepcion',
-        'uuid'
+        'uuid',
+        "registro_portal"
     ];
 
     protected static function boot()
@@ -76,9 +82,34 @@ class Documento extends Model
         return $this->belongsTo(TipoDocto::class,'IdTipoDocto','IdTipoDocto');
     }
 
+    public function eliminado()
+    {
+        return $this->belongsTo(DocumentoEliminado::class, 'IdDocto','IdDocto');
+    }
+
+    public function estado()
+    {
+        return $this->belongsTo(EstatusDocumento::class, 'Estatus', 'Estatus')->where('IdTipoDocto', $this->IdTipoDocto);
+    }
+
+    public function CFDI()
+    {
+        return $this->belongsTo(CFDSAT::class, 'uuid','uuid');
+    }
+
+
     /**
      * Scopes
      */
+    public function scopePorTipo($query, $tipos)
+    {
+        return $query->whereIn('IdTipoDocto', explode(",", $tipos));
+    }
+
+    public function scopePorEstado($query, $estados)
+    {
+        return $query->whereIn('Estatus', [$estados]);
+    }
 
     /**
      * Atributos
@@ -160,6 +191,16 @@ class Documento extends Model
         }
     }
 
+    public function getRfcProveedorAttribute()
+    {
+        try {
+            return $this->proveedor->RFC;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
     public function getImporteFormatAttribute()
     {
         return '$' . number_format(($this->Importe),2);
@@ -175,8 +216,170 @@ class Documento extends Model
         return '$' . number_format(($this->IVA),2);
     }
 
+    public function getVencimientoEditarAttribute()
+    {
+        $date = date_create($this->Vencimiento);
+        return date_format($date,"m/d/Y");
+    }
+
+    public function getFechaEditarAttribute()
+    {
+        $date = date_create($this->Fecha);
+        return date_format($date,"m/d/Y");
+    }
+
+    public function getEstatusDescripcionAttribute()
+    {
+        try {
+            return $this->estado->Descripcion;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->Estatus)
+        {
+            case 5:
+                return '#3386FF';
+            case 1:
+                return '#3386FF';
+            case 6:
+                return '#FFEC33';
+            case 0:
+                return '#FFEC33';
+            case 7:
+                return '#00a65a';
+            case 2:
+                return '#00a65a';
+            default:
+                return '#d1cfd1';
+        }
+    }
+
     /**
      * Métodos
      */
+    public function registrar($data)
+    {
+        $this->validaDocumento($data, null);
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $usuario = Usuario::where('idusuario',auth()->id())->first();
+            $documento = $this->create([
+                'FolioDocto' => $data['folio'],
+                'IdTipoDocto' => $data['idtipodocto'],
+                'TipoDocto' => 0,
+                "IdEmpresa" => $data["id_empresa"],
+                "IdProveedor" => $data["id_proveedor"],
+                "Fecha" => $data['fecha'],
+                "Vencimiento" => $data["vencimiento"],
+                'Concepto' => $data["concepto"],
+                "Importe" => $data["subtotal"],
+                "IVA" => $data["impuesto"],
+                "Total" => $data["total"],
+                "Retenciones" => $data["retencion"],
+                "TasaIva" => (int) $data['iva'],
+                "OtrosImpuestos" => $data["otros"],
+                "IdMoneda" => $data["id_moneda"],
+                'Alias_Depto' => $usuario->departamento ? $usuario->departamento->departamento_abreviatura : '',
+                'Departamento' => $usuario->departamento ? $usuario->departamento->departamento : '',
+                'IdSerie' => $data['idserie'],
+                'TC' => 0,
+                'Creo' => auth()->id(),
+                'Estatus' => $data['estado'],
+                'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
+                "registro_portal" => 1
+            ]);
+            DB::connection('controlrec')->commit();
+            $documento->update([
+                'TC' => $documento->moneda->tipo_cambio
+            ]);
+            return $documento;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
 
+    public function editar(array $data)
+    {
+        $this->validaDocumento($data, $this->getKey());
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $vencimiento = New DateTime($data['vencimiento_editar']);
+            $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha = New DateTime($data['fecha_editar']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->update([
+                'IdEmpresa' => $data["id_empresa"],
+                'IdProveedor' => $data["id_proveedor"],
+                'Vencimiento' => $vencimiento->format('Y-m-d'),
+                'Concepto' => $data["concepto"],
+                'Fecha' => $fecha->format('Y-m-d'),
+                'IdSerie' => $data['id_serie'],
+                'FolioDocto' => $data['folio'],
+                'Importe' => $data['importe'],
+                'IVA' => $data['impuesto'],
+                'Total' => $data['total'],
+                'Retenciones' => $data['retencion'],
+                'TasaIva' => (int) $data['iva'],
+                'OtrosImpuestos' => $data['otros'],
+                'IdMoneda' => $data['id_moneda'],
+                'TC' => 0,
+                'Estatus' => $data["estado"],
+                'IdTipoDocto' => $data["id_tipo"],
+
+            ]);
+            DB::connection('controlrec')->commit();
+            $this->update([
+                'TC' => $this->moneda->tipo_cambio
+            ]);
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function validaDocumento(array $data, $id)
+    {
+        if($id == null) {
+            $documento = self::where('FolioDocto', $data['folio'])->where('IdSerie', array_key_exists('id_serie', $data) ? $data['id_serie'] : $data['idserie'])
+                ->where('IdProveedor', $data['id_proveedor'])->where('IdEmpresa', $data['id_empresa'])
+                ->where('Total', $data['total'])->withoutGlobalScopes()->first();
+        }else{
+            $documento = self::where('FolioDocto', $data['folio'])->where('IdSerie', array_key_exists('id_serie', $data) ? $data['id_serie'] : $data['idserie'])
+                ->where('IdProveedor', $data['id_proveedor'])->where('IdEmpresa', $data['id_empresa'])
+                ->where('Total', $data['total'])->where('IdDocto', '!=', $id)->withoutGlobalScopes()->first();
+        }
+        if($documento)
+        {
+            abort(500, "Este documento ya fue registrado previamente.");
+        }
+    }
+
+
+    public function eliminar()
+    {
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $this->delete();
+            $this->respaldo();
+            DB::connection('controlrec')->commit();
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function respaldo()
+    {
+        $this->eliminado->update([
+            'Elimino' => auth()->id()."*". date("d-m-Y") ."/". date("H:i:s"),
+        ]);
+    }
 }

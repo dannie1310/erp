@@ -16,7 +16,7 @@ class Factura extends Documento
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->whereIn('IdTipoDocto', [1,6])->whereIn('Estatus',[1,5]);
+
         });
     }
 
@@ -45,6 +45,25 @@ class Factura extends Documento
     {
         $date = date_create($this->Vencimiento);
         return date_format($date,"m/d/Y");
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->Estatus)
+        {
+            case 1:
+                return '#3386FF';
+                break;
+            case 0:
+                return '#FFEC33';
+                break;
+            case 2:
+                return '#00a65a';
+                break;
+            default:
+                return '#d1cfd1';
+                break;
+        }
     }
 
     /**
@@ -86,7 +105,8 @@ class Factura extends Documento
             'uuid' => $data['uuid'],
             'Creo' => auth()->id(),
             'Estatus' => $data['idtipodocto'] == 1 ? 1 : 5,
-            'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : ''
+            'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
+            "registro_portal" => 1
         ]);
     }
 
@@ -109,6 +129,16 @@ class Factura extends Documento
         } catch (\Exception $e) {
             DB::connection('controlrec')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    public function desvinculaFacturaRepositorio()
+    {
+        if ($this->cfd) {
+            $this->cfd->id_documento_cr = null;
+            $this->cfd->usuario_asocio = null;
+            $this->cfd->fecha_hora_asociacion = null;
+            $this->cfd->save();
         }
     }
 }

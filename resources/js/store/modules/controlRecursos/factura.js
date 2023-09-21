@@ -31,6 +31,11 @@ export default {
         UPDATE_ATTRIBUTE(state, data) {
             state.currentSolicitud[data.attribute] = data.value
         },
+        DELETE_SOLICITUD(state, id) {
+            state.solicitudes = state.solicitudes.filter(d => {
+                return d.id != id
+            });
+        }
     },
 
     actions: {
@@ -63,7 +68,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Factura",
+                    title: "Registrar Documento",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -83,7 +88,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Factura registrada correctamente", {
+                                    swal("Documento registrado correctamente.", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
@@ -115,7 +120,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar la Factura",
+                    text: "Actualizar el Documento",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -134,7 +139,7 @@ export default {
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Factura actualizada correctamente", {
+                                    swal("Documento actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -142,6 +147,45 @@ export default {
                                         .then(() => {
                                             resolve(data);
                                         })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        delete(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Documento",
+                    text: "¿Está seguro de que desea eliminar el documento?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Documento eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
                                 })
                                 .catch(error => {
                                     reject(error);

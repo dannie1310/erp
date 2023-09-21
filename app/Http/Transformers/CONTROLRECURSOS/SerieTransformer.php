@@ -31,5 +31,4 @@ class SerieTransformer extends TransformerAbstract
             'descripcion' => $model->Descripcion
         ];
     }
-
 }
