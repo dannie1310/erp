@@ -100,7 +100,7 @@
                                             Sin Cuenta Especificada
                                         </span>
                                    </td>
-                                    <td>{{doc.importe_format}}</td>
+                                    <td>{{doc.total_format}}</td>
                                     <td>{{doc.concepto}}</td>
                                     <td class="text-center">
                                         <input type="checkbox" :value="doc.id" v-model="doc.selected"
