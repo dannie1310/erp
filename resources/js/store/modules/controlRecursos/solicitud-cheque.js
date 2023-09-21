@@ -31,7 +31,7 @@ export default {
                     .then(data => {
                         if(data === true)
                         {
-                            swal("Layout de bancario control de recursos descargado previemente.", {
+                            swal("Este layout bancario ya fue descargado previamente.", {
                                 icon: "warning",
                                 timer: 3000,
                                 buttons: false
@@ -44,7 +44,7 @@ export default {
                                     .get(URI + data, {params: payload.params})
                                     .then(r => r.data)
                                     .then(dat => {
-                                        swal("Layout bancario control de recursos descargado correctamente.", {
+                                        swal("El layout bancario ha sido descargado correctamente.", {
                                             icon: "success",
                                             timer: 2000,
                                             buttons: false

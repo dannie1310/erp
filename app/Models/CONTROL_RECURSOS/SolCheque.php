@@ -23,9 +23,9 @@ class SolCheque extends Model
         return $this->belongsTo(Empresa::class, 'IdEmpresa', 'IdEmpresa');
     }
 
-    public function partida()
+    public function partidasSolicitudRecursos()
     {
-        return $this->belongsTo(PartidaSolRec::class, 'IdSolCheques', 'IdSolCheque');
+        return $this->hasMany(PartidaSolRec::class, 'IdSolCheque', 'IdSolCheques');
     }
 
     public function moneda()
@@ -35,7 +35,7 @@ class SolCheque extends Model
 
     public function cuentaProveedor()
     {
-        return $this->belongsTo(CuentaProveedor::class, 'Cuenta2','IdCuenta');
+        return $this->hasOne(CuentaProveedor::class, 'IdCuenta','Cuenta2');
     }
 
     /**
@@ -52,9 +52,19 @@ class SolCheque extends Model
     {
         $time = SolrecSemanaAnio::where('idsemana_anio', $idsemana)->first();
         $solicitudes = SolRecurso::autorizadas()->where('Semana', '=', $time->semana)->where('Anio', $time->anio)->pluck('IdSolRec');
-        return $query->whereHas('partida', function ($q) use ($solicitudes){
+        return $query->whereHas('partidasSolicitudRecursos', function ($q) use ($solicitudes){
             $q->autorizada()->whereIn('IdSolRec', $solicitudes);
         });
+    }
+
+    public function scopeOrdenaSerieFolio($query)
+    {
+        return $query->orderBy('Serie', 'desc')->orderBy('Folio', 'desc');
+    }
+
+    public function scopeTransferencia($query)
+    {
+        return $query->where("IdFormaPago","2");
     }
 
     /**
@@ -73,6 +83,11 @@ class SolCheque extends Model
     public function getImporteFormatAttribute()
     {
         return '$' . number_format(($this->Importe),2);
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format(($this->Total),2);
     }
 
     public function getFechaFormatAttribute()

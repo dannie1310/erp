@@ -2,6 +2,7 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Models\IGH\Usuario;
@@ -40,7 +41,8 @@ class Documento extends Model
         'Estatus',
         'Ubicacion',
         'tipo_cambio_excepcion',
-        'uuid'
+        'uuid',
+        "registro_portal"
     ];
 
     protected static function boot()
@@ -85,12 +87,23 @@ class Documento extends Model
         return $this->belongsTo(DocumentoEliminado::class, 'IdDocto','IdDocto');
     }
 
+    public function estado()
+    {
+        return $this->belongsTo(EstatusDocumento::class, 'Estatus', 'Estatus')->where('IdTipoDocto', $this->IdTipoDocto);
+    }
+
+    public function CFDI()
+    {
+        return $this->belongsTo(CFDSAT::class, 'uuid','uuid');
+    }
+
+
     /**
      * Scopes
      */
     public function scopePorTipo($query, $tipos)
     {
-        return $query->whereIn('IdTipoDocto', [$tipos]);
+        return $query->whereIn('IdTipoDocto', explode(",", $tipos));
     }
 
     public function scopePorEstado($query, $estados)
@@ -178,6 +191,16 @@ class Documento extends Model
         }
     }
 
+    public function getRfcProveedorAttribute()
+    {
+        try {
+            return $this->proveedor->RFC;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
     public function getImporteFormatAttribute()
     {
         return '$' . number_format(($this->Importe),2);
@@ -203,6 +226,37 @@ class Documento extends Model
     {
         $date = date_create($this->Fecha);
         return date_format($date,"m/d/Y");
+    }
+
+    public function getEstatusDescripcionAttribute()
+    {
+        try {
+            return $this->estado->Descripcion;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->Estatus)
+        {
+            case 5:
+                return '#3386FF';
+            case 1:
+                return '#3386FF';
+            case 6:
+                return '#FFEC33';
+            case 0:
+                return '#FFEC33';
+            case 7:
+                return '#00a65a';
+            case 2:
+                return '#00a65a';
+            default:
+                return '#d1cfd1';
+        }
     }
 
     /**
@@ -236,7 +290,8 @@ class Documento extends Model
                 'TC' => 0,
                 'Creo' => auth()->id(),
                 'Estatus' => $data['estado'],
-                'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : ''
+                'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
+                "registro_portal" => 1
             ]);
             DB::connection('controlrec')->commit();
             $documento->update([
@@ -273,7 +328,10 @@ class Documento extends Model
                 'TasaIva' => (int) $data['iva'],
                 'OtrosImpuestos' => $data['otros'],
                 'IdMoneda' => $data['id_moneda'],
-                'TC' => 0
+                'TC' => 0,
+                'Estatus' => $data["estado"],
+                'IdTipoDocto' => $data["id_tipo"],
+
             ]);
             DB::connection('controlrec')->commit();
             $this->update([

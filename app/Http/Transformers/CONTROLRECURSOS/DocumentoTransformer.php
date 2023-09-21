@@ -2,6 +2,7 @@
 
 namespace App\Http\Transformers\CONTROLRECURSOS;
 
+use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CFDSATTransformer;
 use App\Models\CONTROL_RECURSOS\Documento;
 use League\Fractal\TransformerAbstract;
 
@@ -13,6 +14,7 @@ class DocumentoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'cfdi',
 
     ];
 
@@ -22,7 +24,7 @@ class DocumentoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'cfdi',
     ];
 
     public function transform(Documento $model){
@@ -61,7 +63,18 @@ class DocumentoTransformer extends TransformerAbstract
             'vencimiento_editar' => $model->vencimiento_editar,
             'vencimiento' => $model->Vencimiento,
             'otros' => $model->OtrosImpuestos,
-            'id_moneda' => $model->IdMoneda
+            'id_moneda' => $model->IdMoneda,
+            'estado' => $model->Estatus,
+            'estado_descripcion' => $model->estatus_descripcion,
+            'estado_color' => $model->color_estado,
         ];
+    }
+    public function includeCFDI(Documento $model)
+    {
+        if($item = $model->CFDI)
+        {
+            return $this->item($item, new CFDSATTransformer);
+        }
+        return null;
     }
 }

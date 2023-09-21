@@ -12,6 +12,7 @@ use App\Models\IGH\TipoCambio;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\CONTROLRECURSOS\FacturaRepository as Repository;
+use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use App\Utils\CFD;
 use DateTime;
 use DateTimeZone;
@@ -95,7 +96,7 @@ class FacturaService
         $arreglo = [];
         $cfd = new CFD($archivo_xml);
         $arreglo_cfd = $cfd->getArregloFactura();
-        $this->validaUUIDDocumento($arreglo_cfd["uuid"]);
+        $this->validaUUIDDocumento($arreglo_cfd["uuid"], $arreglo_cfd["tipo_comprobante"]);
         $arreglo["total"] = $arreglo_cfd["total"];
         $arreglo["impuesto"] = $arreglo_cfd["total_impuestos_trasladados"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
@@ -144,6 +145,7 @@ class FacturaService
         if (!$arreglo["empresa_bd"]) {
             abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de empresas de control recursos; la factura no puede ser registrada.");
         }
+        $arreglo["moneda_bd"]["id_moneda"] = $this->repository->getMoneda($arreglo["moneda"]);
         $arreglo["id_moneda"] = $this->repository->getMoneda($arreglo["moneda"]);
         if($arreglo_cfd['tipo_cambio'] == '') {
             if($arreglo_cfd['moneda'] == 'MXN') {
@@ -200,7 +202,8 @@ class FacturaService
         try {
             DB::connection('controlrec')->beginTransaction();
             $factura = $this->repository->registrar($data);
-            $this->registrarXML($data, $factura);
+            $factura_repositorio = $this->registrarCFDRepositorio($factura, $data);
+            $this->registrarCFDSAT($factura_repositorio, $arreglo_cfd);
             $this->guardarXML($data);
             DB::connection('controlrec')->commit();
             return $factura;
@@ -303,64 +306,15 @@ class FacturaService
         Storage::disk('xml_control_recursos')->put($datos["uuid"] . ".xml", $xml);
     }
 
-    public function registrarXML($data, $factura)
-    {
-        $empresa = $this->repository->getEmpresaSat($data["receptor"]["rfc"]);
-        if($empresa == null)
-        {
-            abort(500, "El receptor (".$data["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de ListaEmpresasSAT; la factura no puede ser registrada.");
-        }
-        $provedor = $this->repository->getProveedorSat($data["emisor"]["rfc"]);
-        if($provedor == null)
-        {
-            abort(500, "El emisor (".$data["emisor"]["rfc"].")del comprobante no esta dado de alta en el catálogo de proveedores_sat; la factura no puede ser registrada.");
-        }
-        CFDSAT::create([
-            'version' => $data['version'],
-            'id_empresa_sat' => $empresa->getKey(),
-            'id_proveedor_sat' => $provedor->getKey(),
-            'rfc_emisor' => $data['emisor']['rfc'],
-            'rfc_receptor' => $data['receptor']['rfc'],
-            'xml_file' => $this->repository->getArchivoSQL($data['archivo']),
-            'fecha' => $factura->fecha,
-            'serie' => $data['serie'],
-            'folio' => $data['folio'],
-            'uuid' => $data['complemento']['uuid'],
-            'moneda' => $data['moneda'],
-            'total_impuestos_trasladados' => $data['retencion'],
-            'tasa_iva' => $data['tasa_iva'],
-            'total' => $data['total'],
-            'importe_iva' => $data['impuesto'],
-            'descuento' => $data['descuento'],
-            'subtotal' => $data['subtotal'],
-            'tipo_comprobante' => $data['tipo_comprobante'],
-            'estado' => 0,
-            'tipo_cambio' => 1,// $data['tipo_cambio'],
-            'cancelado' => 0,
-            'no_verificable' => 1,
-            'conceptos_txt' => $data['concepto'],
-            'total_mxn' => $data['total'],
-        ]);
-
-        FacturaRepositorio::create([
-            'xml_file' => $this->repository->getArchivoSQL($data['archivo']),
-            'hash_file' => hash_file('md5',$data['archivo']),
-            'uuid' => $data['complemento']['uuid'],
-            'rfc_emisor' => $data['emisor']['rfc'],
-            'rfc_receptor' => $data['receptor']['rfc'],
-            'tipo_comprobante' => $data['tipo_comprobante'],
-            'id_documento_cr' => $factura->getKey()
-        ]);
-    }
-
     public function validaCFDI($uuid)
     {
         $cfdi = CFDSAT::where('uuid', $uuid)->first();
         $factura = FacturaRepositorio::where('uuid', $uuid)->first();
-
-        if($cfdi || $factura)
+        if($factura || $cfdi)
         {
-            abort(500, "El CFDI ".$uuid." fue utilizado anteriormente.");
+            if ($factura->id_transaccion != null || $factura->id_documento_cr != null) {
+                abort(500, "El CFDI " . $uuid . " fue utilizado anteriormente.");
+            }
         }
     }
 
@@ -374,17 +328,81 @@ class FacturaService
         return $this->repository->show($id)->editar($data);
     }
 
-    private function validaUUIDDocumento($uuid)
+    private function validaUUIDDocumento($uuid, $tipo)
     {
-        $documentos = $this->repository->buscarDocumentoUuid($uuid);
-        if ($documentos)
+        $documento = $this->repository->buscarDocumentoUuid($uuid);
+        $repositorio_factura = $this->repository->buscarRepositorioFactura($uuid);
+        if ($documento && $repositorio_factura->id_documento_cr != null)
         {
-            abort(500, "El CFDI ".$uuid." fue utilizado anteriormente la factura en control de recursos.");
+            abort(500, "CFDI utilizado previamente:
+                                Registró: ".$repositorio_factura->usuario->nombre_completo."
+                                Serie: ".$documento->serie_descripcion."
+                                Folio: ".$documento->FolioDocto."
+                                Fecha Registro: ".$documento->fecha_format."
+                                UUID: ".$uuid."
+                                Emisor: ".$documento->proveedor_descripcion."
+                                RFC Emisor: ".$documento->rfc_proveedor);
+        }
+        if ($repositorio_factura && $repositorio_factura->id_transaccion != null)
+        {
+            abort(500, "CFDI utilizado previamente:
+                                Registró: ".$repositorio_factura->usuario->nombre_completo."
+                                DB: ".$repositorio_factura->proyecto->base_datos."
+                                Proyecto: ".$repositorio_factura->obra."
+                                Tipo Transacción: ". $repositorio_factura->transaccion->tipo_transaccion_str."
+                                Folio Transacción: ".$repositorio_factura->transaccion->numero_folio."
+                                Fecha Registro: ".$repositorio_factura->fecha_hora_registro_format ."
+                                UUID: ".$uuid."
+                                Emisor: ".$repositorio_factura->proveedor->razon_social."
+                                RFC Emisor: ".$repositorio_factura->proveedor->rfc);
+        }
+        if($tipo != 'I')
+        {
+            abort(500, 'El CFDI ingresado no es de un tipo válido, favor de subir CFDI’s tipo I (Ingreso) únicamente.');
         }
     }
 
     public function delete($data, $id)
     {
         return $this->repository->eliminar($id);
+    }
+
+    private function registrarCFDRepositorio($factura, $data)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
+        if($factura_repositorio){
+            if($factura_repositorio->id_transaccion == null && $factura_repositorio->id_documento_cr == null)
+            {
+                $factura_repositorio->id_documento_cr = $factura->getKey();
+                $factura_repositorio->save();
+            }else{
+                abort(500, "El CFDI fue utilizado anteriormente.");
+            }
+
+        }
+        else{
+            if($data){
+                $factura_repositorio = FacturaRepositorio::create([
+                    'xml_file' => $this->repository->getArchivoSQL($data['archivo']),
+                    'hash_file' => hash_file('md5',$data['archivo']),
+                    'uuid' => $data['complemento']['uuid'],
+                    'rfc_emisor' => $data['emisor']['rfc'],
+                    'rfc_receptor' => $data['receptor']['rfc'],
+                    'tipo_comprobante' => $data['tipo_comprobante'],
+                    'id_documento_cr' => $factura->getKey(),
+
+                ]);
+                if (!$factura_repositorio) {
+                    abort(400, "Hubo un error al registrar el CFDI en el repositorio");
+                }
+            }
+        }
+        return $factura_repositorio;
+    }
+
+    private function registrarCFDSAT($facturaRepositorio, $data)
+    {
+        $servicio_cfdi = new CFDSATService(new CFDSAT());
+        $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
     }
 }

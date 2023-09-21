@@ -1,7 +1,7 @@
 <template>
     <div class="row" v-if="factura">
         <div class="col-md-12">
-            <span><i class="fa fa-envelope"></i>Datos del Factura</span>
+            <span><i class="fa fa-file-invoice"></i>Datos del Documento</span>
             <div class="table-responsive">
                 <table class="table  table-sm">
                     <tr>
@@ -22,13 +22,13 @@
                     </tr>
                     <tr>
                         <th class="encabezado  c130">
-                           Tipo Documento
+                           Tipo de Documento
                         </th>
                         <th class="encabezado  c130">
-                            Fecha de emisión
+                            Fecha de Emisión
                         </th>
                         <th class="encabezado  c130">
-                            Fecha de vencimiento
+                            Fecha de Vencimiento
                         </th>
                         <th class="encabezado">
                             Serie
@@ -113,10 +113,10 @@
                             UUID
                         </th>
                         <th class="encabezado c150">
-                            Ubicacion
+                            Ubicación
                         </th>
                         <th class="encabezado c150">
-                            Alias Departamento
+                            Alias del Departamento
                         </th>
                         <th class="encabezado c150">
                             Departamento
@@ -124,16 +124,16 @@
 
                     </tr>
                     <tr>
-                        <td style="text-align: right" colspan="3">
+                        <td colspan="3">
                             {{factura.uuid}}
                         </td>
-                        <td class="money">
+                        <td >
                             {{factura.ubicacion}}
                         </td>
-                        <td class="money">
+                        <td >
                             {{factura.alias_dep}}
                         </td>
-                        <td class="money">
+                        <td >
                             {{factura.departamento}}
                         </td>
                     </tr>

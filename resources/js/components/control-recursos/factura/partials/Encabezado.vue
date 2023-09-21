@@ -10,7 +10,7 @@
                                         <tbody>
                                             <tr>
                                                 <td colspan="2" style="border-bottom: 1px solid #9e9e9e; text-align: center">
-                                                    <b>Factura</b>
+                                                    <b>Documento</b>
                                                 </td>
                                             </tr>
                                             <tr>

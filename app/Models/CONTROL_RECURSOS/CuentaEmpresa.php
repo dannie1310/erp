@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CuentaEmpresa extends Model
 {
     protected $connection = 'controlrec';
-    protected $table = 'cuenta_empresa';
+    protected $table = 'vw_cuentas_bancarias_empresa';
 
 
     /**
@@ -16,6 +16,21 @@ class CuentaEmpresa extends Model
     public function cuenta()
     {
         return $this->belongsTo(CuentaBancaria::class,'IdCuentaBancaria','IdCuentaBancaria');
+    }
+
+    public function banco()
+    {
+        return $this->belongsTo(Banco::class,'IdBanco','IdBanco');
+    }
+
+    public function tipoCuenta()
+    {
+        return $this->belongsTo(CuentaBancariaTipo::class, 'IdTipoCuenta', 'IdTipoCuenta');
+    }
+
+    public function moneda()
+    {
+        return $this->belongsTo(CtgMoneda::class, 'id', 'IdMoneda');
     }
 
     /**
@@ -28,7 +43,7 @@ class CuentaEmpresa extends Model
     public function getNumeroCuentaAttribute()
     {
         try {
-            return $this->cuenta->Cuenta;
+            return $this->Cuenta;
         }catch (\Exception $e)
         {
             return null;
@@ -58,7 +73,7 @@ class CuentaEmpresa extends Model
     public function getIdBancoAttribute()
     {
         try {
-            return $this->cuenta->IdBanco;
+            return $this->IdBanco;
         }catch (\Exception $e)
         {
             return null;

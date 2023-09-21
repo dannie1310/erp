@@ -14,25 +14,7 @@
         <div class="card" v-else>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group row error-content">
-                            <label for="id_empresa">Empresa:</label>
-                            <select class="form-control"
-                                    data-vv-as="Empresa"
-                                    id="id_empresa"
-                                    name="id_empresa"
-                                    :error="errors.has('id_empresa')"
-                                    v-validate="{required: true}"
-                                    v-model="id_empresa">
-                                <option value>-- Selecionar --</option>
-                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
-                            </select>
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="idserie" class="col-form-label">Serie:</label>
                             <select class="form-control"
@@ -48,7 +30,66 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
                         </div>
                     </div>
+
                     <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <label for="tipo" class="col-form-label">Tipo:</label>
+                            <select class="form-control"
+                                    data-vv-as="Tipo"
+                                    id="tipo"
+                                    name="tipo"
+                                    :error="errors.has('tipo')"
+                                    v-validate="{required: true}"
+                                    v-model="idtipodocto">
+                                <option value>-- Selecionar --</option>
+                                <option value="1">Documento para Solicitud de Pago de Orden de Compra</option>
+                                <option value="6">Documento para Solicitud de Pago Recurrente</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group error-content">
+                            <label for="id_empresa">Empresa:</label>
+                            <select class="form-control"
+                                    data-vv-as="Empresa"
+                                    id="id_empresa"
+                                    name="id_empresa"
+                                    :error="errors.has('id_empresa')"
+                                    v-validate="{required: true}"
+                                    v-model="id_empresa">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group error-content">
+                            <label for="id_proveedor">Proveedor:</label>
+                            <select
+                                v-if="!cargando_proveedores"
+                                class="form-control"
+                                    :disabled="proveedores.length == 0 ? true : false"
+                                    data-vv-as="Proveedor"
+                                    id="id_proveedor"
+                                    name="id_proveedor"
+                                    :error="errors.has('id_proveedor')"
+                                    v-validate="{required: true}"
+                                    v-model="id_proveedor">
+                                 <option value v-if="!this.idserie">Seleccione la serie para cargar los proveedores</option>
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
+                            </select>
+                            <div v-else style="color:#5a6268;" class="form-control"><i class="fa fa-spinner fa-spin" /> Cargando Proveedores</div>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="folio">Folio:</label>
                             <input class="form-control"
@@ -63,9 +104,10 @@
                             <div class="invalid-feedback" v-show="errors.has('folio')">{{ errors.first('folio') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+
+                    <div class="col-md-2">
                         <div class="form-group error-content">
-                            <label for="fecha">Fecha de Facturación:</label>
+                            <label for="fecha">Fecha de Emisión:</label>
                             <datepicker v-model = "fecha"
                                         name = "fecha"
                                         :format = "formatoFecha"
@@ -78,7 +120,7 @@
                             <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="fecha">Fecha Limite de Pago:</label>
                             <datepicker v-model = "vencimiento"
@@ -96,27 +138,10 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="form-group row error-content">
-                            <label for="id_proveedor">Proveedor:</label>
-                            <select class="form-control"
-                                    data-vv-as="Proveedor"
-                                    id="id_proveedor"
-                                    name="id_proveedor"
-                                    :error="errors.has('id_proveedor')"
-                                    v-validate="{required: true}"
-                                    v-model="id_proveedor">
-                                <option value>-- Selecionar --</option>
-                                <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
-                            </select>
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
                         <div class="form-group error-content">
                             <label for="concepto">Concepto:</label>
-                            <input
+                            <textarea
+                                rows="2"
                                 name="concepto"
                                 id="concepto"
                                 class="form-control"
@@ -140,7 +165,7 @@
                                    v-on:keyup="calcularTotal"
                                    v-model="subtotal"
                                    style="text-align: right"
-                                   v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                   v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                    :class="{'is-invalid': errors.has(`subtotal`)}"
                                    id="subtotal">
                             <div class="invalid-feedback" v-show="errors.has(`subtotal`)">{{ errors.first(`subtotal`) }}</div>
@@ -172,7 +197,7 @@
                                    v-on:keyup="calcularImpuesto"
                                    v-model="impuesto"
                                    style="text-align: right"
-                                   v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                   v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                    :class="{'is-invalid': errors.has(`impuesto`)}"
                                    id="impuesto">
                             <div class="invalid-feedback" v-show="errors.has(`impuesto`)">{{ errors.first(`impuesto`) }}</div>
@@ -189,7 +214,7 @@
                                     v-on:keyup="calcularTotal"
                                     v-model="retencion"
                                     style="text-align: right"
-                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                    v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                     :class="{'is-invalid': errors.has(`retencion`)}"
                                     id="impuesto">
                             <div class="invalid-feedback" v-show="errors.has(`retencion`)">{{ errors.first(`retencion`) }}</div>
@@ -208,7 +233,7 @@
                                    v-on:keyup="calcularTotal"
                                    v-model="otros"
                                    style="text-align: right"
-                                   v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                   v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                    :class="{'is-invalid': errors.has(`otros`)}"
                                    id="otros">
                             <div class="invalid-feedback" v-show="errors.has(`otros`)">{{ errors.first(`otros`) }}</div>
@@ -220,7 +245,7 @@
                         <div class="form-group error-content float-right"> <label for="total">Total:</label></div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group error-content float-right"> {{parseFloat(total).formatMoney(2)}} </div>
+                        <div class="form-group error-content float-right"> {{total}} </div>
                     </div>
                     <div class="col-md-5"></div>
 
@@ -269,6 +294,7 @@ export default {
         return {
             es: es,
             cargando: false,
+            cargando_proveedores : false,
             folio: '',
             empresas: [],
             id_empresa: '',
@@ -293,7 +319,6 @@ export default {
     },
     mounted() {
         this.$validator.reset()
-        this.getProveedores();
         this.getEmpresas();
         this.getMonedas();
         this.getSeries();
@@ -312,6 +337,10 @@ export default {
             })
             .then(data => {
                 this.series = data.data;
+                if(this.series.length == 1)
+                {
+                    this.idserie = this.series[0].id;
+                }
             })
             .finally(() => {
                 this.cargando = false;
@@ -326,10 +355,14 @@ export default {
                 })
         },
         getProveedores() {
+            this.cargando_proveedores = true;
+            this.id_proveedor = "";
             return this.$store.dispatch('controlRecursos/proveedor/index', {
-                params: {sort: 'RazonSocial', order: 'asc', scope:'porRFC'}
+                params: {sort: 'RazonSocial', order: 'asc', scope:['porTipos:1,3','porSerie:'+this.idserie, 'porEstados:1']}
             }).then(data => {
                 this.proveedores = data.data;
+            }).finally(() => {
+                this.cargando_proveedores = false;
             })
         },
         getMonedas() {
@@ -358,7 +391,7 @@ export default {
                     id_empresa: this.id_empresa,
                     id_proveedor: this.id_proveedor,
                     idserie: this.idserie,
-                    idtipodocto: 6,
+                    idtipodocto: this.idtipodocto,
                     fecha: moment(this.fecha).format('YYYY-MM-DD'),
                     vencimiento:  moment(this.vencimiento).format('YYYY-MM-DD'),
                     id_moneda: this.id_moneda,
@@ -369,7 +402,7 @@ export default {
                     retencion: parseFloat(this.retencion),
                     otros: parseFloat(this.otros),
                     total: parseFloat(this.total),
-                    estado: 5
+                    estado: this.idtipodocto == 1 ? 1 : 5,
                 })
                 .then(data => {
                     this.salir();
@@ -379,22 +412,51 @@ export default {
         },
         salir()
         {
-            this.$router.go(-1);
-            this.$emit('created', '')
+            this.$router.push({name: 'documento'});
         },
-        calcularImpuesto()
+        /*calcularImpuesto()
         {
             this.impuesto = ((parseFloat(this.subtotal) * parseFloat(this.iva)) / 100).toFixed(2);
         },
         calcularTotal()
         {
             this.total = (parseFloat(this.subtotal) + parseFloat(this.impuesto) + parseFloat(this.otros)) - parseFloat(this.retencion);
+        },*/
+        calcularImpuesto()
+        {
+            let subtotal_sin_comas;
+            subtotal_sin_comas = this.subtotal.toString().replace(/,/g, '');
+            this.impuesto = ((parseFloat(subtotal_sin_comas) * parseFloat(this.iva)) / 100).toString().formatearkeyUp();
+        },
+        calcularTotal()
+        {
+            let subtotal_sin_comas;
+            let impuesto_sin_comas;
+            let otros_sin_comas;
+            let retencion_sin_comas;
+
+            subtotal_sin_comas = this.subtotal.toString().replace(/,/g, '');
+            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
+            otros_sin_comas = this.otros.toString().replace(/,/g, '');
+            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
+
+            this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toString().formatearkeyUp();
         },
     },
     watch: {
+        idserie(value)
+        {
+            if(value)
+            {
+                this.getProveedores();
+            }
+        },
         subtotal(value) {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.subtotal = cifra_formateada;
                 this.calcularImpuesto();
                 this.calcularTotal();
             }
@@ -409,6 +471,9 @@ export default {
         impuesto(value) {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.impuesto = cifra_formateada;
                 this.calcularTotal();
             }
         },
@@ -416,6 +481,9 @@ export default {
         {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.retencion = cifra_formateada;
                 this.calcularTotal();
             }
         },
@@ -423,6 +491,9 @@ export default {
         {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.otros = cifra_formateada;
                 this.calcularTotal();
             }
         }

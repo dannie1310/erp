@@ -41,7 +41,8 @@ class SolicitudChequeTransformer extends TransformerAbstract
             'moneda' => $model->moneda_descripcion,
             'idempresa' => $model->IdEmpresa,
             'idproveedor' => $model->IdProveedor,
-            'idcuentaempresa' => ''
+            'idcuentaempresa' => '',
+            'total_format' => $model->total_format
         ];
     }
 

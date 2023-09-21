@@ -16,12 +16,12 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group error-content">
-                            <label for="archivo">Archivo de factura:</label>
+                            <label for="archivo">CFDI:</label>
                             <input type="file" class="form-control" id="file_carga" @change="onFileChange"
                                    row="3"
                                    v-validate="{required: true,  ext: ['xml'], size: 3072}"
                                    name="file_carga"
-                                   data-vv-as="Archivo de Factura"
+                                   data-vv-as="Archivo de Factura (CFDI)"
                                    ref="file_carga"
                                    :class="{'is-invalid': errors.has('file_carga')}">
                             <div class="invalid-feedback" v-show="errors.has('file_carga')">{{ errors.first('file_carga') }} (xml)</div>
@@ -46,9 +46,9 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-3">
                         <div class="form-group error-content">
-                            <label for="tipo" class="col-form-label">Tipo Factura:</label>
+                            <label for="tipo" class="col-form-label">Tipo:</label>
                             <select class="form-control"
                                     data-vv-as="Tipo"
                                     id="tipo"
@@ -57,8 +57,8 @@
                                     v-validate="{required: true}"
                                     v-model="idtipodocto">
                                 <option value>-- Selecionar --</option>
-                                <option value="1">Factura</option>
-                                <option value="6">Pago Recurrente</option>
+                                <option value="1">Documento para Solicitud de Pago de Orden de Compra</option>
+                                <option value="6">Documento para Solicitud de Pago Recurrente</option>
                             </select>
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                         </div>
@@ -324,7 +324,7 @@ export default {
         },
         salir()
         {
-            this.$router.go(-1);
+            this.$router.push({name: 'documento'});
         },
     },
 }
