@@ -161,7 +161,7 @@
                                v-on:keyup="calcularTotal"
                                v-model="importe"
                                style="text-align: right"
-                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                               v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                :class="{'is-invalid': errors.has(`subtotal`)}"
                                id="subtotal">
                         <div class="invalid-feedback" v-show="errors.has(`subtotal`)">{{ errors.first(`subtotal`) }}</div>
@@ -193,7 +193,7 @@
                                v-on:keyup="calcularImpuesto"
                                v-model="impuesto"
                                style="text-align: right"
-                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                               v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                :class="{'is-invalid': errors.has(`impuesto`)}"
                                id="impuesto">
                         <div class="invalid-feedback" v-show="errors.has(`impuesto`)">{{ errors.first(`impuesto`) }}</div>
@@ -210,7 +210,7 @@
                                 v-on:keyup="calcularTotal"
                                 v-model="retencion"
                                 style="text-align: right"
-                                v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                 :class="{'is-invalid': errors.has(`retencion`)}"
                                 id="impuesto">
                         <div class="invalid-feedback" v-show="errors.has(`retencion`)">{{ errors.first(`retencion`) }}</div>
@@ -229,7 +229,7 @@
                                v-on:keyup="calcularTotal"
                                v-model="otros"
                                style="text-align: right"
-                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                               v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                :class="{'is-invalid': errors.has(`otros`)}"
                                id="otros">
                         <div class="invalid-feedback" v-show="errors.has(`otros`)">{{ errors.first(`otros`) }}</div>
@@ -241,7 +241,7 @@
                     <div class="form-group error-content float-right"> <label for="total">Total:</label></div>
                 </div>
                 <div class="col-md-2">
-                    <div class="form-group error-content float-right"> {{parseFloat(total).formatMoney(2)}} </div>
+                    <div class="form-group error-content float-right"> {{total}} </div>
                 </div>
                 <div class="col-md-5"></div>
 
@@ -362,12 +362,25 @@ export default {
             });
         },
         update() {
-            this.factura.importe = this.importe;
+
+            let importe_sin_comas;
+            let impuesto_sin_comas;
+            let otros_sin_comas;
+            let retencion_sin_comas;
+            let total_sin_comas;
+
+            importe_sin_comas = this.importe.toString().replace(/,/g, '');
+            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
+            otros_sin_comas = this.otros.toString().replace(/,/g, '');
+            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
+            total_sin_comas = this.total.toString().replace(/,/g, '');
+
+            this.factura.importe = importe_sin_comas;
             this.factura.iva = this.iva;
-            this.factura.impuesto = this.impuesto;
-            this.factura.retencion = this.retencion;
-            this.factura.otros = this.otros;
-            this.factura.total = this.total;
+            this.factura.impuesto = impuesto_sin_comas;
+            this.factura.retencion = retencion_sin_comas;
+            this.factura.otros = otros_sin_comas;
+            this.factura.total = total_sin_comas;
             this.factura.id_tipo = this.idtipodocto;
             this.factura.estado = this.idtipodocto == 1 ? 1 : 5;
             this.factura.id_serie = this.idserie;
@@ -410,11 +423,23 @@ export default {
         },
         calcularImpuesto()
         {
-            this.impuesto = ((parseFloat(this.importe) * parseFloat(this.iva)) / 100).toFixed(2);
+            let importe_sin_comas;
+            importe_sin_comas = this.importe.toString().replace(/,/g, '');
+            this.impuesto = ((parseFloat(importe_sin_comas) * parseFloat(this.iva)) / 100).toString().formatearkeyUp();
         },
         calcularTotal()
         {
-            this.total = (parseFloat(this.importe) + parseFloat(this.impuesto) + parseFloat(this.otros)) - parseFloat(this.retencion);
+            let importe_sin_comas;
+            let impuesto_sin_comas;
+            let otros_sin_comas;
+            let retencion_sin_comas;
+
+            importe_sin_comas = this.importe.toString().replace(/,/g, '');
+            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
+            otros_sin_comas = this.otros.toString().replace(/,/g, '');
+            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
+
+            this.total = (parseFloat(importe_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toString().formatearkeyUp();
         },
     },
     watch: {
@@ -428,6 +453,9 @@ export default {
         importe(value) {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.importe = cifra_formateada;
                 this.calcularImpuesto();
                 this.calcularTotal();
             }
@@ -442,6 +470,9 @@ export default {
         impuesto(value) {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.impuesto = cifra_formateada;
                 this.calcularTotal();
             }
         },
@@ -449,6 +480,9 @@ export default {
         {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.retencion = cifra_formateada;
                 this.calcularTotal();
             }
         },
@@ -456,6 +490,9 @@ export default {
         {
             if(value)
             {
+                let cifra_formateada = 0;
+                cifra_formateada = value.toString().formatearkeyUp();
+                this.otros = cifra_formateada;
                 this.calcularTotal();
             }
         }
