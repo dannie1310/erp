@@ -77,8 +77,26 @@ class Resguardo extends Model
     }
 
     public function getFirmasValidasAttribute(){
-        if($this->GrupoEquipo == 5)
-        {
+
+            $entrega = $this->firmasPorResguardo()->where("IdFirma","=",2)->first();
+            if(!$entrega)
+            {
+                $entrega = "";
+                $entrega_grupo = ResguardoFirmaGrupo::where("IdFirma","=","2")
+                ->where("IdGrupoActivo","=",$this->GrupoEquipo)
+                ->first();
+                $entrega = $entrega_grupo->Valor;
+                DB::connection('sci')->insert("insert resguardos_firmas_x_resguardo (IdResguardo, IdFirma, Valor)
+                values (".$this->IdResguardo .",2,'".$entrega."')");
+            }
+
+            $vobo = $this->firmasPorResguardo()->where("IdFirma","=",3)->first();
+            if(!$vobo)
+            {
+                DB::connection('sci')->insert("insert resguardos_firmas_x_resguardo (IdResguardo, IdFirma)
+                values (".$this->IdResguardo .",3)");
+            }
+
             $sin_admon = $this->firmasPorResguardo()
                 ->where(function ($q){
                     $q->whereNull("Valor")
@@ -93,7 +111,7 @@ class Resguardo extends Model
                     set Valor = '".$this->ubicacion->administrador."' where IdResguardo =".$this->IdResguardo ." and IdFirma=3 ");
                 }
             }
-        }
+
         return $this->firmasPorResguardo()
         ->join('resguardos_firmas', 'resguardos_firmas.IdFirma', 'resguardos_firmas_x_resguardo.IdFirma')
         ->orderBy('resguardos_firmas.Orden', 'ASC')->get();
