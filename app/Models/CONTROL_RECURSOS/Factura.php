@@ -105,7 +105,8 @@ class Factura extends Documento
             'uuid' => $data['uuid'],
             'Creo' => auth()->id(),
             'Estatus' => $data['idtipodocto'] == 1 ? 1 : 5,
-            'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : ''
+            'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
+            "registro_portal" => 1
         ]);
     }
 

@@ -85,6 +85,11 @@ class SolCheque extends Model
         return '$' . number_format(($this->Importe),2);
     }
 
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format(($this->Total),2);
+    }
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->Fecha);

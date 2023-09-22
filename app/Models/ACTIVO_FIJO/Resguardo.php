@@ -11,6 +11,7 @@ use App\Models\IGH\Departamento;
 use App\Models\ACTIVO_FIJO\GrupoActivo;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\ACTIVO_FIJO\ResguardoElementoPdf;
+use Illuminate\Support\Facades\DB;
 
 class Resguardo extends Model
 {
@@ -76,8 +77,43 @@ class Resguardo extends Model
     }
 
     public function getFirmasValidasAttribute(){
+
+            $entrega = $this->firmasPorResguardo()->where("IdFirma","=",2)->first();
+            if(!$entrega)
+            {
+                $entrega = "";
+                $entrega_grupo = ResguardoFirmaGrupo::where("IdFirma","=","2")
+                ->where("IdGrupoActivo","=",$this->GrupoEquipo)
+                ->first();
+                $entrega = $entrega_grupo->Valor;
+                DB::connection('sci')->insert("insert resguardos_firmas_x_resguardo (IdResguardo, IdFirma, Valor)
+                values (".$this->IdResguardo .",2,'".$entrega."')");
+            }
+
+            $vobo = $this->firmasPorResguardo()->where("IdFirma","=",3)->first();
+            if(!$vobo)
+            {
+                DB::connection('sci')->insert("insert resguardos_firmas_x_resguardo (IdResguardo, IdFirma)
+                values (".$this->IdResguardo .",3)");
+            }
+
+            $sin_admon = $this->firmasPorResguardo()
+                ->where(function ($q){
+                    $q->whereNull("Valor")
+                        ->orWhere("Valor","=","");
+                })
+                ->where("IdFirma","=",3)
+                ->first();
+            if($sin_admon)
+            {
+                if($this->ubicacion->administrador<>""){
+                    DB::connection('sci')->update("update resguardos_firmas_x_resguardo
+                    set Valor = '".$this->ubicacion->administrador."' where IdResguardo =".$this->IdResguardo ." and IdFirma=3 ");
+                }
+            }
+
         return $this->firmasPorResguardo()
         ->join('resguardos_firmas', 'resguardos_firmas.IdFirma', 'resguardos_firmas_x_resguardo.IdFirma')
-        ->where('Valor', '!=', '')->orderBy('resguardos_firmas.Orden', 'ASC')->get();
+        ->orderBy('resguardos_firmas.Orden', 'ASC')->get();
     }
 }

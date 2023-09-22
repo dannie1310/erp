@@ -100,7 +100,7 @@
                                             Sin Cuenta Especificada
                                         </span>
                                    </td>
-                                    <td>{{doc.importe_format}}</td>
+                                    <td>{{doc.total_format}}</td>
                                     <td>{{doc.concepto}}</td>
                                     <td class="text-center">
                                         <input type="checkbox" :value="doc.id" v-model="doc.selected"
@@ -188,6 +188,9 @@ export default {
             }
         },
         getSolicitudes() {
+            this.solicitudes = null;
+            this.seleccionar = false;
+            this.solicitudes_seleccionadas = [];
             return this.$store.dispatch('controlRecursos/solicitud-cheque/index', {
                 params: { scope:['porSemanaAnio:'+this.idsemana,'ordenaSerieFolio','transferencia'], include : ['cuentaProveedor','empresa.cuentas_pagadoras_santander'] }
             })
