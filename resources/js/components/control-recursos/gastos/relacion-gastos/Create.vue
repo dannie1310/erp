@@ -151,9 +151,9 @@
                                                  <thead>
                                                  <tr>
                                                      <th class="index_corto">#</th>
-                                                     <th>Tipo de Documento</th>
-                                                     <th class="c70">Fecha</th>
-                                                     <th class="c70">Folio</th>
+                                                     <th class="c100">Tipo de Documento</th>
+                                                     <th class="c80">Fecha</th>
+                                                     <th class="c80">Folio</th>
                                                      <th class="c100">Concepto</th>
                                                      <th class="c100">Importe</th>
                                                      <th class="c100">IVA</th>
@@ -559,7 +559,7 @@ export default {
         getEmpleados() {
             return this.$store.dispatch('controlRecursos/proveedor/index', {
                 params: {
-                    sort: 'RazonSocial', order: 'asc', scope: ['porTipo:2','porEstado:1', 'empleados']
+                    sort: 'RazonSocial', order: 'asc', scope: ['porTipos:2','porEstados:1', 'empleados']
                 }
             }).then(data => {
                 this.empleados = data.data;
