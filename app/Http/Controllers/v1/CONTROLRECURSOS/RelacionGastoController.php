@@ -35,7 +35,7 @@ class RelacionGastoController extends Controller
     public function __construct(RelacionGastoTransformer $transformer, Manager $fractal, RelacionGastoService $service)
     {
         $this->middleware('auth:api');
-        $this->middleware('permisoGlobal:consultar_factura_recursos')->only(['show','paginate','index']);
+        //$this->middleware('permisoGlobal:consultar_factura_recursos')->only(['show','paginate','index']);
 
         $this->transformer = $transformer;
         $this->fractal = $fractal;

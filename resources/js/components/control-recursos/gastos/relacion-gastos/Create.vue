@@ -53,7 +53,7 @@
                                                 data-vv-as="Empresa"
                                                 id="id_empresa"
                                                 name="id_empresa"
-                                                :error="errors.has('id_empresa')"
+                                                :class="{'is-invalid': errors.has('id_empresa')}"
                                                 v-validate="{required: true}"
                                                 v-model="id_empresa">
                                                 <option value>-- Selecionar --</option>
@@ -69,7 +69,7 @@
                                                     data-vv-as="Proyecto"
                                                     id="id_proyecto"
                                                     name="id_proyecto"
-                                                    :error="errors.has('id_proyecto')"
+                                                    :class="{'is-invalid': errors.has('id_proyecto')}"
                                                     v-validate="{required: true}"
                                                     v-model="id_proyecto">
                                                 <option value>-- Selecionar --</option>
@@ -87,7 +87,7 @@
                                                     data-vv-as="Empleado"
                                                     id="id_empleado"
                                                     name="id_empleado"
-                                                    :error="errors.has('id_empleado')"
+                                                    :class="{'is-invalid': errors.has('id_empleado')}"
                                                     v-validate="{required: true}"
                                                     v-model="id_empleado">
                                                 <option value>-- Selecionar --</option>
@@ -125,7 +125,7 @@
                                                     data-vv-as="Moneda"
                                                     id="id_moneda"
                                                     name="id_moneda"
-                                                    :error="errors.has('id_moneda')"
+                                                    :class="{'is-invalid': errors.has('id_moneda')}"
                                                     v-validate="{required: true}"
                                                     v-model="id_moneda">
                                                 <option value>-- Selecionar --</option>
@@ -155,6 +155,7 @@
                                                      <th class="c80">Fecha</th>
                                                      <th class="c80">Folio</th>
                                                      <th class="c100">Concepto</th>
+                                                     <th class="c100">Concepto del CFDI</th>
                                                      <th class="c100">Importe</th>
                                                      <th class="c100">IVA</th>
                                                      <th class="c100">Retenciones</th>
@@ -163,10 +164,7 @@
                                                      <th class="c100">No. Personas</th>
                                                      <th class="c100">Observaciones</th>
                                                      <th class="icono">
-                                                         <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando..." :disabled="cargando">
-                                                             <i class="fa fa-spin fa-spinner"></i>
-                                                         </button>
-                                                         <button type="button" class="btn btn-success btn-sm" @click="addPartidas()" v-else>
+                                                         <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
                                                              <i class="fa fa-plus"></i>
                                                          </button>
                                                      </th>
@@ -175,7 +173,7 @@
                                                  <tbody>
                                                  <tr v-for="(partida, i) in partidas">
                                                      <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                     <td v-if="partida.uuid != ''">
+                                                     <td v-if="partida.uuid != null">
                                                          {{partida.tipo_documento}}
                                                      </td>
                                                      <td v-else>
@@ -191,7 +189,7 @@
                                                         </select>
                                                          <div style="display:block" class="invalid-feedback" v-show="errors.has(`tipo[${i}]`)">{{ errors.first(`tipo[${i}]`) }}</div>
                                                      </td>
-                                                     <td v-if="partida.uuid != ''">
+                                                     <td v-if="partida.uuid != null">
                                                          {{ partida.fecha }}
                                                      </td>
                                                      <td v-else>
@@ -206,7 +204,7 @@
                                                                      :class="{'is-invalid': errors.has(`fecha[${i}]`)}"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                      </td>
-                                                     <td v-if="partida.uuid != ''">
+                                                     <td v-if="partida.uuid != null">
                                                          {{ partida.folio }}
                                                      </td>
                                                      <td v-else>
@@ -221,29 +219,31 @@
                                                                :class="{'is-invalid': errors.has(`folio[${i}]`)}">
                                                         <div class="invalid-feedback" v-show="errors.has(`folio[${i}]`)">{{ errors.first(`folio[${i}]`) }}</div>
                                                      </td>
-                                                     <td v-if="partida.uuid != ''">
+                                                     <td>
+                                                         <select class="form-control"
+                                                                 data-vv-as="Tipo Gasto"
+                                                                 id="idtipogasto"
+                                                                 :name="`idtipogasto[${i}]`"
+                                                                 :class="{'is-invalid': errors.has(`idtipogasto[${i}]`)}"
+                                                                 v-validate="{required: true}"
+                                                                 v-model="partida.idtipogasto">
+                                                            <option value>-- Selecionar --</option>
+                                                            <option v-for="(t) in tipo_gastos" :value="t.id">{{ t.descripcion }}</option>
+                                                        </select>
+                                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`idtipogasto[${i}]`)">{{ errors.first(`idtipogasto[${i}]`) }}</div>
+                                                     </td>
+                                                       <td v-if="partida.uuid != null">
                                                          {{ partida.concepto }}
                                                      </td>
-                                                     <td v-else>
-                                                         <textarea
-                                                             rows="2"
-                                                             :name="`concepto[${i}]`"
-                                                             id="concepto"
-                                                             class="form-control"
-                                                             v-model="partida.concepto"
-                                                             v-validate="{required: true}"
-                                                             data-vv-as="Concepto"
-                                                             :class="{'is-invalid': errors.has(`concepto[${i}]`)}" />
-                                                         <div class="invalid-feedback" v-show="errors.has(`concepto[${i}]`)">{{ errors.first(`concepto[${i}]`) }}</div>
-                                                     </td>
-                                                     <td v-if="partida.uuid != ''">
+                                                     <td v-else></td>
+                                                     <td v-if="partida.uuid != null">
                                                         {{ partida.importe }}
                                                      </td>
                                                      <td v-else>
                                                          <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
                                                                 :name="`importe[${i}]`"
                                                                 data-vv-as="Importe"
-                                                                v-on:keyup="calcularTotal"
+                                                                v-on:keyup="calcularTotalPorPartida(partida, i)"
                                                                 v-model="partida.importe"
                                                                 style="text-align: right"
                                                                 v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
@@ -251,29 +251,17 @@
                                                                 id="importe">
                                                          <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                                      </td>
-                                                     <td v-if="partida.uuid != ''">
+                                                     <td>
                                                         {{ partida.IVA}}
                                                      </td>
-                                                     <td v-else>
-                                                        <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                                               :name="`impuesto[${i}]`"
-                                                               data-vv-as="Impuesto"
-                                                               v-on:keyup="calcularImpuesto"
-                                                               v-model="partida.IVA"
-                                                               style="text-align: right"
-                                                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                                               :class="{'is-invalid': errors.has(`impuesto[${i}]`)}"
-                                                               id="impuesto">
-                                                        <div class="invalid-feedback" v-show="errors.has(`impuesto[${i}]`)">{{ errors.first(`impuesto[${i}]`) }}</div>
-                                                     </td>
-                                                     <td v-if="partida.uuid != ''">
+                                                     <td v-if="partida.uuid != null">
                                                         {{ partida.retenciones }}
                                                      </td>
                                                      <td v-else>
                                                         <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
                                                                :name="`retencion[${i}]`"
                                                                data-vv-as="Retención"
-                                                               v-on:keyup="calcularTotal"
+                                                               v-on:keyup="calcularTotalPorPartida(partida,i)"
                                                                v-model="partida.retencion"
                                                                style="text-align: right"
                                                                v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
@@ -281,29 +269,46 @@
                                                                id="retencion">
                                                         <div class="invalid-feedback" v-show="errors.has(`retencion[${i}]`)">{{ errors.first(`retencion[${i}]`) }}</div>
                                                      </td>
-                                                     <td v-if="partida.uuid != ''">
+                                                     <td v-if="partida.uuid != null">
                                                         {{ partida.otro_imp }}
                                                      </td>
                                                      <td v-else>
-
+                                                         <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                                                :name="`otro_imp[${i}]`"
+                                                                data-vv-as="Otro impuesto"
+                                                                v-on:keyup="calcularTotalPorPartida(partida,i)"
+                                                                v-model="partida.otro_imp"
+                                                                style="text-align: right"
+                                                                v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                                                :class="{'is-invalid': errors.has(`otro_imp[${i}]`)}"
+                                                                id="otro_imp">
+                                                        <div class="invalid-feedback" v-show="errors.has(`otro_imp[${i}]`)">{{ errors.first(`otro_imp[${i}]`) }}</div>
                                                      </td>
-                                                     <td v-if="partida.uuid != ''">
+                                                     <td>
                                                         {{ partida.total }}
                                                      </td>
-                                                     <td v-else>
-
+                                                     <td>
+                                                          <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                                                 :name="`no_personas[${i}]`"
+                                                                 data-vv-as="No. Personas"
+                                                                 v-model="partida.no_personas"
+                                                                 style="text-align: right"
+                                                                 v-validate="{required: true, regex: /^[0-9]\d*?$/, min: 0.01, decimal:0}"
+                                                                 :class="{'is-invalid': errors.has(`no_personas[${i}]`)}"
+                                                                 id="no_personas">
+                                                        <div class="invalid-feedback" v-show="errors.has(`no_personas[${i}]`)">{{ errors.first(`no_personas[${i}]`) }}</div>
                                                      </td>
-                                                     <td v-if="partida.uuid != ''">
-                                                        {{ partida.no_personas }}
-                                                     </td>
-                                                     <td v-else>
-
-                                                     </td>
-                                                     <td v-if="partida.uuid != ''">
-                                                        {{ partida.observaciones }}
-                                                     </td>
-                                                     <td v-else>
-
+                                                     <td>
+                                                         <input class="form-control"
+                                                                style="width: 100%"
+                                                                placeholder="Observaciones"
+                                                                :name="`observaciones[${i}]`"
+                                                                id="observaciones"
+                                                                data-vv-as="Observaciones"
+                                                                v-validate="{required: true}"
+                                                                v-model="partida.observaciones"
+                                                                :class="{'is-invalid': errors.has(`observaciones[${i}]`)}">
+                                                        <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                      </td>
                                                      <td>
                                                          <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
@@ -329,9 +334,9 @@
                                              ></textarea>
                                              <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                                          </div>
-                                         <label>Total de CFDI Cargados:&nbsp;</label><span style="font-size: 15px; font-weight: bold">{{no_cfdi}}</span>
+                                         <label>Total de CFDI Cargados:&nbsp;</label><span style="font-size: 15px; font-weight: bold">{{no_cfd}}</span>
                                      </div>
-                                     <div class="col-md-3" style="text-align: right">
+                                     <!--<div class="col-md-3" style="text-align: right">
                                          <div class="table-responsive col-md-12">
                                              <div class="col-md-12">
 
@@ -339,31 +344,31 @@
                                                      <tbody>
                                                          <tr>
                                                              <th style="text-align: left">Subtotal:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>${{(parseFloat(sumaMontos)).formatMoney(2,'.',',')}}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>{{sumaMontos}}</b></td>
                                                          </tr>
-                                                         <tr  v-if="con_descuento">
+                                                         <tr>
                                                              <th style="text-align: left">Descuento:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>${{(parseFloat(sumaDescuentos)).formatMoney(2,'.',',')}}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>${{sumaDescuentos}}</b></td>
                                                          </tr>
                                                          <tr>
                                                              <th style="text-align: left">IVA:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>${{(parseFloat(iva)).formatMoney(2,'.',',')}}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>${{iva}}</b></td>
                                                          </tr>
                                                          <tr style="text-align: right">
                                                              <th style="text-align: left">Total:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>${{(parseFloat(sumaTotal)).formatMoney(2,'.',',')}}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>${{sumaTotal}}</b></td>
                                                          </tr>
                                                      </tbody>
                                                  </table>
 
                                              </div>
                                          </div>
-                                     </div>
+                                     </div>-->
                                  </div>
                              </div>
                              <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click=""><i class="fa fa-save"></i> Guardar</button>
+                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
                              </div>
                          </form>
                      </div>
@@ -462,8 +467,9 @@ export default {
             id_proyecto: '',
             proyectos:[],
             tipos:[],
-
+            tipo_gastos: [],
             partidas: [],
+            no_cfd: 0,
             subtotal : 0,
             iva : 0,
             total : 0,
@@ -475,22 +481,25 @@ export default {
             cfdi : null,
             uuid : [],
             p_holder:'',
+            index : 0,
+            observaciones: ''
         }
     },
     computed: {
-        sumaMontos() {
+        sumaMontos()
+        {
             let iva = 0;
             let result = 0;
             this.partidas.forEach(function (doc, i) {
-                result += parseFloat(doc.monto);
+                result += parseFloat(doc.importe);
                 iva += parseFloat(doc.iva);
             })
             this.subtotal = result;
             this.iva = iva;
             return result
         },
-        sumaDescuentos() {
-
+        sumaDescuentos()
+        {
             let result = 0;
             this.partidas.forEach(function (doc, i) {
                 result += parseFloat(doc.descuento);
@@ -506,17 +515,12 @@ export default {
         },
         no_cfdi()
         {
-            let cfdi = [];
             this.partidas.forEach(function (doc, i) {
-                if(doc.id_cfdi>0)
-                    cfdi.push(doc.id_cfdi)
+                if(doc.uuid != '')
+                {
+                    this.no_cfd = this.no_cfd + 1;
+                }
             })
-
-            let result_cfdi =cfdi.filter((item, index)=>{
-                return cfdi.indexOf(item) === index;
-            });
-
-            return result_cfdi.length;
         }
     },
     mounted() {
@@ -530,6 +534,7 @@ export default {
         this.getEmpleados();
         this.getProyectos();
         this.getTipos();
+        this.getTiposGasto();
     },
     methods : {
         init() {
@@ -591,12 +596,21 @@ export default {
                 this.tipos = data.data;
             })
         },
-
+        getTiposGasto() {
+            return this.$store.dispatch('controlRecursos/tipo-gasto-comp/index', {
+                params: {
+                    sort: 'Descripcion', order: 'asc', scope: ['porEstados:1']
+                }
+            }).then(data => {
+                this.tipo_gastos = data.data;
+            })
+        },
 
         addPartidas(){
             this.partidas.splice(this.partidas.length + 1, 0, {
                 idtipo: "",
                 tipo_documento: "",
+                idtipogasto: '',
                 fecha: "",
                 folio : "",
                 concepto : "",
@@ -607,27 +621,21 @@ export default {
                 total: 0,
                 no_personas: 0,
                 observaciones: '',
-                uuid : "",
-                cfdi : []
+                uuid : null,
+                xml : '',
+                contenido_xml: '',
+
             });
-            this.index = this.index+1;
+            //this.index = this.index+1;
         },
         destroy(index){
             this.partidas.splice(index, 1);
-        },
-        monto(partida, key) {
-            var monto = 0;
-            if(partida.cantidad != 0 && partida.precio != 0) {
-                monto = parseFloat(partida.cantidad * partida.precio)
-                this.partidas[key]['monto'] = monto;
-            }
-            return monto;
         },
         validate() {
             this.$validator.validate().then(result => {
                 if (result)
                 {
-                    if (this.partidas.length <= 0) {
+                    if (this.partidas.length == 0) {
                         swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
                     } else {
                         this.store();
@@ -637,16 +645,17 @@ export default {
         },
         store() {
             var datos = {};
-            datos["fecha"] = this.$data.fecha;
-            datos ["id_fondo"] = this.$data.id_fondo;
-            datos ["referencia"] = this.$data.referencia;
-            datos ["id_concepto"] = this.$data.id_concepto;
-            datos ["observaciones"] = this.$data.observaciones;
+            datos["fecha_inicial"] = this.$data.fecha_inicial;
+            datos["fecha_final"] = this.$data.fecha_final;
+            datos ["id_empresa"] = this.$data.id_empresa;
+            datos ["id_empleado"] = this.$data.id_empleado;
+            datos ["motivo"] = this.$data.motivo;
+            datos ["id_moneda"] = this.$data.id_moneda;
+            datos ["id_proyecto"] = this.$data.id_proyecto;
             datos ["subtotal"] = this.$data.subtotal;
             datos ["iva"] = this.$data.iva;
             datos ["total"] = this.$data.total;
             datos ["partidas"] = this.$data.partidas;
-            datos ["xmls"] = JSON.stringify(this.files);
             return this.$store.dispatch('finanzas/comprobante-fondo/store', datos)
                 .then((data) => {
                     this.$emit('created', data)
@@ -660,27 +669,8 @@ export default {
         cerrarModalCFDI(){
             $(this.$refs.modal_cfdi).modal('hide');
         },
-        eliminarPartidasCFDI(){
-            let id_conceptos_sat_borrar = [];
-            let _self = this;
-            this.partidas.forEach(function (partida, i) {
-                if(partida.id_cfdi >0)
-                {
-                    id_conceptos_sat_borrar.push(partida.id_concepto_sat);
-                }
-            });
-            id_conceptos_sat_borrar.forEach(function (elemento, i){
-                _self.partidas.forEach(function (partida, i) {
-                    if(partida.id_concepto_sat == elemento)
-                    {
-                        _self.partidas.splice(i, 1);
-                    }
-                });
-            });
-        },
         onFileChange(e){
             //this.files = [];
-            this.eliminarPartidasCFDI();
             this.archivo = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
@@ -710,32 +700,35 @@ export default {
         },
         agregaPartidasConConceptos(conceptos)
         {
-            console.log("PP#",conceptos)
             let _self = this;
             conceptos.forEach(function (concepto, i) {
                 var busqueda = _self.partidas.find(x=>x.uuid === concepto.uuid);
                 if(busqueda == undefined)
                 {
-                    _self.partidas.splice(_self.partidas.length + 1, 0, {
-                        idtipo: '',
-                        tipo_documento: concepto.tipo_comprobante,
-                        fecha: concepto.fecha_hora,
-                        folio : concepto.folio,
-                        concepto : concepto.conceptos[0].descripcion,
-                        importe : concepto.conceptos[0].importe,
-                        IVA : concepto.importe_iva,
-                        retenciones : 0,
-                        otro_imp : 0,
-                        total: concepto.total,
-                        no_personas: '',
-                        observaciones: '',
-                        uuid : concepto.uuid,
-                        xml : concepto.xml,
-                        contenido_xml : concepto.contenido_xml
-                    });
-                    _self.index = _self.index+1;
+                    _self.agregarCFDIPartida(concepto);
                 }
             })
+        },
+        agregarCFDIPartida(concepto)
+        {
+            this.partidas.splice(this.partidas.length + 1, 0, {
+                idtipo: '',
+                tipo_documento: concepto.tipo_comprobante,
+                idtipogasto: '',
+                fecha: concepto.fecha_hora,
+                folio : concepto.folio,
+                concepto : concepto.conceptos[0].descripcion,
+                importe : concepto.conceptos[0].importe,
+                IVA : concepto.importe_iva,
+                retenciones : 0,
+                otro_imp : 0,
+                total: concepto.total,
+                no_personas: '',
+                observaciones: '',
+                uuid : concepto.uuid,
+                xml : concepto.xml,
+                contenido_xml : concepto.contenido_xml
+            });
         },
         cargarXML(){
             this.cargando = true;
@@ -762,7 +755,6 @@ export default {
                             this.archivo = null;
                         }
                         this.cargado = false;
-                        this.cleanData();
                         swal('Carga con XML', 'Archivo sin datos válidos', 'warning')
                     }
                 })
@@ -790,6 +782,29 @@ export default {
             };
             reader.readAsDataURL(file);
         },
+        calcularTotalPorPartida(partida,i)
+        {
+            var total = 0;
+            var iva = 0;
+            iva = ((parseFloat(partida.importe) * parseFloat(16)) / 100).toString().formatearkeyUp();
+            this.partidas[i]['IVA'] = iva;
+            total = (parseFloat(partida.importe) + parseFloat(iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones)).toString().formatearkeyUp();
+            this.partidas[i]['total'] = total;
+        },
+      /*  calcularTotal()
+        {
+            let subtotal_sin_comas;
+            let impuesto_sin_comas;
+            let otros_sin_comas;
+            let retencion_sin_comas;
+
+            subtotal_sin_comas = this.subtotal.toString().replace(/,/g, '');
+            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
+            otros_sin_comas = this.otros.toString().replace(/,/g, '');
+            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
+
+            this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toString().formatearkeyUp();
+        },*/
     },
     watch: {
         id_empleado(value)

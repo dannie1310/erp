@@ -2081,6 +2081,7 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'relacion-gasto'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@store');
         });
 
         $api->group(['prefix' => 'serie'], function ($api) {
@@ -2099,6 +2100,10 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'tipo-doc-comp'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\TipoDocCompController@index');
+        });
+
+        $api->group(['prefix' => 'tipo-gasto-comp'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\TipoGastoCompController@index');
         });
 
         $api->group(['prefix' => 'ubicacion-relacion'], function ($api) {
