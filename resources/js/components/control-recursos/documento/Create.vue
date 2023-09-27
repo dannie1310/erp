@@ -426,7 +426,7 @@ export default {
         {
             let subtotal_sin_comas;
             subtotal_sin_comas = this.subtotal.toString().replace(/,/g, '');
-            this.impuesto = ((parseFloat(subtotal_sin_comas) * parseFloat(this.iva)) / 100).toString().formatearkeyUp();
+            this.impuesto = ((parseFloat(subtotal_sin_comas) * parseFloat(this.iva)) / 100).toFixed(2).toString().formatearkeyUp();
         },
         calcularTotal()
         {
@@ -440,7 +440,7 @@ export default {
             otros_sin_comas = this.otros.toString().replace(/,/g, '');
             retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
 
-            this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toString().formatearkeyUp();
+            this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toFixed(2).toString().formatearkeyUp();
         },
     },
     watch: {
