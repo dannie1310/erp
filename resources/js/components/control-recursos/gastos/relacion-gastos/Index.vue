@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="$root.can('descargar_layout_bancario_recursos', true)" class="btn btn-app pull-right">
+            <button @click="create" v-if="$root.can('registrar_relacion_gastos', true)" class="btn btn-app pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>

@@ -14,7 +14,7 @@
                                                     data-vv-as="Serie"
                                                     id="idserie"
                                                     name="idserie"
-                                                    :error="errors.has('idserie')"
+                                                    :class="{'is-invalid': errors.has('idserie')}"
                                                     v-validate="{required: true}"
                                                     v-model="idserie">
                                                 <option value>-- Selecionar --</option>

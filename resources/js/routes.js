@@ -4418,7 +4418,7 @@ export const routes = [
                             title: 'Gastos de Personal',
                             breadcrumb: {parent: 'control-recursos', name: 'GASTOS DE PERSONAL'},
                             middleware: [auth, permission],
-                            permission: ['editar_factura_recursos'],
+                            permission: ['consultar_relacion_gastos_recursos'],
                             general: true,
 
                         }
@@ -4435,7 +4435,7 @@ export const routes = [
                                     title: 'Relaciones de Gastos',
                                     breadcrumb: {parent: 'gasto-personal', name: 'RELACIONES DE GASTOS'},
                                     middleware: [auth, permission],
-                                    permission: 'editar_factura_recursos',
+                                    permission: 'consultar_relacion_gastos_recursos',
                                     general: true,
                                 }
                             },
@@ -4447,7 +4447,7 @@ export const routes = [
                                     title: 'Registrar Relación de Gastos',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'relacion-gasto'},
                                     middleware: [auth, permission],
-                                    permission: ['registrar_documento_recursos'],
+                                    permission: ['registrar_relacion_gastos_recursos'],
                                     general: true
                                 }
                             }
