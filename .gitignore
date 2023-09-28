@@ -28,3 +28,4 @@ yarn-error.log
 /public/pdf_emitidos
 /public/xml_emitidos
 /public/control_recursos_facturas
+/public/control_recursos_relacion_gastos

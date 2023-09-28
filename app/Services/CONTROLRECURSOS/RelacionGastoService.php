@@ -11,6 +11,7 @@ use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use App\Utils\CFD;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class RelacionGastoService
@@ -80,33 +81,39 @@ class RelacionGastoService
 
     public function store($data)
     {
-        $fecha_inicial = New DateTime($data['fecha_inicial']);
+        $fecha_inicial = new DateTime($data['fecha_inicial']);
         $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
         $data['fecha_inicial'] = $fecha_inicial->format("Y-m-d H:i:s");
-        $fecha_final = New DateTime($data['fecha_final']);
+        $fecha_final = new DateTime($data['fecha_final']);
         $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
         $data['fecha_final'] = $fecha_final->format("Y-m-d H:i:s");
+        try {
+            DB::connection('controlrec')->beginTransaction();
 
-        $relacion = $this->repository->registrar($data);
+            $relacion = $this->repository->registrar($data);
 
-        foreach ($data['partidas'] as $partida)
-        {
-            $fecha = New DateTime($partida['fecha']);
-            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $partida['fecha'] = $fecha->format("Y-m-d");
-            if($partida['uuid'] != null) {
-                $this->validaCFDI($data['uuid']);
-                $arreglo_cfd = $this->getArregloCFD($partida['xml']);
-                $this->validaProveedor($arreglo_cfd, $data['id_empleado']);
-                $documento = $this->repository->registrarDocumento($partida);
-                $factura_repositorio = $this->registrarCFDRepositorio($documento, $arreglo_cfd, $data['xml']);
-                $this->registrarCFDSAT($factura_repositorio, $arreglo_cfd);
-                $this->guardarXML($data);
-            }else{
-                $this->repository->registrarDocumento($partida);
+            foreach ($data['partidas'] as $partida) {
+                $fecha = new DateTime($partida['fecha']);
+                $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+                $partida['fecha'] = $fecha->format("Y-m-d");
+                if ($partida['uuid'] != null) {
+                    $this->validaCFDI($partida['uuid']);
+                    $arreglo_cfd = $this->getArregloCFD($partida['xml']);
+                    $this->validaProveedor($arreglo_cfd, $data['id_empleado']);
+                    $documento = $relacion->registrarDocumento($partida);
+                    $factura_repositorio = $this->registrarCFDRepositorio($documento, $arreglo_cfd, $partida['xml']);
+                    $this->registrarCFDSAT($factura_repositorio, $arreglo_cfd);
+                    $this->guardarXML($partida);
+                } else {
+                    $relacion->registrarDocumento($partida);
+                }
             }
+            DB::connection('controlrec')->commit();
+            return $relacion;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
         }
-        return $relacion;
     }
 
     public function validaCFDI($uuid)
@@ -115,7 +122,7 @@ class RelacionGastoService
         $factura = FacturaRepositorio::where('uuid', $uuid)->first();
         if($factura || $cfdi)
         {
-            if ($factura->id_transaccion != null || $factura->id_documento_cr != null) {
+            if ($factura->id_transaccion != null || $factura->id_documento_cr != null || $factura->id_doc_relacion_gastos_cr != null) {
                 abort(500, "El CFDI " . $uuid . " fue utilizado anteriormente.");
             }
         }
