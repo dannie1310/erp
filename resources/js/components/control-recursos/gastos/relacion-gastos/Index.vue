@@ -10,14 +10,13 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" />
+                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'"  />
                     </div>
                 </div>
                 <!-- /.card-body -->
             </div>
             <!-- /.card -->
         </div>
-        <!-- /.col -->
     </div>
 </template>
 
@@ -28,17 +27,21 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Beneficiario', field: 'id_empresa', thComp: require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Tipo Beneficiaro', field: 'empresa__tipo_empresa', sortable: true},
-                    { title: 'Banco', field: 'id_banco', thComp: require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Cuenta/CLABE', field: 'cuenta_clabe', thComp: require('../../../globals/th-Filter'), sortable: true},
-                    { title: 'Estatus', field: 'estatus', sortable: true},
-                   //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: '#', field: 'index', thClass: 'th_index_corto', sortable: false },
+                    { title: 'Serie', field: 'idserie', thClass: 'th_c60', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Empleado', field: 'idempleado', thClass: 'th_c250', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Empresa', field: 'idempresa', thClass: 'th_c250', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Fecha Inicio', thClass: 'th_c80', field: 'fecha_inicio', sortable: true,thComp: require('../../../globals/th-Date').default},
+                    { title: 'Folio', field: 'folio',sortable: true,thClass: 'th_c80',  thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Proyecto', field: 'idproyecto',sortable: true,thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Total', field: 'total', thClass :'th_c200', tdClass: 'right', sortable: true},
+                    { title: 'Moneda', field: 'idmoneda',thClass: 'th_c100',sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Estatus', field: 'idestado', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
+                    //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {include: [], sort: 'folio', order: 'desc'},
+                query: {include: [], sort: 'numero_folio', order: 'desc'},
                 cargando: false
             }
         },
@@ -66,13 +69,19 @@
             create() {
                 this.$router.push({name: 'relacion-gasto-create'});
             },
+            getEstado(estado, color) {
+                return {
+                    color: color,
+                    descripcion: estado
+                }
+            },
         },
         computed: {
             relaciones(){
                 return this.$store.getters['controlRecursos/relacion-gasto/relaciones'];
             },
             meta(){
-                return this.$store.getters['finanzas/cuenta-bancaria-empresa/meta'];
+                return this.$store.getters['controlRecursos/relacion-gasto/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -83,25 +92,23 @@
                 handler(relaciones) {
                     let self = this
                     self.$data.data = []
-                    relaciones.forEach(function (relacion, i) {
-                        self.$data.data.push({
+                    self.$data.data = relaciones.map((relacion, i) => ({
                             index: (i + 1) + self.query.offset,
-                           /* Fecha: documento.fecha_format,
-                            IdProveedor: documento.proveedor_descripcion,
-                            concepto: documento.concepto,
-                            foliodocto: documento.folio_format,
-                            total: documento.total_format,
-                            idmoneda: documento.moneda,
-                            idserie: documento.serie,
-                            idtipodocto: documento.tipo_documento,*/
+                            fecha_inicio: relacion.fecha_inicio_format,
+                            idempleado: relacion.empleado_descripcion,
+                            idproyecto: relacion.proyecto_descripcion,
+                            idempresa: relacion.empresa_descripcion,
+                            folio: relacion.folio,
+                            total: relacion.total_format,
+                            idmoneda: relacion.moneda,
+                            idserie: relacion.serie,
+                            idestado: this.getEstado(relacion.estado_descripcion, relacion.estado_color),
                             /*buttons: $.extend({}, {
                                 show: true,
                                 id: cuenta.id,
                                 estado: cuenta.estado
                             })*/
-
-                        })
-                    });
+                    }))
                 },
                 deep: true
             },
@@ -141,8 +148,5 @@
     }
 </script>
 <style>
-    .money
-    {
-        text-align: right;
-    }
+
 </style>

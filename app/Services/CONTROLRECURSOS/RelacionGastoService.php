@@ -3,7 +3,12 @@
 namespace App\Services\CONTROLRECURSOS;
 
 use App\Http\Requests\SatQueryRequest;
+use App\Models\CONTROL_RECURSOS\CtgMoneda;
+use App\Models\CONTROL_RECURSOS\Empresa;
+use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\CONTROL_RECURSOS\RelacionGasto;
+use App\Models\CONTROL_RECURSOS\Serie;
+use App\Models\CONTROL_RECURSOS\VwUbicacionRelacion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\CONTROLRECURSOS\RelacionGastoRepository as Repository;
@@ -31,51 +36,46 @@ class RelacionGastoService
 
     public function paginate($data)
     {
-        /*if (isset($data['idserie']))
+        if (isset($data['idserie']))
         {
             $serie = Serie::where([['Descripcion', 'LIKE', '%' . $data['idserie'] . '%']])->pluck('idseries');
             $this->repository->whereIn(['IdSerie', $serie]);
         }
 
-        if (isset($data['IdProveedor']))
+        if (isset($data['idempleado']))
         {
-            $proveedor = Proveedor::where([['RazonSocial', 'LIKE', '%' . $data['IdProveedor'] . '%']])->pluck('IdProveedor');
-            $this->repository->whereIn(['IdProveedor', $proveedor]);
+            $proveedor = Proveedor::where([['RazonSocial', 'LIKE', '%' . $data['idempleado'] . '%']])->pluck('IdProveedor');
+            $this->repository->whereIn(['idempleado', $proveedor]);
         }
 
-        if (isset($data['idtipodocto']))
+        if (isset($data['idempresa']))
         {
-            $tipo = TipoDocto::where([['Descripcion', 'LIKE', '%' . $data['idtipodocto'] . '%']])->pluck('IdTipoDocto');
-            $this->repository->whereIn(['IdTipoDocto', $tipo]);
+            $proveedor = Empresa::where([['RazonSocial', 'LIKE', '%' . $data['idempresa'] . '%']])->pluck('IdEmpresa');
+            $this->repository->whereIn(['idempresa', $proveedor]);
         }
 
-        if (isset($data['Fecha']))
+        if (isset($data['fecha_inicio']))
         {
-            $this->repository->whereBetween( ['Fecha', [ request( 'Fecha' )." 00:00:00",request( 'Fecha' )." 23:59:59"]] );
+            $this->repository->whereBetween( ['fecha_inicio', [ request( 'fecha_inicio' )." 00:00:00",request( 'fecha_iniciov' )." 23:59:59"]] );
         }
 
-        if (isset($data['foliodocto']))
+        if (isset($data['folio']))
         {
-            $this->repository->where([['FolioDocto', 'LIKE', '%'.$data['foliodocto'].'%']]);
+            $this->repository->where([['folio', 'LIKE', '%'.$data['folio'].'%']]);
         }
 
-        if (isset($data['concepto']))
+        if (isset($data['idproyecto']))
         {
-            $this->repository->where([['Concepto', 'LIKE', '%'.$data['concepto'].'%']]);
-        }
-
-        if (isset($data['total']))
-        {
-            $this->repository->where([['Total', 'LIKE', '%'.$data['total'].'%']]);
+            $proveedor = VwUbicacionRelacion::where([['ubicacion', 'LIKE', '%' . $data['idproyecto'] . '%']])->pluck('idubicacion');
+            $this->repository->whereIn(['idproyecto', $proveedor]);
         }
 
         if (isset($data['idmoneda']))
         {
             $tipo = CtgMoneda::where([['moneda', 'LIKE', '%' . $data['idmoneda'] . '%']])->pluck('id');
-            $this->repository->whereIn(['IdMoneda', $tipo]);
+            $this->repository->whereIn(['idmoneda|      ||  ', $tipo]);
         }
 
-       */
         return $this->repository->paginate($data);
     }
 

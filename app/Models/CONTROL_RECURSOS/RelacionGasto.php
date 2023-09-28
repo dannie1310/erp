@@ -4,8 +4,7 @@ namespace App\Models\CONTROL_RECURSOS;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use DateTime;
-use DateTimeZone;
+
 
 class RelacionGasto extends Model
 {
@@ -31,22 +30,36 @@ class RelacionGasto extends Model
         'registro'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->whereIn('idserie', UsuarioSerie::porUsuario()->activo()->pluck('idseries'));
+        });
+    }
+
     /**
      * Relaciones
      */
     public function serie()
     {
-        return $this->belongsTo(Serie::class, 'idserie','idseries');
+        return $this->belongsTo(Serie::class, 'idserie', 'idseries');
     }
 
     public function documentos()
     {
-        return  $this->hasMany(RelacionGastoDocumento::class, 'idrelaciones_gastos','idrelaciones_gastos');
+        return $this->hasMany(RelacionGastoDocumento::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
     }
 
     public function estados()
     {
         return $this->hasMany(RelacionGastoEstado::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
+    }
+
+    public function estado()
+    {
+        return $this->belongsTo(CtgEstadoRelacion::class, 'idestado','idctg_estados_relaciones');
     }
 
     public function empresa()
@@ -57,6 +70,16 @@ class RelacionGasto extends Model
     public function proveedor()
     {
         return $this->belongsTo(Proveedor::class, 'idempleado', 'IdProveedor');
+    }
+
+    public function proyecto()
+    {
+        return $this->belongsTo(VwUbicacionRelacion::class, 'idproyecto', 'idubicacion');
+    }
+
+    public function moneda()
+    {
+        return $this->belongsTo(CtgMoneda::class, 'idmoneda', 'id');
     }
 
 
@@ -71,48 +94,102 @@ class RelacionGasto extends Model
     {
         try {
             return $this->serie->Descripcion;
-        }catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return null;
         }
     }
 
-    public function getFechaFormatAttribute()
+    public function getFechaInicioFormatAttribute()
     {
-        $date = date_create($this->fecha);
-        return date_format($date,"d/m/Y");
+        $date = date_create($this->fecha_inicio);
+        return date_format($date, "d/m/Y");
     }
 
     public function getEmpresaDescripcionAttribute()
     {
         try {
             return $this->empresa->RazonSocial;
-        }catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return null;
         }
     }
 
-    public function getProveedorDescripcionAttribute()
+    public function getEmpleadoDescripcionAttribute()
     {
         try {
             return $this->proveedor->RazonSocial;
-        }catch (\Exception $e)
-        {
+        } catch (\Exception $e) {
             return null;
         }
     }
 
-    public function getRfcProveedorAttribute()
+    public function getRfcEmpleadoAttribute()
     {
         try {
             return $this->proveedor->RFC;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getProyectoDescripcionAttribute()
+    {
+        try {
+            return $this->proyecto->ubicacion;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getEstatusDescripcionAttribute()
+    {
+        try {
+            return $this->estado->descripcion;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->idestado) {
+            case 5:
+                return '#3386FF';
+            case 1:
+                return '#3386FF';
+            case 6:
+                return '#FFEC33';
+            case 0:
+                return '#FFEC33';
+            case 7:
+                return '#00a65a';
+            case 2:
+                return '#00a65a';
+            default:
+                return '#d1cfd1';
+        }
+    }
+
+    public function getTotalAttribute()
+    {
+       return $this->documentos()->sum('total');
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format(($this->total),2);
+    }
+
+
+    public function getMonedaDescripcionAttribute()
+    {
+        try {
+            return $this->moneda->moneda;
         }catch (\Exception $e)
         {
             return null;
         }
     }
-
 
     /**
      * Métodos
