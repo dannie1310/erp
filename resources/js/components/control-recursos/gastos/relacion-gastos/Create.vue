@@ -8,6 +8,24 @@
                              <div class="modal-body">
                                  <div class="row">
                                      <div class="col-md-2">
+                                        <div class="form-group error-content">
+                                            <label for="idserie" class="col-form-label">Serie:</label>
+                                            <select class="form-control"
+                                                    data-vv-as="Serie"
+                                                    id="idserie"
+                                                    name="idserie"
+                                                    :error="errors.has('idserie')"
+                                                    v-validate="{required: true}"
+                                                    v-model="idserie">
+                                                <option value>-- Selecionar --</option>
+                                                <option v-for="(serie) in series" :value="serie.id">{{ serie.descripcion }}</option>
+                                            </select>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
+                                        </div>
+                                    </div>
+                                 </div>
+                                 <div class="row">
+                                     <div class="col-md-2">
                                          <label class="col-form-label">Periodo:</label>
                                      </div>
                                  </div>
@@ -235,8 +253,8 @@
                                                        <td v-if="partida.uuid != null">
                                                          {{ partida.concepto }}
                                                      </td>
-                                                     <td v-else></td>
-                                                     <td v-if="partida.uuid != null">
+                                                     <td v-else>-</td>
+                                                     <td style="text-align: right" v-if="partida.uuid != null">
                                                         {{ partida.importe }}
                                                      </td>
                                                      <td v-else>
@@ -251,10 +269,10 @@
                                                                 id="importe">
                                                          <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                                      </td>
-                                                     <td>
+                                                     <td style="text-align: right">
                                                         {{ partida.IVA}}
                                                      </td>
-                                                     <td v-if="partida.uuid != null">
+                                                     <td style="text-align: right" v-if="partida.uuid != null">
                                                         {{ partida.retenciones }}
                                                      </td>
                                                      <td v-else>
@@ -262,14 +280,14 @@
                                                                :name="`retencion[${i}]`"
                                                                data-vv-as="Retención"
                                                                v-on:keyup="calcularTotalPorPartida(partida,i)"
-                                                               v-model="partida.retencion"
+                                                               v-model="partida.retenciones"
                                                                style="text-align: right"
                                                                v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
                                                                :class="{'is-invalid': errors.has(`retencion[${i}]`)}"
                                                                id="retencion">
                                                         <div class="invalid-feedback" v-show="errors.has(`retencion[${i}]`)">{{ errors.first(`retencion[${i}]`) }}</div>
                                                      </td>
-                                                     <td v-if="partida.uuid != null">
+                                                     <td style="text-align: right" v-if="partida.uuid != null">
                                                         {{ partida.otro_imp }}
                                                      </td>
                                                      <td v-else>
@@ -284,7 +302,7 @@
                                                                 id="otro_imp">
                                                         <div class="invalid-feedback" v-show="errors.has(`otro_imp[${i}]`)">{{ errors.first(`otro_imp[${i}]`) }}</div>
                                                      </td>
-                                                     <td>
+                                                     <td style="text-align: right">
                                                         {{ partida.total }}
                                                      </td>
                                                      <td>
@@ -336,7 +354,7 @@
                                          </div>
                                          <label>Total de CFDI Cargados:&nbsp;</label><span style="font-size: 15px; font-weight: bold">{{no_cfd}}</span>
                                      </div>
-                                     <!--<div class="col-md-3" style="text-align: right">
+                                     <div class="col-md-3" style="text-align: right">
                                          <div class="table-responsive col-md-12">
                                              <div class="col-md-12">
 
@@ -347,12 +365,16 @@
                                                              <td style="text-align: right; font-size: 15px"><b>{{sumaMontos}}</b></td>
                                                          </tr>
                                                          <tr>
-                                                             <th style="text-align: left">Descuento:</th>
+                                                             <th style="text-align: left">IVA:</th>
+                                                             <td style="text-align: right; font-size: 15px"><b>${{iva}}</b></td>
+                                                         </tr>
+                                                         <tr>
+                                                             <th style="text-align: left">Retenciones:</th>
                                                              <td style="text-align: right; font-size: 15px"><b>${{sumaDescuentos}}</b></td>
                                                          </tr>
                                                          <tr>
-                                                             <th style="text-align: left">IVA:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>${{iva}}</b></td>
+                                                             <th style="text-align: left">Otros Impuestos:</th>
+                                                             <td style="text-align: right; font-size: 15px"><b>${{sumaOtros}}</b></td>
                                                          </tr>
                                                          <tr style="text-align: right">
                                                              <th style="text-align: left">Total:</th>
@@ -363,7 +385,7 @@
 
                                              </div>
                                          </div>
-                                     </div>-->
+                                     </div>
                                  </div>
                              </div>
                              <div class="modal-footer">
@@ -474,6 +496,7 @@ export default {
             iva : 0,
             total : 0,
             descuento : 0,
+            otros : 0,
             archivo:null,
             archivo_name:null,
             files : [],
@@ -482,7 +505,9 @@ export default {
             uuid : [],
             p_holder:'',
             index : 0,
-            observaciones: ''
+            observaciones: '',
+            series: [],
+            idserie: '',
         }
     },
     computed: {
@@ -492,7 +517,7 @@ export default {
             let result = 0;
             this.partidas.forEach(function (doc, i) {
                 result += parseFloat(doc.importe);
-                iva += parseFloat(doc.iva);
+                iva += parseFloat(doc.IVA);
             })
             this.subtotal = result;
             this.iva = iva;
@@ -502,15 +527,22 @@ export default {
         {
             let result = 0;
             this.partidas.forEach(function (doc, i) {
-                result += parseFloat(doc.descuento);
+                result += parseFloat(doc.retenciones);
             })
             this.descuento = result;
-
             return result
         },
+        sumaOtros()
+        {
+            let otros = 0;
+            this.partidas.forEach(function (doc, i) {
+                otros += parseFloat(doc.otro_imp);
+            })
+            this.otros = otros;
+            return otros
+        },
         sumaTotal() {
-            this.total = parseFloat(parseFloat(this.subtotal).toFixed(2)) + parseFloat(parseFloat(this.iva).toFixed(2))
-                - parseFloat(parseFloat(this.descuento).toFixed(2))
+            this.total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.descuento)) + parseFloat(this.otros)).toString().formatearkeyUp();
             return this.total
         },
         no_cfdi()
@@ -535,6 +567,7 @@ export default {
         this.getProyectos();
         this.getTipos();
         this.getTiposGasto();
+        this.getSeries();
     },
     methods : {
         init() {
@@ -580,8 +613,7 @@ export default {
         salir(){
             this.$router.push({name: 'relacion-gasto'});
         },
-        buscarEmpleado()
-        {
+        buscarEmpleado(){
             return this.$store.dispatch('controlRecursos/proveedor/find', {
                 id: this.id_empleado,
                 params:{include: [ 'usuario.departamento' ]}
@@ -605,13 +637,28 @@ export default {
                 this.tipo_gastos = data.data;
             })
         },
-
+        getSeries() {
+            this.cargando = true;
+            return this.$store.dispatch('controlRecursos/serie/index', {
+                params: {sort: 'descripcion', order: 'asc'}
+            })
+                .then(data => {
+                    this.series = data.data;
+                    if(this.series.length == 1)
+                    {
+                        this.idserie = this.series[0].id;
+                    }
+                })
+                .finally(() => {
+                    this.cargando = false;
+                })
+        },
         addPartidas(){
             this.partidas.splice(this.partidas.length + 1, 0, {
                 idtipo: "",
                 tipo_documento: "",
                 idtipogasto: '',
-                fecha: "",
+                fecha: this.fecha_hoy,
                 folio : "",
                 concepto : "",
                 importe : 0,
@@ -619,7 +666,7 @@ export default {
                 retenciones : 0,
                 otro_imp : 0,
                 total: 0,
-                no_personas: 0,
+                no_personas: 1,
                 observaciones: '',
                 uuid : null,
                 xml : '',
@@ -635,7 +682,11 @@ export default {
             this.$validator.validate().then(result => {
                 if (result)
                 {
-                    if (this.partidas.length == 0) {
+                    if(moment(this.fecha_final).format('YYYY/MM/DD') < moment(this.fecha_inicial).format('YYYY/MM/DD'))
+                    {
+                        swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
+                    }
+                    else if (this.partidas.length == 0) {
                         swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
                     } else {
                         this.store();
@@ -649,14 +700,18 @@ export default {
             datos["fecha_final"] = this.$data.fecha_final;
             datos ["id_empresa"] = this.$data.id_empresa;
             datos ["id_empleado"] = this.$data.id_empleado;
+            datos ["id_serie"] = this.$data.idserie;
             datos ["motivo"] = this.$data.motivo;
             datos ["id_moneda"] = this.$data.id_moneda;
             datos ["id_proyecto"] = this.$data.id_proyecto;
-            datos ["subtotal"] = this.$data.subtotal;
-            datos ["iva"] = this.$data.iva;
-            datos ["total"] = this.$data.total;
+            datos ["subtotal"] = parseFloat(this.$data.subtotal);
+            datos ["iva"] = parseFloat(this.$data.iva);
+            datos ["total"] = parseFloat(this.$data.total);
+            datos ["otros_imp"] = parseFloat(this.$data.otros);
+            datos ["retenciones"] = parseFloat(this.$data.descuento) ;
+            datos["iddepartamento"] = this.$data.empleado.usuario.departamento.id
             datos ["partidas"] = this.$data.partidas;
-            return this.$store.dispatch('finanzas/comprobante-fondo/store', datos)
+            return this.$store.dispatch('controlRecursos/relacion-gasto/store', datos)
                 .then((data) => {
                     this.$emit('created', data)
                     this.salir();
@@ -712,18 +767,19 @@ export default {
         agregarCFDIPartida(concepto)
         {
             this.partidas.splice(this.partidas.length + 1, 0, {
-                idtipo: '',
-                tipo_documento: concepto.tipo_comprobante,
+                idtipo: 1,
+                tipo_documento: 'Factura',
+                tipo_comprobante:concepto.tipo_comprobante,
                 idtipogasto: '',
                 fecha: concepto.fecha_hora,
                 folio : concepto.folio,
                 concepto : concepto.conceptos[0].descripcion,
                 importe : concepto.conceptos[0].importe,
-                IVA : concepto.importe_iva,
+                IVA : concepto.importe_iva.toString().formatearkeyUp(),
                 retenciones : 0,
                 otro_imp : 0,
-                total: concepto.total,
-                no_personas: '',
+                total: concepto.total.toString().formatearkeyUp(),
+                no_personas: 1,
                 observaciones: '',
                 uuid : concepto.uuid,
                 xml : concepto.xml,
