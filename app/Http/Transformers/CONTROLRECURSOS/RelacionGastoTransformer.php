@@ -22,7 +22,7 @@ class RelacionGastoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'documentos'
     ];
 
     public function transform(RelacionGasto $model){
@@ -31,6 +31,7 @@ class RelacionGastoTransformer extends TransformerAbstract
             'folio' => $model->folio,
             'fecha' => $model->fecha_inicio,
             'fecha_inicio_format' => $model->fecha_inicio_format,
+            'fecha_final_format' => $model->fecha_final_format,
             'total_format' => $model->total_format,
             'total' => $model->total,
             'moneda' => $model->moneda_descripcion,
@@ -45,6 +46,21 @@ class RelacionGastoTransformer extends TransformerAbstract
             'estado' => $model->idestado,
             'estado_descripcion' => $model->estatus_descripcion,
             'estado_color' => $model->color_estado,
+            'departamento' => $model->departamento_descripcion,
+            'motivo' => $model->motivo
         ];
+    }
+
+    /**
+     * @param RelacionGasto $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeDocumentos(RelacionGasto $model)
+    {
+        if($documentos = $model->documentos)
+        {
+            return $this->collection($documentos, new RelacionGastoDocumentoTransformer);
+        }
+        return null;
     }
 }

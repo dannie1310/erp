@@ -43,6 +43,21 @@ class RelacionGastoDocumento extends Model
         return $this->belongsTo(RelacionGasto::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
     }
 
+    public function tipoDocumento()
+    {
+        return $this->belongsTo(TipoDoctoComp::class, 'idtipo_docto_comp','IdTipoDoctoComp');
+    }
+
+    public function tipoGasto()
+    {
+        return $this->belongsTo(TipoGastoComp::class, 'idtipo_gasto_comprobacion','IdTipoGastoComp');
+    }
+
+    public function estado()
+    {
+        return $this->belongsTo(CtgEstadoRelacionDocumento::class, 'idestado','idctg_estados_relaciones_documentos');
+    }
+
     /**
      * Scopes
      */
@@ -56,6 +71,59 @@ class RelacionGastoDocumento extends Model
         return date_format($date,"d/m/Y");
     }
 
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format(($this->total),2);
+    }
+
+    public function getImporteFormatAttribute()
+    {
+        return '$' . number_format(($this->importe),2);
+    }
+
+    public function getIvaFormatAttribute()
+    {
+        return '$' . number_format(($this->iva),2);
+    }
+
+    public function getRetencionesFormatAttribute()
+    {
+        return '$' . number_format(($this->retenciones),2);
+    }
+
+    public function getOtrosImpFormatAttribute()
+    {
+        return '$' . number_format(($this->otros_impuestos),2);
+    }
+
+    public function getEstatusDescripcionAttribute()
+    {
+        try {
+            return $this->estado->descripcion;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        switch ($this->idestado) {
+            case 5:
+                return '#3386FF';
+            case 1:
+                return '#3386FF';
+            case 6:
+                return '#FFEC33';
+            case 0:
+                return '#FFEC33';
+            case 7:
+                return '#00a65a';
+            case 2:
+                return '#00a65a';
+            default:
+                return '#d1cfd1';
+        }
+    }
 
     /**
      * Métodos

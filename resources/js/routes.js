@@ -4450,7 +4450,20 @@ export const routes = [
                                     permission: ['registrar_relacion_gastos_recursos'],
                                     general: true
                                 }
-                            }
+                            },
+                            {
+                                path: ':id',
+                                name: 'relacion-gasto-show',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Relación de Gastos',
+                                    breadcrumb: { parent: 'relacion-gasto', name: 'VER'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_documento_recursos',
+                                    general: true
+                                }
+                            },
                         ]
                     },
                 ]
