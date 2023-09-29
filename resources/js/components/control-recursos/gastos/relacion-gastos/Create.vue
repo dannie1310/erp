@@ -2,10 +2,10 @@
     <span>
         <nav>
             <div class="row">
-                 <div class="col-12">
-                     <div class="invoice p-3 mb-3">
+                 <div class="col-md-12">
+                     <div class="card">
                          <form role="form" @submit.prevent="validate">
-                             <div class="modal-body">
+                             <div class="card-body">
                                  <div class="row">
                                      <div class="col-md-2">
                                         <div class="form-group error-content">
@@ -164,7 +164,7 @@
                                  <hr />
                                  <div class="row">
                                      <div  class="col-md-12 table-responsive-xl">
-                                         <div>
+                                         <div class="table-responsive">
                                              <table class="table table-bordered table-sm">
                                                  <thead>
                                                  <tr>
@@ -548,7 +548,7 @@ export default {
         no_cfdi()
         {
             this.partidas.forEach(function (doc, i) {
-                if(doc.uuid != '')
+                if(doc.uuid != null)
                 {
                     this.no_cfd = this.no_cfd + 1;
                 }
