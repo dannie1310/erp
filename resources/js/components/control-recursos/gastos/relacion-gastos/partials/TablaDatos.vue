@@ -79,20 +79,20 @@
                 <table class="table table-bordered table-sm">
                     <thead>
                         <tr>
-                            <th class="index_corto">#</th>
-                            <th class="c100">Tipo de Documento</th>
-                            <th class="c80">Fecha</th>
-                            <th class="c80">Folio</th>
-                            <th class="c100">Concepto</th>
-                            <th class="c100">Importe</th>
-                            <th class="c100">IVA</th>
-                            <th class="c100">Retenciones</th>
-                            <th class="c100">Otros Imp.</th>
-                            <th class="c100">Total</th>
-                            <th class="c100">No. Personas</th>
-                            <th class="c100">Observaciones</th>
-                            <th class="c100">Uuid</th>
-                            <th class="c100">Estado</th>
+                            <th class="index_corto encabezado">#</th>
+                            <th class="c100 encabezado">Tipo de Documento</th>
+                            <th class="c80 encabezado">Fecha</th>
+                            <th class="c80 encabezado">Folio</th>
+                            <th class="c100 encabezado">Concepto</th>
+                            <th class="c100 encabezado">Importe</th>
+                            <th class="c100 encabezado">IVA</th>
+                            <th class="c100 encabezado">Retenciones</th>
+                            <th class="c100 encabezado">Otros Imp.</th>
+                            <th class="c100 encabezado">Total</th>
+                            <th class="c100 encabezado">No. Personas</th>
+                            <th class="c100 encabezado">Observaciones</th>
+                            <th class="c100 encabezado">Uuid</th>
+                            <th class="c100 encabezado">Estado</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,7 +115,20 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td>..</td>
+                            <td class="encabezado"></td>
+                            <td class="encabezado"></td>
+                            <td class="encabezado"></td>
+                            <td class="encabezado"></td>
+                            <th class="encabezado">Sumatoria</th>
+                            <td class="encabezado">{{ relacion.suma_importe_format }}</td>
+                            <td class="encabezado">{{ relacion.suma_iva_format }}</td>
+                            <td class="encabezado">{{ relacion.suma_retenciones_format }}</td>
+                            <td class="encabezado">{{ relacion.suma_otros_imp_format }}</td>
+                            <td class="encabezado">{{ relacion.total_format }}</td>
+                            <td class="encabezado"></td>
+                            <td class="encabezado"></td>
+                            <td class="encabezado"></td>
+                            <td class="encabezado"></td>
                         </tr>
                     </tfoot>
                 </table>

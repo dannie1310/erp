@@ -186,6 +186,46 @@ class RelacionGasto extends Model
         return '$' . number_format(($this->total),2);
     }
 
+    public function getSumaImporteAttribute()
+    {
+        return $this->documentos()->sum('importe');
+    }
+
+    public function getSumaImporteFormatAttribute()
+    {
+        return '$' . number_format(($this->suma_importe),2);
+    }
+
+    public function getSumaIvaAttribute()
+    {
+        return $this->documentos()->sum('iva');
+    }
+
+    public function getSumaIvaFormatAttribute()
+    {
+        return '$' . number_format(($this->suma_iva),2);
+    }
+
+    public function getSumaRetencionesAttribute()
+    {
+        return $this->documentos()->sum('retenciones');
+    }
+
+    public function getSumaRetencionesFormatAttribute()
+    {
+        return '$' . number_format(($this->suma_retenciones),2);
+    }
+
+    public function getSumaOtrosImpAttribute()
+    {
+        return $this->documentos()->sum('otros_impuestos');
+    }
+
+    public function getSumaOtrosImpFormatAttribute()
+    {
+        return '$' . number_format(($this->suma_otros_imp),2);
+    }
+
     public function getMonedaDescripcionAttribute()
     {
         try {

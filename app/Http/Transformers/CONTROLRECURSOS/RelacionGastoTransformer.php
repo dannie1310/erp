@@ -32,8 +32,6 @@ class RelacionGastoTransformer extends TransformerAbstract
             'fecha' => $model->fecha_inicio,
             'fecha_inicio_format' => $model->fecha_inicio_format,
             'fecha_final_format' => $model->fecha_final_format,
-            'total_format' => $model->total_format,
-            'total' => $model->total,
             'moneda' => $model->moneda_descripcion,
             'serie' => $model->serie_descripcion,
             'id_serie' => $model->idserie,
@@ -47,7 +45,13 @@ class RelacionGastoTransformer extends TransformerAbstract
             'estado_descripcion' => $model->estatus_descripcion,
             'estado_color' => $model->color_estado,
             'departamento' => $model->departamento_descripcion,
-            'motivo' => $model->motivo
+            'motivo' => $model->motivo,
+            'suma_importe_format' => $model->suma_importe_format,
+            'suma_iva_format' => $model->suma_iva_format,
+            'suma_retenciones_format' => $model->suma_retenciones_format,
+            'suma_otros_imp_format' => $model->suma_otros_imp_format,
+            'total' => $model->total,
+            'total_format' => $model->total_format
         ];
     }
 
