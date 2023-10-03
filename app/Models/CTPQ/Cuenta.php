@@ -228,6 +228,9 @@ class Cuenta extends Model
     public function asociarCuenta($data)
     {
         $alias_bdd = Config::get('database.connections.cntpq.database');
+        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD", "=", $alias_bdd)
+            ->where("Desarrollo","=",0)
+            ->where("Historica","=",0)->first();
 
         $cuenta = Cuenta::find($data["id_cuenta_contpaq"]);
         $cargos = $cuenta->movimientos()->where("TipoMovto","=","0")->get()->sum("Importe");
@@ -241,7 +244,12 @@ class Cuenta extends Model
             $preexistente->cargos = $cargos;
             $preexistente->abonos = $abonos;
             $preexistente->saldo = $cargos-$abonos;
-            $preexistente->numero_proyecto = substr($cuenta->Codigo,7,3);
+            if($empresaLocal->length_numero_proyecto>0){
+                $preexistente->numero_proyecto = substr($cuenta->Codigo,
+                    $empresaLocal->offset_numero_proyecto,
+                    $empresaLocal->length_numero_proyecto
+                );
+            }
             $preexistente->save();
             //return $preexistente;
         } else {
@@ -254,7 +262,12 @@ class Cuenta extends Model
                 $preexistente_actualizar->cargos = $cargos;
                 $preexistente_actualizar->abonos = $abonos;
                 $preexistente_actualizar->saldo = $cargos-$abonos;
-                $preexistente_actualizar->numero_proyecto = substr($cuenta->Codigo,7,3);
+                if($empresaLocal->length_numero_proyecto>0){
+                    $preexistente_actualizar->numero_proyecto = substr($cuenta->Codigo,
+                        $empresaLocal->offset_numero_proyecto,
+                        $empresaLocal->length_numero_proyecto
+                    );
+                }
                 $preexistente_actualizar->id_proveedor_sat = $data["id_proveedor_sat"];
                 $preexistente_actualizar->save();
                 //return $preexistente_actualizar;
