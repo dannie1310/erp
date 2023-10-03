@@ -279,38 +279,21 @@
                                                             id="importe">
                                                      <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                                  </td>
-                                                 <td style="text-align: right">
+                                                 <td style="text-align: right" v-if="partida.uuid != null">
                                                     {{ parseFloat(partida.IVA).formatMoney(2)}}
                                                  </td>
+                                                 <td style="text-align: right" v-else>0</td>
                                                  <td style="text-align: right" v-if="partida.uuid != null">
                                                     {{ parseFloat(partida.retenciones).formatMoney(2) }}
                                                  </td>
-                                                 <td v-else>
-                                                    <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                                           :name="`retencion[${i}]`"
-                                                           data-vv-as="Retención"
-                                                           v-on:keyup="calcularTotalPorPartida(partida,i)"
-                                                           v-model="partida.retenciones"
-                                                           style="text-align: right"
-                                                           v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                                           :class="{'is-invalid': errors.has(`retencion[${i}]`)}"
-                                                           id="retencion">
-                                                    <div class="invalid-feedback" v-show="errors.has(`retencion[${i}]`)">{{ errors.first(`retencion[${i}]`) }}</div>
+                                                 <td style="text-align: right" v-else>
+                                                    0
                                                  </td>
                                                  <td style="text-align: right" v-if="partida.uuid != null">
                                                     {{ parseFloat(partida.otro_imp).formatMoney(2) }}
                                                  </td>
-                                                 <td v-else>
-                                                     <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                                            :name="`otro_imp[${i}]`"
-                                                            data-vv-as="Otro impuesto"
-                                                            v-on:keyup="calcularTotalPorPartida(partida,i)"
-                                                            v-model="partida.otro_imp"
-                                                            style="text-align: right"
-                                                            v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                                            :class="{'is-invalid': errors.has(`otro_imp[${i}]`)}"
-                                                            id="otro_imp">
-                                                    <div class="invalid-feedback" v-show="errors.has(`otro_imp[${i}]`)">{{ errors.first(`otro_imp[${i}]`) }}</div>
+                                                 <td style="text-align: right" v-else>
+                                                     0
                                                  </td>
                                                  <td style="text-align: right">
                                                     {{ parseFloat(partida.total).formatMoney(2) }}

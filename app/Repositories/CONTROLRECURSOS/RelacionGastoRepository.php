@@ -118,4 +118,9 @@ class RelacionGastoRepository extends Repository implements RepositoryInterface
             return $existe;
         }
     }
+
+    public function getBuscarEmpresa($id)
+    {
+        return Empresa::where('IdEmpresa',$id)->first();
+    }
 }
