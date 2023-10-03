@@ -279,38 +279,21 @@
                                                             id="importe">
                                                      <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                                  </td>
-                                                 <td style="text-align: right">
+                                                 <td style="text-align: right" v-if="partida.uuid != null">
                                                     {{ parseFloat(partida.IVA).formatMoney(2)}}
                                                  </td>
+                                                 <td style="text-align: right" v-else>0</td>
                                                  <td style="text-align: right" v-if="partida.uuid != null">
                                                     {{ parseFloat(partida.retenciones).formatMoney(2) }}
                                                  </td>
-                                                 <td v-else>
-                                                    <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                                           :name="`retencion[${i}]`"
-                                                           data-vv-as="Retención"
-                                                           v-on:keyup="calcularTotalPorPartida(partida,i)"
-                                                           v-model="partida.retenciones"
-                                                           style="text-align: right"
-                                                           v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                                           :class="{'is-invalid': errors.has(`retencion[${i}]`)}"
-                                                           id="retencion">
-                                                    <div class="invalid-feedback" v-show="errors.has(`retencion[${i}]`)">{{ errors.first(`retencion[${i}]`) }}</div>
+                                                 <td style="text-align: right" v-else>
+                                                    0
                                                  </td>
                                                  <td style="text-align: right" v-if="partida.uuid != null">
                                                     {{ parseFloat(partida.otro_imp).formatMoney(2) }}
                                                  </td>
-                                                 <td v-else>
-                                                     <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                                            :name="`otro_imp[${i}]`"
-                                                            data-vv-as="Otro impuesto"
-                                                            v-on:keyup="calcularTotalPorPartida(partida,i)"
-                                                            v-model="partida.otro_imp"
-                                                            style="text-align: right"
-                                                            v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                                            :class="{'is-invalid': errors.has(`otro_imp[${i}]`)}"
-                                                            id="otro_imp">
-                                                    <div class="invalid-feedback" v-show="errors.has(`otro_imp[${i}]`)">{{ errors.first(`otro_imp[${i}]`) }}</div>
+                                                 <td style="text-align: right" v-else>
+                                                     0
                                                  </td>
                                                  <td style="text-align: right">
                                                     {{ parseFloat(partida.total).formatMoney(2) }}
@@ -338,7 +321,7 @@
                                                             :class="{'is-invalid': errors.has(`observaciones[${i}]`)}">
                                                     <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                  </td>
-                                                 <td>
+                                                 <td style="text-align: center">
                                                      <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                  </td>
                                              </tr>
@@ -586,8 +569,7 @@ export default {
             this.fecha_final = new Date();
             this.cargando = true;
         },
-        formatoFecha(date)
-        {
+        formatoFecha(date) {
             return moment(date).format('DD/MM/YYYY');
         },
         getEmpresas() {
@@ -728,7 +710,6 @@ export default {
                     this.salir();
                 });
         },
-
         modalCFDI(){
             $(this.$refs.modal_cfdi).modal('show');
         },
@@ -764,8 +745,7 @@ export default {
                 this.cargarXML(1)
             }, 500);
         },
-        agregaPartidasConConceptos(conceptos)
-        {
+        agregaPartidasConConceptos(conceptos) {
             let _self = this;
             conceptos.forEach(function (concepto, i) {
                 var busqueda = _self.partidas.find(x=>x.uuid === concepto.uuid);
@@ -775,8 +755,7 @@ export default {
                 }
             })
         },
-        agregarCFDIPartida(concepto)
-        {
+        agregarCFDIPartida(concepto) {
             this.partidas.splice(this.partidas.length + 1, 0, {
                 idtipo: 1,
                 tipo_documento: 'Factura',
@@ -849,29 +828,14 @@ export default {
             };
             reader.readAsDataURL(file);
         },
-        calcularTotalPorPartida(partida,i)
-        {
+        calcularTotalPorPartida(partida,i) {
             var total = 0;
-            var iva = 0;
-            iva = ((parseFloat(partida.importe) * parseFloat(16)) / 100).toString().formatearkeyUp();
-            this.partidas[i]['IVA'] = iva;
-            total = (parseFloat(partida.importe) + parseFloat(iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones)).toString().formatearkeyUp();
+            /*var iva = 0;
+            iva = ((parseFloat(partida.importe) * parseFloat(16)) / 100);
+            this.partidas[i]['IVA'] = iva;*/
+            total = (parseFloat(partida.importe) + parseFloat(iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
             this.partidas[i]['total'] = total;
         },
-      /*  calcularTotal()
-        {
-            let subtotal_sin_comas;
-            let impuesto_sin_comas;
-            let otros_sin_comas;
-            let retencion_sin_comas;
-
-            subtotal_sin_comas = this.subtotal.toString().replace(/,/g, '');
-            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
-            otros_sin_comas = this.otros.toString().replace(/,/g, '');
-            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
-
-            this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toString().formatearkeyUp();
-        },*/
     },
     watch: {
         id_empleado(value)

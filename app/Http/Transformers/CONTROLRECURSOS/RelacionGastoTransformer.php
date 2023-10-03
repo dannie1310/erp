@@ -22,7 +22,7 @@ class RelacionGastoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'documentos'
     ];
 
     public function transform(RelacionGasto $model){
@@ -31,20 +31,43 @@ class RelacionGastoTransformer extends TransformerAbstract
             'folio' => $model->folio,
             'fecha' => $model->fecha_inicio,
             'fecha_inicio_format' => $model->fecha_inicio_format,
-            'total_format' => $model->total_format,
-            'total' => $model->total,
+            'fecha_final_format' => $model->fecha_final_format,
             'moneda' => $model->moneda_descripcion,
             'serie' => $model->serie_descripcion,
             'id_serie' => $model->idserie,
             'id_empleado' => $model->idempleado,
             'id_empresa' => $model->idempresa,
             'id_proyecto' => $model->idproyecto,
+            'id_moneda' =>$model->idmoneda,
             'empresa_descripcion' => $model->empresa_descripcion,
             'empleado_descripcion' => $model->empleado_descripcion,
             'proyecto_descripcion' => $model->proyecto_descripcion,
             'estado' => $model->idestado,
             'estado_descripcion' => $model->estatus_descripcion,
             'estado_color' => $model->color_estado,
+            'departamento' => $model->departamento_descripcion,
+            'motivo' => $model->motivo,
+            'suma_importe_format' => $model->suma_importe_format,
+            'suma_iva_format' => $model->suma_iva_format,
+            'suma_retenciones_format' => $model->suma_retenciones_format,
+            'suma_otros_imp_format' => $model->suma_otros_imp_format,
+            'total' => $model->total,
+            'total_format' => $model->total_format,
+            'fecha_inicio' => $model->fecha_inicio,
+            'fecha_final' => $model->fecha_fin,
         ];
+    }
+
+    /**
+     * @param RelacionGasto $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeDocumentos(RelacionGasto $model)
+    {
+        if($documentos = $model->documentos)
+        {
+            return $this->collection($documentos, new RelacionGastoDocumentoTransformer);
+        }
+        return null;
     }
 }

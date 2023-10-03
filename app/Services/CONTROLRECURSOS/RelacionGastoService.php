@@ -36,42 +36,35 @@ class RelacionGastoService
 
     public function paginate($data)
     {
-        if (isset($data['idserie']))
-        {
+        if (isset($data['idserie'])) {
             $serie = Serie::where([['Descripcion', 'LIKE', '%' . $data['idserie'] . '%']])->pluck('idseries');
             $this->repository->whereIn(['IdSerie', $serie]);
         }
 
-        if (isset($data['idempleado']))
-        {
+        if (isset($data['idempleado'])) {
             $proveedor = Proveedor::where([['RazonSocial', 'LIKE', '%' . $data['idempleado'] . '%']])->pluck('IdProveedor');
             $this->repository->whereIn(['idempleado', $proveedor]);
         }
 
-        if (isset($data['idempresa']))
-        {
+        if (isset($data['idempresa'])) {
             $proveedor = Empresa::where([['RazonSocial', 'LIKE', '%' . $data['idempresa'] . '%']])->pluck('IdEmpresa');
             $this->repository->whereIn(['idempresa', $proveedor]);
         }
 
-        if (isset($data['fecha_inicio']))
-        {
-            $this->repository->whereBetween( ['fecha_inicio', [ request( 'fecha_inicio' )." 00:00:00",request( 'fecha_iniciov' )." 23:59:59"]] );
+        if (isset($data['fecha_inicio'])) {
+            $this->repository->whereBetween(['fecha_inicio', [request('fecha_inicio') . " 00:00:00", request('fecha_iniciov') . " 23:59:59"]]);
         }
 
-        if (isset($data['folio']))
-        {
-            $this->repository->where([['folio', 'LIKE', '%'.$data['folio'].'%']]);
+        if (isset($data['folio'])) {
+            $this->repository->where([['folio', 'LIKE', '%' . $data['folio'] . '%']]);
         }
 
-        if (isset($data['idproyecto']))
-        {
+        if (isset($data['idproyecto'])) {
             $proveedor = VwUbicacionRelacion::where([['ubicacion', 'LIKE', '%' . $data['idproyecto'] . '%']])->pluck('idubicacion');
             $this->repository->whereIn(['idproyecto', $proveedor]);
         }
 
-        if (isset($data['idmoneda']))
-        {
+        if (isset($data['idmoneda'])) {
             $tipo = CtgMoneda::where([['moneda', 'LIKE', '%' . $data['idmoneda'] . '%']])->pluck('id');
             $this->repository->whereIn(['idmoneda|      ||  ', $tipo]);
         }
@@ -87,6 +80,7 @@ class RelacionGastoService
         $fecha_final = new DateTime($data['fecha_final']);
         $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
         $data['fecha_final'] = $fecha_final->format("Y-m-d H:i:s");
+
         try {
             DB::connection('controlrec')->beginTransaction();
 
@@ -99,7 +93,7 @@ class RelacionGastoService
                 if ($partida['uuid'] != null) {
                     $this->validaCFDI($partida['uuid']);
                     $arreglo_cfd = $this->getArregloCFD($partida['xml']);
-                    $this->validaProveedor($arreglo_cfd, $data['id_empleado']);
+                    $this->validaReceptor($this->repository->getBuscarEmpresa($relacion->idempresa),$arreglo_cfd);
                     $documento = $relacion->registrarDocumento($partida);
                     $factura_repositorio = $this->registrarCFDRepositorio($documento, $arreglo_cfd, $partida['xml']);
                     $this->registrarCFDSAT($factura_repositorio, $arreglo_cfd);
@@ -120,14 +114,21 @@ class RelacionGastoService
     {
         $cfdi = CFDSAT::where('uuid', $uuid)->first();
         $factura = FacturaRepositorio::where('uuid', $uuid)->first();
-        if($factura || $cfdi)
-        {
+        if ($factura || $cfdi) {
             if ($factura->id_transaccion != null || $factura->id_documento_cr != null || $factura->id_doc_relacion_gastos_cr != null) {
                 abort(500, "El CFDI " . $uuid . " fue utilizado anteriormente.");
             }
         }
     }
 
+    private function validaReceptor($empresa, $arreglo)
+    {
+        if($empresa->RFC != $arreglo['receptor']['rfc'])
+        {
+            abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no es la misma empresa (".$empresa->RFC.") seleccionada para esta relación de gastos; la factura no puede ser registrada.");
+        }
+
+    }
     private function getArregloCFD($archivo_xml)
     {
         $arreglo = [];
@@ -175,10 +176,6 @@ class RelacionGastoService
         $arreglo["id_empresa"] = $arreglo['empresa_bd'] != null ? $arreglo["empresa_bd"]['id'] : '';
 
         $this->validaEFO($arreglo);
-        if (!$arreglo["proveedor_bd"]) {
-            abort(500, "El emisor (".$arreglo["emisor"]["rfc"].")del comprobante no esta dado de alta en el catálogo de proveedores de control recursos; la factura no puede ser registrada.");
-        }
-
         if (!$arreglo["empresa_bd"]) {
             abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de empresas de control recursos; la factura no puede ser registrada.");
         }
@@ -249,15 +246,6 @@ class RelacionGastoService
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
             }
 
-        }
-    }
-
-    private function validaProveedor($arreglo_cfd, $id_proveedor_seleccionado)
-    {
-        $proveedor_seleccionado = $this->repository->getBuscarProveedor($id_proveedor_seleccionado);
-        if ((string) $arreglo_cfd["emisor"]["rfc"] != (string) str_replace('-','',$proveedor_seleccionado->RFC))
-        {
-            abort(500, "El proveedor seleccionado (" . $proveedor_seleccionado->RFC . ") no corresponde al RFC del emisor en el comprobante digital (" . $arreglo_cfd["emisor"]["rfc"] . ")");
         }
     }
 
@@ -344,5 +332,10 @@ class RelacionGastoService
         $xml_split = explode('base64,', $datos['xml']);
         $xml = base64_decode($xml_split[1]);
         Storage::disk('xml_control_recursos_relacion_gastos')->put($datos["uuid"] . ".xml", $xml);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
     }
 }
