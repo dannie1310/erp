@@ -2363,6 +2363,7 @@ class CFDSATService
             $cfd = new CFD($archivo_xml);
             $arreglo_cfd = $cfd->getArregloFactura();
             $this->validaReceptorSinContexto($arreglo_cfd, $nombres_archivo[$i]);
+            $this->validaEmisorSinContexto($arreglo_cfd, $nombres_archivo[$i]);
             $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
             $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
             $arreglo_cfd["id_proveedor_sat"] = $proveedor["id_proveedor"];
@@ -2391,6 +2392,24 @@ class CFDSATService
             abort(500, "Error de lectura del archivo: ".$nombre);
         }
     }
+
+    private function validaEmisorSinContexto($arreglo_cfd, $nombre = null)
+    {
+        $proveedor = $this->repository->getProveedorRecursos($arreglo_cfd['emisor']);
+        if(key_exists("emisor",$arreglo_cfd))
+        {
+            if($proveedor) {
+                if ($arreglo_cfd["emisor"]["rfc"] != $proveedor['rfc']) {
+                    abort(500, "El RFC del proveedor (" . $proveedor['rfc'] . ") no corresponde al RFC del emisor en el comprobante digital (" . $arreglo_cfd["emisor"]["rfc"] . ")");
+                }
+            }else{
+                abort(500, "El RFC del proveedor emisor del comprobante digital (" . $arreglo_cfd["emisor"]["rfc"] . ") no esta dado de alta en el catálogo de proveedores.");
+            }
+        }else{
+            abort(500, "Error de lectura del archivo: ".$nombre);
+        }
+    }
+
 
     private function validaTipo( $tipo)
     {
