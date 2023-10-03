@@ -2,6 +2,7 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use Illuminate\Database\Eloquent\Model;
 
 class RelacionGastoDocumento extends Model
@@ -56,6 +57,11 @@ class RelacionGastoDocumento extends Model
     public function estado()
     {
         return $this->belongsTo(CtgEstadoRelacionDocumento::class, 'idestado','idctg_estados_relaciones_documentos');
+    }
+
+    public function cfd()
+    {
+        return $this->belongsTo(FacturaRepositorio::class, 'idrelaciones_gastos_documentos','id_doc_relacion_gastos_cr');
     }
 
     /**
@@ -122,6 +128,15 @@ class RelacionGastoDocumento extends Model
                 return '#00a65a';
             default:
                 return '#d1cfd1';
+        }
+    }
+
+    public function getConceptoXmlAttribute()
+    {
+        try {
+            return $this->cfd->cfdiSAT->conceptos_txt;
+        } catch (\Exception $e) {
+            return null;
         }
     }
 

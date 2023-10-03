@@ -4460,7 +4460,20 @@ export const routes = [
                                     title: 'Consultar Relación de Gastos',
                                     breadcrumb: { parent: 'relacion-gasto', name: 'VER'},
                                     middleware: [auth, permission],
-                                    permission: 'consultar_documento_recursos',
+                                    permission: 'consultar_relacion_gastos_recursos',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id/edit',
+                                name: 'relacion-gasto-edit',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Edit').default,
+                                meta: {
+                                    title: 'Editar Relación de Gastos',
+                                    breadcrumb: {parent: 'relacion-gasto', name: 'EDITAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_documento_recursos',
                                     general: true
                                 }
                             },

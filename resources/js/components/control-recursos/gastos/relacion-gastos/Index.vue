@@ -105,7 +105,8 @@
                             idestado: this.getEstado(relacion.estado_descripcion, relacion.estado_color),
                             buttons: $.extend({}, {
                                 show: true,
-                                id: relacion.id
+                                id: relacion.id,
+                                edit : self.$root.can('editar_documento_recursos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
                             })
                     }))
                 },

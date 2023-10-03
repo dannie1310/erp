@@ -44,6 +44,9 @@ class RelacionGastoDocumentoTransformer extends TransformerAbstract
             'estado' => $model->idestado,
             'estado_descripcion' => $model->estatus_descripcion,
             'estado_color' => $model->color_estado,
+            'idtipo' => $model->idtipo_docto_comp,
+            'idtipogasto' => $model->idtipo_gasto_comprobacion,
+            'concepto_xml' => $model->concepto_xml
         ];
     }
 

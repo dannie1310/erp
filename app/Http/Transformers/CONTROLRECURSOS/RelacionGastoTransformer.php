@@ -38,6 +38,7 @@ class RelacionGastoTransformer extends TransformerAbstract
             'id_empleado' => $model->idempleado,
             'id_empresa' => $model->idempresa,
             'id_proyecto' => $model->idproyecto,
+            'id_moneda' =>$model->idmoneda,
             'empresa_descripcion' => $model->empresa_descripcion,
             'empleado_descripcion' => $model->empleado_descripcion,
             'proyecto_descripcion' => $model->proyecto_descripcion,
@@ -51,7 +52,9 @@ class RelacionGastoTransformer extends TransformerAbstract
             'suma_retenciones_format' => $model->suma_retenciones_format,
             'suma_otros_imp_format' => $model->suma_otros_imp_format,
             'total' => $model->total,
-            'total_format' => $model->total_format
+            'total_format' => $model->total_format,
+            'fecha_inicio' => $model->fecha_inicio,
+            'fecha_final' => $model->fecha_fin,
         ];
     }
 
