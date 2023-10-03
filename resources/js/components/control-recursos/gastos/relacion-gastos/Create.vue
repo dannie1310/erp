@@ -569,8 +569,7 @@ export default {
             this.fecha_final = new Date();
             this.cargando = true;
         },
-        formatoFecha(date)
-        {
+        formatoFecha(date) {
             return moment(date).format('DD/MM/YYYY');
         },
         getEmpresas() {
@@ -711,7 +710,6 @@ export default {
                     this.salir();
                 });
         },
-
         modalCFDI(){
             $(this.$refs.modal_cfdi).modal('show');
         },
@@ -747,8 +745,7 @@ export default {
                 this.cargarXML(1)
             }, 500);
         },
-        agregaPartidasConConceptos(conceptos)
-        {
+        agregaPartidasConConceptos(conceptos) {
             let _self = this;
             conceptos.forEach(function (concepto, i) {
                 var busqueda = _self.partidas.find(x=>x.uuid === concepto.uuid);
@@ -758,8 +755,7 @@ export default {
                 }
             })
         },
-        agregarCFDIPartida(concepto)
-        {
+        agregarCFDIPartida(concepto) {
             this.partidas.splice(this.partidas.length + 1, 0, {
                 idtipo: 1,
                 tipo_documento: 'Factura',
@@ -831,9 +827,8 @@ export default {
                 vm.files = unicos;
             };
             reader.readAsDataURL(file);
-        }
-        calcularTotalPorPartida(partida,i)
-        {
+        },
+        calcularTotalPorPartida(partida,i) {
             var total = 0;
             /*var iva = 0;
             iva = ((parseFloat(partida.importe) * parseFloat(16)) / 100);
@@ -841,20 +836,6 @@ export default {
             total = (parseFloat(partida.importe) + parseFloat(iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
             this.partidas[i]['total'] = total;
         },
-      /*  calcularTotal()
-        {
-            let subtotal_sin_comas;
-            let impuesto_sin_comas;
-            let otros_sin_comas;
-            let retencion_sin_comas;
-
-            subtotal_sin_comas = this.subtotal.toString().replace(/,/g, '');
-            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
-            otros_sin_comas = this.otros.toString().replace(/,/g, '');
-            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
-
-            this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toString().formatearkeyUp();
-        },*/
     },
     watch: {
         id_empleado(value)

@@ -333,4 +333,9 @@ class RelacionGastoService
         $xml = base64_decode($xml_split[1]);
         Storage::disk('xml_control_recursos_relacion_gastos')->put($datos["uuid"] . ".xml", $xml);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

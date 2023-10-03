@@ -37,7 +37,7 @@
                     { title: 'Total', field: 'total', thClass :'th_c200', tdClass: 'right', sortable: true},
                     { title: 'Moneda', field: 'idmoneda',thClass: 'th_c100',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Estatus', field: 'idestado', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
-                    //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -103,11 +103,11 @@
                             idmoneda: relacion.moneda,
                             idserie: relacion.serie,
                             idestado: this.getEstado(relacion.estado_descripcion, relacion.estado_color),
-                            /*buttons: $.extend({}, {
+                            buttons: $.extend({}, {
                                 show: true,
-                                id: cuenta.id,
-                                estado: cuenta.estado
-                            })*/
+                                id: relacion.id,
+                                edit : self.$root.can('editar_documento_recursos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
+                            })
                     }))
                 },
                 deep: true
