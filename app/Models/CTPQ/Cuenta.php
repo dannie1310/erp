@@ -244,6 +244,7 @@ class Cuenta extends Model
             $preexistente->cargos = $cargos;
             $preexistente->abonos = $abonos;
             $preexistente->saldo = $cargos-$abonos;
+            $preexistente->cercania = $data["cercania"];
             if($empresaLocal->length_numero_proyecto>0){
                 $preexistente->numero_proyecto = substr($cuenta->Codigo,
                     $empresaLocal->offset_numero_proyecto,
@@ -262,6 +263,7 @@ class Cuenta extends Model
                 $preexistente_actualizar->cargos = $cargos;
                 $preexistente_actualizar->abonos = $abonos;
                 $preexistente_actualizar->saldo = $cargos-$abonos;
+                $preexistente_actualizar->cercania = $data["cercania"];
                 if($empresaLocal->length_numero_proyecto>0){
                     $preexistente_actualizar->numero_proyecto = substr($cuenta->Codigo,
                         $empresaLocal->offset_numero_proyecto,
@@ -371,7 +373,7 @@ class Cuenta extends Model
         }
 
         if (key_exists("0", $cercanias)) {
-            if ($cercanias[0]["cercania"] < 3) {
+            if ($cercanias[0]["cercania"] <= 3) {
                 $this->asociarCuenta($cercanias[0]);
             }
             $solicitud_asociacion_partidas = $this->solicitudAsociacionProveedorPartidas()->orderBy("id", "desc")->first();

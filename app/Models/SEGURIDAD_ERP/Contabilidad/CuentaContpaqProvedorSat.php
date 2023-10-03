@@ -27,7 +27,8 @@ class CuentaContpaqProvedorSat extends Model
         'cargos',
         'abonos',
         'saldo',
-        'numero_proyecto'
+        'numero_proyecto',
+        'cercania'
     ];
 
     public function proveedorSat(){
