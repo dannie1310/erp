@@ -1,344 +1,354 @@
 <template>
     <span>
-        <nav>
-            <div class="row">
-                 <div class="col-md-12">
-                     <div class="card">
-                         <form role="form" @submit.prevent="validate">
-                             <div class="card-body">
-                                 <div class="row">
-                                     <div class="col-md-2">
-                                        <div class="form-group error-content">
-                                            <label for="idserie" class="col-form-label">Serie:</label>
-                                            <select class="form-control"
-                                                    data-vv-as="Serie"
-                                                    id="idserie"
-                                                    name="idserie"
-                                                    :class="{'is-invalid': errors.has('idserie')}"
-                                                    v-validate="{required: true}"
-                                                    v-model="idserie">
-                                                <option value>-- Selecionar --</option>
-                                                <option v-for="(serie) in series" :value="serie.id">{{ serie.descripcion }}</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
-                                        </div>
-                                    </div>
-                                 </div>
-                                 <div class="row">
-                                     <div class="col-md-2">
-                                         <label class="col-form-label">Periodo:</label>
-                                     </div>
-                                 </div>
-                                 <div class="row">
-                                     <div class="col-md-3">
-                                         <div class="form-group error-content">
-                                             <label for="id_empleado">Fecha Inicial:</label>
-                                             <datepicker v-model = "fecha_inicial"
-                                                         name = "fecha_inicial"
-                                                         :format = "formatoFecha"
-                                                         data-vv-as="Fecha Inicial"
-                                                         :language = "es"
-                                                         :bootstrap-styling = "true"
-                                                         class = "form-control"
-                                                         v-validate="{required: true}"
-                                                         :disabled-dates="fechasDeshabilitadas"
-                                                         :class="{'is-invalid': errors.has('fecha_inicial')}"/>
-                                             <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
-                                         </div>
-                                     </div>
-                                     <div class="col-md-3">
-                                         <div class="form-group error-content">
-                                             <label for="id_empleado">Fecha Final:</label>
-                                             <datepicker v-model = "fecha_final"
-                                                         name = "fecha_final"
-                                                         data-vv-as="Fecha Final"
-                                                         :format = "formatoFecha"
-                                                         :language = "es"
-                                                         :bootstrap-styling = "true"
-                                                         class = "form-control"
-                                                         v-validate="{required: true}"
-                                                         :disabled-dates="fechasDeshabilitadas"
-                                                         :class="{'is-invalid': errors.has('fecha_final')}"/>
-                                             <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
-                                         </div>
-                                     </div>
-                                 </div>
-                                 <div class="row">
-                                     <div class="col-md-6">
-                                         <div class="form-group error-content">
-                                             <label for="id_empresa">Empresa:</label>
-                                             <select class="form-control"
-                                                data-vv-as="Empresa"
-                                                id="id_empresa"
-                                                name="id_empresa"
-                                                :class="{'is-invalid': errors.has('id_empresa')}"
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" v-else>
+            <form role="form" @submit.prevent="validate">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                             <div class="row">
+                                 <div class="col-md-2">
+                                    <div class="form-group error-content">
+                                        <label for="idserie" class="col-form-label">Serie:</label>
+                                        <select class="form-control"
+                                                data-vv-as="Serie"
+                                                id="idserie"
+                                                name="idserie"
+                                                :class="{'is-invalid': errors.has('idserie')}"
                                                 v-validate="{required: true}"
-                                                v-model="id_empresa">
-                                                <option value>-- Selecionar --</option>
-                                                <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
-                                             </select>
-                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
-                                         </div>
+                                                v-model="idserie">
+                                            <option value>-- Selecionar --</option>
+                                            <option v-for="(serie) in series" :value="serie.id">{{ serie.descripcion }}</option>
+                                        </select>
+                                        <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
+                                    </div>
+                                </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-md-2">
+                                     <label class="col-form-label">Periodo:</label>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-md-3">
+                                     <div class="form-group error-content">
+                                         <label for="id_empleado">Fecha Inicial:</label>
+                                         <datepicker v-model = "fecha_inicial"
+                                                     name = "fecha_inicial"
+                                                     :format = "formatoFecha"
+                                                     data-vv-as="Fecha Inicial"
+                                                     :language = "es"
+                                                     :bootstrap-styling = "true"
+                                                     class = "form-control"
+                                                     v-validate="{required: true}"
+                                                     :disabled-dates="fechasDeshabilitadas"
+                                                     :class="{'is-invalid': errors.has('fecha_inicial')}"/>
+                                         <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                                      </div>
-                                     <div class="col-md-6">
-                                        <div class="form-group error-content">
-                                            <label for="id_proyecto">Proyecto:</label>
-                                            <select class="form-control"
-                                                    data-vv-as="Proyecto"
-                                                    id="id_proyecto"
-                                                    name="id_proyecto"
-                                                    :class="{'is-invalid': errors.has('id_proyecto')}"
-                                                    v-validate="{required: true}"
-                                                    v-model="id_proyecto">
-                                                <option value>-- Selecionar --</option>
-                                                <option v-for="(p) in proyectos" :value="p.id">{{ p.ubicacion }}</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proyecto')">{{ errors.first('id_proyecto') }}</div>
-                                        </div>
+                                 </div>
+                                 <div class="col-md-3">
+                                     <div class="form-group error-content">
+                                         <label for="id_empleado">Fecha Final:</label>
+                                         <datepicker v-model = "fecha_final"
+                                                     name = "fecha_final"
+                                                     data-vv-as="Fecha Final"
+                                                     :format = "formatoFecha"
+                                                     :language = "es"
+                                                     :bootstrap-styling = "true"
+                                                     class = "form-control"
+                                                     v-validate="{required: true}"
+                                                     :disabled-dates="fechasDeshabilitadas"
+                                                     :class="{'is-invalid': errors.has('fecha_final')}"/>
+                                         <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-md-6">
+                                     <div class="form-group error-content">
+                                         <label for="id_empresa">Empresa:</label>
+                                         <select class="form-control"
+                                            data-vv-as="Empresa"
+                                            id="id_empresa"
+                                            name="id_empresa"
+                                            :class="{'is-invalid': errors.has('id_empresa')}"
+                                            v-validate="{required: true}"
+                                            v-model="id_empresa">
+                                            <option value>-- Selecionar --</option>
+                                            <option v-for="(empresa) in empresas" :value="empresa.id">{{ empresa.razon_social }} - [ {{empresa.rfc}} ]</option>
+                                         </select>
+                                         <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
+                                     </div>
+                                 </div>
+                                 <div class="col-md-6">
+                                    <div class="form-group error-content">
+                                        <label for="id_proyecto">Proyecto:</label>
+                                        <select class="form-control"
+                                                data-vv-as="Proyecto"
+                                                id="id_proyecto"
+                                                name="id_proyecto"
+                                                :class="{'is-invalid': errors.has('id_proyecto')}"
+                                                v-validate="{required: true}"
+                                                v-model="id_proyecto">
+                                            <option value>-- Selecionar --</option>
+                                            <option v-for="(p) in proyectos" :value="p.id">{{ p.ubicacion }}</option>
+                                        </select>
+                                        <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proyecto')">{{ errors.first('id_proyecto') }}</div>
+                                    </div>
+                                </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-md-6">
+                                    <div class="form-group error-content">
+                                        <label for="id_empleado">Empleado:</label>
+                                        <select class="form-control"
+                                                data-vv-as="Empleado"
+                                                id="id_empleado"
+                                                name="id_empleado"
+                                                :class="{'is-invalid': errors.has('id_empleado')}"
+                                                v-validate="{required: true}"
+                                                v-model="id_empleado">
+                                            <option value>-- Selecionar --</option>
+                                            <option v-for="(e) in empleados" :value="e.id">{{ e.razon_social }} - [ {{e.rfc}} ]</option>
+                                        </select>
+                                        <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
+                                    </div>
+                                </div>
+                                 <div class="col-md-6" v-if="empleado != ''">
+                                    <div class="form-group error-content">
+                                        <h6><b>Departamento:</b></h6>
+                                        <h6>{{empleado.usuario.departamento.departamento}}</h6>
                                     </div>
                                  </div>
-                                 <div class="row">
-                                     <div class="col-md-6">
-                                        <div class="form-group error-content">
-                                            <label for="id_empleado">Empleado:</label>
-                                            <select class="form-control"
-                                                    data-vv-as="Empleado"
-                                                    id="id_empleado"
-                                                    name="id_empleado"
-                                                    :class="{'is-invalid': errors.has('id_empleado')}"
-                                                    v-validate="{required: true}"
-                                                    v-model="id_empleado">
-                                                <option value>-- Selecionar --</option>
-                                                <option v-for="(e) in empleados" :value="e.id">{{ e.razon_social }} - [ {{e.rfc}} ]</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
-                                        </div>
-                                    </div>
-                                     <div class="col-md-6" v-if="empleado != ''">
-                                        <div class="form-group error-content">
-                                            <h6><b>Departamento:</b></h6>
-                                            <h6>{{empleado.usuario.departamento.departamento}}</h6>
-                                        </div>
+                             </div>
+                             <div class="row">
+                                 <div class="col-md-6">
+                                     <div class="form-group error-content">
+                                         <label for="motivo">Motivo:</label>
+                                         <input
+                                             name="motivo"
+                                             id="motivo"
+                                             class="form-control"
+                                             v-model="motivo"
+                                             v-validate="{required: true}"
+                                             data-vv-as="Motivo"
+                                             :class="{'is-invalid': errors.has('motivo')}" />
+                                         <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                                      </div>
                                  </div>
-                                 <div class="row">
-                                     <div class="col-md-6">
-                                         <div class="form-group error-content">
-                                             <label for="motivo">Motivo:</label>
-                                             <input
-                                                 name="motivo"
-                                                 id="motivo"
-                                                 class="form-control"
-                                                 v-model="motivo"
-                                                 v-validate="{required: true}"
-                                                 data-vv-as="Motivo"
-                                                 :class="{'is-invalid': errors.has('motivo')}" />
-                                             <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
-                                         </div>
-                                     </div>
-                                     <div class="col-md-3">
-                                         <div class="form-group error-content">
-                                             <label for="moneda">Moneda:</label>
-                                             <select class="form-control"
-                                                    data-vv-as="Moneda"
-                                                    id="id_moneda"
-                                                    name="id_moneda"
-                                                    :class="{'is-invalid': errors.has('id_moneda')}"
-                                                    v-validate="{required: true}"
-                                                    v-model="id_moneda">
-                                                <option value>-- Selecionar --</option>
-                                                <option v-for="(m) in monedas" :value="m.id">{{m.moneda}}</option>
-                                            </select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
-                                         </div>
+                                 <div class="col-md-3">
+                                     <div class="form-group error-content">
+                                         <label for="moneda">Moneda:</label>
+                                         <select class="form-control"
+                                                data-vv-as="Moneda"
+                                                id="id_moneda"
+                                                name="id_moneda"
+                                                :class="{'is-invalid': errors.has('id_moneda')}"
+                                                v-validate="{required: true}"
+                                                v-model="id_moneda">
+                                            <option value>-- Selecionar --</option>
+                                            <option v-for="(m) in monedas" :value="m.id">{{m.moneda}}</option>
+                                        </select>
+                                        <div style="display:block" class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
                                      </div>
                                  </div>
-                                 <hr />
-                                 <div class="row">
-                                     <div class="col-md-12">
-                                         <button type="button" class="btn btn-success btn-sm pull-right" @click="modalCFDI()">
-                                             <i class="fa fa-file-code"></i> Cargar x CFDI
-                                         </button>
-                                     </div>
+                             </div>
+                             <hr />
+                             <div class="row">
+                                 <div class="col-md-12">
+                                     <button type="button" class="btn btn-success btn-sm pull-right" @click="modalCFDI()">
+                                         <i class="fa fa-file-code"></i> Cargar x CFDI
+                                     </button>
                                  </div>
-                                 <hr />
-                                 <div class="row">
-                                     <div  class="col-md-12 table-responsive-xl">
-                                         <div class="table-responsive">
-                                             <table class="table table-bordered table-sm">
-                                                 <thead>
-                                                 <tr>
-                                                     <th class="index_corto">#</th>
-                                                     <th class="c100">Tipo de Documento</th>
-                                                     <th class="c80">Fecha</th>
-                                                     <th class="c80">Folio</th>
-                                                     <th class="c100">Concepto</th>
-                                                     <th class="c100">Concepto del CFDI</th>
-                                                     <th class="c100">Importe</th>
-                                                     <th class="c100">IVA</th>
-                                                     <th class="c100">Retenciones</th>
-                                                     <th class="c100">Otros Imp.</th>
-                                                     <th class="c100">Total</th>
-                                                     <th class="c100">No. Personas</th>
-                                                     <th class="c100">Observaciones</th>
-                                                     <th class="icono">
-                                                         <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
-                                                             <i class="fa fa-plus"></i>
-                                                         </button>
-                                                     </th>
-                                                 </tr>
-                                                 </thead>
-                                                 <tbody>
-                                                 <tr v-for="(partida, i) in partidas">
-                                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                     <td v-if="partida.uuid != null">
-                                                         {{partida.tipo_documento}}
-                                                     </td>
-                                                     <td v-else>
-                                                        <select class="form-control"
-                                                                data-vv-as="Tipo"
-                                                                id="tipo"
-                                                                :name="`tipo[${i}]`"
-                                                                :class="{'is-invalid': errors.has(`tipo[${i}]`)}"
-                                                                v-validate="{required: true}"
-                                                                v-model="partida.idtipo">
-                                                            <option value>-- Selecionar --</option>
-                                                            <option v-for="(t) in tipos" :value="t.id">{{ t.descripcion }}</option>
-                                                        </select>
-                                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`tipo[${i}]`)">{{ errors.first(`tipo[${i}]`) }}</div>
-                                                     </td>
-                                                     <td v-if="partida.uuid != null">
-                                                         {{ partida.fecha }}
-                                                     </td>
-                                                     <td v-else>
-                                                         <datepicker v-model = "partida.fecha"
-                                                                     :name = "`fecha[${i}]`"
-                                                                     :format = "formatoFecha"
-                                                                     data-vv-as="Fecha"
-                                                                     :language = "es"
-                                                                     :bootstrap-styling = "true"
-                                                                     class = "form-control"
-                                                                     v-validate="{required: true}"
-                                                                     :class="{'is-invalid': errors.has(`fecha[${i}]`)}"/>
-                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
-                                                     </td>
-                                                     <td v-if="partida.uuid != null">
-                                                         {{ partida.folio }}
-                                                     </td>
-                                                     <td v-else>
-                                                        <input class="form-control"
-                                                               style="width: 100%"
-                                                               placeholder="Folio"
-                                                               :name="`folio[${i}]`"
-                                                               id="folio"
-                                                               data-vv-as="Folio"
-                                                               v-validate="{required: true}"
-                                                               v-model="partida.folio"
-                                                               :class="{'is-invalid': errors.has(`folio[${i}]`)}">
-                                                        <div class="invalid-feedback" v-show="errors.has(`folio[${i}]`)">{{ errors.first(`folio[${i}]`) }}</div>
-                                                     </td>
-                                                     <td>
-                                                         <select class="form-control"
-                                                                 data-vv-as="Tipo Gasto"
-                                                                 id="idtipogasto"
-                                                                 :name="`idtipogasto[${i}]`"
-                                                                 :class="{'is-invalid': errors.has(`idtipogasto[${i}]`)}"
+                             </div>
+                             <hr />
+                             <div class="row">
+                                 <div  class="col-md-12 table-responsive-xl">
+                                     <div class="table-responsive">
+                                         <table class="table table-bordered table-sm">
+                                             <thead>
+                                             <tr>
+                                                 <th class="index_corto">#</th>
+                                                 <th class="c100">Tipo de Documento</th>
+                                                 <th class="c80">Fecha</th>
+                                                 <th class="c80">Folio</th>
+                                                 <th class="c100">Concepto</th>
+                                                 <th class="c100">Concepto del CFDI</th>
+                                                 <th class="c100">Importe</th>
+                                                 <th class="c100">IVA</th>
+                                                 <th class="c100">Retenciones</th>
+                                                 <th class="c100">Otros Imp.</th>
+                                                 <th class="c100">Total</th>
+                                                 <th class="c100">No. Personas</th>
+                                                 <th class="c100">Observaciones</th>
+                                                 <th class="icono">
+                                                     <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
+                                                         <i class="fa fa-plus"></i>
+                                                     </button>
+                                                 </th>
+                                             </tr>
+                                             </thead>
+                                             <tbody>
+                                             <tr v-for="(partida, i) in partidas">
+                                                 <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
+                                                 <td v-if="partida.uuid != null">
+                                                     {{partida.tipo_documento}}
+                                                 </td>
+                                                 <td v-else>
+                                                    <select class="form-control"
+                                                            data-vv-as="Tipo"
+                                                            id="tipo"
+                                                            :name="`tipo[${i}]`"
+                                                            :class="{'is-invalid': errors.has(`tipo[${i}]`)}"
+                                                            v-validate="{required: true}"
+                                                            v-model="partida.idtipo">
+                                                        <option value>-- Selecionar --</option>
+                                                        <option v-for="(t) in tipos" :value="t.id">{{ t.descripcion }}</option>
+                                                    </select>
+                                                     <div style="display:block" class="invalid-feedback" v-show="errors.has(`tipo[${i}]`)">{{ errors.first(`tipo[${i}]`) }}</div>
+                                                 </td>
+                                                 <td v-if="partida.uuid != null">
+                                                     {{ partida.fecha }}
+                                                 </td>
+                                                 <td v-else>
+                                                     <datepicker v-model = "partida.fecha"
+                                                                 :name = "`fecha[${i}]`"
+                                                                 :format = "formatoFecha"
+                                                                 data-vv-as="Fecha"
+                                                                 :language = "es"
+                                                                 :bootstrap-styling = "true"
+                                                                 class = "form-control"
                                                                  v-validate="{required: true}"
-                                                                 v-model="partida.idtipogasto">
-                                                            <option value>-- Selecionar --</option>
-                                                            <option v-for="(t) in tipo_gastos" :value="t.id">{{ t.descripcion }}</option>
-                                                        </select>
-                                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`idtipogasto[${i}]`)">{{ errors.first(`idtipogasto[${i}]`) }}</div>
-                                                     </td>
-                                                       <td v-if="partida.uuid != null">
-                                                         {{ partida.concepto }}
-                                                     </td>
-                                                     <td v-else>-</td>
-                                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                                        {{ partida.importe }}
-                                                     </td>
-                                                     <td v-else>
-                                                         <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                                                :name="`importe[${i}]`"
-                                                                data-vv-as="Importe"
-                                                                v-on:keyup="calcularTotalPorPartida(partida, i)"
-                                                                v-model="partida.importe"
-                                                                style="text-align: right"
-                                                                v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                                                :class="{'is-invalid': errors.has(`importe[${i}]`)}"
-                                                                id="importe">
-                                                         <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
-                                                     </td>
-                                                     <td style="text-align: right">
-                                                        {{ partida.IVA}}
-                                                     </td>
-                                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                                        {{ partida.retenciones }}
-                                                     </td>
-                                                     <td v-else>
-                                                        <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                                               :name="`retencion[${i}]`"
-                                                               data-vv-as="Retención"
-                                                               v-on:keyup="calcularTotalPorPartida(partida,i)"
-                                                               v-model="partida.retenciones"
-                                                               style="text-align: right"
-                                                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                                               :class="{'is-invalid': errors.has(`retencion[${i}]`)}"
-                                                               id="retencion">
-                                                        <div class="invalid-feedback" v-show="errors.has(`retencion[${i}]`)">{{ errors.first(`retencion[${i}]`) }}</div>
-                                                     </td>
-                                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                                        {{ partida.otro_imp }}
-                                                     </td>
-                                                     <td v-else>
-                                                         <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                                                :name="`otro_imp[${i}]`"
-                                                                data-vv-as="Otro impuesto"
-                                                                v-on:keyup="calcularTotalPorPartida(partida,i)"
-                                                                v-model="partida.otro_imp"
-                                                                style="text-align: right"
-                                                                v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                                                :class="{'is-invalid': errors.has(`otro_imp[${i}]`)}"
-                                                                id="otro_imp">
-                                                        <div class="invalid-feedback" v-show="errors.has(`otro_imp[${i}]`)">{{ errors.first(`otro_imp[${i}]`) }}</div>
-                                                     </td>
-                                                     <td style="text-align: right">
-                                                        {{ partida.total }}
-                                                     </td>
-                                                     <td>
-                                                          <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                                                 :name="`no_personas[${i}]`"
-                                                                 data-vv-as="No. Personas"
-                                                                 v-model="partida.no_personas"
-                                                                 style="text-align: right"
-                                                                 v-validate="{required: true, regex: /^[0-9]\d*?$/, min: 0.01, decimal:0}"
-                                                                 :class="{'is-invalid': errors.has(`no_personas[${i}]`)}"
-                                                                 id="no_personas">
-                                                        <div class="invalid-feedback" v-show="errors.has(`no_personas[${i}]`)">{{ errors.first(`no_personas[${i}]`) }}</div>
-                                                     </td>
-                                                     <td>
-                                                         <input class="form-control"
-                                                                style="width: 100%"
-                                                                placeholder="Observaciones"
-                                                                :name="`observaciones[${i}]`"
-                                                                id="observaciones"
-                                                                data-vv-as="Observaciones"
-                                                                v-validate="{required: true}"
-                                                                v-model="partida.observaciones"
-                                                                :class="{'is-invalid': errors.has(`observaciones[${i}]`)}">
-                                                        <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
-                                                     </td>
-                                                     <td>
-                                                         <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
-                                                     </td>
-                                                 </tr>
-                                                 </tbody>
-                                             </table>
-                                         </div>
+                                                                 :class="{'is-invalid': errors.has(`fecha[${i}]`)}"/>
+                                                     <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
+                                                 </td>
+                                                 <td v-if="partida.uuid != null">
+                                                     {{ partida.folio }}
+                                                 </td>
+                                                 <td v-else>
+                                                    <input class="form-control"
+                                                           style="width: 100%"
+                                                           placeholder="Folio"
+                                                           :name="`folio[${i}]`"
+                                                           id="folio"
+                                                           data-vv-as="Folio"
+                                                           v-validate="{required: true}"
+                                                           v-model="partida.folio"
+                                                           :class="{'is-invalid': errors.has(`folio[${i}]`)}">
+                                                    <div class="invalid-feedback" v-show="errors.has(`folio[${i}]`)">{{ errors.first(`folio[${i}]`) }}</div>
+                                                 </td>
+                                                 <td>
+                                                     <select class="form-control"
+                                                             data-vv-as="Tipo Gasto"
+                                                             id="idtipogasto"
+                                                             :name="`idtipogasto[${i}]`"
+                                                             :class="{'is-invalid': errors.has(`idtipogasto[${i}]`)}"
+                                                             v-validate="{required: true}"
+                                                             v-model="partida.idtipogasto">
+                                                        <option value>-- Selecionar --</option>
+                                                        <option v-for="(t) in tipo_gastos" :value="t.id">{{ t.descripcion }}</option>
+                                                    </select>
+                                                     <div style="display:block" class="invalid-feedback" v-show="errors.has(`idtipogasto[${i}]`)">{{ errors.first(`idtipogasto[${i}]`) }}</div>
+                                                 </td>
+                                                   <td v-if="partida.uuid != null">
+                                                     {{ partida.concepto }}
+                                                 </td>
+                                                 <td v-else>-</td>
+                                                 <td style="text-align: right" v-if="partida.uuid != null">
+                                                    {{ parseFloat(partida.importe).formatMoney(2) }}
+                                                 </td>
+                                                 <td v-else>
+                                                     <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                                            :name="`importe[${i}]`"
+                                                            data-vv-as="Importe"
+                                                            v-on:keyup="calcularTotalPorPartida(partida, i)"
+                                                            v-model="partida.importe"
+                                                            style="text-align: right"
+                                                            v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                                            :class="{'is-invalid': errors.has(`importe[${i}]`)}"
+                                                            id="importe">
+                                                     <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
+                                                 </td>
+                                                 <td style="text-align: right">
+                                                    {{ parseFloat(partida.IVA).formatMoney(2)}}
+                                                 </td>
+                                                 <td style="text-align: right" v-if="partida.uuid != null">
+                                                    {{ parseFloat(partida.retenciones).formatMoney(2) }}
+                                                 </td>
+                                                 <td v-else>
+                                                    <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                                           :name="`retencion[${i}]`"
+                                                           data-vv-as="Retención"
+                                                           v-on:keyup="calcularTotalPorPartida(partida,i)"
+                                                           v-model="partida.retenciones"
+                                                           style="text-align: right"
+                                                           v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                                           :class="{'is-invalid': errors.has(`retencion[${i}]`)}"
+                                                           id="retencion">
+                                                    <div class="invalid-feedback" v-show="errors.has(`retencion[${i}]`)">{{ errors.first(`retencion[${i}]`) }}</div>
+                                                 </td>
+                                                 <td style="text-align: right" v-if="partida.uuid != null">
+                                                    {{ parseFloat(partida.otro_imp).formatMoney(2) }}
+                                                 </td>
+                                                 <td v-else>
+                                                     <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                                            :name="`otro_imp[${i}]`"
+                                                            data-vv-as="Otro impuesto"
+                                                            v-on:keyup="calcularTotalPorPartida(partida,i)"
+                                                            v-model="partida.otro_imp"
+                                                            style="text-align: right"
+                                                            v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
+                                                            :class="{'is-invalid': errors.has(`otro_imp[${i}]`)}"
+                                                            id="otro_imp">
+                                                    <div class="invalid-feedback" v-show="errors.has(`otro_imp[${i}]`)">{{ errors.first(`otro_imp[${i}]`) }}</div>
+                                                 </td>
+                                                 <td style="text-align: right">
+                                                    {{ parseFloat(partida.total).formatMoney(2) }}
+                                                 </td>
+                                                 <td>
+                                                      <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
+                                                             :name="`no_personas[${i}]`"
+                                                             data-vv-as="No. Personas"
+                                                             v-model="partida.no_personas"
+                                                             style="text-align: right"
+                                                             v-validate="{required: true, regex: /^[0-9]\d*?$/, min: 0.01, decimal:0}"
+                                                             :class="{'is-invalid': errors.has(`no_personas[${i}]`)}"
+                                                             id="no_personas">
+                                                    <div class="invalid-feedback" v-show="errors.has(`no_personas[${i}]`)">{{ errors.first(`no_personas[${i}]`) }}</div>
+                                                 </td>
+                                                 <td>
+                                                     <input class="form-control"
+                                                            style="width: 100%"
+                                                            placeholder="Observaciones"
+                                                            :name="`observaciones[${i}]`"
+                                                            id="observaciones"
+                                                            data-vv-as="Observaciones"
+                                                            v-validate="{required: true}"
+                                                            v-model="partida.observaciones"
+                                                            :class="{'is-invalid': errors.has(`observaciones[${i}]`)}">
+                                                    <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
+                                                 </td>
+                                                 <td>
+                                                     <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
+                                                 </td>
+                                             </tr>
+                                             </tbody>
+                                         </table>
                                      </div>
                                  </div>
-                                 <div class="row">
-                                     <div class="col-md-9">
+                             </div>
+                             <div class="row">
+                                     <div class="col-md-8">
                                          <div class="form-group row error-content">
                                              <label for="observaciones" class="col-form-label">Observaciones: </label>
                                              <textarea
@@ -354,31 +364,30 @@
                                          </div>
                                          <label>Total de CFDI Cargados:&nbsp;</label><span style="font-size: 15px; font-weight: bold">{{no_cfd}}</span>
                                      </div>
-                                     <div class="col-md-3" style="text-align: right">
+                                     <div class="col-md-4" style="text-align: right">
                                          <div class="table-responsive col-md-12">
                                              <div class="col-md-12">
-
                                                  <table class="table table-borderless">
                                                      <tbody>
                                                          <tr>
                                                              <th style="text-align: left">Subtotal:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>{{sumaMontos}}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(sumaMontos).formatMoney(2) }}</b></td>
                                                          </tr>
                                                          <tr>
                                                              <th style="text-align: left">IVA:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>${{iva}}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(iva).formatMoney(2) }}</b></td>
                                                          </tr>
                                                          <tr>
                                                              <th style="text-align: left">Retenciones:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>${{sumaDescuentos}}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(sumaDescuentos).formatMoney(2) }}</b></td>
                                                          </tr>
                                                          <tr>
                                                              <th style="text-align: left">Otros Impuestos:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>${{sumaOtros}}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(sumaOtros).formatMoney(2) }}</b></td>
                                                          </tr>
                                                          <tr style="text-align: right">
                                                              <th style="text-align: left">Total:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>${{sumaTotal}}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(sumaTotal).formatMoney(2)}}</b></td>
                                                          </tr>
                                                      </tbody>
                                                  </table>
@@ -387,16 +396,15 @@
                                          </div>
                                      </div>
                                  </div>
-                             </div>
-                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
-                                <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
-                             </div>
-                         </form>
-                     </div>
-                 </div>
-            </div>
-        </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
+                </div>
+            </form>
+        </div>
         <div class="modal fade" ref="modal_cfdi" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" >
                 <div class="modal-content">
@@ -432,7 +440,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <cfdi-show v-bind:cfdi="cfdi" v-if="cfdi"></cfdi-show>
-                                    <div class="card" v-else-if="cargando">
+                                    <div class="card" v-else-if="cargando_a">
                                         <div class="card-body">
                                             <div >
                                                 <div class="row" >
@@ -472,6 +480,7 @@ export default {
     data() {
         return {
             cargando : false,
+            cargando_a : false,
             es : es,
             fechasDeshabilitadas : {},
             fecha_hoy : '',
@@ -542,17 +551,19 @@ export default {
             return otros
         },
         sumaTotal() {
-            this.total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.descuento)) + parseFloat(this.otros)).toString().formatearkeyUp();
+            this.total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.descuento)) + parseFloat(this.otros));
             return this.total
         },
         no_cfdi()
         {
+            let suma = 0;
             this.partidas.forEach(function (doc, i) {
                 if(doc.uuid != null)
                 {
-                    this.no_cfd = this.no_cfd + 1;
+                   suma = parseInt(suma) + 1;
                 }
-            })
+            });
+            this.no_cfd = suma;
         }
     },
     mounted() {
@@ -774,11 +785,11 @@ export default {
                 fecha: concepto.fecha_hora,
                 folio : concepto.folio,
                 concepto : concepto.conceptos[0].descripcion,
-                importe : concepto.conceptos[0].importe,
-                IVA : concepto.importe_iva.toString().formatearkeyUp(),
+                importe : concepto.subtotal,
+                IVA : concepto.importe_iva,
                 retenciones : 0,
                 otro_imp : 0,
-                total: concepto.total.toString().formatearkeyUp(),
+                total: concepto.total,
                 no_personas: 1,
                 observaciones: '',
                 uuid : concepto.uuid,
@@ -787,7 +798,7 @@ export default {
             });
         },
         cargarXML(){
-            this.cargando = true;
+            this.cargando_a = true;
             var formData = new FormData();
             formData.append('xmls',  JSON.stringify(this.files));
             formData.append('nombres_archivo',  JSON.stringify(this.names));
@@ -821,7 +832,7 @@ export default {
                     this.archivo = null;
                 })
                 .finally(() => {
-                    this.cargando = false;
+                    this.cargando_a = false;
                 });
         },
         createImage(file) {

@@ -4416,7 +4416,7 @@ export const routes = [
                         component: require('./components/control-recursos/gastos/Index').default,
                         meta: {
                             title: 'Gastos de Personal',
-                            breadcrumb: {parent: 'control-recursos', name: 'GASTOS DE PERSONAL'},
+                            breadcrumb: {parent: 'control-recursos', name: 'GASTOS DEL PERSONAL'},
                             middleware: [auth, permission],
                             permission: ['consultar_relacion_gastos_recursos'],
                             general: true,
