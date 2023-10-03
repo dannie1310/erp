@@ -273,6 +273,17 @@ class Cuenta extends Model
                 //return $preexistente_actualizar;
 
             } else {
+                $data["codigo_cuenta"] =  $cuenta->Codigo;
+                $data["alias_bdd"] = $alias_bdd;
+                $data["cargos"] = $cargos;
+                $data["abonos"] = $abonos;
+                $data["saldo"] = $cargos-$abonos;
+                if($empresaLocal->length_numero_proyecto>0){
+                    $data["numero_proyecto"] = substr($cuenta->Codigo,
+                        $empresaLocal->offset_numero_proyecto,
+                        $empresaLocal->length_numero_proyecto
+                    );
+                }
                 $this->cuentaContpaqProvedorSat()->create($data);
             }
         }
