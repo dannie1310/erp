@@ -321,7 +321,7 @@
                                                             :class="{'is-invalid': errors.has(`observaciones[${i}]`)}">
                                                     <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                  </td>
-                                                 <td>
+                                                 <td style="text-align: center">
                                                      <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                  </td>
                                              </tr>
@@ -831,14 +831,14 @@ export default {
                 vm.files = unicos;
             };
             reader.readAsDataURL(file);
-        },
+        }
         calcularTotalPorPartida(partida,i)
         {
             var total = 0;
-            var iva = 0;
-            iva = ((parseFloat(partida.importe) * parseFloat(16)) / 100).toString().formatearkeyUp();
-            this.partidas[i]['IVA'] = iva;
-            total = (parseFloat(partida.importe) + parseFloat(iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones)).toString().formatearkeyUp();
+            /*var iva = 0;
+            iva = ((parseFloat(partida.importe) * parseFloat(16)) / 100);
+            this.partidas[i]['IVA'] = iva;*/
+            total = (parseFloat(partida.importe) + parseFloat(iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
             this.partidas[i]['total'] = total;
         },
       /*  calcularTotal()
