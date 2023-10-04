@@ -38,6 +38,11 @@ class Cuenta extends Model
         return $this->belongsTo(Proveedor::class, "Id", "IdCuenta");
     }
 
+    public function movimientos()
+    {
+        return $this->hasMany(PolizaMovimiento::class, "IdCuenta","Id");
+    }
+
     public function getCuentaMayorAttribute()
     {
         if ($this->asociacion->cuenta_superior->CtaMayor == 1) {
@@ -222,21 +227,65 @@ class Cuenta extends Model
 
     public function asociarCuenta($data)
     {
+        $alias_bdd = Config::get('database.connections.cntpq.database');
+        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD", "=", $alias_bdd)
+            ->where("Desarrollo","=",0)
+            ->where("Historica","=",0)->first();
+
+        $cuenta = Cuenta::find($data["id_cuenta_contpaq"]);
+        $cargos = $cuenta->movimientos()->where("TipoMovto","=","0")->get()->sum("Importe");
+        $abonos = $cuenta->movimientos()->where("TipoMovto","=","1")->get()->sum("Importe");
         $preexistente = CuentaContpaqProvedorSat::where("id_empresa_contpaq", "=", $data["id_empresa_contpaq"])
             ->where("id_cuenta_contpaq", "=", $data["id_cuenta_contpaq"])
             ->where("id_proveedor_sat", "=", $data["id_proveedor_sat"])->first();
         if ($preexistente) {
+            $preexistente->codigo_cuenta =  $cuenta->Codigo;
+            $preexistente->alias_bdd = $alias_bdd;
+            $preexistente->cargos = $cargos;
+            $preexistente->abonos = $abonos;
+            $preexistente->saldo = $cargos-$abonos;
+            $preexistente->cercania = $data["cercania"];
+            if($empresaLocal->length_numero_proyecto>0){
+                $preexistente->numero_proyecto = substr($cuenta->Codigo,
+                    $empresaLocal->offset_numero_proyecto,
+                    $empresaLocal->length_numero_proyecto
+                );
+            }
+            $preexistente->save();
             //return $preexistente;
         } else {
             $preexistente_actualizar = CuentaContpaqProvedorSat::where("id_empresa_contpaq", "=", $data["id_empresa_contpaq"])
                 ->where("id_cuenta_contpaq", "=", $data["id_cuenta_contpaq"])
                 ->first();
             if ($preexistente_actualizar) {
+                $preexistente_actualizar->codigo_cuenta =  $cuenta->Codigo;
+                $preexistente_actualizar->alias_bdd = $alias_bdd;
+                $preexistente_actualizar->cargos = $cargos;
+                $preexistente_actualizar->abonos = $abonos;
+                $preexistente_actualizar->saldo = $cargos-$abonos;
+                $preexistente_actualizar->cercania = $data["cercania"];
+                if($empresaLocal->length_numero_proyecto>0){
+                    $preexistente_actualizar->numero_proyecto = substr($cuenta->Codigo,
+                        $empresaLocal->offset_numero_proyecto,
+                        $empresaLocal->length_numero_proyecto
+                    );
+                }
                 $preexistente_actualizar->id_proveedor_sat = $data["id_proveedor_sat"];
                 $preexistente_actualizar->save();
                 //return $preexistente_actualizar;
 
             } else {
+                $data["codigo_cuenta"] =  $cuenta->Codigo;
+                $data["alias_bdd"] = $alias_bdd;
+                $data["cargos"] = $cargos;
+                $data["abonos"] = $abonos;
+                $data["saldo"] = $cargos-$abonos;
+                if($empresaLocal->length_numero_proyecto>0){
+                    $data["numero_proyecto"] = substr($cuenta->Codigo,
+                        $empresaLocal->offset_numero_proyecto,
+                        $empresaLocal->length_numero_proyecto
+                    );
+                }
                 $this->cuentaContpaqProvedorSat()->create($data);
             }
         }
@@ -324,7 +373,7 @@ class Cuenta extends Model
         }
 
         if (key_exists("0", $cercanias)) {
-            if ($cercanias[0]["cercania"] < 3) {
+            if ($cercanias[0]["cercania"] <= 3) {
                 $this->asociarCuenta($cercanias[0]);
             }
             $solicitud_asociacion_partidas = $this->solicitudAsociacionProveedorPartidas()->orderBy("id", "desc")->first();
