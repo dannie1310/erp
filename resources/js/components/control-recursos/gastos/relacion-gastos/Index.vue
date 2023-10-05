@@ -106,7 +106,8 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 id: relacion.id,
-                                edit : self.$root.can('editar_relacion_gastos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
+                                //edit : self.$root.can('editar_relacion_gastos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
+                                edit: true
                             })
                     }))
                 },

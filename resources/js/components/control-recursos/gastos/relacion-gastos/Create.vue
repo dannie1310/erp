@@ -833,7 +833,7 @@ export default {
             /*var iva = 0;
             iva = ((parseFloat(partida.importe) * parseFloat(16)) / 100);
             this.partidas[i]['IVA'] = iva;*/
-            total = (parseFloat(partida.importe) + parseFloat(iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
+            total = (parseFloat(partida.importe) + parseFloat(partida.iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
             this.partidas[i]['total'] = total;
         },
     },

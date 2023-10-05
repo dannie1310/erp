@@ -246,6 +246,18 @@ class RelacionGasto extends Model
         }
     }
 
+    public function getFechaInicioEditarAttribute()
+    {
+        $date = date_create($this->fecha_inicio);
+        return date_format($date, "m/d/Y");
+    }
+
+    public function getFechaFinalEditarAttribute()
+    {
+        $date = date_create($this->fecha_fin);
+        return date_format($date, "m/d/Y");
+    }
+
     /**
      * Métodos
      */

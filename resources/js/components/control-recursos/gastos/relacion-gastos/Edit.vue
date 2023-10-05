@@ -40,7 +40,7 @@
                     <div class="col-md-3">
                         <div class="form-group error-content">
                             <label for="id_empleado">Fecha Inicial:</label>
-                            <datepicker v-model = "relacion.fecha_inicio"
+                            <datepicker v-model = "relacion.fecha_inicio_format"
                                         name = "fecha_inicial"
                                         :format = "formatoFecha"
                                         data-vv-as="Fecha Inicial"
@@ -48,7 +48,6 @@
                                         :bootstrap-styling = "true"
                                         class = "form-control"
                                         v-validate="{required: true}"
-                                        :disabled-dates="fechasDeshabilitadas"
                                         :class="{'is-invalid': errors.has('fecha_inicial')}"/>
                             <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                         </div>
@@ -56,7 +55,7 @@
                     <div class="col-md-3">
                         <div class="form-group error-content">
                             <label for="id_empleado">Fecha Final:</label>
-                            <datepicker v-model = "relacion.fecha_final"
+                            <datepicker v-model = "relacion.fecha_final_format"
                                         name = "fecha_final"
                                         data-vv-as="Fecha Final"
                                         :format = "formatoFecha"
@@ -64,7 +63,6 @@
                                         :bootstrap-styling = "true"
                                         class = "form-control"
                                         v-validate="{required: true}"
-                                        :disabled-dates="fechasDeshabilitadas"
                                         :class="{'is-invalid': errors.has('fecha_final')}"/>
                             <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
                         </div>
@@ -175,20 +173,22 @@
                             <table class="table table-bordered table-sm">
                                 <thead>
                                 <tr>
-                                    <th class="index_corto">#</th>
-                                    <th class="c100">Tipo de Documento</th>
-                                    <th class="c80">Fecha</th>
-                                    <th class="c80">Folio</th>
-                                    <th class="c100">Concepto</th>
-                                    <th class="c100">Concepto del CFDI</th>
-                                    <th class="c100">Importe</th>
-                                    <th class="c100">IVA</th>
-                                    <th class="c100">Retenciones</th>
-                                    <th class="c100">Otros Imp.</th>
-                                    <th class="c100">Total</th>
-                                    <th class="c100">No. Personas</th>
-                                    <th class="c100">Observaciones</th>
-                                    <th class="icono">
+                                    <th class="index_corto encabezado">#</th>
+                                    <th class="c100 encabezado">Tipo de Documento</th>
+                                    <th class="c80 encabezado">Fecha</th>
+                                    <th class="c80 encabezado">Folio</th>
+                                    <th class="c100 encabezado">Concepto</th>
+                                    <th class="c100 encabezado">Concepto del CFDI</th>
+                                    <th class="c100 encabezado">Importe</th>
+                                    <th class="c100 encabezado">IVA</th>
+                                    <th class="c100 encabezado">Retenciones</th>
+                                    <th class="c100 encabezado">Otros Imp.</th>
+                                    <th class="c100 encabezado">Total</th>
+                                    <th class="c100 encabezado">No. Personas</th>
+                                    <th class="c100 encabezado">Observaciones</th>
+                                    <th class="c100 encabezado">Uuid</th>
+                                    <th class="c100 encabezado">Estado</th>
+                                    <th class="icono encabezado">
                                         <button type="button" class="btn btn-success btn-sm" @click="addPartidas()">
                                             <i class="fa fa-plus"></i>
                                         </button>
@@ -279,43 +279,25 @@
                                         {{ partida.iva_format}}
                                     </td>
                                     <td style="text-align: right" v-else>
-                                        {{ partida.iva }}
+                                       $ 0.00
                                     </td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
                                         {{ partida.retenciones_format }}
                                     </td>
-                                    <td v-else>
-                                        <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                               :name="`retencion[${i}]`"
-                                               data-vv-as="Retención"
-                                               v-on:keyup="calcularTotalPorPartida(partida,i)"
-                                               v-model="partida.retenciones"
-                                               style="text-align: right"
-                                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                               :class="{'is-invalid': errors.has(`retencion[${i}]`)}"
-                                               id="retencion">
-                                        <div class="invalid-feedback" v-show="errors.has(`retencion[${i}]`)">{{ errors.first(`retencion[${i}]`) }}</div>
+                                    <td  style="text-align: right"  v-else>
+                                        $ 0.00
                                     </td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
                                         {{ partida.otros_imp_format }}
                                     </td>
-                                    <td v-else>
-                                        <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
-                                               :name="`otro_imp[${i}]`"
-                                               data-vv-as="Otro impuesto"
-                                               v-on:keyup="calcularTotalPorPartida(partida,i)"
-                                               v-model="partida.otro_imp"
-                                               style="text-align: right"
-                                               v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
-                                               :class="{'is-invalid': errors.has(`otro_imp[${i}]`)}"
-                                               id="otro_imp">
-                                        <div class="invalid-feedback" v-show="errors.has(`otro_imp[${i}]`)">{{ errors.first(`otro_imp[${i}]`) }}</div>
+                                    <td style="text-align: right"  v-else>
+                                        $ 0.00
                                     </td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
                                         {{ partida.total_format }}
                                     </td>
                                     <td style="text-align: right" v-else>
-                                        {{ partida.total }}
+                                        $ {{ parseFloat(partida.total).formatMoney(2) }}
                                     </td>
                                     <td>
                                         <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
@@ -340,6 +322,12 @@
                                                :class="{'is-invalid': errors.has(`observaciones[${i}]`)}">
                                         <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                     </td>
+                                    <td v-if="partida.uuid != null">
+                                        {{ partida.uuid }}
+                                    </td>
+                                    <td v-else>
+                                    </td>
+                                    <td> <estado v-bind:value="getEstado(partida.estado_descripcion, partida.estado_color)" /></td>
                                     <td>
                                         <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                     </td>
@@ -410,34 +398,94 @@
                 </div>
             </div>
        </div>
+       <div class="modal fade" ref="modal_cfdi" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-destino"> <i class="fa fa-file-code"></i> Seleccionar CFDI</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div >
+                                        <div>
+                                            <label class="col-form-label">Archivos de CFDI (XML):</label>
+                                        </div>
+                                        <div>
+                                            <div class="form-group error-content" >
+                                                <input type="file" class="form-control" id="archivo" @change="onFileChange" multiple="multiple"
+                                                       row="3"
+                                                       v-validate="{ ext: ['xml'], size: 3072}"
+                                                       name="archivo"
+                                                       data-vv-as="Archivo de CFDI"
+                                                       ref="archivo"
+                                                       :class="{'is-invalid': errors.has('archivo')}">
+                                                <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <cfdi-show v-bind:cfdi="cfdi" v-if="cfdi"></cfdi-show>
+                                    <div class="card" v-else-if="cargando_a">
+                                        <div class="card-body">
+                                            <div >
+                                                <div class="row" >
+                                                    <div class="col-md-1">
+                                                        <div class="spinner-border text-success" role="status">
+                                                            <span class="sr-only">Cargando...</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-11">
+                                                        <h5>Procesando</h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalCFDI"><i class="fa fa-close"  ></i> Cerrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
    </span>
 </template>
 
 <script>
 import datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
+import estado from './partials/EstatusLabel';
+import CfdiShow from "../../../fiscal/cfd/cfd-sat/Show";
+import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
 export default {
     name: "relacion-edit",
     props: ['id'],
-    components: {es,datepicker},
+    components: {es,datepicker, estado, CFDI, CfdiShow},
     data(){
         return{
             es: es,
-            fechasDeshabilitadas : {},
             fecha_hoy : '',
-            fecha_inicial: '',
-            fecha_final: '',
             cargando: false,
-            cargando_proveedores : false,
+            cargando_a : false,
             relacion : null,
             series: [],
             empresas: [],
             id_proveedor: '',
             proveedores: [],
             monedas: [],
-            importe: 0,
-            iva: 16,
-            impuesto: 0,
+            subtotal: 0,
+            iva: 0,
             retencion: 0,
             otros: 0,
             total: 0,
@@ -445,13 +493,20 @@ export default {
             idserie: '',
             proyectos: [],
             empleados: [],
-
+            no_cfd: 0,
+            cfdi : null,
+            archivo:null,
+            archivo_name:null,
+            files : [],
+            names : [],
+            uuid : [],
+            p_holder:'',
+            index : 0,
         }
     },
 
     mounted() {
         this.fecha_hoy = new Date();
-        this.fechasDeshabilitadas.from = new Date();
         this.relacion = null
         this.getSeries();
         this.getEmpresas();
@@ -461,6 +516,53 @@ export default {
         this.getTipos();
         this.getTiposGasto();
         this.find();
+    },
+    computed: {
+        sumaMontos()
+        {
+            let iva = 0;
+            let result = 0;
+            this.relacion.documentos.data.forEach(function (doc, i) {
+                result += parseFloat(doc.importe);
+                iva += parseFloat(doc.IVA);
+            })
+            this.subtotal = result;
+            this.iva = iva;
+            return result
+        },
+        sumaDescuentos()
+        {
+            let result = 0;
+            this.relacion.documentos.data.forEach(function (doc, i) {
+                result += parseFloat(doc.retenciones);
+            })
+            this.retencion = result;
+            return result
+        },
+        sumaOtros()
+        {
+            let otros = 0;
+            this.relacion.documentos.data.forEach(function (doc, i) {
+                otros += parseFloat(doc.otro_imp);
+            })
+            this.otros = otros;
+            return otros
+        },
+        sumaTotal() {
+            this.total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.descuento)) + parseFloat(this.otros));
+            return this.total
+        },
+        no_cfdi()
+        {
+            let suma = 0;
+            this.relacion.documentos.data.forEach(function (doc, i) {
+                if(doc.uuid != null)
+                {
+                    suma = parseInt(suma) + 1;
+                }
+            });
+            this.no_cfd = suma;
+        }
     },
     methods: {
         formatoFecha(date){
@@ -472,21 +574,12 @@ export default {
                 params:{include: []}
             }).then(data => {
                 this.relacion = data
-                this.importe= data.importe
-                this.iva= data.tasa_iva
-                this.impuesto= data.impuesto
-                this.retencion= data.retenciones
-                this.otros= data.otros
-                this.total= data.total
             }).finally(()=> {
-                console.log(this.cargando)
                 this.cargando = false;
-
-                console.log("2",this.cargando)
             })
         },
         salir() {
-            this.$router.push({name: 'documento'});
+            this.$router.push({name: 'relacion-gasto'});
         },
         getSeries() {
             this.cargando = true;
@@ -517,14 +610,14 @@ export default {
             let total_sin_comas;
 
             importe_sin_comas = this.importe.toString().replace(/,/g, '');
-            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
+            impuesto_sin_comas = this.iva.toString().replace(/,/g, '');
             otros_sin_comas = this.otros.toString().replace(/,/g, '');
             retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
             total_sin_comas = this.total.toString().replace(/,/g, '');
 
             this.relacion.importe = importe_sin_comas;
             this.relacion.iva = this.iva;
-            this.relacion.impuesto = impuesto_sin_comas;
+            this.relacion.iva = impuesto_sin_comas;
             this.relacion.retencion = retencion_sin_comas;
             this.relacion.otros = otros_sin_comas;
             this.relacion.total = total_sin_comas;
@@ -548,7 +641,6 @@ export default {
                 })
         },
         getProveedores() {
-            this.cargando_proveedores = true;
             if(this.relacion.id_serie != this.idserie)
             {
                 this.id_proveedor = "";
@@ -557,8 +649,6 @@ export default {
                 params: {sort: 'RazonSocial', order: 'asc', scope:['porTipos:1,3','porSerie:'+this.idserie, 'porEstados:1']}
             }).then(data => {
                 this.proveedores = data.data;
-            }).finally(() => {
-                this.cargando_proveedores = false;
             })
         },
         getMonedas() {
@@ -567,24 +657,6 @@ export default {
             }).then(data => {
                 this.monedas = data.data;
             })
-        },
-        calcularImpuesto() {
-            let importe_sin_comas;
-            importe_sin_comas = this.importe.toString().replace(/,/g, '');
-            this.impuesto = ((parseFloat(importe_sin_comas) * parseFloat(this.iva)) / 100).toString().formatearkeyUp();
-        },
-        calcularTotal() {
-            let importe_sin_comas;
-            let impuesto_sin_comas;
-            let otros_sin_comas;
-            let retencion_sin_comas;
-
-            importe_sin_comas = this.importe.toString().replace(/,/g, '');
-            impuesto_sin_comas = this.impuesto.toString().replace(/,/g, '');
-            otros_sin_comas = this.otros.toString().replace(/,/g, '');
-            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
-
-            this.total = (parseFloat(importe_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toString().formatearkeyUp();
         },
         getEmpleados() {
             return this.$store.dispatch('controlRecursos/proveedor/index', {
@@ -627,6 +699,7 @@ export default {
             })
         },
         addPartidas(){
+            console.log("AQUI?")
             this.relacion.documentos.data.splice(this.relacion.documentos.data.length + 1, 0, {
                 idtipo: "",
                 tipo_documento: "",
@@ -635,7 +708,7 @@ export default {
                 folio : "",
                 concepto : "",
                 importe : 0,
-                IVA : 0,
+                iva : 0,
                 retenciones : 0,
                 otro_imp : 0,
                 total: 0,
@@ -705,11 +778,11 @@ export default {
                 fecha: concepto.fecha_hora,
                 folio : concepto.folio,
                 concepto : concepto.conceptos[0].descripcion,
-                importe : concepto.conceptos[0].importe,
-                IVA : concepto.importe_iva.toString().formatearkeyUp(),
+                importe : concepto.importe,
+                iva : concepto.importe_iva,
                 retenciones : 0,
                 otro_imp : 0,
-                total: concepto.total.toString().formatearkeyUp(),
+                total: concepto.total,
                 no_personas: 1,
                 observaciones: '',
                 uuid : concepto.uuid,
@@ -771,65 +844,21 @@ export default {
         },
         calcularTotalPorPartida(partida,i) {
             var total = 0;
-            var iva = 0;
-            iva = ((parseFloat(partida.importe) * parseFloat(16)) / 100).toString().formatearkeyUp();
-            this.relacion.documentos.data[i]['IVA'] = iva;
-            total = (parseFloat(partida.importe) + parseFloat(iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones)).toString().formatearkeyUp();
+            total = (parseFloat(partida.importe) + parseFloat(partida.iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
             this.relacion.documentos.data[i]['total'] = total;
+        },
+        getEstado(estado, color) {
+            return {
+                color: color,
+                descripcion: estado
+            }
         },
     },
     watch: {
-        idserie(value)
-        {
+        id_empleado(value){
             if(value)
             {
-                this.getProveedores();
-            }
-        },
-        importe(value) {
-            if(value)
-            {
-                let cifra_formateada = 0;
-                cifra_formateada = value.toString().formatearkeyUp();
-                this.importe = cifra_formateada;
-                this.calcularImpuesto();
-                this.calcularTotal();
-            }
-        },
-        iva(value)
-        {
-            if(value)
-            {
-                this.calcularImpuesto()
-            }
-        },
-        impuesto(value) {
-            if(value)
-            {
-                let cifra_formateada = 0;
-                cifra_formateada = value.toString().formatearkeyUp();
-                this.impuesto = cifra_formateada;
-                this.calcularTotal();
-            }
-        },
-        retencion(value)
-        {
-            if(value)
-            {
-                let cifra_formateada = 0;
-                cifra_formateada = value.toString().formatearkeyUp();
-                this.retencion = cifra_formateada;
-                this.calcularTotal();
-            }
-        },
-        otros(value)
-        {
-            if(value)
-            {
-                let cifra_formateada = 0;
-                cifra_formateada = value.toString().formatearkeyUp();
-                this.otros = cifra_formateada;
-                this.calcularTotal();
+                this.buscarEmpleado();
             }
         }
     }

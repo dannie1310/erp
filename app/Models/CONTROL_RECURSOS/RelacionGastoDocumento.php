@@ -99,7 +99,7 @@ class RelacionGastoDocumento extends Model
 
     public function getOtrosImpFormatAttribute()
     {
-        return '$' . number_format(($this->otros_impuestos),2);
+        return '$' . number_format($this->otros_impuestos,2);
     }
 
     public function getEstatusDescripcionAttribute()
