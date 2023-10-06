@@ -126,8 +126,10 @@
                                 </div>
                                  <div class="col-md-6" v-if="empleado != ''">
                                     <div class="form-group error-content">
-                                        <h6><b>Departamento:</b></h6>
-                                        <h6>{{empleado.usuario.departamento.departamento}}</h6>
+                                        <label>Departamento:</label>
+                                    </div>
+                                     <div class="form-group error-content">
+                                        <label>{{empleado.usuario.departamento.departamento}}</label>
                                     </div>
                                  </div>
                              </div>
@@ -280,23 +282,23 @@
                                                      <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                                  </td>
                                                  <td style="text-align: right" v-if="partida.uuid != null">
-                                                    {{ parseFloat(partida.IVA).formatMoney(2)}}
+                                                    $ {{ parseFloat(partida.IVA).formatMoney(2)}}
                                                  </td>
-                                                 <td style="text-align: right" v-else>0</td>
+                                                 <td style="text-align: right" v-else>$ 0.00</td>
                                                  <td style="text-align: right" v-if="partida.uuid != null">
-                                                    {{ parseFloat(partida.retenciones).formatMoney(2) }}
+                                                    $ {{ parseFloat(partida.retenciones).formatMoney(2) }}
                                                  </td>
                                                  <td style="text-align: right" v-else>
-                                                    0
+                                                    $ 0.00
                                                  </td>
                                                  <td style="text-align: right" v-if="partida.uuid != null">
-                                                    {{ parseFloat(partida.otro_imp).formatMoney(2) }}
+                                                    $ {{ parseFloat(partida.otro_imp).formatMoney(2) }}
                                                  </td>
                                                  <td style="text-align: right" v-else>
-                                                     0
+                                                     $ 0.00
                                                  </td>
                                                  <td style="text-align: right">
-                                                    {{ parseFloat(partida.total).formatMoney(2) }}
+                                                    $ {{ parseFloat(partida.total).formatMoney(2) }}
                                                  </td>
                                                  <td>
                                                       <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
@@ -830,10 +832,8 @@ export default {
         },
         calcularTotalPorPartida(partida,i) {
             var total = 0;
-            /*var iva = 0;
-            iva = ((parseFloat(partida.importe) * parseFloat(16)) / 100);
-            this.partidas[i]['IVA'] = iva;*/
-            total = (parseFloat(partida.importe) + parseFloat(iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
+            total = (parseFloat(partida.importe) + parseFloat(partida.IVA) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
+            console.log(parseFloat(partida.importe),parseFloat(partida.IVA),parseFloat(partida.otro_imp),parseFloat(partida.retenciones), total);
             this.partidas[i]['total'] = total;
         },
     },
