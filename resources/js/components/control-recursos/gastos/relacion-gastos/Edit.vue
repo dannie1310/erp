@@ -199,7 +199,7 @@
                                 <tr v-for="(partida, i) in relacion.documentos.data">
                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                     <td v-if="partida.uuid != null">
-                                        {{partida.tipoDocumento.descripcion}}
+                                        {{partida.tipo_documento}}
                                     </td>
                                     <td v-else>
                                         <select class="form-control" data-vv-as="Tipo"
@@ -214,7 +214,7 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`tipo[${i}]`)">{{ errors.first(`tipo[${i}]`) }}</div>
                                     </td>
                                     <td v-if="partida.uuid != null">
-                                        {{ partida.fecha_format }}
+                                        {{ partida.fecha }}
                                     </td>
                                     <td v-else>
                                         <datepicker v-model = "partida.fecha"
@@ -257,11 +257,11 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`idtipogasto[${i}]`)">{{ errors.first(`idtipogasto[${i}]`) }}</div>
                                     </td>
                                     <td v-if="partida.uuid != null">
-                                        {{ partida.concepto_xml }}
+                                       {{ partida.concepto }}
                                     </td>
                                     <td v-else>-</td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                        {{ partida.importe_format }}
+                                         {{ parseFloat(partida.importe).formatMoney(2) }}
                                     </td>
                                     <td v-else>
                                         <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
@@ -276,27 +276,24 @@
                                         <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                     </td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                        {{ partida.iva_format}}
+                                        $ {{ parseFloat(partida.IVA).formatMoney(2)}}
                                     </td>
                                     <td style="text-align: right" v-else>
                                        $ 0.00
                                     </td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                        {{ partida.retenciones_format }}
+                                        $ {{ parseFloat(partida.retenciones).formatMoney(2) }}
                                     </td>
                                     <td  style="text-align: right"  v-else>
                                         $ 0.00
                                     </td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                        {{ partida.otros_imp_format }}
+                                        $ {{ parseFloat(partida.otro_imp).formatMoney(2) }}
                                     </td>
                                     <td style="text-align: right"  v-else>
                                         $ 0.00
                                     </td>
-                                    <td style="text-align: right" v-if="partida.uuid != null">
-                                        {{ partida.total_format }}
-                                    </td>
-                                    <td style="text-align: right" v-else>
+                                    <td style="text-align: right">
                                         $ {{ parseFloat(partida.total).formatMoney(2) }}
                                     </td>
                                     <td>
@@ -338,7 +335,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-9">
+                    <div class="col-md-8">
                         <div class="form-group row error-content">
                             <label for="observaciones" class="col-form-label">Observaciones: </label>
                             <textarea
@@ -354,30 +351,30 @@
                         </div>
                         <label>Total de CFDI Cargados:&nbsp;</label><span style="font-size: 15px; font-weight: bold">{{no_cfd}}</span>
                     </div>
-                    <div class="col-md-3" style="text-align: right">
+                    <div class="col-md-4" style="text-align: right">
                         <div class="table-responsive col-md-12">
                             <div class="col-md-12">
                                 <table class="table table-borderless">
                                     <tbody>
                                     <tr>
                                         <th style="text-align: left">Subtotal:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>{{sumaMontos}}</b></td>
+                                        <td style="text-align: right; font-size: 15px"><b>$ {{ parseFloat(sumaMontos).formatMoney(2) }}</b></td>
                                     </tr>
                                     <tr>
                                         <th style="text-align: left">IVA:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>${{iva}}</b></td>
+                                        <td style="text-align: right; font-size: 15px"><b>$ {{ parseFloat(iva).formatMoney(2) }}</b></td>
                                     </tr>
                                     <tr>
                                         <th style="text-align: left">Retenciones:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>${{sumaDescuentos}}</b></td>
+                                        <td style="text-align: right; font-size: 15px"><b>$ {{ parseFloat(sumaDescuentos).formatMoney(2) }}</b></td>
                                     </tr>
                                     <tr>
                                         <th style="text-align: left">Otros Impuestos:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>${{sumaOtros}}</b></td>
+                                        <td style="text-align: right; font-size: 15px"><b>$ {{ parseFloat(sumaOtros).formatMoney(2) }}</b></td>
                                     </tr>
                                     <tr style="text-align: right">
                                         <th style="text-align: left">Total:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>${{sumaTotal}}</b></td>
+                                        <td style="text-align: right; font-size: 15px"><b>$ {{ parseFloat(sumaTotal).formatMoney(2) }}</b></td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -524,7 +521,10 @@ export default {
             let result = 0;
             this.relacion.documentos.data.forEach(function (doc, i) {
                 result += parseFloat(doc.importe);
-                iva += parseFloat(doc.IVA);
+                if(doc.uuid != null)
+                {
+                    iva += parseFloat(doc.iva);
+                }
             })
             this.subtotal = result;
             this.iva = iva;
@@ -543,13 +543,13 @@ export default {
         {
             let otros = 0;
             this.relacion.documentos.data.forEach(function (doc, i) {
-                otros += parseFloat(doc.otro_imp);
+                otros += parseFloat(doc.otros_imp);
             })
             this.otros = otros;
             return otros
         },
         sumaTotal() {
-            this.total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.descuento)) + parseFloat(this.otros));
+            this.total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.retencion)) + parseFloat(this.otros));
             return this.total
         },
         no_cfdi()
@@ -558,7 +558,7 @@ export default {
             this.relacion.documentos.data.forEach(function (doc, i) {
                 if(doc.uuid != null)
                 {
-                    suma = parseInt(suma) + 1;
+                    suma = suma + 1;
                 }
             });
             this.no_cfd = suma;
@@ -609,18 +609,17 @@ export default {
             let retencion_sin_comas;
             let total_sin_comas;
 
-            importe_sin_comas = this.importe.toString().replace(/,/g, '');
-            impuesto_sin_comas = this.iva.toString().replace(/,/g, '');
-            otros_sin_comas = this.otros.toString().replace(/,/g, '');
-            retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
-            total_sin_comas = this.total.toString().replace(/,/g, '');
+            importe_sin_comas = this.importe;
+            impuesto_sin_comas = this.iva;
+            otros_sin_comas = this.otros;
+            retencion_sin_comas = this.retencion;
+            total_sin_comas = this.total;
 
-            this.relacion.importe = importe_sin_comas;
+            this.relacion.importe = this.importe;
             this.relacion.iva = this.iva;
-            this.relacion.iva = impuesto_sin_comas;
-            this.relacion.retencion = retencion_sin_comas;
-            this.relacion.otros = otros_sin_comas;
-            this.relacion.total = total_sin_comas;
+            this.relacion.retencion = this.retencion;
+            this.relacion.otros = this.otros;
+            this.relacion.total = this.total;
             this.relacion.id_tipo = this.idtipodocto;
             this.relacion.estado = this.idtipodocto == 1 ? 1 : 5;
             this.relacion.id_serie = this.idserie;
@@ -778,10 +777,10 @@ export default {
                 fecha: concepto.fecha_hora,
                 folio : concepto.folio,
                 concepto : concepto.conceptos[0].descripcion,
-                importe : concepto.importe,
+                importe : concepto.subtotal,
                 iva : concepto.importe_iva,
-                retenciones : 0,
-                otro_imp : 0,
+                retenciones : concepto.retenciones,
+                otros_imp : concepto.otros_imp,
                 total: concepto.total,
                 no_personas: 1,
                 observaciones: '',
@@ -844,7 +843,13 @@ export default {
         },
         calcularTotalPorPartida(partida,i) {
             var total = 0;
-            total = (parseFloat(partida.importe) + parseFloat(partida.iva) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
+            if(partida.uuid === null)
+            {
+                this.relacion.documentos.data[i]['iva'] = 0;
+                this.relacion.documentos.data[i]['otros_imp'] = 0;
+                this.relacion.documentos.data[i]['retenciones'] = 0;
+            }
+            total = (parseFloat(partida.importe) + parseFloat(partida.iva) + parseFloat(partida.otros_imp) - parseFloat(partida.retenciones));
             this.relacion.documentos.data[i]['total'] = total;
         },
         getEstado(estado, color) {
