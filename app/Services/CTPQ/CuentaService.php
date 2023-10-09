@@ -138,7 +138,7 @@ class CuentaService
             ProcessAsociacionCuentasContpaqProveedoresSAT::dispatch($partida)->onQueue("q".$idistribucion);
             //$partida->procesarAsociacion();
             $idistribucion ++;
-            if($idistribucion==5){
+            if($idistribucion==10){
                 $idistribucion=0;
             }
         }
