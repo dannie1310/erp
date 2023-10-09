@@ -2372,6 +2372,8 @@ class CFDSATService
             $contenido_xml = base64_decode($exp[1]);
             $arreglo_cfd["contenido_xml"] = $contenido_xml;
             $this->validaTipo($arreglo_cfd['tipo_comprobante']);
+            $arreglo_cfd["retenciones"] = 0;
+            $arreglo_cfd["otros_imp"] = 0;
             $conceptos[$i] =  $arreglo_cfd;
             $i++;
         }

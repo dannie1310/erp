@@ -48,6 +48,7 @@ class RelacionGastoTransformer extends TransformerAbstract
             'estado_descripcion' => $model->estatus_descripcion,
             'estado_color' => $model->color_estado,
             'departamento' => $model->departamento_descripcion,
+            'id_departamento' => $model->iddepartamento,
             'motivo' => $model->motivo,
             'suma_importe' => $model->suma_importe,
             'suma_importe_format' => $model->suma_importe_format,

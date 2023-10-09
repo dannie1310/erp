@@ -40,7 +40,7 @@
                     <div class="col-md-3">
                         <div class="form-group error-content">
                             <label for="id_empleado">Fecha Inicial:</label>
-                            <datepicker v-model = "relacion.fecha_inicio_format"
+                            <datepicker v-model = "relacion.fecha_inicio_editar"
                                         name = "fecha_inicial"
                                         :format = "formatoFecha"
                                         data-vv-as="Fecha Inicial"
@@ -55,7 +55,7 @@
                     <div class="col-md-3">
                         <div class="form-group error-content">
                             <label for="id_empleado">Fecha Final:</label>
-                            <datepicker v-model = "relacion.fecha_final_format"
+                            <datepicker v-model = "relacion.fecha_final_editar"
                                         name = "fecha_final"
                                         data-vv-as="Fecha Final"
                                         :format = "formatoFecha"
@@ -199,7 +199,7 @@
                                 <tr v-for="(partida, i) in relacion.documentos.data">
                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                     <td v-if="partida.uuid != null">
-                                        {{partida.tipo_documento}}
+                                        {{partida.tipoDocumento.descripcion}}
                                     </td>
                                     <td v-else>
                                         <select class="form-control" data-vv-as="Tipo"
@@ -257,7 +257,7 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`idtipogasto[${i}]`)">{{ errors.first(`idtipogasto[${i}]`) }}</div>
                                     </td>
                                     <td v-if="partida.uuid != null">
-                                       {{ partida.concepto }}
+                                       {{ partida.concepto_xml }}
                                     </td>
                                     <td v-else>-</td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
@@ -276,7 +276,7 @@
                                         <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                     </td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                        $ {{ parseFloat(partida.IVA).formatMoney(2)}}
+                                        $ {{ parseFloat(partida.iva).formatMoney(2)}}
                                     </td>
                                     <td style="text-align: right" v-else>
                                        $ 0.00
@@ -549,7 +549,9 @@ export default {
             return otros
         },
         sumaTotal() {
-            this.total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.retencion)) + parseFloat(this.otros));
+            let total = 0;
+            total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.retencion)) + parseFloat(this.otros));
+            this.total = total
             return this.total
         },
         no_cfdi()
@@ -569,6 +571,7 @@ export default {
             return moment(date).format('DD/MM/YYYY');
         },
         find() {
+            this.relacion = null
             return this.$store.dispatch('controlRecursos/relacion-gasto/find', {
                 id: this.id,
                 params:{include: []}
@@ -592,39 +595,25 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    if(moment(this.relacion.fecha_inicio_format).format('YYYY/MM/DD') < moment(this.relacion.fecha_final_format).format('YYYY/MM/DD'))
+                    if(moment(this.relacion.fecha_final_editar).format('YYYY/MM/DD') < moment(this.relacion.fecha_inicio_editar).format('YYYY/MM/DD'))
                     {
-                        swal('¡Error!', 'La fecha no puede ser posterior a la fecha de vencimiento.', 'error')
-                    }else{
+                        swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
+                    }
+                    else if (this.relacion.documentos.data.length == 0) {
+                        swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
+                    } else{
                         this.update()
                     }
                 }
             });
         },
         update() {
-
-            let importe_sin_comas;
-            let impuesto_sin_comas;
-            let otros_sin_comas;
-            let retencion_sin_comas;
-            let total_sin_comas;
-
-            importe_sin_comas = this.importe;
-            impuesto_sin_comas = this.iva;
-            otros_sin_comas = this.otros;
-            retencion_sin_comas = this.retencion;
-            total_sin_comas = this.total;
-
             this.relacion.importe = this.importe;
             this.relacion.iva = this.iva;
             this.relacion.retencion = this.retencion;
             this.relacion.otros = this.otros;
             this.relacion.total = this.total;
-            this.relacion.id_tipo = this.idtipodocto;
-            this.relacion.estado = this.idtipodocto == 1 ? 1 : 5;
-            this.relacion.id_serie = this.idserie;
-            this.relacion.id_proveedor = this.id_proveedor;
-            return this.$store.dispatch('controlRecursos/documento/update', {
+            return this.$store.dispatch('controlRecursos/relacion-gasto/update', {
                 id: this.id,
                 data: this.relacion
             }).then((data) => {
@@ -709,7 +698,7 @@ export default {
                 importe : 0,
                 iva : 0,
                 retenciones : 0,
-                otro_imp : 0,
+                otros_imp : 0,
                 total: 0,
                 no_personas: 1,
                 observaciones: '',

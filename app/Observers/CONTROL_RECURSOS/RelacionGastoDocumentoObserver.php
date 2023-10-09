@@ -23,9 +23,4 @@ class RelacionGastoDocumentoObserver
          */
         //$relacion->agregarEstados();
     }
-
-    public function updating(RelacionGastoDocumento $relacion)
-    {
-        dd("Editar",$relacion);
-    }
 }
