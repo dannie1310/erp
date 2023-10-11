@@ -50,7 +50,8 @@ class RelacionGastoDocumentoTransformer extends TransformerAbstract
             'estado_color' => $model->color_estado,
             'idtipo' => $model->idtipo_docto_comp,
             'idtipogasto' => $model->idtipo_gasto_comprobacion,
-            'concepto_xml' => $model->concepto_xml
+            'concepto' => $model->concepto_xml,
+            'fecha_editar' => $model->fecha_editar,
         ];
     }
 

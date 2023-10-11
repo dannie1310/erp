@@ -199,7 +199,7 @@
                                 <tr v-for="(partida, i) in relacion.documentos.data">
                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                     <td v-if="partida.uuid != null">
-                                        {{partida.tipoDocumento.descripcion}}
+                                        Factura
                                     </td>
                                     <td v-else>
                                         <select class="form-control" data-vv-as="Tipo"
@@ -214,10 +214,10 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`tipo[${i}]`)">{{ errors.first(`tipo[${i}]`) }}</div>
                                     </td>
                                     <td v-if="partida.uuid != null">
-                                        {{ partida.fecha }}
+                                        {{ partida.fecha_editar }}
                                     </td>
                                     <td v-else>
-                                        <datepicker v-model = "partida.fecha"
+                                        <datepicker v-model = "partida.fecha_editar"
                                                     :name = "`fecha[${i}]`"
                                                     :format = "formatoFecha"
                                                     data-vv-as="Fecha"
@@ -257,7 +257,7 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`idtipogasto[${i}]`)">{{ errors.first(`idtipogasto[${i}]`) }}</div>
                                     </td>
                                     <td v-if="partida.uuid != null">
-                                       {{ partida.concepto_xml }}
+                                       {{ partida.concepto }}
                                     </td>
                                     <td v-else>-</td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
@@ -554,17 +554,6 @@ export default {
             this.total = total
             return this.total
         },
-        no_cfdi()
-        {
-            let suma = 0;
-            this.relacion.documentos.data.forEach(function (doc, i) {
-                if(doc.uuid != null)
-                {
-                    suma = suma + 1;
-                }
-            });
-            this.no_cfd = suma;
-        }
     },
     methods: {
         formatoFecha(date){
@@ -577,6 +566,13 @@ export default {
                 params:{include: []}
             }).then(data => {
                 this.relacion = data
+                let suma = 0;
+                this.relacion.documentos.data.forEach(function (doc, i) {
+                    if(doc.uuid != null) {
+                        suma = parseInt(suma) + 1;
+                    }
+                })
+                this.no_cfd = suma;
             }).finally(()=> {
                 this.cargando = false;
             })
@@ -687,7 +683,6 @@ export default {
             })
         },
         addPartidas(){
-            console.log("AQUI?")
             this.relacion.documentos.data.splice(this.relacion.documentos.data.length + 1, 0, {
                 idtipo: "",
                 tipo_documento: "",
@@ -707,7 +702,6 @@ export default {
                 contenido_xml: '',
 
             });
-            //this.index = this.index+1;
         },
         destroy(index){
             this.relacion.documentos.data.splice(index, 1);
@@ -749,13 +743,16 @@ export default {
         },
         agregaPartidasConConceptos(conceptos) {
             let _self = this;
+            let suma = 0;
             conceptos.forEach(function (concepto, i) {
                 var busqueda = _self.relacion.documentos.data.find(x=>x.uuid === concepto.uuid);
                 if(busqueda == undefined)
                 {
                     _self.agregarCFDIPartida(concepto);
+                    suma = parseInt(suma) + 1;
                 }
             })
+            this.no_cfd = suma;
         },
         agregarCFDIPartida(concepto) {
             this.relacion.documentos.data.splice(this.relacion.documentos.data.length + 1, 0, {

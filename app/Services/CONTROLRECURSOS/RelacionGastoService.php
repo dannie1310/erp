@@ -88,7 +88,7 @@ class RelacionGastoService
             $relacion = $this->repository->registrar($data);
 
             foreach ($data['partidas'] as $partida) {
-                $fecha = new DateTime($partida['fecha']);
+                $fecha = new DateTime($partida['fecha_editar']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $partida['fecha'] = $fecha->format("Y-m-d");
                 if ($partida['uuid'] != null) {
@@ -115,7 +115,7 @@ class RelacionGastoService
     {
         $cfdi = CFDSAT::where('uuid', $uuid)->first();
         $factura = FacturaRepositorio::where('uuid', $uuid)->first();
-        if ($factura || $cfdi) {
+        if ($factura && $cfdi) {
             if ($factura->id_transaccion != null || $factura->id_documento_cr != null || $factura->id_doc_relacion_gastos_cr != null) {
                 abort(500, "El CFDI " . $uuid . " fue utilizado anteriormente.");
             }

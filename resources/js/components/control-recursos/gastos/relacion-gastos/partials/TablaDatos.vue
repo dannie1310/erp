@@ -102,11 +102,11 @@
                             <td>{{ d.fecha_format }}</td>
                             <td>{{ d.folio }}</td>
                             <td>{{ d.tipoGasto.descripcion }}</td>
-                            <td>{{ d.importe_format }}</td>
-                            <td>{{ d.iva_format }}</td>
-                            <td>{{ d.retenciones_format }}</td>
-                            <td>{{ d.otros_imp_format }}</td>
-                            <td>{{ d.total_format }}</td>
+                            <td style="text-align:right;">{{ d.importe_format }}</td>
+                            <td style="text-align:right;">{{ d.iva_format }}</td>
+                            <td style="text-align:right;">{{ d.retenciones_format }}</td>
+                            <td style="text-align:right;">{{ d.otros_imp_format }}</td>
+                            <td style="text-align:right;">{{ d.total_format }}</td>
                             <td>{{ d.no_personas }}</td>
                             <td>{{ d.observaciones }}</td>
                             <td>{{ d.uuid }}</td>
@@ -120,11 +120,11 @@
                             <td class="encabezado"></td>
                             <td class="encabezado"></td>
                             <th class="encabezado">Sumatoria</th>
-                            <td class="encabezado">{{ relacion.suma_importe_format }}</td>
-                            <td class="encabezado">{{ relacion.suma_iva_format }}</td>
-                            <td class="encabezado">{{ relacion.suma_retenciones_format }}</td>
-                            <td class="encabezado">{{ relacion.suma_otros_imp_format }}</td>
-                            <td class="encabezado">{{ relacion.total_format }}</td>
+                            <td class="encabezado" style="text-align:right;">{{ relacion.suma_importe_format }}</td>
+                            <td class="encabezado" style="text-align:right;">{{ relacion.suma_iva_format }}</td>
+                            <td class="encabezado" style="text-align:right;">{{ relacion.suma_retenciones_format }}</td>
+                            <td class="encabezado" style="text-align:right;">{{ relacion.suma_otros_imp_format }}</td>
+                            <td class="encabezado" style="text-align:right;">{{ relacion.total_format }}</td>
                             <td class="encabezado"></td>
                             <td class="encabezado"></td>
                             <td class="encabezado"></td>
