@@ -7,6 +7,7 @@ use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Empresa;
 use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\CONTROL_RECURSOS\RelacionGasto;
+use App\Models\CONTROL_RECURSOS\RelacionGastoDocumento;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\VwUbicacionRelacion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
@@ -87,7 +88,7 @@ class RelacionGastoService
             $relacion = $this->repository->registrar($data);
 
             foreach ($data['partidas'] as $partida) {
-                $fecha = new DateTime($partida['fecha']);
+                $fecha = new DateTime($partida['fecha_editar']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $partida['fecha'] = $fecha->format("Y-m-d");
                 if ($partida['uuid'] != null) {
@@ -114,7 +115,7 @@ class RelacionGastoService
     {
         $cfdi = CFDSAT::where('uuid', $uuid)->first();
         $factura = FacturaRepositorio::where('uuid', $uuid)->first();
-        if ($factura || $cfdi) {
+        if ($factura && $cfdi) {
             if ($factura->id_transaccion != null || $factura->id_documento_cr != null || $factura->id_doc_relacion_gastos_cr != null) {
                 abort(500, "El CFDI " . $uuid . " fue utilizado anteriormente.");
             }
@@ -129,6 +130,7 @@ class RelacionGastoService
         }
 
     }
+
     private function getArregloCFD($archivo_xml)
     {
         $arreglo = [];
@@ -203,7 +205,7 @@ class RelacionGastoService
                                 Fecha Registro: " . $relacion->fecha_format . "
                                 UUID: " . $uuid . "
                                 Emisor: " . $relacion->relacion->proveedor_descripcion . "
-                                RFC Emisor: " . $documento->relacion->rfc_proveedor);
+                                RFC Emisor: " . $relacion->relacion->rfc_proveedor);
             }
 
             if ($documento && $repositorio_factura->id_documento_cr != null) {
@@ -337,5 +339,113 @@ class RelacionGastoService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function update(array $data, $id)
+    {
+        $fecha_inicial = new DateTime($data['fecha_inicio_editar']);
+        $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $fecha_final = new DateTime($data['fecha_final_editar']);
+        $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            $relacion = $this->repository->show($id);
+            $documentos = $relacion->documentos->pluck('idrelaciones_gastos_documentos')->toArray();
+
+            foreach ($data['documentos']['data'] as $partida) {
+                $fecha = new DateTime($partida['fecha']);
+                $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+                $partida['fecha'] = $fecha->format("Y-m-d");
+
+                if(array_key_exists('id', $partida))
+                {
+                    $documento = RelacionGastoDocumento::find($partida['id']);
+                    if($partida['uuid'] != null){
+                        $documento->update([
+                            'idtipo_gasto_comprobacion' => $partida['idtipogasto'],
+                            'no_personas' => $partida['no_personas'],
+                            'observaciones' => $partida['observaciones']
+                        ]);
+                    }
+                    else {
+                        $documento->update([
+                            'fecha' => $partida['fecha'],
+                            'folio' => $partida['folio'],
+                            'idtipo_docto_comp' => $partida['idtipo'],
+                            'idtipo_gasto_comprobacion' => $partida['idtipogasto'],
+                            'no_personas' => $partida['no_personas'],
+                            'importe' => $partida['importe'],
+                            'iva' => $partida['iva'],
+                            'retenciones' => $partida['retenciones'],
+                            'otros_impuestos' => $partida['otros_imp'],
+                            'total' => $partida['total'],
+                            'observaciones' => $partida['observaciones']
+                        ]);
+                    }
+                    $key = array_search($partida['id'],$documentos, true);
+                    if($key !== false)
+                    {
+                        unset($documentos[$key]);
+                    }
+                }else {
+                    $partida['IVA'] = $partida['iva'];
+                    $partida['otro_imp'] = $partida['otros_imp'];
+                   if ($partida['uuid'] != null) {
+                       $arreglo_cfd = $this->getArregloCFD($partida['xml']);
+                       $relacion->update([
+                           'idempresa' => $data['id_empresa']
+                       ]);
+                       $this->validaCFDI($partida['uuid']);
+                       $this->validaReceptor($this->repository->getBuscarEmpresa($relacion->idempresa), $arreglo_cfd);
+                       $documento = $relacion->registrarDocumento($partida);
+                       $factura_repositorio = $this->registrarCFDRepositorio($documento, $arreglo_cfd, $partida['xml']);
+                       $this->registrarCFDSAT($factura_repositorio, $arreglo_cfd);
+                       $this->guardarXML($partida);
+                   }else {
+                       $relacion->registrarDocumento($partida);
+                   }
+                }
+            }
+
+            if(count($documentos) > 0)
+            {
+                foreach ($documentos as $documento) {
+                    $d = RelacionGastoDocumento::find($documento);
+                    if($d->uuid != null)
+                    {
+                        $this->desvinculaFacturaRepositorio($d->uuid);
+                    }
+                    $d->delete();
+                }
+            }
+
+            $relacion->update([
+                'fecha_inicio' => $fecha_inicial->format("Y-m-d H:i:s"),
+                'fecha_fin' => $fecha_final->format("Y-m-d H:i:s"),
+                'idempleado' => $data['id_empleado'],
+                'idserie' => $data['id_serie'],
+                'idmoneda' => $data['id_moneda'],
+                'iddepartamento' => $data['id_departamento'],
+                'idproyecto' => $data['id_proyecto'],
+                'motivo' => $data['motivo']
+            ]);
+            DB::connection('controlrec')->commit();
+            return $relacion;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function desvinculaFacturaRepositorio($uuid)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$uuid)->first();
+        if($factura_repositorio)
+        {
+            $factura_repositorio->id_doc_relacion_gastos_cr = NULL;
+            $factura_repositorio->save();
+        }
     }
 }

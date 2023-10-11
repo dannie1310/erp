@@ -31,6 +31,10 @@ class RelacionGastoObserver
 
     public function updating(RelacionGasto $relacionGasto)
     {
-        dd("Editar",$relacionGasto);
+        if($relacionGasto->getOriginal('idserie') != $relacionGasto->idserie)
+        {
+            $serie = Serie::where('idseries', $relacionGasto->idserie)->pluck('Descripcion')->first();
+            $relacionGasto->folio = $serie . "-" . $relacionGasto->numero_folio;
+        }
     }
 }

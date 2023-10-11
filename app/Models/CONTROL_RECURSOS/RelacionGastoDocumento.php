@@ -77,6 +77,12 @@ class RelacionGastoDocumento extends Model
         return date_format($date,"d/m/Y");
     }
 
+    public function getFechaEditarAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date, "m/d/Y");
+    }
+
     public function getTotalFormatAttribute()
     {
         return '$' . number_format(($this->total),2);

@@ -2372,6 +2372,12 @@ class CFDSATService
             $contenido_xml = base64_decode($exp[1]);
             $arreglo_cfd["contenido_xml"] = $contenido_xml;
             $this->validaTipo($arreglo_cfd['tipo_comprobante']);
+            if(array_key_exists('retencionesLocales', $arreglo_cfd)) {
+                $arreglo_cfd["retenciones"] = $this->sumarRetenciones($arreglo_cfd['retencionesLocales']);
+            }else{
+                $arreglo_cfd["retenciones"] = 0;
+            }
+            $arreglo_cfd["otros_imp"] = $arreglo_cfd['descuento'];
             $conceptos[$i] =  $arreglo_cfd;
             $i++;
         }
@@ -2401,5 +2407,15 @@ class CFDSATService
         {
             abort(500, 'El CFDI ingresado no es de un tipo válido, favor de subir CFDI’s tipo I (Ingreso) únicamente.');
         }
+    }
+
+    private function sumarRetenciones($retenciones)
+    {
+        $suma = 0;
+        foreach ($retenciones as $retencion)
+        {
+            $suma = $suma + $retencion['total'];
+        }
+        return $suma;
     }
 }
