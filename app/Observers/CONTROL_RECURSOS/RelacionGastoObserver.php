@@ -36,5 +36,10 @@ class RelacionGastoObserver
             $serie = Serie::where('idseries', $relacionGasto->idserie)->pluck('Descripcion')->first();
             $relacionGasto->folio = $serie . "-" . $relacionGasto->numero_folio;
         }
+
+        if($relacionGasto->getOriginal('idestado') != $relacionGasto->idestado)
+        {
+            $relacionGasto->modifico_estado = auth()->id();
+        }
     }
 }

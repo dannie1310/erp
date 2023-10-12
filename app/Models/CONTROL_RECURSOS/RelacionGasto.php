@@ -330,4 +330,70 @@ class RelacionGasto extends Model
             'registro' => auth()->id()
         ]);
     }
+
+    public function cerrar()
+    {
+        $this->validaCierre();
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            $this->update([
+                'idestado' => 5
+            ]);
+
+            foreach ($this->documentos as $documento)
+            {
+                $documento->update([
+                    'idestado' => 5
+                ]);
+            }
+
+            DB::connection('controlrec')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function validaCierre()
+    {
+        if ($this->idestado != 2)
+        {
+            abort(500, "La relación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede cerrarse.");
+        }
+    }
+
+    public function abrir()
+    {
+        $this->validaApertura();
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            $this->update([
+                'idestado' => 2
+            ]);
+
+            foreach ($this->documentos as $documento)
+            {
+                $documento->update([
+                    'idestado' => 1
+                ]);
+            }
+
+            DB::connection('controlrec')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function validaApertura()
+    {
+        if ($this->idestado != 5)
+        {
+            abort(500, "La relación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede abrirse.");
+        }
+    }
 }

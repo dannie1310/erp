@@ -23,4 +23,12 @@ class RelacionGastoDocumentoObserver
          */
         //$relacion->agregarEstados();
     }
+
+    public function updating(RelacionGastoDocumento $relacion)
+    {
+        if($relacion->getOriginal('idestado') != $relacion->idestado)
+        {
+            $relacion->modifico_estado = auth()->id();
+        }
+    }
 }

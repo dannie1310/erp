@@ -2084,6 +2084,8 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@update')->where(['id' => '[0-9]+']);
+            $api->get('{id}/close', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@close')->where(['id' => '[0-9]+']);
+            $api->get('{id}/open', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@open')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'serie'], function ($api) {

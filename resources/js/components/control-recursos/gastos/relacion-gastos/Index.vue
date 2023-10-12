@@ -107,7 +107,8 @@
                                 show: true,
                                 id: relacion.id,
                                 edit : self.$root.can('editar_relacion_gastos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
-                                //edit: true
+                                cerrar: (self.$root.can('editar_relacion_gastos', true) && relacion.estado == 2) ? true : false,
+                                abrir: (self.$root.can('editar_relacion_gastos', true) && relacion.estado == 5) ? true : false,
                             })
                     }))
                 },
