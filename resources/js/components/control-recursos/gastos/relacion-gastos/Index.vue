@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="$root.can('registrar_relacion_gastos', true)" class="btn btn-app pull-right">
+            <button @click="create" v-if="$root.can('registrar_relacion_gastos_recursos', true)" class="btn btn-app pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
@@ -106,9 +106,9 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 id: relacion.id,
-                                edit : self.$root.can('editar_relacion_gastos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
-                                cerrar: (self.$root.can('editar_relacion_gastos', true) && relacion.estado == 2) ? true : false,
-                                abrir: (self.$root.can('editar_relacion_gastos', true) && relacion.estado == 5) ? true : false,
+                                edit : self.$root.can('editar_relacion_gastos_recursos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
+                                cerrar: (self.$root.can('cerrar_relacion_gastos_recursos', true) && relacion.estado == 2) ? true : false,
+                                abrir: (self.$root.can('abrir_relacion_gastos_recursos', true) && relacion.estado == 5) ? true : false,
                             })
                     }))
                 },

@@ -38,6 +38,9 @@ class RelacionGastoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('permisoGlobal:consultar_relacion_gastos_recursos')->only(['show','paginate','index']);
         $this->middleware('permisoGlobal:registrar_relacion_gastos_recursos')->only('store');
+        $this->middleware('permisoGlobal:editar_relacion_gastos_recursos')->only('update');
+        $this->middleware('permisoGlobal:abrir_relacion_gastos_recursos')->only('open');
+        $this->middleware('permisoGlobal:cerrar_relacion_gastos_recursos')->only('close');
 
         $this->transformer = $transformer;
         $this->fractal = $fractal;

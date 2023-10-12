@@ -159,18 +159,38 @@ class RelacionGasto extends Model
     public function getColorEstadoAttribute()
     {
         switch ($this->idestado) {
-            case 5:
-                return '#3386FF';
             case 1:
-                return '#3386FF';
-            case 6:
-                return '#FFEC33';
-            case 0:
-                return '#FFEC33';
-            case 7:
-                return '#00a65a';
+                return '#EEE416';
             case 2:
+                return '#EE9916';
+            case 3:
+                return '#EE5416';
+            case 4:
+                return '#5D9B23';
+            case 5:
                 return '#00a65a';
+            case 6:
+                return '#237A9B';
+            case 7:
+                return '#23559B';
+            case 8:
+                return '#B0B0BD';
+            case 9:
+                return '#A878DE';
+            case 10:
+                return '#E431F9';
+            case 60:
+                return '#B54AC2';
+            case 70:
+                return '#E22988';
+            case 80:
+                return '#E23F29';
+            case 100:
+                return '#E26529';
+            case 600:
+                return '#E2B029';
+            case 700:
+                return '#8B6C18';
             default:
                 return '#d1cfd1';
         }

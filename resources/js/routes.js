@@ -4473,7 +4473,7 @@ export const routes = [
                                     title: 'Editar Relación de Gastos',
                                     breadcrumb: {parent: 'relacion-gasto', name: 'EDITAR'},
                                     middleware: [auth, permission],
-                                    permission: 'editar_documento_recursos',
+                                    permission: 'editar_relacion_gastos_recursos',
                                     general: true
                                 }
                             },
