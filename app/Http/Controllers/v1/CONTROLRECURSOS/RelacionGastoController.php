@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CONTROLRECURSOS\RelacionGastoTransformer;
 use App\Services\CONTROLRECURSOS\RelacionGastoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class RelacionGastoController extends Controller
@@ -37,9 +38,22 @@ class RelacionGastoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('permisoGlobal:consultar_relacion_gastos_recursos')->only(['show','paginate','index']);
         $this->middleware('permisoGlobal:registrar_relacion_gastos_recursos')->only('store');
+        $this->middleware('permisoGlobal:editar_relacion_gastos_recursos')->only('update');
+        $this->middleware('permisoGlobal:abrir_relacion_gastos_recursos')->only('open');
+        $this->middleware('permisoGlobal:cerrar_relacion_gastos_recursos')->only('close');
 
         $this->transformer = $transformer;
         $this->fractal = $fractal;
         $this->service = $service;
+    }
+
+    public function close(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->close($id));
+    }
+
+    public function open(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->open($id));
     }
 }

@@ -19,6 +19,19 @@ export default {
         SET_META(state, data) {
             state.meta = data;
         },
+        UPDATE_RELACION(state, data) {
+            state.relaciones = state.relaciones.map(relacion => {
+                if (relacion.id === data.id) {
+                    return Object.assign([], relacion, data)
+                }
+                return relacion
+            })
+            state.currentRelacion = data
+        },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            state.currentRelacion[data.attribute] = data.value
+        }
     },
 
     actions: {
@@ -110,6 +123,88 @@ export default {
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Documento actualizado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        close(context, payload) {
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Cerrar la Relación de Gastos",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cerrar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id + '/close', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Relación cerrada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        open(context, payload) {
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Abrir la Relación de Gastos",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Abrir',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id + '/open', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Relación abierta correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

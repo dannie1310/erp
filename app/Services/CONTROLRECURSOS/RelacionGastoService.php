@@ -448,4 +448,14 @@ class RelacionGastoService
             $factura_repositorio->save();
         }
     }
+
+    public function close($id)
+    {
+        return $this->repository->show($id)->cerrar();
+    }
+
+    public function open($id)
+    {
+        return $this->repository->show($id)->abrir();
+    }
 }
