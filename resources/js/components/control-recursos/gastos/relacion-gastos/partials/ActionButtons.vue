@@ -12,13 +12,15 @@
         <button v-if="value.abrir" @click="abrir" type="button" class="btn btn-sm btn-outline-info" title="Abrir">
             <i class="fa fa-unlock"></i>
         </button>
+        <PDF v-bind:id="value.id" v-if="value.pdf"></PDF>
     </div>
 </template>
 
 <script>
+    import PDF from "../FormatoRelacionGasto";
     export default {
         name: "relacion-gastos-action-buttons",
-        components: {},
+        components: { PDF },
         props: ['value'],
         methods: {
             cerrar() {

@@ -12,6 +12,7 @@ use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\VwUbicacionRelacion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\PDF\ControlRecursos\RelacionGastosFormato;
 use App\Repositories\CONTROLRECURSOS\RelacionGastoRepository as Repository;
 use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use App\Utils\CFD;
@@ -457,5 +458,11 @@ class RelacionGastoService
     public function open($id)
     {
         return $this->repository->show($id)->abrir();
+    }
+
+    public function pdfRelacion($id)
+    {
+        $pdf = new RelacionGastosFormato($this->repository->show($id));
+        return $pdf->create();
     }
 }
