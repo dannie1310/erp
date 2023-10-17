@@ -36,8 +36,16 @@
                     id: this.value.id
                 })
                     .then(data => {
-                        this.$store.commit('controlRecursos/relacion-gasto/UPDATE_RELACION', data);
+                        this.find();
                     })
+            },
+            find() {
+                return this.$store.dispatch('controlRecursos/relacion-gasto/find', {
+                    id: this.value.id,
+                    params:{include: []}
+                }).then(data => {
+                    this.$store.commit('controlRecursos/relacion-gasto/UPDATE_RELACION', data);
+                })
             },
         }
     }
