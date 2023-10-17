@@ -56,4 +56,9 @@ class RelacionGastoController extends Controller
     {
         return $this->respondWithItem($this->service->open($id));
     }
+
+    public function pdfRelacion($id)
+    {
+        return $this->service->pdfRelacion($id);
+    }
 }

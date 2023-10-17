@@ -12,6 +12,7 @@ use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\VwUbicacionRelacion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\PDF\ControlRecursos\RelacionGastosFormato;
 use App\Repositories\CONTROLRECURSOS\RelacionGastoRepository as Repository;
 use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use App\Utils\CFD;
@@ -88,7 +89,7 @@ class RelacionGastoService
             $relacion = $this->repository->registrar($data);
 
             foreach ($data['partidas'] as $partida) {
-                $fecha = new DateTime($partida['fecha_editar']);
+                $fecha = new DateTime($partida['fecha']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $partida['fecha'] = $fecha->format("Y-m-d");
                 if ($partida['uuid'] != null) {
@@ -355,7 +356,7 @@ class RelacionGastoService
             $documentos = $relacion->documentos->pluck('idrelaciones_gastos_documentos')->toArray();
 
             foreach ($data['documentos']['data'] as $partida) {
-                $fecha = new DateTime($partida['fecha']);
+                $fecha = new DateTime($partida['fecha_editar']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $partida['fecha'] = $fecha->format("Y-m-d");
 
@@ -457,5 +458,11 @@ class RelacionGastoService
     public function open($id)
     {
         return $this->repository->show($id)->abrir();
+    }
+
+    public function pdfRelacion($id)
+    {
+        $pdf = new RelacionGastosFormato($this->repository->show($id));
+        return $pdf->create();
     }
 }

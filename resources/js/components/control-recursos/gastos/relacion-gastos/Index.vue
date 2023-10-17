@@ -109,6 +109,7 @@
                                 edit : self.$root.can('editar_relacion_gastos_recursos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
                                 cerrar: (self.$root.can('cerrar_relacion_gastos_recursos', true) && relacion.estado == 2) ? true : false,
                                 abrir: (self.$root.can('abrir_relacion_gastos_recursos', true) && relacion.estado == 5) ? true : false,
+                                pdf: relacion.estado == 5 ? true : false,
                             })
                     }))
                 },

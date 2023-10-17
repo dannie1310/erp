@@ -12,13 +12,15 @@
         <button v-if="value.abrir" @click="abrir" type="button" class="btn btn-sm btn-outline-info" title="Abrir">
             <i class="fa fa-unlock"></i>
         </button>
+        <PDF v-bind:id="value.id" v-if="value.pdf"></PDF>
     </div>
 </template>
 
 <script>
+    import PDF from "../FormatoRelacionGasto";
     export default {
         name: "relacion-gastos-action-buttons",
-        components: {},
+        components: { PDF },
         props: ['value'],
         methods: {
             cerrar() {
@@ -34,8 +36,16 @@
                     id: this.value.id
                 })
                     .then(data => {
-                        this.$store.commit('controlRecursos/relacion-gasto/UPDATE_RELACION', data);
+                        this.find();
                     })
+            },
+            find() {
+                return this.$store.dispatch('controlRecursos/relacion-gasto/find', {
+                    id: this.value.id,
+                    params:{include: []}
+                }).then(data => {
+                    this.$store.commit('controlRecursos/relacion-gasto/UPDATE_RELACION', data);
+                })
             },
         }
     }
