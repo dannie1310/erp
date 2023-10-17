@@ -88,7 +88,7 @@ class RelacionGastoService
             $relacion = $this->repository->registrar($data);
 
             foreach ($data['partidas'] as $partida) {
-                $fecha = new DateTime($partida['fecha_editar']);
+                $fecha = new DateTime($partida['fecha']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $partida['fecha'] = $fecha->format("Y-m-d");
                 if ($partida['uuid'] != null) {
@@ -355,7 +355,7 @@ class RelacionGastoService
             $documentos = $relacion->documentos->pluck('idrelaciones_gastos_documentos')->toArray();
 
             foreach ($data['documentos']['data'] as $partida) {
-                $fecha = new DateTime($partida['fecha']);
+                $fecha = new DateTime($partida['fecha_editar']);
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $partida['fecha'] = $fecha->format("Y-m-d");
 

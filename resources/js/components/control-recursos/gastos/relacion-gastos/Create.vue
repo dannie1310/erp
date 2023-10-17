@@ -334,19 +334,6 @@
                              </div>
                              <div class="row">
                                      <div class="col-md-8">
-                                         <div class="form-group row error-content">
-                                             <label for="observaciones" class="col-form-label">Observaciones: </label>
-                                             <textarea
-                                                 name="observaciones"
-                                                 id="observaciones"
-                                                 class="form-control"
-                                                 v-model="observaciones"
-                                                 v-validate="{required: true}"
-                                                 data-vv-as="Observaciones"
-                                                 :class="{'is-invalid': errors.has('observaciones')}"
-                                             ></textarea>
-                                             <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
-                                         </div>
                                          <label>Total de CFDI Cargados:&nbsp;</label><span style="font-size: 15px; font-weight: bold">{{no_cfd}}</span>
                                      </div>
                                      <div class="col-md-4" style="text-align: right">
