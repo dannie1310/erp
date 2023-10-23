@@ -82,10 +82,15 @@ class RelacionGasto extends Model
         return $this->belongsTo(CtgMoneda::class, 'idmoneda', 'id');
     }
 
+    public function firmas()
+    {
+        return $this->hasMany(RelacionGastoFirma::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
+    }
 
     /**
      * Scopes
      */
+
 
     /**
      * Atributos
@@ -276,6 +281,369 @@ class RelacionGasto extends Model
     {
         $date = date_create($this->fecha_fin);
         return date_format($date, "m/d/Y");
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->timestamp_registro);
+        return date_format($date, "d/m/Y");
+    }
+
+    public function getDocumentosDeduciblesAttribute()
+    {
+        return $this->documentos()->deducibles();
+    }
+
+    public function getSumaTotalDeducibleAttribute()
+    {
+        return $this->documentos_deducibles->sum('total');
+    }
+
+    public function getSumaTotalDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_total_deducible),2);
+    }
+
+    public function getPorcentajeDeduciblesAttribute()
+    {
+        return (100 * $this->suma_total_deducible) / $this->total;
+    }
+
+    public function getPorcentajeDeduciblesFormatAttribute()
+    {
+        return number_format($this->porcentaje_deducibles, 2);
+    }
+
+    public function getSumaImporteDeducibleAttribute()
+    {
+        return $this->documentos_deducibles->sum('importe');
+    }
+
+    public function getSumaImporteDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_importe_deducible),2);
+    }
+
+    public function getSumaIvaDeducibleAttribute()
+    {
+        return $this->documentos_deducibles->sum('iva');
+    }
+
+    public function getSumaIvaDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_iva_deducible),2);
+    }
+
+    public function getSumaRetencionesDeducibleAttribute()
+    {
+        return $this->documentos_deducibles->sum('retenciones');
+    }
+
+    public function getSumaRetencionesDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_retenciones_deducible),2);
+    }
+
+    public function getSumaOtrosImpDeducibleAttribute()
+    {
+        return $this->documentos_deducibles->sum('otros_impuestos');
+    }
+
+    public function getSumaOtrosImpDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_otros_imp_deducible),2);
+    }
+
+    public function getDocumentosNoDeduciblesAttribute()
+    {
+        return $this->documentos()->noDeducibles();
+    }
+
+    public function getSumaTotalNoDeducibleAttribute()
+    {
+        return $this->documentos_no_deducibles->sum('total');
+    }
+
+    public function getSumaTotalNoDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_total_no_deducible),2);
+    }
+
+    public function getPorcentajeNoDeduciblesAttribute()
+    {
+        return (100 * $this->suma_total_no_deducible) / $this->total;
+    }
+
+    public function getPorcentajeNoDeduciblesFormatAttribute()
+    {
+        return number_format($this->porcentaje_no_deducibles, 2);
+    }
+
+    public function getSumaImporteNoDeducibleAttribute()
+    {
+        return $this->documentos_no_deducibles->sum('importe');
+    }
+
+    public function getSumaImporteNoDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_importe_no_deducible),2);
+    }
+
+    public function getSumaIvaNoDeducibleAttribute()
+    {
+        return $this->documentos_no_deducibles->sum('iva');
+    }
+
+    public function getSumaIvaNoDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_iva_no_deducible),2);
+    }
+
+    public function getSumaRetencionesNoDeducibleAttribute()
+    {
+        return $this->documentos_no_deducibles->sum('retenciones');
+    }
+
+    public function getSumaRetencionesNoDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_retenciones_no_deducible),2);
+    }
+
+    public function getSumaOtrosImpNoDeducibleAttribute()
+    {
+        return $this->documentos_no_deducibles->sum('otros_impuestos');
+    }
+
+    public function getSumaOtrosImpNoDeducibleFormatAttribute()
+    {
+        return number_format(($this->suma_otros_imp_no_deducible),2);
+    }
+
+    public function getNoDiasAttribute()
+    {
+        return $this->documentos()->selectRaw("COUNT(distinct(fecha)) AS dias")->first()->dias;
+    }
+
+    public function getNoDiasFormatAttribute()
+    {
+        return $this->no_dias . ($this->no_dias > 1 ? ' DIAS' : 'DIA');
+    }
+
+    public function getPromedioDiarioAttribute()
+    {
+        return $this->total / $this->no_dias;
+    }
+
+    public function getPromedioDiarioFormatAttribute()
+    {
+        return number_format(($this->promedio_diario),2);
+    }
+
+    public function getResumenGastosAttribute()
+    {
+        $consulta = " SELECT
+            grupostipogastocomp.Descripcion AS concepto,
+           (SELECT
+                        SUM(relaciones_gastos_documentos.importe)
+                    FROM
+                        relaciones_gastos_documentos
+                            INNER JOIN
+                        controlrec.tiposgastocomp tiposgastocomp_ND ON (tiposgastocomp_ND.IdTipoGastoComp = relaciones_gastos_documentos.idtipo_gasto_comprobacion)
+                            INNER JOIN
+                        controlrec.grupostipogastocomp grupostipogastocomp_ND ON (tiposgastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp_ND.IdGrupoTipoGastoComp)
+                    WHERE
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = " . $this->getKey() . "
+                            AND grupostipogastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp) AS importe_deducible,
+           (SELECT
+                        SUM(relaciones_gastos_documentos.iva)
+                    FROM
+                        relaciones_gastos_documentos
+                            INNER JOIN
+                        controlrec.tiposgastocomp tiposgastocomp_ND ON (tiposgastocomp_ND.IdTipoGastoComp = relaciones_gastos_documentos.idtipo_gasto_comprobacion)
+                            INNER JOIN
+                        controlrec.grupostipogastocomp grupostipogastocomp_ND ON (tiposgastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp_ND.IdGrupoTipoGastoComp)
+                    WHERE
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = " . $this->getKey() . "
+                            AND grupostipogastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp) AS iva,
+           (SELECT
+                        SUM(relaciones_gastos_documentos.otros_impuestos)
+                    FROM
+                        relaciones_gastos_documentos
+                            INNER JOIN
+                        controlrec.tiposgastocomp tiposgastocomp_ND ON (tiposgastocomp_ND.IdTipoGastoComp = relaciones_gastos_documentos.idtipo_gasto_comprobacion)
+                            INNER JOIN
+                        controlrec.grupostipogastocomp grupostipogastocomp_ND ON (tiposgastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp_ND.IdGrupoTipoGastoComp)
+                    WHERE
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = " . $this->getKey() . "
+                            AND grupostipogastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp) AS otros_impuestos,
+            (SELECT
+                        SUM(relaciones_gastos_documentos.retenciones)
+                    FROM
+                        relaciones_gastos_documentos
+                            INNER JOIN
+                        controlrec.tiposgastocomp tiposgastocomp_ND ON (tiposgastocomp_ND.IdTipoGastoComp = relaciones_gastos_documentos.idtipo_gasto_comprobacion)
+                            INNER JOIN
+                        controlrec.grupostipogastocomp grupostipogastocomp_ND ON (tiposgastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp_ND.IdGrupoTipoGastoComp)
+                    WHERE
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = " . $this->getKey() . "
+                            AND grupostipogastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp) AS retenciones,
+            (SELECT
+                        SUM(relaciones_gastos_documentos.total)
+                    FROM
+                        relaciones_gastos_documentos
+                            INNER JOIN
+                        controlrec.tiposgastocomp tiposgastocomp_ND ON (tiposgastocomp_ND.IdTipoGastoComp = relaciones_gastos_documentos.idtipo_gasto_comprobacion)
+                            INNER JOIN
+                        controlrec.grupostipogastocomp grupostipogastocomp_ND ON (tiposgastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp_ND.IdGrupoTipoGastoComp)
+                    WHERE
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = " . $this->getKey() . "
+                            AND grupostipogastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp) AS total_deducible,
+            (SELECT
+                        SUM(relaciones_gastos_documentos.total)
+                    FROM
+                        relaciones_gastos_documentos
+                            INNER JOIN
+                        controlrec.tiposgastocomp tiposgastocomp_ND ON (tiposgastocomp_ND.IdTipoGastoComp = relaciones_gastos_documentos.idtipo_gasto_comprobacion)
+                            INNER JOIN
+                        controlrec.grupostipogastocomp grupostipogastocomp_ND ON (tiposgastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp_ND.IdGrupoTipoGastoComp)
+                    WHERE
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (3 , 4)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = " . $this->getKey() . "
+                            AND grupostipogastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp) AS importe_no_deducible,
+            (SELECT
+                        SUM(relaciones_gastos_documentos.total)
+                    FROM
+                        relaciones_gastos_documentos
+                            INNER JOIN
+                        controlrec.tiposgastocomp tiposgastocomp_ND ON (tiposgastocomp_ND.IdTipoGastoComp = relaciones_gastos_documentos.idtipo_gasto_comprobacion)
+                            INNER JOIN
+                        controlrec.grupostipogastocomp grupostipogastocomp_ND ON (tiposgastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp_ND.IdGrupoTipoGastoComp)
+                    WHERE
+                        relaciones_gastos_documentos.idrelaciones_gastos = " . $this->getKey() . "
+                            AND grupostipogastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp) AS total,";
+
+        if ($this->no_dias > 0) {
+            $consulta = $consulta . "((SELECT
+                SUM(relaciones_gastos_documentos.total)
+            FROM
+                relaciones_gastos_documentos
+                    INNER JOIN
+                controlrec.tiposgastocomp tiposgastocomp_ND ON (tiposgastocomp_ND.IdTipoGastoComp = relaciones_gastos_documentos.idtipo_gasto_comprobacion)
+                    INNER JOIN
+                controlrec.grupostipogastocomp grupostipogastocomp_ND ON (tiposgastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp_ND.IdGrupoTipoGastoComp)
+            WHERE
+                relaciones_gastos_documentos.idrelaciones_gastos = " . $this->getKey() . "
+                    AND grupostipogastocomp_ND.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp) / " . $this->no_dias . ") AS promedio_diario";
+        } else {
+            $consulta = $consulta . "NULL as promedio_diario";
+        }
+        $consulta = $consulta . "
+            FROM
+                (controlrec.tiposgastocomp tiposgastocomp
+                INNER JOIN controlrec.grupostipogastocomp grupostipogastocomp ON (tiposgastocomp.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp))
+                    INNER JOIN
+                controlrec.relaciones_gastos_documentos relaciones_gastos_documentos ON (relaciones_gastos_documentos.idtipo_gasto_comprobacion = tiposgastocomp.IdTipoGastoComp)
+            WHERE
+                (relaciones_gastos_documentos.idrelaciones_gastos = " . $this->getKey() . ")
+            GROUP BY grupostipogastocomp.Descripcion,controlrec.grupostipogastocomp.IdGrupoTipoGastoComp";
+
+        $resumen = DB::connection('controlrec')->select(DB::raw($consulta));
+
+        return $resumen;
+    }
+
+    public function getSumasResumenGastosAttribute()
+    {
+        $consulta = "
+         SELECT format((select
+                        SUM(relaciones_gastos_documentos.importe)
+                    from
+                        relaciones_gastos_documentos
+
+                    where
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey()."
+                            ),2) as importe_deducible,
+                   format((select
+                        SUM(relaciones_gastos_documentos.iva)
+                    from
+                        relaciones_gastos_documentos
+
+                    where
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey()."
+                            ),2) as iva,
+                format((select
+                        SUM(relaciones_gastos_documentos.otros_impuestos)
+                    from
+                        relaciones_gastos_documentos
+
+                    where
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey()."
+                            ),2) as otros_impuestos,
+                format((select
+                        SUM(relaciones_gastos_documentos.retenciones)
+                    from
+                        relaciones_gastos_documentos
+
+                    where
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey()."
+                            ),2) as retenciones,
+                format((select
+                        SUM(relaciones_gastos_documentos.total)
+                    from
+                        relaciones_gastos_documentos
+
+                    where
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (1 , 2)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey()."
+                            ),2) as total_deducible,
+                format((select
+                        SUM(relaciones_gastos_documentos.total)
+                    from
+                        relaciones_gastos_documentos
+
+                    where
+                        relaciones_gastos_documentos.idtipo_docto_comp IN (3,4)
+                            AND relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey()."
+                            ),2) as importe_no_deducible,
+                format((select
+                        SUM(relaciones_gastos_documentos.total)
+                    from
+                        relaciones_gastos_documentos
+
+                    where
+                        relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey()."
+                            ),2) as total";
+
+         if($this->no_dias > 0)
+         {
+             $consulta = $consulta . "
+                 ,
+                 format((select SUM(relaciones_gastos_documentos.total)
+                        from
+                            relaciones_gastos_documentos
+
+                        where
+                            relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey()."
+                                )/".$this->no_dias.",2) as promedio_diario ";
+         }
+
+        $consulta .= "FROM (controlrec.tiposgastocomp tiposgastocomp
+                    INNER JOIN controlrec.grupostipogastocomp grupostipogastocomp ON (tiposgastocomp.IdGrupoTipoGastoComp = grupostipogastocomp.IdGrupoTipoGastoComp))
+                        INNER JOIN
+                    controlrec.relaciones_gastos_documentos relaciones_gastos_documentos ON (relaciones_gastos_documentos.idtipo_gasto_comprobacion = tiposgastocomp.IdTipoGastoComp)
+                WHERE
+                    (relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey().")
+                GROUP BY    relaciones_gastos_documentos.idrelaciones_gastos;";
+        return DB::connection('controlrec')->select(DB::raw($consulta))[0];
     }
 
     /**

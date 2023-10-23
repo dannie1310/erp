@@ -67,6 +67,15 @@ class RelacionGastoDocumento extends Model
     /**
      * Scopes
      */
+    public function scopeDeducibles($query)
+    {
+        return $query->whereIn('idtipo_docto_comp', [1,2]);
+    }
+
+    public function scopeNoDeducibles($query)
+    {
+        return $query->whereIn('idtipo_docto_comp', [3,4]);
+    }
 
     /**
      * Atributos

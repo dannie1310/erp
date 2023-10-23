@@ -214,7 +214,7 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`tipo[${i}]`)">{{ errors.first(`tipo[${i}]`) }}</div>
                                     </td>
                                     <td v-if="partida.uuid != null">
-                                        {{ partida.fecha_editar }}
+                                        {{ partida.fecha_editar != undefined ?  partida.fecha_editar :  partida.fecha}}
                                     </td>
                                     <td v-else>
                                         <datepicker v-model = "partida.fecha_editar"
@@ -690,6 +690,17 @@ export default {
             });
         },
         destroy(index){
+            let _self = this;
+            var partida = this.relacion.documentos.data[index]
+            let x = 0;
+            if(partida.uuid != null) {
+                this.names.forEach(function (name, i) {
+                    let indice = _self.names.indexOf(partida.uuid + ".xml");
+                    _self.names.splice(indice, 1);
+                    _self.files.splice(indice, 1);
+                });
+                this.no_cfd = this.no_cfd - 1;
+            }
             this.relacion.documentos.data.splice(index, 1);
         },
         modalCFDI(){
