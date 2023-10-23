@@ -133,8 +133,8 @@ class RelacionGastosFormato extends Rotation
         if (!App::environment('production')) {
             $this->SetFont('Arial','B',90);
             $this->SetTextColor(155,155,155);
-            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
-            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
+            $this->RotatedText(3,15,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(6,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
         }
 
@@ -188,14 +188,12 @@ class RelacionGastosFormato extends Rotation
         $this->SetFont('Arial', 'BI', 6);
         $this->SetY(27);
 
-        $this->SetTextColor('0,0,0');
-        $this->Cell(7, .4, utf8_decode('Formato generado desde el módulo de control de recursos.'), 0, 0, 'L');
 
-        $this->Ln(.4);
-        $this->SetY(-0.9);
-        $this->SetTextColor('0,0,0');
+
         $this->SetFont('Arial', 'BI', 6);
-        $this->Cell(19.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
+        $this->Cell(10, .3, utf8_decode('Formato generado desde el sistema de control de recursos. Fecha de registro: ' . date("d-m-Y", strtotime($this->relacion->timestamp_registro))).' Fecha de consulta: '.date("d-m-Y H:i:s").'  Estado: '.$this->relacion->estatus_descripcion, 0, 0, 'L');
+        $this->SetXY(22.6,-0.9);
+        $this->Cell(5, .3, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     public function partidas()
