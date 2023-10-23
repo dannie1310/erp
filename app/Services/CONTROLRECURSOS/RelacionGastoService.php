@@ -224,8 +224,8 @@ class RelacionGastoService
                                 Registró: " . $repositorio_factura->usuario->nombre_completo . "
                                 DB: " . $repositorio_factura->proyecto->base_datos . "
                                 Proyecto: " . $repositorio_factura->obra . "
-                                Tipo Transacción: " . $repositorio_factura->transaccion->tipo_transaccion_str . "
-                                Folio Transacción: " . $repositorio_factura->transaccion->numero_folio . "
+                                Tipo Transacción: " . ($repositorio_factura->transaccion != null ? $repositorio_factura->transaccion->tipo_transaccion_str : "No se encontro..."). "
+                                Folio Transacción: " . ($repositorio_factura->transaccion != null ? $repositorio_factura->transaccion->numero_folio : "No se encontro...") . "
                                 Fecha Registro: " . $repositorio_factura->fecha_hora_registro_format . "
                                 UUID: " . $uuid . "
                                 Emisor: " . $repositorio_factura->proveedor->razon_social . "
@@ -356,7 +356,11 @@ class RelacionGastoService
             $documentos = $relacion->documentos->pluck('idrelaciones_gastos_documentos')->toArray();
 
             foreach ($data['documentos']['data'] as $partida) {
-                $fecha = new DateTime($partida['fecha_editar']);
+                if(array_key_exists('fecha_editar', $partida)) {
+                    $fecha = new DateTime($partida['fecha_editar']);
+                }else{
+                    $fecha = new DateTime($partida['fecha']);
+                }
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $partida['fecha'] = $fecha->format("Y-m-d");
 
