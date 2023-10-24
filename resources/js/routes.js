@@ -4477,6 +4477,19 @@ export const routes = [
                                     general: true
                                 }
                             },
+                            {
+                                path: ':id/delete',
+                                name: 'relacion-gasto-delete',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Delete').default,
+                                props: true,
+                                meta: {
+                                    title: 'Eliminar Relación de Gastos',
+                                    breadcrumb: { parent: 'relacion-gasto', name: 'ELIMINAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'eliminar_factura_recursos',
+                                    general: true
+                                }
+                            },
                         ]
                     },
                 ]

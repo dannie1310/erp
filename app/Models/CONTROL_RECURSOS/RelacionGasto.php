@@ -2,6 +2,7 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -85,6 +86,11 @@ class RelacionGasto extends Model
     public function firmas()
     {
         return $this->hasMany(RelacionGastoFirma::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
+    }
+
+    public function relacionEliminada()
+    {
+        return $this->belongsTo(RelacionGastoEliminado::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
     }
 
     /**
@@ -783,5 +789,56 @@ class RelacionGasto extends Model
         {
             abort(500, "La relación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede abrirse.");
         }
+    }
+
+    public function eliminar()
+    {
+        $this->validaEliminacion();
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $this->delete();
+            foreach ($this->documentos as $documento)
+            {
+                $documento->respaldar();
+                $documento->desvinculaFacturaRepositorio();
+            }
+            DB::connection('controlrec')->commit();
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function validaEliminacion()
+    {
+        if ($this->idestado != 1 && $this->idestado != 2)
+        {
+            abort(500, "La relación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede eliminarse.");
+        }
+    }
+
+    public function respaldar()
+    {
+        $this->relacionEliminada()->create([
+            'idrelaciones_gastos' => $this->idrelaciones_gastos,
+            'numero_folio' => $this->numero_folio,
+            'folio' => $this->folio,
+            'fecha_inicio' => $this->fecha_inicio,
+            'fecha_fin' => $this->fecha_fin,
+            'idempresa' => $this->idempresa,
+            'idempleado' => $this->idempleado,
+            'idserie' => $this->idserie,
+            'idmoneda' => $this->idmoneda,
+            'iddepartamento' => $this->iddepartamento,
+            'idproyecto' => $this->idproyecto,
+            'modifico_estado' => $this->modifico_estado,
+            'idestado' => $this->idestado,
+            'motivo' => $this->motivo,
+            'registro' => $this->registro,
+            'timestamp_registro' => $this->timestamp_registro,
+            'usuario_elimina' => auth()->id(),
+            'fecha_eliminacion' => date('Y-m-d H:i:s')
+        ]);
     }
 }

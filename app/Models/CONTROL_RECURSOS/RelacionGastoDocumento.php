@@ -64,6 +64,11 @@ class RelacionGastoDocumento extends Model
         return $this->belongsTo(FacturaRepositorio::class, 'idrelaciones_gastos_documentos','id_doc_relacion_gastos_cr');
     }
 
+    public function eliminada()
+    {
+        return $this->belongsTo(RelacionGastoDocumentoEliminado::class, 'idrelaciones_gastos_documentos', 'idrelaciones_gastos_documentos');
+    }
+
     /**
      * Scopes
      */
@@ -172,5 +177,38 @@ class RelacionGastoDocumento extends Model
             'idctg_estados_relaciones_documentos' => $this->idestado,
             'registro' => auth()->id()
         ]);
+    }
+
+    public function respaldar()
+    {
+        $this->eliminada()->create([
+            'idrelaciones_gastos_documentos' => $this->idrelaciones_gastos_documentos,
+            'idrelaciones_gastos' => $this->idrelaciones_gastos,
+            'fecha' => $this->fecha,
+            'folio' => $this->folio,
+            'idtipo_docto_comp' => $this->idtipo_docto_comp,
+            'idtipo_gasto_comprobacion' => $this->idtipo_gasto_comprobacion,
+            'no_personas' => $this->no_personas,
+            'importe' => $this->importe,
+            'iva' => $this->iva,
+            'retenciones' => $this->retenciones,
+            'otros_impuestos' => $this->otros_impuestos,
+            'total' => $this->total,
+            'observaciones' => $this->observaciones,
+            'idestado' => $this->idestado,
+            'registro' => $this->registro,
+            'timestamp_registro' => $this->timestamp_registro,
+            'uuid' => $this->uuid
+        ]);
+    }
+
+    public function desvinculaFacturaRepositorio()
+    {
+        if ($this->cfd) {
+            $this->cfd->id_doc_relacion_gastos_cr = null;
+            $this->cfd->usuario_asocio = null;
+            $this->cfd->fecha_hora_asociacion = null;
+            $this->cfd->save();
+        }
     }
 }

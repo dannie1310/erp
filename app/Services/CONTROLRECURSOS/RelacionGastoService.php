@@ -469,4 +469,9 @@ class RelacionGastoService
         $pdf = new RelacionGastosFormato($this->repository->show($id));
         return $pdf->create();
     }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->show($id)->eliminar();
+    }
 }
