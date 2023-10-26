@@ -4486,7 +4486,7 @@ export const routes = [
                                     title: 'Eliminar Relación de Gastos',
                                     breadcrumb: { parent: 'relacion-gasto', name: 'ELIMINAR'},
                                     middleware: [auth, permission],
-                                    permission: 'eliminar_factura_recursos',
+                                    permission: 'eliminar_relacion_gastos_recursos',
                                     general: true
                                 }
                             },
