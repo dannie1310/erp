@@ -396,12 +396,12 @@ export default {
                     vencimiento:  moment(this.vencimiento).format('YYYY-MM-DD'),
                     id_moneda: this.id_moneda,
                     concepto: this.concepto,
-                    subtotal: parseFloat(this.subtotal),
+                    subtotal: parseFloat(this.subtotal.toString().replace(/,/g, '')),
                     iva: this.iva,
-                    impuesto: parseFloat(this.impuesto),
-                    retencion: parseFloat(this.retencion),
-                    otros: parseFloat(this.otros),
-                    total: parseFloat(this.total),
+                    impuesto: parseFloat(this.impuesto.toString().replace(/,/g, '')),
+                    retencion: parseFloat(this.retencion.toString().replace(/,/g, '')),
+                    otros: parseFloat(this.otros.toString().replace(/,/g, '')),
+                    total: parseFloat(this.total.toString().replace(/,/g, '')),
                     estado: this.idtipodocto == 1 ? 1 : 5,
                 })
                 .then(data => {
