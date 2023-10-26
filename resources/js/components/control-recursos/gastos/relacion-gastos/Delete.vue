@@ -20,11 +20,31 @@
                             <tabla-datos v-bind:relacion="relacion" />
                         </div>
                     </div>
+                     <hr />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row error-content">
+                                <label for="motivo" class="col-md-2 col-form-label">Motivo:</label>
+                                <div class="col-md-10">
+                                    <textarea
+                                        name="motivo"
+                                        id="motivo"
+                                        class="form-control"
+                                        v-model="motivo"
+                                        v-validate="{required: true}"
+                                        data-vv-as="Motivo"
+                                        :class="{'is-invalid': errors.has('motivo')}"
+                                    ></textarea>
+                                    <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <div class="pull-right">
                         <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
-                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0"><i class="fa fa-trash"></i>Eliminar</button>
+                        <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 && motivo == null"><i class="fa fa-trash"></i>Eliminar</button>
                     </div>
                 </div>
             </form>
@@ -42,7 +62,8 @@ export default {
     data() {
         return {
             cargando: false,
-            relacion : null
+            relacion : null,
+            motivo: null
         }
     },
     mounted() {
@@ -74,7 +95,7 @@ export default {
         destroy() {
             return this.$store.dispatch('controlRecursos/relacion-gasto/delete', {
                 id: this.id,
-                params: {}
+                params: {data: this.$data.motivo}
             }).then(() => {
                 this.$store.commit('controlRecursos/relacion-gasto/DELETE_RELACION', {id: this.id})
                 this.salir();

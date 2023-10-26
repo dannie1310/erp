@@ -50,6 +50,5 @@ class RelacionGastoObserver
         {
             abort(400, "Error al eliminar, respaldo incorrecto.");
         }
-
     }
 }

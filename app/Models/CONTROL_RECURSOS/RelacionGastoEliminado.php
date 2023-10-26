@@ -29,6 +29,7 @@ class RelacionGastoEliminado extends Model
         'registro',
         'timestamp_registro',
         'usuario_elimina',
-        'fecha_eliminacion'
+        'fecha_eliminacion',
+        'motivo_eliminacion'
     ];
 }

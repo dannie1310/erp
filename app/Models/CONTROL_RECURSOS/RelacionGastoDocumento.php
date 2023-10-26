@@ -69,6 +69,11 @@ class RelacionGastoDocumento extends Model
         return $this->belongsTo(RelacionGastoDocumentoEliminado::class, 'idrelaciones_gastos_documentos', 'idrelaciones_gastos_documentos');
     }
 
+    public function eliminadaErp()
+    {
+        return $this->belongsTo(RelacionGastoDocumentoEliminadoErp::class, 'idrelaciones_gastos_documentos', 'idrelaciones_gastos_documentos');
+    }
+
     /**
      * Scopes
      */
@@ -181,7 +186,7 @@ class RelacionGastoDocumento extends Model
 
     public function respaldar()
     {
-        $this->eliminada()->create([
+        $this->eliminadaErp()->create([
             'idrelaciones_gastos_documentos' => $this->idrelaciones_gastos_documentos,
             'idrelaciones_gastos' => $this->idrelaciones_gastos,
             'fecha' => $this->fecha,

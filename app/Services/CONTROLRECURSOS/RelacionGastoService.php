@@ -472,6 +472,6 @@ class RelacionGastoService
 
     public function delete($data, $id)
     {
-        return $this->repository->show($id)->eliminar();
+        return $this->repository->show($id)->eliminar($data["data"]);
     }
 }

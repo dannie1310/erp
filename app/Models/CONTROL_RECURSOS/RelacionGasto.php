@@ -791,17 +791,24 @@ class RelacionGasto extends Model
         }
     }
 
-    public function eliminar()
+    public function eliminar($motivo)
     {
         $this->validaEliminacion();
         try {
             DB::connection('controlrec')->beginTransaction();
-            $this->delete();
             foreach ($this->documentos as $documento)
             {
                 $documento->respaldar();
+                if($documento->eliminadaErp == null)
+                {
+                    abort(400, "Error al eliminar, respaldo incorrecto.");
+                }
                 $documento->desvinculaFacturaRepositorio();
             }
+            $this->delete();
+            $this->relacionEliminada->update([
+                'motivo_eliminacion' => $motivo
+            ]);
             DB::connection('controlrec')->commit();
         } catch (\Exception $e) {
             DB::connection('controlrec')->rollBack();
