@@ -31,6 +31,11 @@ export default {
 
         UPDATE_ATTRIBUTE(state, data) {
             state.currentRelacion[data.attribute] = data.value
+        },
+        DELETE_RELACION(state, id) {
+            state.relaciones = state.relaciones.filter(d => {
+                return d.id != id
+            });
         }
     },
 
@@ -212,6 +217,45 @@ export default {
                                         .then(() => {
                                             resolve(data);
                                         })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        delete(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Relación de Gastos",
+                    text: "¿Está seguro de que desea eliminar el relación?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Relación de gastos eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
                                 })
                                 .catch(error => {
                                     reject(error);

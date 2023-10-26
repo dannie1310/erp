@@ -2087,6 +2087,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/close', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@close')->where(['id' => '[0-9]+']);
             $api->get('{id}/open', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@open')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-relacion', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@pdfRelacion')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@destroy')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'serie'], function ($api) {

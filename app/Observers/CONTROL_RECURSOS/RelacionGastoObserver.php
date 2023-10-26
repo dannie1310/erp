@@ -42,4 +42,13 @@ class RelacionGastoObserver
             $relacionGasto->modifico_estado = auth()->id();
         }
     }
+
+    public function deleting(RelacionGasto $relacion)
+    {
+        $relacion->respaldar();
+        if($relacion->relacionEliminada == null)
+        {
+            abort(400, "Error al eliminar, respaldo incorrecto.");
+        }
+    }
 }

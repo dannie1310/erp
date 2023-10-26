@@ -13,6 +13,9 @@
             <i class="fa fa-unlock"></i>
         </button>
         <PDF v-bind:id="value.id" v-if="value.pdf"></PDF>
+        <router-link :to="{ name: 'relacion-gasto-delete', params: {id: value.id}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+            <i class="fa fa-trash"></i>
+        </router-link>
     </div>
 </template>
 

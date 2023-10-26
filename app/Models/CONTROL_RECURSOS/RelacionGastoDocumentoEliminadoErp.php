@@ -4,11 +4,11 @@ namespace App\Models\CONTROL_RECURSOS;
 
 use Illuminate\Database\Eloquent\Model;
 
-class RelacionGastoDocumentoEliminado extends Model
+class RelacionGastoDocumentoEliminadoErp extends Model
 {
     protected $connection = 'controlrec';
-    protected $table = 'relaciones_gastos_documentos_eliminados';
-    protected $primaryKey = 'idrelaciones_gastos_documentos_eliminados';
+    protected $table = 'relaciones_gastos_documentos_eliminados_erp';
+    protected $primaryKey = 'id';
     public $timestamps = false;
 
     protected $fillable = [
