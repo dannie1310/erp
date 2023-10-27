@@ -134,12 +134,6 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="form-group error-content">
-                <label for="observaciones" class="col-form-label">Observaciones: </label>
-                <h5>{{relacion.motivo}}</h5>
-            </div>
-        </div>
     </div>
 </template>
 

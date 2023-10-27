@@ -42,10 +42,28 @@
                             {{relacion.proyecto_descripcion}}
                         </td>
                         <td>
-                            {{relacion.fecha_inicio_format}}
+                            <datepicker v-model = "relacion.fecha_inicio_editar"
+                                        name = "fecha_inicial"
+                                        :format = "formatoFecha"
+                                        data-vv-as="Fecha Inicial"
+                                        :language = "es"
+                                        :bootstrap-styling = "true"
+                                        class = "form-control"
+                                        v-validate="{required: true}"
+                                        :class="{'is-invalid': errors.has('fecha_inicial')}"/>
+                            <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                         </td>
                         <td>
-                            {{ relacion.fecha_final_format }}
+                            <datepicker v-model = "relacion.fecha_final_editar"
+                                        name = "fecha_final"
+                                        data-vv-as="Fecha Final"
+                                        :format = "formatoFecha"
+                                        :language = "es"
+                                        :bootstrap-styling = "true"
+                                        class = "form-control"
+                                        v-validate="{required: true}"
+                                        :class="{'is-invalid': errors.has('fecha_final')}"/>
+                            <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
                         </td>
                     </tr>
                     <tr>
@@ -61,7 +79,14 @@
                     </tr>
                     <tr>
                         <td>
-                            {{ relacion.motivo }}
+                            <input name="motivo"
+                                id="motivo"
+                                class="form-control"
+                                v-model="relacion.motivo"
+                                v-validate="{required: true}"
+                                data-vv-as="Motivo"
+                                :class="{'is-invalid': errors.has('motivo')}" />
+                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                         </td>
                         <td>
                             {{ relacion.moneda }}
@@ -73,85 +98,21 @@
                 </table>
             </div>
         </div>
-        <div class="col-md-12">
-            <span><i class="fa fa-file-invoice"></i>Documentos asociados</span>
-            <div class="table-responsive">
-                <table class="table table-bordered table-sm">
-                    <thead>
-                        <tr>
-                            <th class="index_corto encabezado">#</th>
-                            <th class="c100 encabezado">Tipo de Documento</th>
-                            <th class="c80 encabezado">Fecha</th>
-                            <th class="c80 encabezado">Folio</th>
-                            <th class="c100 encabezado">Concepto</th>
-                            <th class="c100 encabezado">Importe</th>
-                            <th class="c100 encabezado">IVA</th>
-                            <th class="c100 encabezado">Retenciones</th>
-                            <th class="c100 encabezado">Otros Imp.</th>
-                            <th class="c100 encabezado">Total</th>
-                            <th class="c100 encabezado">No. Personas</th>
-                            <th class="c100 encabezado">Observaciones</th>
-                            <th class="c100 encabezado">Uuid</th>
-                            <th class="c100 encabezado">Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(d, i) in relacion.documentos.data">
-                            <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                            <td>{{d.tipoDocumento.descripcion}}</td>
-                            <td>{{ d.fecha_format }}</td>
-                            <td>{{ d.folio }}</td>
-                            <td>{{ d.tipoGasto.descripcion }}</td>
-                            <td style="text-align:right;">{{ d.importe_format }}</td>
-                            <td style="text-align:right;">{{ d.iva_format }}</td>
-                            <td style="text-align:right;">{{ d.retenciones_format }}</td>
-                            <td style="text-align:right;">{{ d.otros_imp_format }}</td>
-                            <td style="text-align:right;">{{ d.total_format }}</td>
-                            <td>{{ d.no_personas }}</td>
-                            <td>{{ d.observaciones }}</td>
-                            <td>{{ d.uuid }}</td>
-                            <td> <estado v-bind:value="getEstado(d.estado_descripcion, d.estado_color)" /></td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td class="encabezado"></td>
-                            <td class="encabezado"></td>
-                            <td class="encabezado"></td>
-                            <td class="encabezado"></td>
-                            <th class="encabezado">Sumatoria</th>
-                            <td class="encabezado" style="text-align:right;">{{ relacion.suma_importe_format }}</td>
-                            <td class="encabezado" style="text-align:right;">{{ relacion.suma_iva_format }}</td>
-                            <td class="encabezado" style="text-align:right;">{{ relacion.suma_retenciones_format }}</td>
-                            <td class="encabezado" style="text-align:right;">{{ relacion.suma_otros_imp_format }}</td>
-                            <td class="encabezado" style="text-align:right;">{{ relacion.total_format }}</td>
-                            <td class="encabezado"></td>
-                            <td class="encabezado"></td>
-                            <td class="encabezado"></td>
-                            <td class="encabezado"></td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="form-group error-content">
-                <label for="observaciones" class="col-form-label">Observaciones: </label>
-                <h5>{{relacion.motivo}}</h5>
-            </div>
-        </div>
     </div>
 </template>
 
 <script>
-import estado from './EstatusLabel'
+import estado from './EstatusLabel';
+import datepicker from 'vuejs-datepicker';
+import {es} from 'vuejs-datepicker/dist/locale';
 export default {
     name: "RelacionGastosTablaDatos",
-    components: { estado },
+    components: { estado, datepicker, es },
     props: ['relacion'],
     methods :{
         getEstado(estado, color) {
             return {
+                es: es,
                 color: color,
                 descripcion: estado
             }

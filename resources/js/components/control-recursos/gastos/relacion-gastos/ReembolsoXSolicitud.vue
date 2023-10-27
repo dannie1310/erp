@@ -16,6 +16,7 @@
                 <div class="row" >
                     <div class="col-md-12">
                         <encabezado v-bind:relacion="relacion" />
+                        <resumen v-bind:relacion="relacion" />
                     </div>
                 </div>
             </div>
@@ -33,9 +34,10 @@
 
 <script>
 import Encabezado from './partials/Encabezado';
+import Resumen from './partials/TablaDatosResumen';
 export default {
     name: "SolicitaReembolsoXSolicitud",
-    components: { Encabezado },
+    components: { Encabezado, Resumen },
     props: ['id'],
     data(){
         return{
