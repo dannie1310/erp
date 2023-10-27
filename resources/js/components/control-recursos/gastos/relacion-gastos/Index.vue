@@ -111,6 +111,7 @@
                                 abrir: (self.$root.can('abrir_relacion_gastos_recursos', true) && relacion.estado == 5) ? true : false,
                                 pdf: relacion.estado == 5 ? true : false,
                                 delete: self.$root.can('eliminar_relacion_gastos_recursos', true) && (relacion.estado == 1 || relacion.estado == 2) ? true : false,
+                                reembolso_x_solicitud: self.$root.can('eliminar_relacion_gastos_recursos', true) && (relacion.estado == 5) ? true : false,
                             })
                     }))
                 },
