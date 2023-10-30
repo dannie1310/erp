@@ -103,7 +103,7 @@ class FacturaService
         $arreglo["retencion"]  = $arreglo_cfd["descuento"];
         $arreglo["serie"] = $arreglo_cfd["serie"];
         $arreglo["otros"] = $arreglo_cfd["total_impuestos_retenidos"];
-        $arreglo["folio"] = $arreglo_cfd["folio"] == "" ? "N/A" : $arreglo_cfd["folio"];
+        $arreglo["folio"] = $arreglo_cfd["folio"] == "" ? substr($arreglo_cfd["uuid"],0,5) : $arreglo_cfd["folio"];
         $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("m/d/Y");
         $arreglo["vencimiento"] = $arreglo_cfd["fecha"]->format("m/d/Y");
         $arreglo["fecha_hora"] = $arreglo_cfd["fecha_hora"];
