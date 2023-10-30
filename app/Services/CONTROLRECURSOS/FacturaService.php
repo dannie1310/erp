@@ -103,7 +103,7 @@ class FacturaService
         $arreglo["retencion"]  = $arreglo_cfd["descuento"];
         $arreglo["serie"] = $arreglo_cfd["serie"];
         $arreglo["otros"] = $arreglo_cfd["total_impuestos_retenidos"];
-        $arreglo["folio"] = $arreglo_cfd["folio"];
+        $arreglo["folio"] = $arreglo_cfd["folio"] == "" ? substr($arreglo_cfd["uuid"],0,5) : $arreglo_cfd["folio"];
         $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("m/d/Y");
         $arreglo["vencimiento"] = $arreglo_cfd["fecha"]->format("m/d/Y");
         $arreglo["fecha_hora"] = $arreglo_cfd["fecha_hora"];
@@ -121,7 +121,6 @@ class FacturaService
         $arreglo["receptor"]["nombre"] = $arreglo_cfd["receptor"]["nombre"];
 
         $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
-        $arreglo["folio"] = $arreglo_cfd["folio"];
 
         $arreglo["proveedor_bd"] = $this->repository->getProveedor([
                 "rfc" => $arreglo["emisor"]["rfc"],
