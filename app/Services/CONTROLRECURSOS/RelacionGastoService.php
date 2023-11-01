@@ -474,4 +474,9 @@ class RelacionGastoService
     {
         return $this->repository->show($id)->eliminar($data["data"]);
     }
+
+    public function storeReembolsoXSolicitud($data)
+    {
+        return $this->show($data['id'])->reembolsoPorSolicitud($data);
+    }
 }

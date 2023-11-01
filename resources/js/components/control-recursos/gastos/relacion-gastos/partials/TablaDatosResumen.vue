@@ -27,19 +27,42 @@
                         </th>
                     </tr>
                     <tr>
-                        <th class="encabezado  c130">
+                        <th class="encabezado  c130" colspan="2">
                            Proyecto
                         </th>
-                        <th class="encabezado  c130">
-                            Fecha Inicial
+                        <th class="encabezado">
+                            Estado
+                        </th>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            {{relacion.proyecto_descripcion}}
+                        </td>
+                        <td style="text-align: center">
+                            <estado v-bind:value="getEstado(relacion.estado_descripcion, relacion.estado_color)" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="encabezado">
+                            Concepto
                         </th>
                         <th class="encabezado  c130">
-                            Fecha Final
+                            Fecha
+                        </th>
+                        <th class="encabezado  c130">
+                            Fecha Limite de Pago
                         </th>
                     </tr>
                     <tr>
                         <td>
-                            {{relacion.proyecto_descripcion}}
+                            <input name="motivo"
+                                id="motivo"
+                                class="form-control"
+                                v-model="relacion.motivo"
+                                v-validate="{required: true}"
+                                data-vv-as="Motivo"
+                                :class="{'is-invalid': errors.has('motivo')}" />
+                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                         </td>
                         <td>
                             <datepicker v-model = "relacion.fecha_inicio_editar"
@@ -67,33 +90,24 @@
                         </td>
                     </tr>
                     <tr>
-                        <th class="encabezado">
-                            Motivo
-                        </th>
-                        <th class="encabezado">
-                            Moneda
-                        </th>
-                        <th class="encabezado">
-                            Estado
-                        </th>
+                        <th class="encabezado">Moneda</th>
+                        <th class="encabezado">Importe</th>
+                        <th class="encabezado">IVA</th>
                     </tr>
                     <tr>
-                        <td>
-                            <input name="motivo"
-                                id="motivo"
-                                class="form-control"
-                                v-model="relacion.motivo"
-                                v-validate="{required: true}"
-                                data-vv-as="Motivo"
-                                :class="{'is-invalid': errors.has('motivo')}" />
-                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
-                        </td>
-                        <td>
-                            {{ relacion.moneda }}
-                        </td>
-                        <td style="text-align: center">
-                            <estado v-bind:value="getEstado(relacion.estado_descripcion, relacion.estado_color)" />
-                        </td>
+                        <td>{{ relacion.moneda }}</td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_importe_format }}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_iva_format }}</b></td>
+                    </tr>
+                    <tr>
+                        <th class="encabezado">Retenciones</th>
+                        <th class="encabezado">Otros Impuestos</th>
+                        <th class="encabezado">Total</th>
+                    </tr>
+                    <tr>
+                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_retenciones_format}}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_otros_imp_format }}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.total_format }}</b></td>
                     </tr>
                 </table>
             </div>

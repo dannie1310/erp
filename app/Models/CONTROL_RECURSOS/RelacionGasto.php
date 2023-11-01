@@ -848,4 +848,25 @@ class RelacionGasto extends Model
             'fecha_eliminacion' => date('Y-m-d H:i:s')
         ]);
     }
+
+    public function reembolsoPorSolicitud($data)
+    {
+dd($data);
+        $fecha_inicial = new DateTime($data['fecha_inicial']);
+        $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data['fecha_inicial'] = $fecha_inicial->format("Y-m-d H:i:s");
+        $fecha_final = new DateTime($data['fecha_final']);
+        $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data['fecha_final'] = $fecha_final->format("Y-m-d H:i:s");
+
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            DB::connection('controlrec')->commit();
+            return $relacion;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
 }
