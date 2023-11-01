@@ -177,6 +177,7 @@
                                 <select data-vv-as="IVA"
                                         id="iva"
                                         name="iva"
+                                        v-on:keyup="calcularImpuesto"
                                         :error="errors.has('iva')"
                                         v-validate="{required: true}"
                                         v-model="iva">
@@ -194,7 +195,6 @@
                             <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
                                    name="impuesto"
                                    data-vv-as="Impuesto"
-                                   v-on:keyup="calcularImpuesto"
                                    v-model="impuesto"
                                    style="text-align: right"
                                    v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
