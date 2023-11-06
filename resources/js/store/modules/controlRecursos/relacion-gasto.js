@@ -264,6 +264,44 @@ export default {
                     });
             });
         },
+        reembolsoXSolicitud(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Reembolso por Solicitud",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Solicitar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI+'xSolicitud', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Reembolso por solicitud registrado correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

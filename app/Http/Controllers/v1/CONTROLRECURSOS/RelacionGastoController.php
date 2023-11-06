@@ -65,6 +65,6 @@ class RelacionGastoController extends Controller
 
     public function storeReembolsoXSolicitud(Request $request)
     {
-        return $this->respondWithItem($this->service->store($request->all()));
+        return $this->respondWithItem($this->service->storeReembolsoXSolicitud($request->all()));
     }
 }

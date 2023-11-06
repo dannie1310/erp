@@ -2,9 +2,12 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\IGH\Departamento;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use DateTime;
+use DateTimeZone;
 
 
 class RelacionGasto extends Model
@@ -91,6 +94,21 @@ class RelacionGasto extends Model
     public function relacionEliminada()
     {
         return $this->belongsTo(RelacionGastoEliminado::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
+    }
+
+    public function reembolsoGastoSol()
+    {
+        return $this->belongsTo(RelacionGastoXDocumento::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
+    }
+
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class, 'iddepartamento', 'iddepartamento');
+    }
+
+    public function departamentoSn()
+    {
+        return $this->belongsTo(DepartamentoSn::class, 'iddepartamento', 'iddepartamento');
     }
 
     /**
@@ -270,7 +288,7 @@ class RelacionGasto extends Model
     public function getDepartamentoDescripcionAttribute()
     {
         try {
-            return $this->proveedor->usuario->departamento->departamento;
+            return $this->departamento->departamento;
         }catch (\Exception $e)
         {
             return null;
@@ -851,22 +869,78 @@ class RelacionGasto extends Model
 
     public function reembolsoPorSolicitud($data)
     {
-dd($data);
-        $fecha_inicial = new DateTime($data['fecha_inicial']);
+        $fecha_inicial = new DateTime($data['fecha_inicio_editar']);
         $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
-        $data['fecha_inicial'] = $fecha_inicial->format("Y-m-d H:i:s");
-        $fecha_final = new DateTime($data['fecha_final']);
+        $data['fecha_inicial'] = $fecha_inicial->format("Y-m-d");
+        $fecha_final = new DateTime($data['fecha_final_editar']);
         $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
-        $data['fecha_final'] = $fecha_final->format("Y-m-d H:i:s");
-
+        $data['fecha_final'] = $fecha_final->format("Y-m-d");
         try {
             DB::connection('controlrec')->beginTransaction();
 
+            $reembolso = ReembolsoGastoSol::create([
+                'IdEmpresa' => $this->idempresa,
+                'IdProveedor' => $this->idempleado,
+                'Concepto' => $data['motivo'],
+                'IdMoneda' => $this->idmoneda,
+                'Fecha' => $data['fecha_inicial'],
+                'FolioDocto' => $this->folio,
+                'Importe' => $data['suma_importe'],
+                'Retenciones' => $data['suma_retenciones'],
+                'IVA' => $data['suma_iva'],
+                'OtrosImpuestos' =>$data['suma_otros_imp'],
+                'Total' => $data['total'],
+                'Vencimiento' => $data['fecha_final'],
+                'TasaIVA' => 16,
+                'IdTipoDocto' => 13,
+                'Estatus' => 11,
+                'Alias_Depto' => explode('-', $this->folio)[0],
+                'IdSerie' => $this->idserie,
+                'IdGenero' => auth()->id(),
+                'registro_portal' => 1
+            ]);
+
+            $this->reembolsoGastoSol()->create([
+                'idrelaciones_gastos' => $this->getKey(),
+                'iddocumento' => $reembolso->getKey(),
+                'idregistro' => auth()->id()
+            ]);
+
+            $this->crearCcDoctos($reembolso->getKey());
+
             DB::connection('controlrec')->commit();
-            return $relacion;
+            return $this;
         } catch (\Exception $e) {
             DB::connection('controlrec')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    private function crearCcDoctos($id_docto)
+    {
+        $centro_costo = $this->departamentoSn->centroCosto;
+        if($centro_costo == null)
+        {
+            $centro_costo = CentroCosto::where('Estatus', 1)->orderBy('IdCC')->pluck('IdCC')->first();
+        }
+        dd($centro_costo);
+        foreach ($this->documentos as $documento)
+        {
+            dd($documento);
+           /* CcDocto::create([
+
+                'IdDocto' => $id_docto,
+                'IdCC',
+                'IdTipoGasto',
+                'Importe',
+                'IVA',
+                'OtrosImpuestos',
+                'Retenciones',
+                'Total',
+                'PorcentajeFacturar',
+                'ImporteFacturar',
+                'Facturable'
+            ]);*/
         }
     }
 }
