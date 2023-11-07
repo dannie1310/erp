@@ -87,6 +87,7 @@ class FacturaService
     {
         $archivo_xml = $data["factura"];
         $arreglo_cfd = $this->getArregloCFD($archivo_xml);
+        $this->validarFactura($arreglo_cfd['uuid']);
         $this->validaCFDI($arreglo_cfd['uuid']);
         return $arreglo_cfd;
     }
@@ -181,6 +182,7 @@ class FacturaService
 
     public function store(array $data)
     {
+        $this->validarFactura($data['uuid']);
         $this->validaCFDI($data['uuid']);
         $arreglo_cfd = $this->getArregloCFD($data["archivo"]);
         $this->validaExistenciaRepositorio($arreglo_cfd);
@@ -331,7 +333,7 @@ class FacturaService
     {
         $documento = $this->repository->buscarDocumentoUuid($uuid);
         $repositorio_factura = $this->repository->buscarRepositorioFactura($uuid);
-        if ($documento && $repositorio_factura->id_documento_cr != null)
+        if ($documento && $repositorio_factura && $repositorio_factura->id_documento_cr != null)
         {
             abort(500, "CFDI utilizado previamente:
                                 Registró: ".$repositorio_factura->usuario->nombre_completo."
@@ -403,5 +405,13 @@ class FacturaService
     {
         $servicio_cfdi = new CFDSATService(new CFDSAT());
         $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
+    }
+
+    private function validarFactura($uuid)
+    {
+        if($this->repository->buscarFactura($uuid))
+        {
+            abort(500, "La Factura fue registrada anteriormente.");
+        }
     }
 }
