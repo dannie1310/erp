@@ -1,7 +1,9 @@
 <template>
-    <div class="row" v-if="relacion">
+    <div class="row" v-if="reembolso">
+        <div class="col-md-12" style="text-align: right;">
+            <h5><b>Con Segmentos Cargados (TOTALES)</b></h5>
+        </div>
         <div class="col-md-12">
-            <span><i class="fa fa-file-invoice"></i>Datos de la Relación</span>
             <div class="table-responsive">
                 <table class="table table-sm">
                     <tr>
@@ -17,30 +19,14 @@
                     </tr>
                     <tr>
                         <th>
-                            {{relacion.empresa_descripcion}}
+                            {{reembolso.empresa_descripcion}}
                         </th>
                         <th>
-                            {{relacion.empleado_descripcion}}
+                            {{reembolso.empleado_descripcion}}
                         </th>
                         <th>
-                            {{relacion.departamento}}
+                            {{reembolso.departamento}}
                         </th>
-                    </tr>
-                    <tr>
-                        <th class="encabezado  c130" colspan="2">
-                           Proyecto
-                        </th>
-                        <th class="encabezado">
-                            Estado
-                        </th>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            {{relacion.proyecto_descripcion}}
-                        </td>
-                        <td style="text-align: center">
-                            <estado v-bind:value="getEstado(relacion.estado_descripcion, relacion.estado_color)" />
-                        </td>
                     </tr>
                     <tr>
                         <th class="encabezado">
@@ -56,16 +42,16 @@
                     <tr>
                         <td>
                             <input name="motivo"
-                                id="motivo"
-                                class="form-control"
-                                v-model="relacion.motivo"
-                                v-validate="{required: true}"
-                                data-vv-as="Motivo"
-                                :class="{'is-invalid': errors.has('motivo')}" />
+                                   id="motivo"
+                                   class="form-control"
+                                   v-model="reembolso.motivo"
+                                   v-validate="{required: true}"
+                                   data-vv-as="Motivo"
+                                   :class="{'is-invalid': errors.has('motivo')}" />
                             <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                         </td>
                         <td>
-                            <datepicker v-model = "relacion.fecha_inicio_editar"
+                            <datepicker v-model = "reembolso.fecha_inicio_editar"
                                         name = "fecha_inicial"
                                         :format = "formatoFecha"
                                         data-vv-as="Fecha Inicial"
@@ -77,7 +63,7 @@
                             <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                         </td>
                         <td>
-                            <datepicker v-model = "relacion.fecha_final_editar"
+                            <datepicker v-model = "reembolso.fecha_final_editar"
                                         name = "fecha_final"
                                         data-vv-as="Fecha Final"
                                         :format = "formatoFecha"
@@ -95,9 +81,9 @@
                         <th class="encabezado">IVA</th>
                     </tr>
                     <tr>
-                        <td>{{ relacion.moneda }}</td>
-                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_importe_format }}</b></td>
-                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_iva_format }}</b></td>
+                        <td><b>{{ reembolso.moneda }}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ reembolso.suma_importe_format }}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ reembolso.suma_iva_format }}</b></td>
                     </tr>
                     <tr>
                         <th class="encabezado">Retenciones</th>
@@ -105,9 +91,9 @@
                         <th class="encabezado">Total</th>
                     </tr>
                     <tr>
-                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_retenciones_format}}</b></td>
-                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_otros_imp_format }}</b></td>
-                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.total_format }}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ reembolso.suma_retenciones_format}}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ reembolso.suma_otros_imp_format }}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ reembolso.total_format }}</b></td>
                     </tr>
                 </table>
             </div>
@@ -116,24 +102,15 @@
 </template>
 
 <script>
-import estado from './EstatusLabel';
 import datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
 export default {
-    name: "RelacionGastosTablaDatos",
-    components: { estado, datepicker, es },
-    props: ['relacion'],
+    name: "TablaReembolso",
+    components: { datepicker, es },
+    props: ['reembolso'],
     methods :{
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
-        },
-
-        getEstado(estado, color) {
-            return {
-                es: es,
-                color: color,
-                descripcion: estado
-            }
         },
     }
 }

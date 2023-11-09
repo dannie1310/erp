@@ -2079,6 +2079,11 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@show')->where(['id' => '[0-9]+']);
         });
 
+        $api->group(['prefix' => 'reembolso-gasto-sol'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@update')->where(['id' => '[0-9]+']);
+        });
+
         $api->group(['prefix' => 'relacion-gasto'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@store');

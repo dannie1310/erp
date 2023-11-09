@@ -111,6 +111,11 @@ class RelacionGasto extends Model
         return $this->belongsTo(DepartamentoSn::class, 'iddepartamento', 'iddepartamento');
     }
 
+    public function relacionGastoXDocumento()
+    {
+        return $this->belongsTo(RelacionGastoXDocumento::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
+    }
+
     /**
      * Scopes
      */
@@ -670,6 +675,16 @@ class RelacionGasto extends Model
         return DB::connection('controlrec')->select(DB::raw($consulta))[0];
     }
 
+    public function getIdDocumentoAttribute()
+    {
+        try {
+            return $this->relacionGastoXDocumento->iddocumento;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */
@@ -894,10 +909,11 @@ class RelacionGasto extends Model
                 'TasaIVA' => 16,
                 'IdTipoDocto' => 13,
                 'Estatus' => 11,
-                'Alias_Depto' => explode('-', $this->folio)[0],
+                'Alias_Depto' => $this->departamento->departamento_abreviatura,
                 'IdSerie' => $this->idserie,
                 'IdGenero' => auth()->id(),
-                'registro_portal' => 1
+                'registro_portal' => 1,
+                'Departamento' => $this->departamento->departamento
             ]);
 
             $this->reembolsoGastoSol()->create([
@@ -923,24 +939,20 @@ class RelacionGasto extends Model
         {
             $centro_costo = CentroCosto::where('Estatus', 1)->orderBy('IdCC')->pluck('IdCC')->first();
         }
-        dd($centro_costo);
+
         foreach ($this->documentos as $documento)
         {
-            dd($documento);
-           /* CcDocto::create([
-
+           CcDocto::create([
                 'IdDocto' => $id_docto,
-                'IdCC',
-                'IdTipoGasto',
-                'Importe',
-                'IVA',
-                'OtrosImpuestos',
-                'Retenciones',
-                'Total',
-                'PorcentajeFacturar',
-                'ImporteFacturar',
-                'Facturable'
-            ]);*/
+                'IdCC' => $centro_costo->getKey(),
+                'IdTipoGasto' => $documento->tipoGasto->getKey(),
+                'Importe' => $documento->importe,
+                'IVA' => $documento->iva,
+                'OtrosImpuestos' => $documento->otros_impuestos,
+                'Retenciones' => $documento->retenciones,
+                'Total' => $documento->total,
+                'Facturable' => 'N'
+            ]);
         }
     }
 }

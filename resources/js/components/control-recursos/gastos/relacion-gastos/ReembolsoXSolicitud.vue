@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="relacion == null">
+        <div class="card" v-if="registro==false && relacion == null && reembolso == null">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
@@ -13,53 +13,35 @@
         </div>
         <div class="card" v-else>
             <div class="card-body">
-                <div class="row" >
+                <div class="row">
+                    <div class="col-md-12" v-if="relacion.estado == 5">
+                        <h4>Documento para Relación</h4>
+                    </div>
+                    <div class="col-md-12" v-else>
+                        <h4>Documento para Reembolso</h4>
+                    </div>
+                </div>
+                <div class="row" v-if="relacion.estado == 5">
                     <div class="col-md-12">
                         <encabezado v-bind:relacion="relacion" />
                         <resumen v-bind:relacion="relacion" />
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-8"></div>
-                    <div class="col-md-4" style="text-align: right">
-                        <div class="table-responsive col-md-12">
-                            <div class="col-md-12">
-                                <table class="table table-borderless">
-                                    <tbody>
-                                    <tr>
-                                        <th style="text-align: left">Importe:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_importe_format }}</b></td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left">IVA:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_iva_format }}</b></td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left">Retenciones:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_retenciones_format}}</b></td>
-                                    </tr>
-                                    <tr>
-                                        <th style="text-align: left">Otros Impuestos:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_otros_imp_format }}</b></td>
-                                    </tr>
-                                    <tr style="text-align: right">
-                                        <th style="text-align: left">Total:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>{{ relacion.total_format }}</b></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                <div class="row" v-if="relacion.estado == 6">
+                    <div class="col-md-12">
+                        <encabezado-reembolso v-bind:reembolso="relacion" />
+                        <tabla-datos-reembolso v-bind:reembolso="reembolso" />
+                        <hr />
+                        <documentos v-bind:documentos="reembolso.documentos" />
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-secondary" v-on:click="salir">
-                        <i class="fa fa-angle-left"></i>
-                        Regresar
-                    </button>
-                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate" v-if="relacion.estado == 5"><i class="fa fa-save"></i> Guardar</button>
+                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar" v-if="relacion.estado == 6"><i class="fa fa-save" ></i> Actualizar</button>
+                    <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar" v-if="relacion.estado == 6"><i class="fa fa-trash"></i> Eliminar</button>
+                    <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
                 </div>
             </div>
         </div>
@@ -68,15 +50,20 @@
 
 <script>
 import Encabezado from './partials/Encabezado';
+import EncabezadoReembolso from "./partials/EncabezadoReembolso";
 import Resumen from './partials/TablaDatosResumen';
+import TablaDatosReembolso from "./partials/TablaDatosReembolso";
+import Documentos from './partials/TablaDatosDocumentos';
 export default {
     name: "SolicitaReembolsoXSolicitud",
-    components: { Encabezado, Resumen },
+    components: { Encabezado,EncabezadoReembolso, Resumen, Documentos, TablaDatosReembolso },
     props: ['id'],
     data(){
         return{
             cargando: false,
-            relacion : null
+            relacion : null,
+            reembolso : null,
+            registro: false
         }
     },
     mounted() {
@@ -90,6 +77,13 @@ export default {
                 params:{include: []}
             }).then(data => {
                 this.relacion = data
+                if(this.relacion.id_documento != null && this.registro == false)
+                {
+                    this.findReembolso();
+                }
+                else{
+                    this.registro = true;
+                }
             })
                 .finally(()=> {
                     this.cargando = false;
@@ -113,6 +107,27 @@ export default {
             });
         },
         store() {
+            return this.$store.dispatch('controlRecursos/relacion-gasto/reembolsoXSolicitud', this.relacion)
+                .then((data) => {
+                    this.relacion = data
+                    this.findReembolso();
+                });
+        },
+        findReembolso() {
+            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/find', {
+                id: this.relacion.id_documento,
+                params:{include: []}
+            }).then(data => {
+                this.reembolso = data;
+            })
+        },
+        editar() {
+            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/update', this.reembolso)
+                .then((data) => {
+                    this.reembolso = data;
+                });
+        },
+        eliminar() {
             return this.$store.dispatch('controlRecursos/relacion-gasto/reembolsoXSolicitud', this.relacion)
                 .then((data) => {
                     this.$emit('created', data)

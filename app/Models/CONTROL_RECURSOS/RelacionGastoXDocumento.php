@@ -15,4 +15,12 @@ class RelacionGastoXDocumento extends Model
         'iddocumento',
         'idregistro'
     ];
+
+    /**
+     * Relaciones
+     */
+    public function reembolso()
+    {
+        return $this->belongsTo(ReembolsoGastoSol::class, 'IdDocto', 'iddocumento');
+    }
 }
