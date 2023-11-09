@@ -29,7 +29,7 @@
                 </div>
                 <div class="row" v-if="relacion.estado == 6">
                     <div class="col-md-12">
-                        <encabezado-reembolso v-bind:reembolso="relacion" />
+                        <encabezado-reembolso v-bind:reembolso="reembolso" />
                         <tabla-datos-reembolso v-bind:reembolso="reembolso" />
                         <hr />
                         <documentos v-bind:documentos="reembolso.documentos" />
@@ -122,10 +122,12 @@ export default {
             })
         },
         editar() {
-            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/update', this.reembolso)
-                .then((data) => {
-                    this.reembolso = data;
-                });
+            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/update',  {
+                id: this.reembolso.id,
+                data: this.reembolso
+            }).then((data) => {
+                this.reembolso = data;
+            })
         },
         eliminar() {
             return this.$store.dispatch('controlRecursos/relacion-gasto/reembolsoXSolicitud', this.relacion)

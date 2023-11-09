@@ -5,6 +5,8 @@ namespace App\Models\CONTROL_RECURSOS;
 
 use App\Models\IGH\Departamento;
 use Illuminate\Support\Facades\DB;
+use DateTime;
+use DateTimeZone;
 
 class ReembolsoGastoSol extends Documento
 {
@@ -103,7 +105,6 @@ class ReembolsoGastoSol extends Documento
     /**
      * Métodos
      */
-
     public function editar(array $data)
     {
         $fecha_inicial = new DateTime($data['fecha_inicio_editar']);
