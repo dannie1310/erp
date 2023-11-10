@@ -71,7 +71,6 @@
                                             :disabled="pasivo.coincide_folio"
                                             type="text"
                                             data-vv-as="Folio de Factura"
-                                            v-validate="{required: true, max: 14}"
                                             class="form-control"
                                             name="folio_factura"
                                             id="folio_factura"
