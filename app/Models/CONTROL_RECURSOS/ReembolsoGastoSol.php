@@ -66,6 +66,11 @@ class ReembolsoGastoSol extends Documento
         return $this->hasMany(CcDocto::class, 'IdDocto', 'IdDocto');
     }
 
+    public function relacionXDocumento()
+    {
+        return $this->belongsTo(RelacionGastoXDocumento::class, 'IdDocto', 'iddocumento');
+    }
+
     /**
      * Atributos
      */
@@ -127,6 +132,31 @@ class ReembolsoGastoSol extends Documento
         } catch (\Exception $e) {
             DB::connection('controlrec')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+
+    public function eliminar()
+    {
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $this->eliminarDocumentos();
+            $this->relacionXDocumento()->delete();
+            $this->delete();
+            $this->respaldo();
+            DB::connection('controlrec')->commit();
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function eliminarDocumentos()
+    {
+        foreach ($this->ccDoctos as $ccDocto)
+        {
+           $ccDocto->delete();
         }
     }
 }

@@ -29,4 +29,9 @@ class ReembolsoGastoSolService
     {
         return $this->repository->show($id)->editar($data);
     }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->show($id)->eliminar();
+    }
 }

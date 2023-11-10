@@ -16,16 +16,9 @@
         <router-link :to="{ name: 'relacion-gasto-delete', params: {id: value.id}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
             <i class="fa fa-trash"></i>
         </router-link>
-        <router-link :to="{ name: 'relacion-gasto-reembolso-x-solicitud', params: {id: value.id}}" v-if="value.solicitar_reembolso" type="button" class="btn btn-sm btn-outline-info" title="Solicitar Reembolso X Solicitud">
+        <router-link :to="{ name: 'relacion-gasto-reembolso-x-solicitud', params: {id: value.id}}" v-if="value.reembolso_x_solicitud" type="button" class="btn btn-sm btn-outline-info" title="Reembolso X Solicitud">
             <i class="fa fa-file-o"></i>
         </router-link>
-        <router-link :to="{ name: 'reembolso-x-solicitud', params: {id: value.id_documento}}" v-if="value.reembolso_x_solicitud" type="button" class="btn btn-sm btn-outline-dark" title="Reembolso X Solicitud">
-            <i class="fa fa-file-o"></i>
-        </router-link>
-
-
-
-
     </div>
 </template>
 

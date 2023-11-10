@@ -19,6 +19,11 @@ export default {
         SET_META(state, data) {
             state.meta = data;
         },
+        DELETE_REEMBOLSO(state, id) {
+            state.reembolsos = state.reembolsos.filter(d => {
+                return d.id != id
+            });
+        }
     },
 
     actions: {
@@ -66,6 +71,45 @@ export default {
                                         .then(() => {
                                             resolve(data);
                                         })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        delete(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Reembolso de Gastos",
+                    text: "¿Está seguro de que desea eliminar el reembolso?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Reembolso de gastos eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
                                 })
                                 .catch(error => {
                                     reject(error);

@@ -106,12 +106,14 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 id: relacion.id,
+                                id_documento: relacion.id_documento,
                                 edit : self.$root.can('editar_relacion_gastos_recursos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
                                 cerrar: (self.$root.can('cerrar_relacion_gastos_recursos', true) && relacion.estado == 2) ? true : false,
                                 abrir: (self.$root.can('abrir_relacion_gastos_recursos', true) && relacion.estado == 5) ? true : false,
                                 pdf: relacion.estado == 5 ? true : false,
                                 delete: self.$root.can('eliminar_relacion_gastos_recursos', true) && (relacion.estado == 1 || relacion.estado == 2) ? true : false,
-                                reembolso_x_solicitud: self.$root.can('eliminar_relacion_gastos_recursos', true) && (relacion.estado == 5 || relacion.estado == 6) ? true : false,
+                                reembolso_x_solicitud: self.$root.can('eliminar_relacion_gastos_recursos', true) && relacion.estado == 6 ? true : false,
+                                solicitar_reembolso: self.$root.can('eliminar_relacion_gastos_recursos', true) && relacion.estado == 5 ? true : false,
                             })
                     }))
                 },

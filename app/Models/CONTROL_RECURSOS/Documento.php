@@ -375,7 +375,7 @@ class Documento extends Model
         }
     }
 
-    private function respaldo()
+    public function respaldo()
     {
         $this->eliminado->update([
             'Elimino' => auth()->id()."*". date("d-m-Y") ."/". date("H:i:s"),
