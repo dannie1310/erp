@@ -177,6 +177,7 @@
                                 <select data-vv-as="IVA"
                                         id="iva"
                                         name="iva"
+                                        v-on:keyup="calcularImpuesto"
                                         :error="errors.has('iva')"
                                         v-validate="{required: true}"
                                         v-model="iva">
@@ -194,7 +195,6 @@
                             <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
                                    name="impuesto"
                                    data-vv-as="Impuesto"
-                                   v-on:keyup="calcularImpuesto"
                                    v-model="impuesto"
                                    style="text-align: right"
                                    v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
@@ -396,12 +396,12 @@ export default {
                     vencimiento:  moment(this.vencimiento).format('YYYY-MM-DD'),
                     id_moneda: this.id_moneda,
                     concepto: this.concepto,
-                    subtotal: parseFloat(this.subtotal),
+                    subtotal: parseFloat(this.subtotal.toString().replace(/,/g, '')),
                     iva: this.iva,
-                    impuesto: parseFloat(this.impuesto),
-                    retencion: parseFloat(this.retencion),
-                    otros: parseFloat(this.otros),
-                    total: parseFloat(this.total),
+                    impuesto: parseFloat(this.impuesto.toString().replace(/,/g, '')),
+                    retencion: parseFloat(this.retencion.toString().replace(/,/g, '')),
+                    otros: parseFloat(this.otros.toString().replace(/,/g, '')),
+                    total: parseFloat(this.total.toString().replace(/,/g, '')),
                     estado: this.idtipodocto == 1 ? 1 : 5,
                 })
                 .then(data => {
@@ -426,7 +426,7 @@ export default {
         {
             let subtotal_sin_comas;
             subtotal_sin_comas = this.subtotal.toString().replace(/,/g, '');
-            this.impuesto = ((parseFloat(subtotal_sin_comas) * parseFloat(this.iva)) / 100).toString().formatearkeyUp();
+            this.impuesto = ((parseFloat(subtotal_sin_comas) * parseFloat(this.iva)) / 100).toFixed(2).toString().formatearkeyUp();
         },
         calcularTotal()
         {
@@ -440,7 +440,7 @@ export default {
             otros_sin_comas = this.otros.toString().replace(/,/g, '');
             retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
 
-            this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toString().formatearkeyUp();
+            this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toFixed(2).toString().formatearkeyUp();
         },
     },
     watch: {

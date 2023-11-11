@@ -142,7 +142,7 @@ class Poliza extends Model
     public function getIdEmpresaAttribute()
     {
         $obra = Obra::find(Context::getIdObra());
-        $empresa = Empresa::where("AliasBDD","=",$obra->datosContables->BDContPaq)->first();
+        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD","=",$obra->datosContables->BDContPaq)->first();
         if($empresa){
             return $empresa->Id;
         }

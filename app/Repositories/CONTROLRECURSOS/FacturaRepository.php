@@ -156,4 +156,9 @@ class FacturaRepository extends Repository implements RepositoryInterface
         $factura_repositorio = FacturaRepositorio::where("uuid","=", $uuid)->first();
         return $factura_repositorio;
     }
+
+    public function buscarFactura($uuid)
+    {
+        return $this->model->where('uuid', $uuid)->first();
+    }
 }

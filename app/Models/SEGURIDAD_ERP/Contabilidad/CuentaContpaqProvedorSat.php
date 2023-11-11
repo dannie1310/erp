@@ -22,6 +22,13 @@ class CuentaContpaqProvedorSat extends Model
         'id_cuenta_contpaq',
         'id_proveedor_sat',
         'id_empresa_contpaq',
+        'codigo_cuenta',
+        'alias_bdd',
+        'cargos',
+        'abonos',
+        'saldo',
+        'numero_proyecto',
+        'cercania'
     ];
 
     public function proveedorSat(){
