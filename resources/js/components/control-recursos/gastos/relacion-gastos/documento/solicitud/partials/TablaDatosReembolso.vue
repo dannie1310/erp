@@ -108,6 +108,11 @@ export default {
     name: "TablaReembolso",
     components: { datepicker, es },
     props: ['reembolso'],
+    data(){
+        return{
+            es: es
+        }
+    },
     methods :{
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');

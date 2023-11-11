@@ -71,13 +71,15 @@ export default {
             this.$validator.validate().then(result => {
                 if (result)
                 {
-                    /*if(moment(this.relacion.fecha_final_editar).format('YYYY/MM/DD') < moment(this.relacion.fecha_inicial_editar).format('YYYY/MM/DD'))
+                    console.log(moment(this.relacion.fecha_final_editar).format('DD/MM/YYYY'))
+                    console.log( moment(this.relacion.fecha_inicial_editar).format('DD/MM/YYYY'))
+                    if(moment(this.relacion.fecha_final_editar).format('DD/MM/YYYY') < moment(this.relacion.fecha_inicial_editar).format('DD/MM/YYYY'))
                     {
                         swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
                     }
-                    else {*/
+                    else {
                         this.store();
-                   // }
+                    }
                 }
             });
         },
@@ -85,12 +87,8 @@ export default {
             return this.$store.dispatch('controlRecursos/relacion-gasto/reembolsoXSolicitud', this.relacion)
                 .then((data) => {
                     this.relacion = data;
-                    this.reembolso();
+                    this.salir()
                 });
-        },
-        reembolso()
-        {
-            this.$route.push({name:'reembolso-x-solicitud', params: { id: this.relacion.id_documento }});
         }
     },
 }

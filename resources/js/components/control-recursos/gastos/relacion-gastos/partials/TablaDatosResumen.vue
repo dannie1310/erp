@@ -123,6 +123,11 @@ export default {
     name: "RelacionGastosTablaDatos",
     components: { estado, datepicker, es },
     props: ['relacion'],
+    data(){
+        return{
+            es: es
+        }
+    },
     methods :{
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
