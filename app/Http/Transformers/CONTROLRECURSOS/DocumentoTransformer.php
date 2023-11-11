@@ -67,6 +67,8 @@ class DocumentoTransformer extends TransformerAbstract
             'estado' => $model->Estatus,
             'estado_descripcion' => $model->estatus_descripcion,
             'estado_color' => $model->color_estado,
+            'solicitado' => $model->solicitado,
+            'con_segmento' => $model->con_segmento
         ];
     }
     public function includeCFDI(Documento $model)
