@@ -87,6 +87,7 @@ class FacturaService
     {
         $archivo_xml = $data["factura"];
         $arreglo_cfd = $this->getArregloCFD($archivo_xml);
+        $this->validarFactura($arreglo_cfd['uuid']);
         $this->validaCFDI($arreglo_cfd['uuid']);
         return $arreglo_cfd;
     }
@@ -100,9 +101,27 @@ class FacturaService
         $arreglo["total"] = $arreglo_cfd["total"];
         $arreglo["impuesto"] = $arreglo_cfd["total_impuestos_trasladados"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
-        $arreglo["retencion"]  = $arreglo_cfd["descuento"];
+        if(array_key_exists('retenciones', $arreglo_cfd))
+        {
+            $arreglo["retencion"] = $arreglo_cfd['retenciones'][0]['importe'];
+        }else{
+            $arreglo["retencion"] = 0;
+        }
+        if(array_key_exists('traslados', $arreglo_cfd))
+        {
+            $suma = 0;
+            foreach ($arreglo_cfd['traslados'] as $traslado)
+            {
+                if($traslado['impuesto'] == '003')
+                {
+                    $suma = $suma + $traslado['importe'];
+                }
+            }
+            $arreglo["otros"] = $suma;
+        }else{
+            $arreglo["otros"] = 0;
+        }
         $arreglo["serie"] = $arreglo_cfd["serie"];
-        $arreglo["otros"] = $arreglo_cfd["total_impuestos_retenidos"];
         $arreglo["folio"] = $arreglo_cfd["folio"] == "" ? substr($arreglo_cfd["uuid"],0,5) : $arreglo_cfd["folio"];
         $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("m/d/Y");
         $arreglo["vencimiento"] = $arreglo_cfd["fecha"]->format("m/d/Y");
@@ -181,6 +200,7 @@ class FacturaService
 
     public function store(array $data)
     {
+        $this->validarFactura($data['uuid']);
         $this->validaCFDI($data['uuid']);
         $arreglo_cfd = $this->getArregloCFD($data["archivo"]);
         $this->validaExistenciaRepositorio($arreglo_cfd);
@@ -331,7 +351,7 @@ class FacturaService
     {
         $documento = $this->repository->buscarDocumentoUuid($uuid);
         $repositorio_factura = $this->repository->buscarRepositorioFactura($uuid);
-        if ($documento && $repositorio_factura->id_documento_cr != null)
+        if ($documento && $repositorio_factura && $repositorio_factura->id_documento_cr != null)
         {
             abort(500, "CFDI utilizado previamente:
                                 Registró: ".$repositorio_factura->usuario->nombre_completo."
@@ -403,5 +423,13 @@ class FacturaService
     {
         $servicio_cfdi = new CFDSATService(new CFDSAT());
         $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
+    }
+
+    private function validarFactura($uuid)
+    {
+        if($this->repository->buscarFactura($uuid))
+        {
+            abort(500, "La Factura fue registrada anteriormente.");
+        }
     }
 }
