@@ -223,7 +223,11 @@ export default {
                     if(moment(this.factura.vencimiento_editar).format('YYYY/MM/DD') < moment(this.factura.fecha).format('YYYY/MM/DD'))
                     {
                         swal('¡Error!', 'La fecha no puede ser posterior a la fecha de vencimiento.', 'error')
-                    }else{
+                    }
+                    else if (this.factura.solicitado){
+                        swal('¡Error!', 'El documento se encuentra solicitado, no se puede editar.', 'error')
+                    }
+                    else{
                         this.update()
                     }
                 }
