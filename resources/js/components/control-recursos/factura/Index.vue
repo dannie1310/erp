@@ -68,10 +68,25 @@
                     this.cargando = false;
                 })
         },
-        getEstado(estado, color) {
-            return {
-                color: color,
-                descripcion: estado
+        getEstado(estado, color, solicitado, segmento) {
+            if(solicitado)
+            {
+                return {
+                    color: '#2369C8',
+                    descripcion: 'Solicitado'
+                }
+            }else if (solicitado == false && segmento)
+            {
+                return {
+                    color: '#CFB9B4',
+                    descripcion: 'Segmentos Asignados'
+                }
+            }
+            else {
+                return {
+                    color: color,
+                    descripcion: estado
+                }
             }
         },
     },
@@ -101,11 +116,11 @@
                     idmoneda: solicitud.moneda,
                     idserie: solicitud.serie,
                     idtipodocto: solicitud.tipo_documento,
-                    estatus: this.getEstado(solicitud.estado_descripcion, solicitud.estado_color),
+                    estatus: this.getEstado(solicitud.estado_descripcion, solicitud.estado_color, solicitud.solicitado, solicitud.con_segmento),
                     buttons: $.extend({}, {
                         id: solicitud.id,
-                        edit: self.$root.can('editar_factura_recursos', true) && solicitud.estado == 1 ? true : false,
-                        delete: self.$root.can('eliminar_factura_recursos', true) && solicitud.estado != 2 ? true : false,
+                        edit: self.$root.can('editar_factura_recursos', true) && solicitud.estado == 1 && solicitud.solicitado == false && solicitud.con_segmento == false ? true : false,
+                        delete: self.$root.can('eliminar_factura_recursos', true) && solicitud.estado != 2 && solicitud.solicitado == false && solicitud.con_segmento == false ? true : false,
                     })
                 }));
             },
