@@ -70,20 +70,6 @@ export default {
         salir() {
             this.$router.push({name: 'relacion-gasto'});
         },
-        validate() {
-            this.$validator.validate().then(result => {
-                if (result)
-                {
-                    /*if(moment(this.relacion.fecha_final_editar).format('YYYY/MM/DD') < moment(this.relacion.fecha_inicial_editar).format('YYYY/MM/DD'))
-                    {
-                        swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
-                    }
-                    else {*/
-                        this.store();
-                   // }
-                }
-            });
-        },
         store() {
             /*return this.$store.dispatch('controlRecursos/relacion-gasto/reembolsoXSolicitud', this.relacion)
                 .then((data) => {
@@ -92,12 +78,18 @@ export default {
                 });*/
         },
         editar() {
-            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/update',  {
-                id: this.reembolso.id,
-                data: this.reembolso
-            }).then((data) => {
-                this.reembolso = data;
-            })
+            if(moment(this.reembolso.fecha_final_editar).format('YYYY/MM/DD') < moment(this.reembolso.fecha_inicio_editar).format('YYYY/MM/DD'))
+            {
+                swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
+            }
+            else {
+                return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/update', {
+                    id: this.reembolso.id,
+                    data: this.reembolso
+                }).then((data) => {
+                    this.reembolso = data;
+                })
+            }
         },
         eliminar() {
             return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/delete', {
