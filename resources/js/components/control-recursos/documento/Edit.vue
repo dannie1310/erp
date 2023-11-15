@@ -51,7 +51,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group row error-content">
+                    <div class="form-group error-content">
                         <label for="id_empresa">Empresa:</label>
                         <select class="form-control"
                                 data-vv-as="Empresa"
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group row error-content">
+                    <div class="form-group error-content">
                         <label for="id_proveedor">Proveedor:</label>
                         <select v-if="!this.cargando_proveedores"
                             class="form-control"
@@ -212,7 +212,7 @@
                                 style="text-align: right"
                                 v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                 :class="{'is-invalid': errors.has(`retencion`)}"
-                                id="impuesto">
+                                id="retencion">
                         <div class="invalid-feedback" v-show="errors.has(`retencion`)">{{ errors.first(`retencion`) }}</div>
                     </div>
                 </div>
@@ -328,7 +328,7 @@ export default {
                 this.factura = data
                 this.importe= this.factura.importe
                 this.iva= this.factura.tasa_iva
-                this.impuesto= this.factura.impuesto
+                this.impuesto= this.factura.iva
                 this.retencion= this.factura.retenciones
                 this.otros= this.factura.otros
                 this.total= this.factura.total
@@ -358,6 +358,9 @@ export default {
                     }
                     else if (this.factura.solicitado){
                         swal('¡Error!', 'El documento se encuentra solicitado, no se puede editar.', 'error')
+                    }
+                    else if (this.factura.con_segmento){
+                        swal('¡Error!', 'El documento se encuentra con segmentos de negocio cargados, no se puede editar.', 'error')
                     }
                     else{
                         this.update()
