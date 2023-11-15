@@ -113,6 +113,7 @@ class Factura extends Documento
 
     public function editar(array $data)
     {
+        $this->validaEstado();
         try {
             DB::connection('controlrec')->beginTransaction();
             $vencimiento = New DateTime($data["vencimiento"]);

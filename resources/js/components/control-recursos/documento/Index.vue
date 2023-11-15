@@ -66,24 +66,10 @@
                     this.$Progress.finish();
                 })
         },
-        getEstado(estado, color, solicitado, segmento) {
-            if(solicitado)
-            {
-                return {
-                    color: '#2369C8',
-                    descripcion: 'Solicitado'
-                }
-            }else if (solicitado == false && segmento)
-            {
-                return {
-                    color: '#CFB9B4',
-                    descripcion: 'Segmentos Asignados'
-                }
-            }else {
-                return {
-                    color: color,
-                    descripcion: estado
-                }
+        getEstado(estado, color) {
+            return {
+                color: color,
+                descripcion: estado
             }
         },
     },
@@ -117,8 +103,8 @@
                     buttons: $.extend({}, {
                         con_cfdi : documento.cfdi ? true : false,
                         id : documento.id,
-                        edit : self.$root.can('editar_documento_recursos', true) && (documento.estado == 5 ||  documento.estado == 1) && documento.solicitado == false && documento.con_segmento == false ? true : false,
-                        delete : self.$root.can('eliminar_documento_recursos', true) && (documento.estado != 7 && documento.estado != 2) && documento.solicitado == false && documento.con_segmento == false  ? true : false,
+                        edit : self.$root.can('editar_documento_recursos', true) && (documento.estado == 5 ||  documento.estado == 1) ? true : false,
+                        delete : self.$root.can('eliminar_documento_recursos', true) && (documento.estado != 7 && documento.estado != 2) ? true : false,
                     }),
                     consulta_uuid : $.extend({}, {
                         uuid: documento.cfdi ? documento.cfdi.uuid : '',
