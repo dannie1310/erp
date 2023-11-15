@@ -42,7 +42,8 @@ class Documento extends Model
         'Ubicacion',
         'tipo_cambio_excepcion',
         'uuid',
-        "registro_portal"
+        'registro_portal',
+        'Descuento'
     ];
 
     protected static function boot()
