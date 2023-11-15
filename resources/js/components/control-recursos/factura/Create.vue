@@ -250,6 +250,10 @@ export default {
             })
             .then(data => {
                 this.series = data.data;
+                if(this.series.length == 1)
+                {
+                    this.idserie = this.series[0].id;
+                }
             })
             .finally(() => {
                 this.cargando = false;
