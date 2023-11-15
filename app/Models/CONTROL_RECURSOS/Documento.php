@@ -97,6 +97,16 @@ class Documento extends Model
         return $this->belongsTo(CFDSAT::class, 'uuid','uuid');
     }
 
+    public function solChequeDocto()
+    {
+        return $this->belongsTo(SolChequeDocto::class, 'IdDocto', 'IdDocto');
+    }
+
+    public function segmento()
+    {
+        return $this->belongsTo(CcDocto::class, 'IdDocto', 'IdDocto');
+    }
+
 
     /**
      * Scopes
@@ -256,6 +266,26 @@ class Documento extends Model
                 return '#00a65a';
             default:
                 return '#d1cfd1';
+        }
+    }
+
+    public function getSolicitadoAttribute()
+    {
+        if($this->solChequeDocto)
+        {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function getConSegmentoAttribute()
+    {
+        if($this->segmento)
+        {
+            return true;
+        }else{
+            return false;
         }
     }
 
