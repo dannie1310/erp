@@ -42,7 +42,8 @@ class Documento extends Model
         'Ubicacion',
         'tipo_cambio_excepcion',
         'uuid',
-        "registro_portal"
+        'registro_portal',
+        'Descuento'
     ];
 
     protected static function boot()
@@ -336,6 +337,7 @@ class Documento extends Model
 
     public function editar(array $data)
     {
+        $this->validaEstado();
         $this->validaDocumento($data, $this->getKey());
         try {
             DB::connection('controlrec')->beginTransaction();
@@ -393,6 +395,7 @@ class Documento extends Model
 
     public function eliminar()
     {
+        $this->validaEstado();
         try {
             DB::connection('controlrec')->beginTransaction();
             $this->delete();
@@ -410,5 +413,18 @@ class Documento extends Model
         $this->eliminado->update([
             'Elimino' => auth()->id()."*". date("d-m-Y") ."/". date("H:i:s"),
         ]);
+    }
+
+    public function validaEstado()
+    {
+        if($this->solicitado)
+        {
+            abort(500, "Este documento ya se encuentra asociado a una solicitud.");
+        }
+
+        if($this->con_segmento)
+        {
+            abort(500, "Este documento ya tiene segmentos asignados.");
+        }
     }
 }

@@ -106,12 +106,14 @@ class Factura extends Documento
             'Creo' => auth()->id(),
             'Estatus' => $data['idtipodocto'] == 1 ? 1 : 5,
             'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
-            "registro_portal" => 1
+            'registro_portal' => 1,
+            'Descuento' => $data['descuento']
         ]);
     }
 
     public function editar(array $data)
     {
+        $this->validaEstado();
         try {
             DB::connection('controlrec')->beginTransaction();
             $vencimiento = New DateTime($data["vencimiento"]);
