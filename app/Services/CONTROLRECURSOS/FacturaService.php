@@ -325,9 +325,8 @@ class FacturaService
 
     public function validaCFDI($uuid)
     {
-        $cfdi = CFDSAT::where('uuid', $uuid)->first();
         $factura = FacturaRepositorio::where('uuid', $uuid)->first();
-        if($factura || $cfdi)
+        if($factura)
         {
             if ($factura->id_transaccion != null)
             {
