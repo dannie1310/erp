@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CONTROLRECURSOS\ReembolsoGastoSolTransformer;
 use App\Services\CONTROLRECURSOS\ReembolsoGastoSolService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class ReembolsoGastoSolController extends Controller
@@ -41,5 +42,10 @@ class ReembolsoGastoSolController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;
+    }
+
+    public function validarDocumentos(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->validarDocumentos($id));
     }
 }

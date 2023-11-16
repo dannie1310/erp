@@ -2070,6 +2070,10 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@destroy')->where(['id' => '[0-9]+']);
         });
 
+        $api->group(['prefix' => 'forma-pago'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\FormaPagoController@index');
+        });
+
         $api->group(['prefix' => 'moneda'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\MonedaController@index');
         });

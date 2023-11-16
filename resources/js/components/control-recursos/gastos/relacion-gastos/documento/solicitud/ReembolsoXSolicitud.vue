@@ -40,9 +40,9 @@
 </template>
 
 <script>
-import EncabezadoReembolso from "./partials/EncabezadoReembolso";
-import TablaDatosReembolso from "./partials/TablaDatosReembolso";
-import Documentos from './partials/TablaDatosDocumentos';
+import EncabezadoReembolso from "../reembolso/partials/EncabezadoReembolso";
+import TablaDatosReembolso from "../reembolso/partials/TablaDatosReembolso";
+import Documentos from '../reembolso/partials/TablaDatosDocumentos';
 export default {
     name: "ReembolsoXSolicitud",
     components: { EncabezadoReembolso, Documentos, TablaDatosReembolso },

@@ -155,6 +155,7 @@ import extraordinario from './modules/controlPresupuesto/extraordinario';
 import documentoRecurso from "./modules/controlRecursos/documento";
 import empresaRecurso from "./modules/controlRecursos/empresa";
 import facturaRecurso from "./modules/controlRecursos/factura";
+import formaPago from "./modules/controlRecursos/forma-pago";
 import monedaRecurso from "./modules/controlRecursos/moneda";
 import proveedorRecurso from "./modules/controlRecursos/proveedor";
 import reembolsoGastoSol from "./modules/controlRecursos/reembolso-gasto-sol";
@@ -389,6 +390,7 @@ export default new Vuex.Store({
         'controlRecursos/documento' : documentoRecurso,
         'controlRecursos/empresa' : empresaRecurso,
         'controlRecursos/factura' : facturaRecurso,
+        'controlRecursos/forma-pago' : formaPago,
         'controlRecursos/moneda' : monedaRecurso,
         'controlRecursos/proveedor' : proveedorRecurso,
         'controlRecursos/reembolso-gasto-sol' : reembolsoGastoSol,

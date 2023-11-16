@@ -34,4 +34,11 @@ class ReembolsoGastoSolService
     {
         return $this->repository->show($id)->eliminar();
     }
+
+    public function validarDocumentos($id)
+    {
+        $reembolso = $this->show($id);
+
+        dd($id);
+    }
 }
