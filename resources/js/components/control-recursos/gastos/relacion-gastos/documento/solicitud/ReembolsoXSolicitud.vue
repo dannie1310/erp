@@ -29,6 +29,7 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validaDocumentos"><i class="fa fa-save"></i> Registrar Solicitud</button>
                     <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar"><i class="fa fa-save" ></i> Actualizar</button>
                     <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar"><i class="fa fa-trash"></i> Eliminar</button>
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
@@ -70,12 +71,13 @@ export default {
         salir() {
             this.$router.push({name: 'relacion-gasto'});
         },
-        store() {
-            /*return this.$store.dispatch('controlRecursos/relacion-gasto/reembolsoXSolicitud', this.relacion)
-                .then((data) => {
-                    this.relacion = data
-                    this.findReembolso();
-                });*/
+        validaDocumentos() {
+            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/validaDocumentos', {
+                id: this.id,
+                params:{include: []}
+            }).then(data => {
+                this.relacion = data
+            })
         },
         editar() {
             if(moment(this.reembolso.fecha_final_editar).format('YYYY/MM/DD') < moment(this.reembolso.fecha_inicio_editar).format('YYYY/MM/DD'))
