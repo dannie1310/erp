@@ -1,0 +1,143 @@
+<template>
+    <span>
+        <div class="card" v-if="reembolso == null">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" v-else>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <encabezado-reembolso v-bind:reembolso="reembolso" />
+                        <tabla-datos-reembolso v-bind:reembolso="reembolso" />
+                        <hr />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <label for="forma_pago">Forma de Pago:</label>
+                            <select class="form-control"
+                                    data-vv-as="Forma de Pago"
+                                    id="forma_pago"
+                                    name="forma_pago"
+                                    :class="{'is-invalid': errors.has('forma_pago')}"
+                                    v-validate="{required: true}"
+                                    v-model="forma_pago">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(m) in formas_pago" :value="m.id">{{m.nombre}}</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('forma_pago')">{{ errors.first('forma_pago') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <label for="forma_pago">Tipo de Pago:</label>
+                            <label> Reembolso de Gastos </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3" v-if="forma_pago != '' && forma_pago != 1">
+                        <div class="form-group error-content">
+                            <label for="cuenta">Cuenta Bancaria:</label>
+                            <select class="form-control"
+                                    data-vv-as="Cuenta Bancaria"
+                                    id="cuenta"
+                                    name="cuenta"
+                                    :class="{'is-invalid': errors.has('cuenta')}"
+                                    v-validate="{required: true}"
+                                    v-model="cuenta">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(m) in cuentas" :value="m.id">{{m.banco_descripcion}}</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <label for="instrucciones">Instrucciones de entrega:</label>
+                            <select class="instrucciones"
+                                    data-vv-as="Forma de Pago"
+                                    id="instrucciones"
+                                    name="instrucciones"
+                                    :class="{'is-invalid': errors.has('instrucciones')}"
+                                    v-validate="{required: true}"
+                                    v-model="instrucciones">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(m) in formas_pago" :value="m.id">{{m.nombre}}</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('instrucciones')">{{ errors.first('instrucciones') }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="solicitud"><i class="fa fa-save"></i> Registrar</button>
+                    <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
+                </div>
+            </div>
+        </div>
+    </span>
+</template>
+
+<script>
+import EncabezadoReembolso from "../reembolso/partials/EncabezadoReembolso";
+import TablaDatosReembolso from "../reembolso/partials/TablaDatosReembolso";
+export default {
+    name: "solicitud-create",
+    components: {EncabezadoReembolso, TablaDatosReembolso},
+    props: ['id'],
+    data() {
+        return {
+            cargando: false,
+            reembolso: null,
+            formas_pago: [],
+            forma_pago: '',
+            cuentas: [],
+            cuenta: ''
+        }
+    },
+    mounted() {
+        this.find();
+        this.getFormaPago();
+    },
+    methods: {
+        find() {
+            this.cargando = true;
+            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/find', {
+                id: this.id,
+                params: {include: [ 'proveedor.cuentas' ]}
+            }).then(data => {
+                this.reembolso = data;
+                this.cuentas = data.proveedor.cuentas;
+            }).finally(() => {
+                this.cargando = false;
+            })
+        },
+        salir() {
+            this.$router.push({name: 'relacion-gasto'});
+        },
+        solicitud() {
+            console.log("AQUI____>")
+        },
+        getFormaPago() {
+            return this.$store.dispatch('controlRecursos/forma-pago/index', {
+                params: { scope:'activo' }
+            }).then(data => {
+                this.formas_pago = data.data;
+            })
+        },
+    }
+}
+</script>
+
+<style scoped>
+
+</style>

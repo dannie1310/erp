@@ -29,7 +29,7 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validaDocumentos"><i class="fa fa-save"></i> Registrar Solicitud</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="solicitud"><i class="fa fa-save"></i> Registrar Solicitud</button>
                     <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar"><i class="fa fa-save" ></i> Actualizar</button>
                     <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar"><i class="fa fa-trash"></i> Eliminar</button>
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
@@ -40,9 +40,9 @@
 </template>
 
 <script>
-import EncabezadoReembolso from "../reembolso/partials/EncabezadoReembolso";
-import TablaDatosReembolso from "../reembolso/partials/TablaDatosReembolso";
-import Documentos from '../reembolso/partials/TablaDatosDocumentos';
+import EncabezadoReembolso from "./partials/EncabezadoReembolso";
+import TablaDatosReembolso from "./partials/TablaDatosReembolso";
+import Documentos from './partials/TablaDatosDocumentos';
 export default {
     name: "ReembolsoXSolicitud",
     components: { EncabezadoReembolso, Documentos, TablaDatosReembolso },
@@ -71,13 +71,8 @@ export default {
         salir() {
             this.$router.push({name: 'relacion-gasto'});
         },
-        validaDocumentos() {
-            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/validaDocumentos', {
-                id: this.id,
-                params:{include: []}
-            }).then(data => {
-                this.relacion = data
-            })
+        solicitud() {
+            this.$router.push({name:'solicitud-create', params: { id: this.reembolso.id }});
         },
         editar() {
             if(moment(this.reembolso.fecha_final_editar).format('YYYY/MM/DD') < moment(this.reembolso.fecha_inicio_editar).format('YYYY/MM/DD'))

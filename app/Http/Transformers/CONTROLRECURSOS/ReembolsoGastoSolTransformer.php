@@ -13,7 +13,7 @@ class ReembolsoGastoSolTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'proveedor'
     ];
 
     /**
@@ -80,6 +80,19 @@ class ReembolsoGastoSolTransformer extends TransformerAbstract
         if($documentos = $model->ccDoctos)
         {
             return $this->collection($documentos, new CcDoctoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param ReembolsoGastoSol $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeProveedor(ReembolsoGastoSol $model)
+    {
+        if($proveedor = $model->proveedor)
+        {
+            return $this->item($proveedor, new ProveedorTransformer);
         }
         return null;
     }

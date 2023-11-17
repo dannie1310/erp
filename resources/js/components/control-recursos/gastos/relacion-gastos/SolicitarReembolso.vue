@@ -71,8 +71,6 @@ export default {
             this.$validator.validate().then(result => {
                 if (result)
                 {
-                    console.log(moment(this.relacion.fecha_final_editar).format('DD/MM/YYYY'))
-                    console.log( moment(this.relacion.fecha_inicio_editar).format('DD/MM/YYYY'))
                     if(moment(this.relacion.fecha_final_editar).format('DD/MM/YYYY') < moment(this.relacion.fecha_inicio_editar).format('DD/MM/YYYY'))
                     {
                         swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')

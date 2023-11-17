@@ -4510,7 +4510,7 @@ export const routes = [
                                     {
                                         path: '/',
                                         name: 'reembolso',
-                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Index').default,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/Index').default,
                                         meta: {
                                             title: 'Reembolso de Gastos',
                                             breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO'},
@@ -4523,12 +4523,43 @@ export const routes = [
                                         path: ':id',
                                         name: 'reembolso-x-solicitud',
                                         props: true,
-                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/ReembolsoXSolicitud').default,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/ReembolsoXSolicitud').default,
                                         meta: {
                                             title: 'Reembolso por Solicitud',
-                                            breadcrumb: {parent: 'reembolso', name: 'REEMBOLSO POR SOLICITUD'},
+                                            breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO POR SOLICITUD'},
                                             middleware: [auth, permission],
                                             permission: 'editar_relacion_gastos_recursos',
+                                            general: true
+                                        }
+                                    },
+                                ]
+                            },
+                            {
+                                path: 'solicitud-reembolso',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/documento/Layout').default,
+                                children: [
+                                    {
+                                        path: '/',
+                                        name: 'solicitud-reembolso',
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Index').default,
+                                        meta: {
+                                            title: 'Solicitud de Gastos',
+                                            breadcrumb: {parent: 'reembolso', name: 'SOLICITUD'},
+                                            middleware: [auth, permission],
+                                            permission: 'consultar_relacion_gastos_recursos',
+                                            general: true,
+                                        }
+                                    },
+                                    {
+                                        path: ':id/create',
+                                        name: 'solicitud-create',
+                                        props: true,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Create').default,
+                                        meta: {
+                                            title: 'Registrar Solicitud',
+                                            breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'relacion-gasto'},
+                                            middleware: [auth, permission],
+                                            permission: ['registrar_relacion_gastos_recursos'],
                                             general: true
                                         }
                                     },
