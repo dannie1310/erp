@@ -71,8 +71,7 @@
                                     v-model="instrucciones">
                                 <option value>-- Selecionar --</option>
                                 <option v-for="(m) in formas_pago" :value="m.id">{{m.nombre}}</option>
-                            </select>
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('instrucciones')">{{ errors.first('instrucciones') }}</div>
+                            </select><div style="display:block" class="invalid-feedback" v-show="errors.has('instrucciones')">{{ errors.first('instrucciones') }}</div>
                         </div>
                     </div>
                 </div>
