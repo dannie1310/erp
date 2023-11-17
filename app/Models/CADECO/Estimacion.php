@@ -794,7 +794,11 @@ class Estimacion extends Transaccion
 
     public function getTasaIvaAttribute()
     {
-        return $this->impuesto / $this->subtotal_orden_pago;
+        if($this->subtotal_orden_pago != 0) {
+            return $this->impuesto / $this->subtotal_orden_pago;
+        }else{
+            return 16;
+        }
     }
 
     public function getTasaIvaFormatAttribute()
