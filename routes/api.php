@@ -2061,6 +2061,10 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\EmpresaController@index');
         });
 
+        $api->group(['prefix' => 'entrega'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\EntregaController@index');
+        });
+
         $api->group(['prefix' => 'factura'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@paginate');
             $api->post('xml', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@cargaXML');
