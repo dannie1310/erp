@@ -797,7 +797,7 @@ class Estimacion extends Transaccion
         if($this->subtotal_orden_pago != 0) {
             return $this->impuesto / $this->subtotal_orden_pago;
         }else{
-            return 16;
+            return 0.16;
         }
     }
 
