@@ -9,4 +9,9 @@ class SolChequeDocto extends Model
     protected $connection = 'controlrec';
     protected $table = 'solchequesdoctos';
     public $timestamps = false;
+
+    protected $fillable = [
+        'IdSolCheque',
+        'IdDocto'
+    ];
 }

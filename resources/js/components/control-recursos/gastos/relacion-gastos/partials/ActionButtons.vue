@@ -22,7 +22,9 @@
         <router-link :to="{ name: 'reembolso-x-solicitud', params: {id: value.id_documento}}" v-if="value.reembolso_x_solicitud" type="button" class="btn btn-sm btn-outline-dark" title="Reembolso X Solicitud">
             <i class="fa fa-file-o"></i>
         </router-link>
-
+        <router-link :to="{ name: 'relacion-gasto-reembolso-x-caja', params: {id: value.id}}" v-if="value.solicitar_reembolso_caja" type="button" class="btn btn-sm btn-outline-info" title="Solicitar Reembolso X Caja">
+            <i class="fa fa-archive"></i>
+        </router-link>
 
 
 

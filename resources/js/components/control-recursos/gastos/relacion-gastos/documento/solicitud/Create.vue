@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="forma_pago">Forma de Pago:</label>
                             <select class="form-control"
@@ -80,11 +80,26 @@
                             </select><div style="display:block" class="invalid-feedback" v-show="errors.has('instruccion')">{{ errors.first('instruccion') }}</div>
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <label for="solicitante">Solicitante:</label>
+                            <select  class="form-control"
+                                     data-vv-as="Solicitante"
+                                     id="solicitante"
+                                     name="solicitante"
+                                     :class="{'is-invalid': errors.has('solicitante')}"
+                                     v-validate="{required: true}"
+                                     v-model="solicitante">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(m) in solicitantes" :value="m.id">{{m.descripcion_st}}</option>
+                            </select><div style="display:block" class="invalid-feedback" v-show="errors.has('solicitante')">{{ errors.first('solicitante') }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="solicitud"><i class="fa fa-save"></i> Registrar</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Registrar</button>
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
                 </div>
             </div>
@@ -108,10 +123,13 @@ export default {
             cuentas: [],
             cuenta: '',
             instrucciones: [],
-            instruccion: ''
+            instruccion: '',
+            solicitantes: [],
+            solicitante: ''
         }
     },
     mounted() {
+        this.getFirmasFirmantes();
         this.find();
         this.getFormaPago();
     },
@@ -124,6 +142,7 @@ export default {
             }).then(data => {
                 this.reembolso = data;
                 this.cuentas = data.proveedor.cuentas.data;
+                this.solicitante = data.id_solicitante;
             }).finally(() => {
                 this.cargando = false;
             })
@@ -131,8 +150,26 @@ export default {
         salir() {
             this.$router.push({name: 'relacion-gasto'});
         },
-        solicitud() {
-            console.log("AQUI____>")
+        validate() {
+            this.$validator.validate().then(result => {
+                if (result) {
+                    this.store()
+                }
+            });
+        },
+        store() {
+            var datos = [];
+
+            console.log(datos);
+            return this.$store.dispatch('controlRecursos/solicitud-cheque/store', {
+                reembolso : this.reembolso,
+                forma_pago : this.forma_pago,
+                cuenta : this.cuenta,
+                instruccion : this.instruccion,
+                solicitante : this.solicitante
+            }).then(data => {
+                // this.salir();
+            })
         },
         getFormaPago() {
             return this.$store.dispatch('controlRecursos/forma-pago/index', {
@@ -142,11 +179,17 @@ export default {
             })
         },
         getInstrucciones() {
-            console.log(this.forma_pago)
             return this.$store.dispatch('controlRecursos/entrega/index', {
                 params: { scope:'tipo:'+ this.forma_pago }
             }).then(data => {
                 this.instrucciones = data.data;
+            })
+        },
+        getFirmasFirmantes() {
+            return this.$store.dispatch('controlRecursos/firma-firmante/index', {
+                params: { scope:'firmasSolicitantes' }
+            }).then(data => {
+                this.solicitantes = data.data;
             })
         },
     },

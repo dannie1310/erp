@@ -152,10 +152,12 @@ import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
 import extraordinario from './modules/controlPresupuesto/extraordinario';
 
 //CONTROL RECURSOS
+import cajaChica from "./modules/controlRecursos/caja-chica";
 import documentoRecurso from "./modules/controlRecursos/documento";
 import empresaRecurso from "./modules/controlRecursos/empresa";
 import entrega from "./modules/controlRecursos/entrega";
 import facturaRecurso from "./modules/controlRecursos/factura";
+import firmaFirmante from "./modules/controlRecursos/firma-firmante";
 import formaPago from "./modules/controlRecursos/forma-pago";
 import monedaRecurso from "./modules/controlRecursos/moneda";
 import proveedorRecurso from "./modules/controlRecursos/proveedor";
@@ -388,10 +390,12 @@ export default new Vuex.Store({
         'control-presupuesto/concepto-tarjeta': conceptoTarjeta,
         'control-presupuesto/extraordinario': extraordinario,
 
+        'controlRecursos/caja-chica' : cajaChica,
         'controlRecursos/documento' : documentoRecurso,
         'controlRecursos/empresa' : empresaRecurso,
         'controlRecursos/entrega' : entrega,
         'controlRecursos/factura' : facturaRecurso,
+        'controlRecursos/firma-firmante' : firmaFirmante,
         'controlRecursos/forma-pago' : formaPago,
         'controlRecursos/moneda' : monedaRecurso,
         'controlRecursos/proveedor' : proveedorRecurso,

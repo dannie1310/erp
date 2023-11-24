@@ -107,6 +107,15 @@ class ReembolsoGastoSol extends Documento
         return '$' . number_format(($this->OtrosImpuestos),2);
     }
 
+    public function getFirmaSolicitanteAttribute()
+    {
+        try {
+            return $this->relacionXDocumento->relacion->firmas[0]->idfirmas_firmantes;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */

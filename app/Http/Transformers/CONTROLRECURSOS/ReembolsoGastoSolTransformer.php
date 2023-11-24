@@ -67,7 +67,8 @@ class ReembolsoGastoSolTransformer extends TransformerAbstract
             'suma_importe_format' => $model->importe_format,
             'suma_retenciones_format' => $model->retenciones_format,
             'suma_iva_format' => $model->iva_format,
-            'suma_otros_imp_format' => $model->otros_impuestos_format
+            'suma_otros_imp_format' => $model->otros_impuestos_format,
+            'id_solicitante' => $model->firma_solicitante
         ];
     }
 

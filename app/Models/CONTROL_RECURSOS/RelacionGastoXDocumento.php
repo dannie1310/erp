@@ -23,4 +23,9 @@ class RelacionGastoXDocumento extends Model
     {
         return $this->belongsTo(ReembolsoGastoSol::class, 'IdDocto', 'iddocumento');
     }
+
+    public function relacion()
+    {
+        return $this->belongsTo(RelacionGasto::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
+    }
 }

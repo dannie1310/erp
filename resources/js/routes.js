@@ -4532,6 +4532,19 @@ export const routes = [
                                             general: true
                                         }
                                     },
+                                    {
+                                        path: ':id',
+                                        name: 'reembolso-x-caja',
+                                        props: true,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/ReembolsoXCaja').default,
+                                        meta: {
+                                            title: 'Reembolso por Caja Chica',
+                                            breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO POR CAJA CHICA'},
+                                            middleware: [auth, permission],
+                                            permission: 'editar_relacion_gastos_recursos',
+                                            general: true
+                                        }
+                                    },
                                 ]
                             },
                             {
@@ -4564,6 +4577,19 @@ export const routes = [
                                         }
                                     },
                                 ]
+                            },
+                            {
+                                path: ':id/reembolso-x-caja',
+                                name: 'relacion-gasto-reembolso-x-caja',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/relacion-gastos/SolicitarReembolsoCaja').default,
+                                meta: {
+                                    title: 'Solicitar Reembolso por Caja Chica',
+                                    breadcrumb: {parent: 'relacion-gasto', name: 'SOLICITAR REEMBOLSO POR CAJA CHICA'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_relacion_gastos_recursos',
+                                    general: true
+                                }
                             },
                         ]
                     },
