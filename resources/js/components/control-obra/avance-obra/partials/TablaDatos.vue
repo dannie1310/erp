@@ -130,35 +130,35 @@
                                         <td v-if="partida.concepto.medible != 3"><b>{{partida.concepto.descripcion}}</b></td>
                                         <td v-else> {{partida.concepto.descripcion}}</td>
                                         <td style="text-align:center;">{{partida.concepto.unidad}}</td>
-                                        <td v-if="partida.concepto.medible == 3" style="text-align:right;">
+                                        <td v-if="partida.concepto.medible == 1 || partida.concepto.medible == 3" style="text-align:right;">
                                             {{partida.concepto.cantidad_presupuestada_calculada}}
                                         </td>
                                         <td v-else></td>
-                                        <td v-if="partida.concepto.medible == 3" style="text-align:right;">
+                                        <td v-if="partida.concepto.medible == 1 || partida.concepto.medible == 3" style="text-align:right;">
                                             {{partida.cantidad_anterior_avance}}
                                         </td>
                                         <td v-else></td>
-                                        <td v-if="partida.concepto.medible == 3">
+                                        <td v-if="partida.concepto.medible == 1 || partida.concepto.medible == 3">
                                             {{partida.cantidad_format}}
                                         </td>
                                         <td v-else></td>
-                                        <td v-if="partida.concepto.medible == 3" style="text-align:right;">
+                                        <td v-if="partida.concepto.medible == 1 || partida.concepto.medible == 3" style="text-align:right;">
                                             {{partida.concepto.precio_venta}}
                                         </td>
                                         <td v-else></td>
-                                        <td v-if="partida.concepto.medible == 3" style="text-align:right;">
+                                        <td v-if="partida.concepto.medible == 1 || partida.concepto.medible == 3" style="text-align:right;">
                                             {{partida.monto_avance_format}}
                                         </td>
                                         <td v-else></td>
-                                        <td v-if="partida.concepto.medible == 3" style="text-align:right;">
+                                        <td v-if="partida.concepto.medible == 1 || partida.concepto.medible == 3" style="text-align:right;">
                                             {{partida.cantidad_avance_actual_format}}
                                         </td>
                                         <td v-else></td>
-                                        <td v-if="partida.concepto.medible == 3" style="text-align:right;">
+                                        <td v-if="partida.concepto.medible == 1 || partida.concepto.medible == 3" style="text-align:right;">
                                             {{partida.monto_avance_actual_format}}
                                         </td>
                                         <td v-else></td>
-                                        <td v-if="partida.concepto.medible == 3" style="text-align: center">
+                                        <td v-if="partida.concepto.medible == 1 || partida.concepto.medible == 3" style="text-align: center">
                                             <label class="form-check-label" v-if="partida.cumplido"><b>Si</b></label>
                                             <label class="form-check-label" v-else><b>No</b></label>
                                         </td>
