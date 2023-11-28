@@ -46,6 +46,7 @@ export default {
         return{
             cargando: false,
             relacion : null,
+            datos : null,
         }
     },
     mounted() {
@@ -82,15 +83,15 @@ export default {
             });
         },
         store() {
-            return this.$store.dispatch('controlRecursos/relacion-gasto/reembolsoXSolicitud', this.relacion)
+            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/store', this.relacion)
                 .then((data) => {
-                    this.relacion = data;
+                    this.datos = data;
                     this.reembolso()
                 });
         },
         reembolso()
         {
-            this.$router.push({name:'reembolso-x-solicitud', params: { id: this.relacion.id_documento }});
+            this.$router.push({name:'reembolso-x-solicitud', params: { id: this.datos.id }});
         }
     },
 }

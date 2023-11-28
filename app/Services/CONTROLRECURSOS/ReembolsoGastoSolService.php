@@ -20,6 +20,11 @@ class ReembolsoGastoSolService
         $this->repository = new Repository($model);
     }
 
+    public function store($data)
+    {
+        return $this->repository->registrar($data);
+    }
+
     public function show($id)
     {
         return $this->repository->show($id);
@@ -33,12 +38,5 @@ class ReembolsoGastoSolService
     public function delete($data, $id)
     {
         return $this->repository->show($id)->eliminar();
-    }
-
-    public function validarDocumentos($id)
-    {
-        $reembolso = $this->show($id);
-
-        dd($id);
     }
 }

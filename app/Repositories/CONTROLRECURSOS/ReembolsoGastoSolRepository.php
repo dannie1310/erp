@@ -13,4 +13,9 @@ class ReembolsoGastoSolRepository extends Repository implements RepositoryInterf
         parent::__construct($model);
         $this->model = $model;
     }
+
+    public function registrar($data)
+    {
+        return $this->model->registrar($data);
+    }
 }

@@ -225,7 +225,7 @@ export default {
         },
         store() {
             this.relacion.id_caja = this.id_caja;
-            return this.$store.dispatch('controlRecursos/relacion-gasto/', this.relacion)
+            return this.$store.dispatch('controlRecursos/reembolso-caja-chica/store/', this.relacion)
                 .then((data) => {
                     this.relacion = data;
                     this.reembolso()

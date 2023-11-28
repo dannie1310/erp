@@ -2095,11 +2095,15 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@show')->where(['id' => '[0-9]+']);
         });
 
+        $api->group(['prefix' => 'reembolso-caja-chica'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoCajaChicaController@store');
+        });
+
         $api->group(['prefix' => 'reembolso-gasto-sol'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@update')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@destroy')->where(['id' => '[0-9]+']);
-            $api->get('{id}/validarDocumentos', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@validarDocumentos')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'relacion-gasto'], function ($api) {
@@ -2111,7 +2115,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}/open', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@open')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-relacion', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@pdfRelacion')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@destroy')->where(['id' => '[0-9]+']);
-            $api->post('/xSolicitud', 'App\Http\Controllers\v1\CONTROLRECURSOS\RelacionGastoController@storeReembolsoXSolicitud');
         });
 
         $api->group(['prefix' => 'serie'], function ($api) {

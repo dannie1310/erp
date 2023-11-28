@@ -161,6 +161,7 @@ import firmaFirmante from "./modules/controlRecursos/firma-firmante";
 import formaPago from "./modules/controlRecursos/forma-pago";
 import monedaRecurso from "./modules/controlRecursos/moneda";
 import proveedorRecurso from "./modules/controlRecursos/proveedor";
+import reembolsoCajaChica from "./modules/controlRecursos/reembolso-caja-chica";
 import reembolsoGastoSol from "./modules/controlRecursos/reembolso-gasto-sol";
 import relacionGasto from "./modules/controlRecursos/relacion-gasto";
 import semanaAnio from "./modules/controlRecursos/semana-anio";
@@ -399,6 +400,7 @@ export default new Vuex.Store({
         'controlRecursos/forma-pago' : formaPago,
         'controlRecursos/moneda' : monedaRecurso,
         'controlRecursos/proveedor' : proveedorRecurso,
+        'controlRecursos/reembolso-caja-chica' : reembolsoCajaChica,
         'controlRecursos/reembolso-gasto-sol' : reembolsoGastoSol,
         'controlRecursos/relacion-gasto': relacionGasto,
         'controlRecursos/semana-anio' : semanaAnio,
