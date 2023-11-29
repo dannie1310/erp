@@ -59,7 +59,7 @@ export default {
     methods: {
         find() {
             this.cargando = true;
-            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/find', {
+            return this.$store.dispatch('controlRecursos/reembolso-caja-chica/find', {
                 id: this.id,
                 params:{include: []}
             }).then(data => {

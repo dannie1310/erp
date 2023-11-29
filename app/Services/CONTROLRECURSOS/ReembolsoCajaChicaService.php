@@ -28,4 +28,9 @@ class ReembolsoCajaChicaService
             throw $e;
         }
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

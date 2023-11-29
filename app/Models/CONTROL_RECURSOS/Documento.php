@@ -43,7 +43,8 @@ class Documento extends Model
         'tipo_cambio_excepcion',
         'uuid',
         'registro_portal',
-        'Descuento'
+        'Descuento',
+        'IdGenero'
     ];
 
     protected static function boot()

@@ -34,7 +34,7 @@
                                                 Empleado
                                             </th>
                                             <th class="encabezado">
-                                                Departamento
+                                                Caja Chica
                                             </th>
                                         </tr>
                                         <tr>
@@ -44,20 +44,38 @@
                                             <th>
                                                 {{relacion.empleado_descripcion}}
                                             </th>
-                                            <th>
-                                                {{relacion.departamento}}
-                                            </th>
+                                            <td colspan="3">
+                                                <div class="form-group error-content">
+                                                    <select class="form-control"
+                                                            data-vv-as="Caja Chica"
+                                                            id="id_caja"
+                                                            name="id_caja"
+                                                            :class="{'is-invalid': errors.has('id_caja')}"
+                                                            v-validate="{required: true}"
+                                                            v-model="id_caja">
+                                                        <option value>-- Selecionar --</option>
+                                                        <option v-for="(c) in cajas" :value="c.id">{{ c.descripcion }}</option>
+                                                    </select>
+                                                    <div style="display:block" class="invalid-feedback" v-show="errors.has('id_caja')">{{ errors.first('id_caja') }}</div>
+                                                </div>
+                                            </td>
                                         </tr>
                                         <tr>
-                                            <th class="encabezado  c130" colspan="2">
-                                               Proyecto
+                                            <th class="encabezado">
+                                                Departamento
+                                            </th>
+                                            <th class="encabezado  c130">
+                                                Proyecto
                                             </th>
                                             <th class="encabezado">
                                                 Estado
                                             </th>
                                         </tr>
                                         <tr>
-                                            <td colspan="2">
+                                            <th>
+                                                {{relacion.departamento}}
+                                            </th>
+                                            <td>
                                                 {{relacion.proyecto_descripcion}}
                                             </td>
                                             <td style="text-align: center">
@@ -130,26 +148,6 @@
                                             <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_retenciones_format}}</b></td>
                                             <td style="text-align: right; font-size: 15px"><b>{{ relacion.suma_otros_imp_format }}</b></td>
                                             <td style="text-align: right; font-size: 15px"><b>{{ relacion.total_format }}</b></td>
-                                        </tr>
-                                        <tr>
-                                            <th class="encabezado" colspan="3">Caja Chica</th>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3">
-                                                <div class="form-group error-content">
-                                                    <select class="form-control"
-                                                            data-vv-as="Caja Chica"
-                                                            id="id_caja"
-                                                            name="id_caja"
-                                                            :class="{'is-invalid': errors.has('id_caja')}"
-                                                            v-validate="{required: true}"
-                                                            v-model="id_caja">
-                                                        <option value>-- Selecionar --</option>
-                                                        <option v-for="(c) in cajas" :value="c.id">{{ c.descripcion }}</option>
-                                                    </select>
-                                                    <div style="display:block" class="invalid-feedback" v-show="errors.has('id_caja')">{{ errors.first('id_caja') }}</div>
-                                                </div>
-                                            </td>
                                         </tr>
                                     </table>
                                 </div>
@@ -225,7 +223,7 @@ export default {
         },
         store() {
             this.relacion.id_caja = this.id_caja;
-            return this.$store.dispatch('controlRecursos/reembolso-caja-chica/store/', this.relacion)
+            return this.$store.dispatch('controlRecursos/reembolso-caja-chica/store', this.relacion)
                 .then((data) => {
                     this.relacion = data;
                     this.reembolso()
@@ -233,7 +231,7 @@ export default {
         },
         reembolso()
         {
-            this.$router.push({name:'reembolso-x-caja', params: { id: this.relacion.id_documento }});
+            this.$router.push({name:'reembolso-x-caja', params: { id: this.relacion.id }});
         },
         getCajaChica() {
             return this.$store.dispatch('controlRecursos/caja-chica/index', {
@@ -254,5 +252,10 @@ export default {
 </script>
 
 <style scoped>
-
+.encabezado{
+    text-align: center; background-color: #f2f4f5
+}
+td, th{
+    border: 1px #dee2e6 solid;
+}
 </style>

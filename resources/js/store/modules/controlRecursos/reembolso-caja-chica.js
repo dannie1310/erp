@@ -1,4 +1,4 @@
-const URI = '/api/control-recursos/sol-reembolso-caja-chica/';
+const URI = '/api/control-recursos/reembolso-caja-chica/';
 
 export default {
     namespaced: true,
@@ -59,6 +59,19 @@ export default {
                                 });
                         }
                     });
+            });
+        },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             });
         },
     },
