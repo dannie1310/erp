@@ -79,7 +79,7 @@ class Resguardo extends Model
     public function getFirmasValidasAttribute(){
 
             $entrega = $this->firmasPorResguardo()->where("IdFirma","=",2)->first();
-            if(!$entrega)
+            if($entrega)
             {
                 $entrega = "";
                 $entrega_grupo = ResguardoFirmaGrupo::where("IdFirma","=","2")
