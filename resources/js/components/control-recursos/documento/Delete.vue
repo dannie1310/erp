@@ -53,7 +53,7 @@ export default {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/documento/find', {
                 id: this.id,
-                params:{include: []}
+                params: { scope: 'seriePorUsuario' }
             }).then(data => {
                 this.factura = data
             })
