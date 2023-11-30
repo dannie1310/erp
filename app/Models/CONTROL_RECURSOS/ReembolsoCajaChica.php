@@ -8,6 +8,15 @@ use DateTimeZone;
 
 class ReembolsoCajaChica extends Documento
 {
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->where('IdTipdoDocto', 11);
+        });
+    }
+
     /**
      * Relaciones
      */
@@ -32,6 +41,9 @@ class ReembolsoCajaChica extends Documento
     }
 
 
+    /**
+     * Métodos
+     */
     public function registrar($data)
     {
         $fecha_inicial = new DateTime($data['fecha_inicio_editar']);
