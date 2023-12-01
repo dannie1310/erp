@@ -4533,7 +4533,7 @@ export const routes = [
                                         }
                                     },
                                     {
-                                        path: ':id',
+                                        path: ':id/caja',
                                         name: 'reembolso-x-caja',
                                         props: true,
                                         component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/ReembolsoXCaja').default,

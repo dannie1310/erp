@@ -33,4 +33,9 @@ class ReembolsoCajaChicaService
     {
         return $this->repository->show($id);
     }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->show($id)->eliminar();
+    }
 }

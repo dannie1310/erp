@@ -21,7 +21,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <encabezado-reembolso v-bind:reembolso="reembolso" />
-                        <tabla-datos-reembolso v-bind:reembolso="reembolso" />
+                        <tabla-datos-reembolso-caja v-bind:reembolso="reembolso" />
                         <hr />
                         <documentos v-bind:documentos="reembolso.documentos" />
                     </div>
@@ -29,8 +29,6 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="solicitud"><i class="fa fa-save"></i> Registrar Solicitud</button>
-                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar"><i class="fa fa-save" ></i> Actualizar</button>
                     <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar"><i class="fa fa-trash"></i> Eliminar</button>
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
                 </div>
@@ -41,20 +39,22 @@
 
 <script>
 import EncabezadoReembolso from "./partials/EncabezadoReembolso";
-import TablaDatosReembolso from "./partials/TablaDatosReembolso";
+import TablaDatosReembolsoCaja from "./partials/TablaDatosReembolsoCaja";
 import Documentos from './partials/TablaDatosDocumentos';
 export default {
     name: "ReembolsoXCaja",
-    components: { EncabezadoReembolso, Documentos, TablaDatosReembolso },
+    components: { EncabezadoReembolso, Documentos, TablaDatosReembolsoCaja },
     props: ['id'],
     data(){
         return{
             cargando: false,
-            reembolso : null
+            reembolso : null,
+            cajas: [],
         }
     },
     mounted() {
         this.find();
+        this.getCajaChica();
     },
     methods: {
         find() {
@@ -68,28 +68,18 @@ export default {
                 this.cargando = false;
             })
         },
+        getCajaChica() {
+            return this.$store.dispatch('controlRecursos/caja-chica/index', {
+                params: { scope: 'cajaChica' }
+            }).then(data => {
+                this.cajas = data.data;
+            })
+        },
         salir() {
             this.$router.push({name: 'relacion-gasto'});
         },
-        solicitud() {
-            this.$router.push({name:'solicitud-create', params: { id: this.reembolso.id }});
-        },
-        editar() {
-            if(moment(this.reembolso.fecha_final_editar).format('YYYY/MM/DD') < moment(this.reembolso.fecha_inicio_editar).format('YYYY/MM/DD'))
-            {
-                swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
-            }
-            else {
-                return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/update', {
-                    id: this.reembolso.id,
-                    data: this.reembolso
-                }).then((data) => {
-                    this.reembolso = data;
-                })
-            }
-        },
         eliminar() {
-            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/delete', {
+            return this.$store.dispatch('controlRecursos/reembolso-caja-chica/delete', {
                 id: this.id,
                 params: {}
             }).then(() => {

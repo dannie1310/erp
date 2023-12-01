@@ -13,7 +13,7 @@ class ReembolsoCajaChica extends Documento
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('IdTipdoDocto', 11);
+            return $query->where('IdTipoDocto', 11);
         });
     }
 
@@ -40,6 +40,22 @@ class ReembolsoCajaChica extends Documento
         return $this->belongsTo(CajaChicaReembolso::class, 'iddocto', 'iddocto');
     }
 
+    /**
+     * Atributos
+     */
+    public function getEmpleadoDescripcionAttribute()
+    {
+        try {
+            return $this->proveedor->RazonSocial;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getOtrosImpuestosFormatAttribute()
+    {
+        return '$' . number_format(($this->OtrosImpuestos),2);
+    }
 
     /**
      * Métodos
@@ -122,6 +138,31 @@ class ReembolsoCajaChica extends Documento
                 'Total' => $documento->total,
                 'Facturable' => 'N'
             ]);
+        }
+    }
+
+    public function eliminar()
+    {
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $this->eliminarDocumentos();
+            $this->relacionXDocumento()->delete();
+            $this->cajaChicaReembolso()->delete();
+            $this->delete();
+            $this->respaldo();
+            DB::connection('controlrec')->commit();
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function eliminarDocumentos()
+    {
+        foreach ($this->ccDoctos as $ccDocto)
+        {
+            $ccDocto->delete();
         }
     }
 }
