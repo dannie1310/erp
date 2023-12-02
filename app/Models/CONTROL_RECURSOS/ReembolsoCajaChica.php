@@ -37,7 +37,7 @@ class ReembolsoCajaChica extends Documento
 
     public function cajaChicaReembolso()
     {
-        return $this->belongsTo(CajaChicaReembolso::class, 'iddocto', 'iddocto');
+        return $this->belongsTo(CajaChicaReembolso::class, 'IdDocto', 'iddocto');
     }
 
     /**
@@ -55,6 +55,15 @@ class ReembolsoCajaChica extends Documento
     public function getOtrosImpuestosFormatAttribute()
     {
         return '$' . number_format(($this->OtrosImpuestos),2);
+    }
+
+    public function getIdCajaChicaAttribute()
+    {
+        try {
+            return $this->cajaChicaReembolso->idcajas_chicas;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**

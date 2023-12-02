@@ -21,7 +21,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <encabezado-reembolso v-bind:reembolso="reembolso" />
-                        <tabla-datos-reembolso-caja v-bind:reembolso="reembolso" />
+                        <tabla-datos-reembolso-caja v-bind:reembolso="reembolso" v-bind:cajas="cajas" />
                         <hr />
                         <documentos v-bind:documentos="reembolso.documentos" />
                     </div>

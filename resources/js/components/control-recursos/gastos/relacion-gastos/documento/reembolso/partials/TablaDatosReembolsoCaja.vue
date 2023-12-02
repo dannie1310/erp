@@ -119,7 +119,7 @@ import {es} from 'vuejs-datepicker/dist/locale';
 export default {
     name: "TablaReembolsoCaja",
     components: { datepicker, es },
-    props: ['reembolso'],
+    props: ['reembolso', 'cajas'],
     data(){
         return{
             es: es
