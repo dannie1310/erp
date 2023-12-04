@@ -79,13 +79,13 @@
                             Tasa de Iva
                         </th>
                         <th class="encabezado money">
+                            Descuento
+                        </th>
+                        <th class="encabezado money">
                             Retenciones
                         </th>
                         <th class="encabezado">
                             Total
-                        </th>
-                        <th class="encabezado">
-                            Moneda
                         </th>
                     </tr>
                     <tr>
@@ -99,17 +99,20 @@
                             {{ factura.tasa_iva }}
                         </td>
                         <td class="money">
+                            {{ factura.descuento }}
+                        </td>
+                        <td class="money">
                             {{ factura.retencion_format }}
                         </td>
                         <td class="money">
                             {{ factura.total_format }}
                         </td>
-                        <td>
-                            {{ factura.moneda }}
-                        </td>
                     </tr>
                     <tr>
-                        <th class="encabezado" colspan="3">
+                        <th class="encabezado">
+                            Moneda
+                        </th>
+                        <th class="encabezado" colspan="2">
                             UUID
                         </th>
                         <th class="encabezado c150">
@@ -124,7 +127,10 @@
 
                     </tr>
                     <tr>
-                        <td colspan="3">
+                        <td>
+                            {{ factura.moneda }}
+                        </td>
+                        <td colspan="2">
                             {{factura.uuid}}
                         </td>
                         <td >
