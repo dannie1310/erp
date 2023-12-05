@@ -163,6 +163,7 @@ import monedaRecurso from "./modules/controlRecursos/moneda";
 import proveedorRecurso from "./modules/controlRecursos/proveedor";
 import reembolsoCajaChica from "./modules/controlRecursos/reembolso-caja-chica";
 import reembolsoGastoSol from "./modules/controlRecursos/reembolso-gasto-sol";
+import reembolsoPagoAProveedor from "./modules/controlRecursos/reembolso-pago-a-proveedor";
 import relacionGasto from "./modules/controlRecursos/relacion-gasto";
 import semanaAnio from "./modules/controlRecursos/semana-anio";
 import serie from "./modules/controlRecursos/serie";
@@ -402,6 +403,7 @@ export default new Vuex.Store({
         'controlRecursos/proveedor' : proveedorRecurso,
         'controlRecursos/reembolso-caja-chica' : reembolsoCajaChica,
         'controlRecursos/reembolso-gasto-sol' : reembolsoGastoSol,
+        'controlRecursos/reembolso-pago-a-proveedor' : reembolsoPagoAProveedor,
         'controlRecursos/relacion-gasto': relacionGasto,
         'controlRecursos/semana-anio' : semanaAnio,
         'controlRecursos/serie' : serie,

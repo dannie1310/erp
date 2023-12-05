@@ -116,6 +116,8 @@
                                 solicitar_reembolso: self.$root.can('eliminar_relacion_gastos_recursos', true) && relacion.estado == 5 ? true : false,
                                 solicitar_reembolso_caja: self.$root.can('eliminar_relacion_gastos_recursos', true) && relacion.estado == 5 ? true : false,
                                 reembolso_x_solicitud_caja: self.$root.can('eliminar_relacion_gastos_recursos', true) && relacion.estado == 60 ? true : false,
+                                solicitud_pago_a_proveedor: self.$root.can('eliminar_relacion_gastos_recursos', true) && relacion.estado == 5 ? true : false,
+                                reembolso_pago_a_proveedor: self.$root.can('eliminar_relacion_gastos_recursos', true) && relacion.estado == 60 ? true : false,
                             })
                     }))
                 },

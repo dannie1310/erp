@@ -19,7 +19,7 @@
 
 <script>
     export default {
-        name: "documento-index",
+        name: "reembolso-index",
         data() {
             return {
                 HeaderSettings: false,

@@ -15,8 +15,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <encabezado-reembolso v-bind:reembolso="reembolso" />
-                        <tabla-datos-reembolso v-bind:reembolso="reembolso" />
+                        <encabezado v-bind:reembolso="reembolso" />
+                        <tabla-datos v-bind:reembolso="reembolso" />
                         <hr />
                     </div>
                 </div>
@@ -108,11 +108,11 @@
 </template>
 
 <script>
-import EncabezadoReembolso from "../reembolso/partials/EncabezadoReembolso";
-import TablaDatosReembolso from "../reembolso/partials/TablaDatosReembolso";
+import Encabezado from "./partials/Encabezado";
+import TablaDatos from "./partials/TablaDatos";
 export default {
     name: "solicitud-create",
-    components: {EncabezadoReembolso, TablaDatosReembolso},
+    components: {Encabezado, TablaDatos},
     props: ['id'],
     data() {
         return {
