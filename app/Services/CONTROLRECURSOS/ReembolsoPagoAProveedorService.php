@@ -28,4 +28,19 @@ class ReembolsoPagoAProveedorService
             throw $e;
         }
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->show($id)->editar($data);
+    }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->show($id)->eliminar();
+    }
 }

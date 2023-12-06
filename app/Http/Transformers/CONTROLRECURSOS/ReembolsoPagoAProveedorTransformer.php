@@ -22,7 +22,7 @@ class ReembolsoPagoAProveedorTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'documentos'
     ];
 
     public function transform(ReembolsoPagoAProveedor $model){
@@ -67,8 +67,20 @@ class ReembolsoPagoAProveedorTransformer extends TransformerAbstract
             'suma_importe_format' => $model->importe_format,
             'suma_retenciones_format' => $model->retenciones_format,
             'suma_iva_format' => $model->iva_format,
-            'suma_otros_imp_format' => $model->otros_impuestos_format,
-            'id_caja' => $model->id_caja_chica
+            'suma_otros_imp_format' => $model->otros_impuestos_format
         ];
+    }
+
+    /**
+     * @param ReembolsoPagoAProveedor $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeDocumentos(ReembolsoPagoAProveedor $model)
+    {
+        if($documentos = $model->ccDoctos)
+        {
+            return $this->collection($documentos, new CcDoctoTransformer);
+        }
+        return null;
     }
 }

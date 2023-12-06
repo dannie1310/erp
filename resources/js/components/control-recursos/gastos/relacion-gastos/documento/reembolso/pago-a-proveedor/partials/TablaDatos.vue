@@ -14,7 +14,7 @@
                             Empleado
                         </th>
                         <th class="encabezado">
-                            Departamento
+                            Proveedor
                         </th>
                     </tr>
                     <tr>
@@ -25,7 +25,19 @@
                             {{reembolso.empleado_descripcion}}
                         </th>
                         <th>
-                            {{reembolso.departamento}}
+                            <div class="form-group error-content">
+                                <select class="form-control"
+                                        data-vv-as="Proyecto"
+                                        id="id_proyecto"
+                                        name="id_proyecto"
+                                        :class="{'is-invalid': errors.has('id_proyecto')}"
+                                        v-validate="{required: true}"
+                                        v-model="reembolso.id_proveedor">
+                                    <option value>-- Selecionar --</option>
+                                    <option v-for="(p) in proyectos" :value="p.id">{{ p.razon_social }} ( {{ p.rfc }} )</option>
+                                </select>
+                                <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proyecto')">{{ errors.first('id_proyecto') }}</div>
+                            </div>
                         </th>
                     </tr>
                     <tr>
@@ -51,16 +63,7 @@
                             <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                         </td>
                         <td>
-                            <datepicker v-model = "reembolso.fecha_inicio_editar"
-                                        name = "fecha_inicial"
-                                        :format = "formatoFecha"
-                                        data-vv-as="Fecha Inicial"
-                                        :language = "es"
-                                        :bootstrap-styling = "true"
-                                        class = "form-control"
-                                        v-validate="{required: true}"
-                                        :class="{'is-invalid': errors.has('fecha_inicial')}"/>
-                            <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
+                            {{reembolso.fecha_inicio_editar}}
                         </td>
                         <td>
                             <datepicker v-model = "reembolso.fecha_final_editar"
@@ -110,12 +113,23 @@ export default {
     props: ['reembolso'],
     data(){
         return{
-            es: es
+            es: es,
+            proyectos : []
         }
+    },
+    mounted() {
+        this.getProyectos();
     },
     methods :{
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
+        },
+        getProyectos() {
+            return this.$store.dispatch('controlRecursos/proveedor/index', {
+                params: { scope:'paraReembolso' }
+            }).then(data => {
+                this.proyectos = data.data;
+            })
         },
     }
 }

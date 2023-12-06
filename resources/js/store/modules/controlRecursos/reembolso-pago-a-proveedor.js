@@ -30,7 +30,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Reembolso por Solicitud",
+                    title: "Reembolso pago a proveedor",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -50,7 +50,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Reembolso por solicitud registrado correctamente", {
+                                    swal("Reembolso pago a proveedor registrado correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
@@ -82,7 +82,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar el Reembolso de Gastos",
+                    text: "Actualizar el Reembolso Pago a Proveedor",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -120,7 +120,7 @@ export default {
         delete(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Reembolso de Gastos",
+                    title: "Eliminar Reembolso Pago a Proveedor",
                     text: "¿Está seguro de que desea eliminar el reembolso?",
                     icon: "warning",
                     buttons: {
@@ -141,7 +141,7 @@ export default {
                                 .delete(URI + payload.id, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Reembolso de gastos eliminado correctamente", {
+                                    swal("Reembolso pago a proveedor eliminado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

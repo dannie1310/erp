@@ -30,7 +30,7 @@ class Documento extends Model
         'IVA',
         'Total',
         'Retenciones',
-        'TasaIva',
+        'TasaIVA',
         'OtrosImpuestos',
         'IdMoneda',
         'Alias_Depto',
@@ -409,7 +409,7 @@ class Documento extends Model
     public function respaldo()
     {
         $this->eliminado->update([
-            'Elimino' => auth()->id()."*". date("d-m-Y") ."/". date("H:i:s"),
+            'Elimino' => auth()->id()."*ERP/". date("d-m-Y") ."/". date("H:i:s"),
         ]);
     }
 

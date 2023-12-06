@@ -231,6 +231,7 @@ export default {
             });
         },
         store() {
+            this.relacion.id_proyecto_seleccionado = this.id_proyecto;
             return this.$store.dispatch('controlRecursos/reembolso-pago-a-proveedor/store', this.relacion)
                 .then((data) => {
                     this.datos = data;

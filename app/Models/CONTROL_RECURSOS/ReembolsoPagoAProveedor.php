@@ -3,6 +3,8 @@
 namespace App\Models\CONTROL_RECURSOS;
 
 use Illuminate\Support\Facades\DB;
+use DateTime;
+use DateTimeZone;
 
 class ReembolsoPagoAProveedor extends Documento
 {
@@ -11,18 +13,64 @@ class ReembolsoPagoAProveedor extends Documento
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('IdTipoDocto', 11);
+            return $query->where('IdTipoDocto', 12);
         });
     }
 
+    /**
+     * Relaciones
+     */
+    public function relacionXDocumento()
+    {
+        return $this->belongsTo(RelacionGastoXDocumento::class, 'IdDocto', 'iddocumento');
+    }
 
+    public function ccDoctos()
+    {
+        return $this->hasMany(CcDocto::class, 'IdDocto', 'IdDocto');
+    }
+
+    /**
+     * Atributos
+     */
+    public function getEmpleadoDescripcionAttribute()
+    {
+        try {
+            return $this->relacionXDocumento->relacion->empleado_descripcion;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getDepartamentoDescripcionAttribute()
+    {
+        try {
+            return $this->departamento->departamento;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getProyectoDescripcionAttribute()
+    {
+        try {
+            return $this->proyecto->ubicacion;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getOtrosImpuestosFormatAttribute()
+    {
+        return '$' . number_format(($this->OtrosImpuestos),2);
+    }
 
     /**
      * Métodos
      */
     public function registrar($data)
     {
-        dd("AQUI");
         $fecha_inicial = new DateTime($data['fecha_inicio_editar']);
         $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
         $data['fecha_inicial'] = $fecha_inicial->format("Y-m-d");
@@ -30,7 +78,6 @@ class ReembolsoPagoAProveedor extends Documento
         $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
         $data['fecha_final'] = $fecha_final->format("Y-m-d");
         $relacion = RelacionGasto::where('idrelaciones_gastos', $data['id'])->first();
-        $caja = CajaChica::where('idcajas_chicas', $data['id_caja'])->first();
         try {
             DB::connection('controlrec')->beginTransaction();
 
@@ -45,16 +92,16 @@ class ReembolsoPagoAProveedor extends Documento
                 'IVA' => $data['suma_iva'],
                 'OtrosImpuestos' => $data['suma_otros_imp'],
                 'Total' => $data['total'],
-                'Vencimiento' => $data['fecha_final'],
+                'Vencimiento' =>  date('Y-m-d'),
                 'TasaIVA' => 16,
-                'IdTipoDocto' => 11,
-                'Estatus' => 15,
+                'IdTipoDocto' => 12,
+                'Estatus' => 1,
                 'IdGenero' => auth()->id(),
                 'registro_portal' => 1,
                 'Departamento' => $relacion->departamento->departamento,
-                'IdSerie' => $caja->idserie,
-                'Alias_Depto' => $caja->serie->Descripcion,
-                'IdProveedor' => $caja->idempleado,
+                'IdSerie' => $relacion->idserie,
+                'Alias_Depto' => $relacion->serie->Descripcion,
+                'IdProveedor' => $data['id_proyecto_seleccionado'],
             ]);
 
             $this->relacionXDocumento()->create([
@@ -64,11 +111,6 @@ class ReembolsoPagoAProveedor extends Documento
             ]);
 
             $this->crearCcDoctos($reembolso->getKey(), $relacion);
-
-            $this->cajaChicaReembolso()->create([
-                'iddocto' => $reembolso->getKey(),
-                'idcajas_chicas' => $data['id_caja']
-            ]);
 
             DB::connection('controlrec')->commit();
             return $reembolso;
@@ -102,4 +144,49 @@ class ReembolsoPagoAProveedor extends Documento
         }
     }
 
+    public function editar(array $data)
+    {
+        $fecha_final = new DateTime($data['fecha_final_editar']);
+        $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data['fecha_final'] = $fecha_final->format("Y-m-d");
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            $this->update([
+                'Concepto' => $data['motivo'],
+                'Vencimiento' => $data['fecha_final'],
+                'IdProveedor' => $data['id_proveedor'],
+            ]);
+
+            DB::connection('controlrec')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function eliminar()
+    {
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $this->eliminarDocumentos();
+            $this->relacionXDocumento()->delete();
+            $this->delete();
+            $this->respaldo();
+            DB::connection('controlrec')->commit();
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function eliminarDocumentos()
+    {
+        foreach ($this->ccDoctos as $ccDocto)
+        {
+            $ccDocto->delete();
+        }
+    }
 }
