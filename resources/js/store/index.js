@@ -160,6 +160,8 @@ import facturaRecurso from "./modules/controlRecursos/factura";
 import firmaFirmante from "./modules/controlRecursos/firma-firmante";
 import formaPago from "./modules/controlRecursos/forma-pago";
 import monedaRecurso from "./modules/controlRecursos/moneda";
+import pagoAProveedor from "./modules/controlRecursos/pago-a-proveedor";
+import pagoReembolsoPorSolicitud from "./modules/controlRecursos/pago-reembolso-por-solicitud";
 import proveedorRecurso from "./modules/controlRecursos/proveedor";
 import reembolsoCajaChica from "./modules/controlRecursos/reembolso-caja-chica";
 import reembolsoGastoSol from "./modules/controlRecursos/reembolso-gasto-sol";
@@ -400,6 +402,8 @@ export default new Vuex.Store({
         'controlRecursos/firma-firmante' : firmaFirmante,
         'controlRecursos/forma-pago' : formaPago,
         'controlRecursos/moneda' : monedaRecurso,
+        'controlRecursos/pago-a-proveedor' : pagoAProveedor,
+        'controlRecursos/pago-reembolso-por-solicitud' : pagoReembolsoPorSolicitud,
         'controlRecursos/proveedor' : proveedorRecurso,
         'controlRecursos/reembolso-caja-chica' : reembolsoCajaChica,
         'controlRecursos/reembolso-gasto-sol' : reembolsoGastoSol,

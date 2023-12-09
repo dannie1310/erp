@@ -13,9 +13,4 @@ class SolicitudChequeRepository extends Repository implements RepositoryInterfac
         parent::__construct($model);
         $this->model = $model;
     }
-
-    public function create(array $datos)
-    {
-        return $this->model->registrar($datos);
-    }
 }

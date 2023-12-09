@@ -40,7 +40,7 @@
                     <div class="col-md-3">
                         <div class="form-group error-content">
                             <label for="forma_pago">Tipo de Pago:</label>
-                            <label class="form-control"> Reembolso de Gastos </label>
+                            <label class="form-control">Pago a Proveedor</label>
                         </div>
                     </div>
                     <div class="col-md-3" v-if="forma_pago != '' && forma_pago != 1">
@@ -113,7 +113,7 @@ import TablaDatos from "./partials/TablaDatos";
 export default {
     name: "solicitud-create",
     components: {Encabezado, TablaDatos},
-    props: ['id'],
+    props: ['id', 'tipo'],
     data() {
         return {
             cargando: false,
@@ -130,13 +130,33 @@ export default {
     },
     mounted() {
         this.getFirmasFirmantes();
-        this.find();
+        if(this.tipo == 11)
+        {
+            this.findPorSolicitud();
+        }
+        if(this.tipo == 12)
+        {
+            this.findPagoAProveedor();
+        }
         this.getFormaPago();
     },
     methods: {
-        find() {
+        findPorSolicitud() {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/find', {
+                id: this.id,
+                params: {include: [ 'proveedor.cuentas' ]}
+            }).then(data => {
+                this.reembolso = data;
+                this.cuentas = data.proveedor.cuentas.data;
+                this.solicitante = data.id_solicitante;
+            }).finally(() => {
+                this.cargando = false;
+            })
+        },
+        findPagoAProveedor() {
+            this.cargando = true;
+            return this.$store.dispatch('controlRecursos/reembolso-pago-a-proveedor/find', {
                 id: this.id,
                 params: {include: [ 'proveedor.cuentas' ]}
             }).then(data => {
@@ -153,15 +173,30 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    this.store()
+                    if(this.tipo == 11)
+                    {
+                        this.storePagoReembolsoPorSolicitud();
+                    }
+                    if(this.tipo == 12)
+                    {
+                        this.storePagoAProveedor();
+                    }
                 }
             });
         },
-        store() {
-            var datos = [];
-
-            console.log(datos);
-            return this.$store.dispatch('controlRecursos/solicitud-cheque/store', {
+        storePagoReembolsoPorSolicitud() {
+            return this.$store.dispatch('controlRecursos/pago-reembolso-por-solicitud/store', {
+                reembolso : this.reembolso,
+                forma_pago : this.forma_pago,
+                cuenta : this.cuenta,
+                instruccion : this.instruccion,
+                solicitante : this.solicitante
+            }).then(data => {
+                // this.salir();
+            })
+        },
+        storePagoAProveedor() {
+            return this.$store.dispatch('controlRecursos/pago-a-proveedor/store', {
                 reembolso : this.reembolso,
                 forma_pago : this.forma_pago,
                 cuenta : this.cuenta,

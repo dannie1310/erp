@@ -42,13 +42,4 @@ class SolicitudChequeService
         $descarga = DescargaLayoutBanco::where('id', $id)->first();
         return Storage::disk('bancario_recurso_descarga_zip')->download($descarga->nombre_archivo);
     }
-
-    public function store(array $data)
-    {
-        try {
-            return $this->repository->create($data);
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
 }

@@ -2090,6 +2090,16 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\MonedaController@index');
         });
 
+        $api->group(['prefix' => 'pago-a-proveedor'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@index');
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@store');
+        });
+
+        $api->group(['prefix' => 'pago-reembolso-por-solicitud'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoReembolsoPorSolicitudController@index');
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoReembolsoPorSolicitudController@store');
+        });
+
         $api->group(['prefix' => 'proveedor'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@show')->where(['id' => '[0-9]+']);
@@ -2134,7 +2144,6 @@ $api->version('v1', function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@descargaLayout');
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@index');
             $api->get('{id}/descarga', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@descarga')->where(['id' => '[0-9]+']);
-            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@store');
         });
 
         $api->group(['prefix' => 'semana-anio'], function ($api) {

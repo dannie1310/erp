@@ -13,7 +13,7 @@ class ReembolsoPagoAProveedorTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'proveedor'
     ];
 
     /**
@@ -67,7 +67,8 @@ class ReembolsoPagoAProveedorTransformer extends TransformerAbstract
             'suma_importe_format' => $model->importe_format,
             'suma_retenciones_format' => $model->retenciones_format,
             'suma_iva_format' => $model->iva_format,
-            'suma_otros_imp_format' => $model->otros_impuestos_format
+            'suma_otros_imp_format' => $model->otros_impuestos_format,
+            'id_solicitante' => $model->firma_solicitante
         ];
     }
 
@@ -80,6 +81,19 @@ class ReembolsoPagoAProveedorTransformer extends TransformerAbstract
         if($documentos = $model->ccDoctos)
         {
             return $this->collection($documentos, new CcDoctoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param ReembolsoPagoAProveedor $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeProveedor(ReembolsoPagoAProveedor $model)
+    {
+        if($proveedor = $model->proveedor)
+        {
+            return $this->item($proveedor, new ProveedorTransformer);
         }
         return null;
     }

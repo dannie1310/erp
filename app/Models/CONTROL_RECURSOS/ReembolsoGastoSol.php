@@ -39,7 +39,6 @@ class ReembolsoGastoSol extends Documento
 
         self::addGlobalScope(function ($query) {
             return $query->where('IdTipoDocto', '13');
-            //->where('Estatus', 11);
         });
     }
 
