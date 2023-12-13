@@ -48,6 +48,7 @@ class PagoReembolsoPorSolicitud extends SolCheque
                 'Serie' => $reembolso->Alias_Depto,
                 'IdGenero' => auth()->id(),
                 'FechaFactura' =>  $fecha->format("Y-m-d"),
+                'registro_portal' => 1
             ]);
 
             foreach ($reembolso->ccDoctos as $docto)
@@ -83,5 +84,15 @@ class PagoReembolsoPorSolicitud extends SolCheque
             DB::connection('controlrec')->rollBack();
             abort(400, $e->getMessage());
         }
+    }
+
+    public function editar($data)
+    {
+       dd($data, "ed");
+    }
+
+    public function eliminar($data)
+    {
+        dd($data, "E");
     }
 }

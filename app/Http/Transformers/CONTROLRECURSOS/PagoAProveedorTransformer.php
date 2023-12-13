@@ -13,7 +13,7 @@ class PagoAProveedorTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'cuentaProveedor'
+
     ];
 
     /**
@@ -22,8 +22,7 @@ class PagoAProveedorTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'empresa',
-        'proveedor',
+
     ];
 
     public function transform(PagoAProveedor $model){

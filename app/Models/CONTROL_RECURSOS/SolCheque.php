@@ -37,7 +37,8 @@ class SolCheque extends Model
         'IdSerie',
         'Serie',
         'IdGenero',
-        'Fecha'
+        'Fecha',
+        'registro_portal'
     ];
 
     /**

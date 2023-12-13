@@ -4512,7 +4512,7 @@ export const routes = [
                                         name: 'reembolso',
                                         component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/Index').default,
                                         meta: {
-                                            title: 'Reembolso de Gastos',
+                                            title: 'Reembolso de Gvbm ,,,,,,+{}-.astos',
                                             breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO'},
                                             middleware: [auth, permission],
                                             permission: 'consultar_relacion_gastos_recursos',
@@ -4578,7 +4578,7 @@ export const routes = [
                                     },
                                     {
                                         path: ':id/create',
-                                        name: 'solicitud-create',
+                                        name: 'solicitud-reembolso-create',
                                         props: true,
                                         component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Create').default,
                                         meta: {
@@ -4586,6 +4586,19 @@ export const routes = [
                                             breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'relacion-gasto'},
                                             middleware: [auth, permission],
                                             permission: ['registrar_relacion_gastos_recursos'],
+                                            general: true
+                                        }
+                                    },
+                                    {
+                                        path: ':id/edit',
+                                        name: 'solicitud-reembolso-edit',
+                                        props: true,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Edit').default,
+                                        meta: {
+                                            title: 'Editar Solicitud',
+                                            breadcrumb: {parent: 'relacion-gasto', name: 'EDITAR'},
+                                            middleware: [auth, permission],
+                                            permission: 'editar_relacion_gastos_recursos',
                                             general: true
                                         }
                                     },

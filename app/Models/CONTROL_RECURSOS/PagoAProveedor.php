@@ -3,6 +3,8 @@
 namespace App\Models\CONTROL_RECURSOS;
 
 use Illuminate\Support\Facades\DB;
+use DateTime;
+use DateTimeZone;
 
 class PagoAProveedor extends SolCheque
 {
@@ -13,8 +15,8 @@ class PagoAProveedor extends SolCheque
     {
         try {
             $reembolso = ReembolsoPagoAProveedor::where('IdDocto',$datos['reembolso']['id'])->first();
-dd($datos, $reembolso);
-            if($reembolso->Estatus == 700)
+
+            if($reembolso->Estatus == 2)
             {
                 abort(500, "Este reembolso ya se encuentra asociado a una solicitud.");
             }
@@ -48,6 +50,7 @@ dd($datos, $reembolso);
                 'Serie' => $reembolso->Alias_Depto,
                 'IdGenero' => auth()->id(),
                 'FechaFactura' =>  $fecha->format("Y-m-d"),
+                'registro_portal' => 1
             ]);
 
             /*
@@ -78,7 +81,7 @@ dd($datos, $reembolso);
             ]);
 
             $reembolso->update([
-                'Estatus'  => 13
+                'Estatus'  => 2
             ]);
             DB::connection('controlrec')->commit();
             return $sol_cheque;
@@ -87,5 +90,15 @@ dd($datos, $reembolso);
             DB::connection('controlrec')->rollBack();
             abort(400, $e->getMessage());
         }
+    }
+
+    public function editar($data)
+    {
+        dd($data, "ed1");
+    }
+
+    public function eliminar($data)
+    {
+        dd($data, "E1");
     }
 }

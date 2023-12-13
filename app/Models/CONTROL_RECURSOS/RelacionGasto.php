@@ -31,7 +31,8 @@ class RelacionGasto extends Model
         'modifico_estado',
         'idestado',
         'motivo',
-        'registro'
+        'registro',
+        'registro_portal'
     ];
 
     protected static function boot()
@@ -674,6 +675,16 @@ class RelacionGasto extends Model
     {
         try {
             return $this->relacionGastoXDocumento->iddocumento;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getIdSolicitudAttribute()
+    {
+        try {
+            return $this->relacionGastoXDocumento->solicitudCheque->IdSolCheque;
         }catch (\Exception $e)
         {
             return null;

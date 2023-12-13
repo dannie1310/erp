@@ -72,7 +72,7 @@ export default {
             this.$router.push({name: 'relacion-gasto'});
         },
         solicitud() {
-            this.$router.push({name:'solicitud-create', params: { id: this.reembolso.id, tipo: this.reembolso.id_tipo }});
+            this.$router.push({name:'solicitud-reembolso-create', params: { id: this.reembolso.id, tipo: this.reembolso.id_tipo }});
         },
         editar() {
             if(moment(this.reembolso.fecha_final_editar).format('YYYY/MM/DD') < moment(this.reembolso.fecha_inicio_editar).format('YYYY/MM/DD'))
