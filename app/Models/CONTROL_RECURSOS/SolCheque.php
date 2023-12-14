@@ -3,12 +3,43 @@
 namespace App\Models\CONTROL_RECURSOS;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use DateTime;
+use DateTimeZone;
 
 class SolCheque extends Model
 {
     protected $connection = 'controlrec';
     protected $table = 'solcheques';
     protected $primaryKey = 'IdSolCheques';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'IdSolCheques',
+        'FechaFactura',
+        'Vencimiento',
+        'IdEmpresa',
+        'IdProveedor',
+        'IdMoneda',
+        'Importe',
+        'Retenciones',
+        'IVA',
+        'OtrosImpuestos',
+        'Total',
+        'Concepto',
+        'Estatus',
+        'IdTipoSolicitud',
+        'IdFormaPago',
+        'IdTipoPago',
+        'IdEntrega',
+        'Cuenta2',
+        'Folio',
+        'IdSerie',
+        'Serie',
+        'IdGenero',
+        'Fecha',
+        'registro_portal'
+    ];
 
     /**
      * Relaciones
@@ -36,6 +67,11 @@ class SolCheque extends Model
     public function cuentaProveedor()
     {
         return $this->hasOne(CuentaProveedor::class, 'IdCuenta','Cuenta2');
+    }
+
+    public function solChequeDocto()
+    {
+        return $this->belongsTo(SolChequeDocto::class, 'IdSolCheque', 'IdSolCheques');
     }
 
     /**

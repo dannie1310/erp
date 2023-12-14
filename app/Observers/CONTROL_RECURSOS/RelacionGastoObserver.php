@@ -19,6 +19,7 @@ class RelacionGastoObserver
         $relacion->modifico_estado = auth()->id();
         $relacion->idestado = 1;
         $relacion->registro = auth()->id();
+        $relacion->registro_portal = 1;
     }
 
     public function created(RelacionGasto $relacion)

@@ -5,7 +5,7 @@ namespace App\Services\CONTROLRECURSOS;
 use App\LAYOUT\LayoutBancario;
 use App\Models\CONTROL_RECURSOS\DescargaLayoutBanco;
 use App\Models\CONTROL_RECURSOS\SolCheque;
-use App\Repositories\Repository;
+use App\Repositories\CONTROLRECURSOS\SolicitudChequeRepository as Repository;
 use Illuminate\Support\Facades\Storage;
 
 class SolicitudChequeService

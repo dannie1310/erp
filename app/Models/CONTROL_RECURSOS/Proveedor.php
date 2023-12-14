@@ -29,6 +29,11 @@ class Proveedor extends Model
         return $this->belongsTo(Usuario::class, 'IdUsuario', 'idusuario');
     }
 
+    public function proveedoresParaReembolso()
+    {
+        return $this->hasMany(ProveedorReembolso::class, 'idproveedor', 'IdProveedor');
+    }
+
     /**
      * Scopes
      */
@@ -57,6 +62,11 @@ class Proveedor extends Model
     public function scopeEmpleados($query)
     {
         return $query->where('IdUsuario', '>', 0);
+    }
+
+    public function scopeParaReembolso($query)
+    {
+        return $query->whereHas('proveedoresParaReembolso');
     }
 
     /**

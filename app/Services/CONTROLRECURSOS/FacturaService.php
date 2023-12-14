@@ -100,10 +100,28 @@ class FacturaService
         $arreglo["total"] = $arreglo_cfd["total"];
         $arreglo["impuesto"] = $arreglo_cfd["total_impuestos_trasladados"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
-        $arreglo["retencion"]  = $arreglo_cfd["descuento"];
+        if(array_key_exists('retenciones', $arreglo_cfd))
+        {
+            $arreglo["retencion"] = $arreglo_cfd['retenciones'][0]['importe'];
+        }else{
+            $arreglo["retencion"] = 0;
+        }
+        if(array_key_exists('traslados', $arreglo_cfd))
+        {
+            $suma = 0;
+            foreach ($arreglo_cfd['traslados'] as $traslado)
+            {
+                if($traslado['impuesto'] == '003')
+                {
+                    $suma = $suma + $traslado['importe'];
+                }
+            }
+            $arreglo["otros"] = $suma;
+        }else{
+            $arreglo["otros"] = 0;
+        }
         $arreglo["serie"] = $arreglo_cfd["serie"];
-        $arreglo["otros"] = $arreglo_cfd["total_impuestos_retenidos"];
-        $arreglo["folio"] = $arreglo_cfd["folio"];
+        $arreglo["folio"] = $arreglo_cfd["folio"] == "" ? substr($arreglo_cfd["uuid"],0,5) : $arreglo_cfd["folio"];
         $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("m/d/Y");
         $arreglo["vencimiento"] = $arreglo_cfd["fecha"]->format("m/d/Y");
         $arreglo["fecha_hora"] = $arreglo_cfd["fecha_hora"];
@@ -121,7 +139,6 @@ class FacturaService
         $arreglo["receptor"]["nombre"] = $arreglo_cfd["receptor"]["nombre"];
 
         $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
-        $arreglo["folio"] = $arreglo_cfd["folio"];
 
         $arreglo["proveedor_bd"] = $this->repository->getProveedor([
                 "rfc" => $arreglo["emisor"]["rfc"],
@@ -308,12 +325,37 @@ class FacturaService
 
     public function validaCFDI($uuid)
     {
-        $cfdi = CFDSAT::where('uuid', $uuid)->first();
         $factura = FacturaRepositorio::where('uuid', $uuid)->first();
-        if($factura || $cfdi)
+        if($factura)
         {
-            if ($factura->id_transaccion != null || $factura->id_documento_cr != null) {
-                abort(500, "El CFDI " . $uuid . " fue utilizado anteriormente.");
+            if ($factura->id_transaccion != null)
+            {
+                abort(500, "CFDI utilizado previamente:
+                                Registró: ".$factura->usuario->nombre_completo."
+                                DB: ".$factura->proyecto->base_datos."
+                                Proyecto: ".$factura->obra."
+                                Tipo Transacción: ". $factura->transaccion->tipo_transaccion_str."
+                                Folio Transacción: ".$factura->transaccion->numero_folio."
+                                Fecha Registro: ".$factura->fecha_hora_registro_format ."
+                                UUID: ".$uuid."
+                                Emisor: ".$factura->proveedor->razon_social."
+                                RFC Emisor: ".$factura->proveedor->rfc
+                );
+            }
+            if( $factura->id_documento_cr != null)
+            {
+                $cr_factura = $this->repository->show($factura->id_documento_cr);
+                if($cr_factura)
+                {
+                    abort(500, "CFDI utilizado previamente:
+                                Registró: ".$factura->usuario->nombre_completo."
+                                Serie: ".$cr_factura->serie_descripcion."
+                                Folio: ".$cr_factura->FolioDocto."
+                                Fecha Registro: ".$cr_factura->fecha_format."
+                                UUID: ".$uuid."
+                                Emisor: ".$cr_factura->proveedor_descripcion."
+                                RFC Emisor: ".$cr_factura->rfc_proveedor);
+                }
             }
         }
     }
@@ -332,7 +374,8 @@ class FacturaService
     {
         $documento = $this->repository->buscarDocumentoUuid($uuid);
         $repositorio_factura = $this->repository->buscarRepositorioFactura($uuid);
-        if ($documento && $repositorio_factura->id_documento_cr != null)
+
+        if ($documento && $repositorio_factura && $repositorio_factura->id_documento_cr != null)
         {
             abort(500, "CFDI utilizado previamente:
                                 Registró: ".$repositorio_factura->usuario->nombre_completo."
@@ -371,7 +414,7 @@ class FacturaService
     {
         $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
-            if($factura_repositorio->id_transaccion == null && $factura_repositorio->id_documento_cr == null)
+            if($factura_repositorio->id_transaccion == null && ($factura_repositorio->id_documento_cr == null || $factura_repositorio->documento_registrado == null))
             {
                 $factura_repositorio->id_documento_cr = $factura->getKey();
                 $factura_repositorio->save();

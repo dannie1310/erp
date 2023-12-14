@@ -2,9 +2,12 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\IGH\Departamento;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use DateTime;
+use DateTimeZone;
 
 
 class RelacionGasto extends Model
@@ -28,7 +31,8 @@ class RelacionGasto extends Model
         'modifico_estado',
         'idestado',
         'motivo',
-        'registro'
+        'registro',
+        'registro_portal'
     ];
 
     protected static function boot()
@@ -91,6 +95,21 @@ class RelacionGasto extends Model
     public function relacionEliminada()
     {
         return $this->belongsTo(RelacionGastoEliminado::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
+    }
+
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class, 'iddepartamento', 'iddepartamento');
+    }
+
+    public function departamentoSn()
+    {
+        return $this->belongsTo(DepartamentoSn::class, 'iddepartamento', 'iddepartamento');
+    }
+
+    public function relacionGastoXDocumento()
+    {
+        return $this->belongsTo(RelacionGastoXDocumento::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
     }
 
     /**
@@ -270,7 +289,7 @@ class RelacionGasto extends Model
     public function getDepartamentoDescripcionAttribute()
     {
         try {
-            return $this->proveedor->usuario->departamento->departamento;
+            return $this->departamento->departamento;
         }catch (\Exception $e)
         {
             return null;
@@ -650,6 +669,26 @@ class RelacionGasto extends Model
                     (relaciones_gastos_documentos.idrelaciones_gastos = ".$this->getKey().")
                 GROUP BY    relaciones_gastos_documentos.idrelaciones_gastos;";
         return DB::connection('controlrec')->select(DB::raw($consulta))[0];
+    }
+
+    public function getIdDocumentoAttribute()
+    {
+        try {
+            return $this->relacionGastoXDocumento->iddocumento;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getIdSolicitudAttribute()
+    {
+        try {
+            return $this->relacionGastoXDocumento->solicitudCheque->IdSolCheque;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
     }
 
     /**

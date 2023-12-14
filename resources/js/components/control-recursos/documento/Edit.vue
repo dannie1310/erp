@@ -51,7 +51,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6">
-                    <div class="form-group row error-content">
+                    <div class="form-group error-content">
                         <label for="id_empresa">Empresa:</label>
                         <select class="form-control"
                                 data-vv-as="Empresa"
@@ -67,7 +67,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="form-group row error-content">
+                    <div class="form-group error-content">
                         <label for="id_proveedor">Proveedor:</label>
                         <select v-if="!this.cargando_proveedores"
                             class="form-control"
@@ -173,6 +173,7 @@
                             <select data-vv-as="IVA"
                                     id="iva"
                                     name="iva"
+                                    v-on:keyup="calcularImpuesto"
                                     :error="errors.has('iva')"
                                     v-validate="{required: true}"
                                     v-model="iva">
@@ -190,7 +191,6 @@
                         <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
                                name="impuesto"
                                data-vv-as="Impuesto"
-                               v-on:keyup="calcularImpuesto"
                                v-model="impuesto"
                                style="text-align: right"
                                v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
@@ -212,7 +212,7 @@
                                 style="text-align: right"
                                 v-validate="{required: true, regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                 :class="{'is-invalid': errors.has(`retencion`)}"
-                                id="impuesto">
+                                id="retencion">
                         <div class="invalid-feedback" v-show="errors.has(`retencion`)">{{ errors.first(`retencion`) }}</div>
                     </div>
                 </div>
@@ -323,12 +323,12 @@ export default {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/documento/find', {
                 id: this.id,
-                params:{include: []}
+                params: { scope: 'seriePorUsuario' }
             }).then(data => {
                 this.factura = data
                 this.importe= this.factura.importe
                 this.iva= this.factura.tasa_iva
-                this.impuesto= this.factura.impuesto
+                this.impuesto= this.factura.iva
                 this.retencion= this.factura.retenciones
                 this.otros= this.factura.otros
                 this.total= this.factura.total
@@ -355,7 +355,14 @@ export default {
                     if(moment(this.factura.vencimiento_editar).format('YYYY/MM/DD') < moment(this.factura.fecha_editar).format('YYYY/MM/DD'))
                     {
                         swal('¡Error!', 'La fecha no puede ser posterior a la fecha de vencimiento.', 'error')
-                    }else{
+                    }
+                    else if (this.factura.solicitado){
+                        swal('¡Error!', 'El documento se encuentra solicitado, no se puede editar.', 'error')
+                    }
+                    else if (this.factura.con_segmento){
+                        swal('¡Error!', 'El documento se encuentra con segmentos de negocio cargados, no se puede editar.', 'error')
+                    }
+                    else{
                         this.update()
                     }
                 }
@@ -456,7 +463,6 @@ export default {
                 let cifra_formateada = 0;
                 cifra_formateada = value.toString().formatearkeyUp();
                 this.importe = cifra_formateada;
-                this.calcularImpuesto();
                 this.calcularTotal();
             }
         },

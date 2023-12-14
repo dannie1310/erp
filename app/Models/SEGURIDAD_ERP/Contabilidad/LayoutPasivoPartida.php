@@ -217,6 +217,24 @@ class LayoutPasivoPartida extends Model
                     $cfdi->grado_coincidencia += 1;
                     $cfdi->coincide_folio = 1;
                 }
+
+                if($cfdi->folio != ""){
+                    if(strpos($referencia, $cfdi->folio)!==false)
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        $cfdi->coincide_folio = 1;
+                    }
+                }else if($referencia != ""){
+                    if(strpos($cfdi->folio, $referencia)!==false)
+                    {
+                        $cfdi->grado_coincidencia += 1;
+                        $cfdi->coincide_folio = 1;
+                    }
+                }else if($cfdi->folio == $referencia){
+                    $cfdi->grado_coincidencia += 1;
+                    $cfdi->coincide_folio = 1;
+                }
+
                 if($cfdi->moneda == $this->moneda_factura)
                 {
                     $cfdi->grado_coincidencia += 1;
@@ -280,6 +298,21 @@ class LayoutPasivoPartida extends Model
             {
                 $this->coincide_folio = 1;
             }
+
+            if($cfdi->folio != ""){
+                if(strpos($this->folio_factura, $cfdi->folio)!==false)
+                {
+                    $this->coincide_folio = 1;
+                }
+            }else if($this->folio_factura != ""){
+                if(strpos($cfdi->folio, $this->folio_factura)!==false)
+                {
+                    $this->coincide_folio = 1;
+                }
+            }else if($cfdi->folio == $this->folio_factura){
+                $this->coincide_folio = 1;
+            }
+
             if($cfdi->moneda == $this->moneda_factura)
             {
                 $this->coincide_moneda = 1;

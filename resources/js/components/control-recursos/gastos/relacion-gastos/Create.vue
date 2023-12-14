@@ -655,7 +655,6 @@ export default {
                 contenido_xml: '',
 
             });
-            //this.index = this.index+1;
         },
         destroy(index){
             this.partidas.splice(index, 1);

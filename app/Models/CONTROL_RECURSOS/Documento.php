@@ -30,7 +30,7 @@ class Documento extends Model
         'IVA',
         'Total',
         'Retenciones',
-        'TasaIva',
+        'TasaIVA',
         'OtrosImpuestos',
         'IdMoneda',
         'Alias_Depto',
@@ -42,17 +42,11 @@ class Documento extends Model
         'Ubicacion',
         'tipo_cambio_excepcion',
         'uuid',
-        "registro_portal"
+        'registro_portal',
+        'Descuento',
+        'IdGenero'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->whereIn('IdSerie', UsuarioSerie::porUsuario()->activo()->pluck('idseries'));
-        });
-    }
 
     /**
      * Relaciones
@@ -97,6 +91,16 @@ class Documento extends Model
         return $this->belongsTo(CFDSAT::class, 'uuid','uuid');
     }
 
+    public function solChequeDocto()
+    {
+        return $this->belongsTo(SolChequeDocto::class, 'IdDocto', 'IdDocto');
+    }
+
+    public function segmento()
+    {
+        return $this->belongsTo(CcDocto::class, 'IdDocto', 'IdDocto');
+    }
+
 
     /**
      * Scopes
@@ -109,6 +113,11 @@ class Documento extends Model
     public function scopePorEstado($query, $estados)
     {
         return $query->whereIn('Estatus', [$estados]);
+    }
+
+    public function scopeSeriePorUsuario($query)
+    {
+        return $query->whereIn('IdSerie', UsuarioSerie::porUsuario()->activo()->pluck('idseries'));
     }
 
     /**
@@ -259,6 +268,26 @@ class Documento extends Model
         }
     }
 
+    public function getSolicitadoAttribute()
+    {
+        if($this->solChequeDocto)
+        {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function getConSegmentoAttribute()
+    {
+        if($this->segmento)
+        {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     /**
      * Métodos
      */
@@ -306,6 +335,7 @@ class Documento extends Model
 
     public function editar(array $data)
     {
+        $this->validaEstado();
         $this->validaDocumento($data, $this->getKey());
         try {
             DB::connection('controlrec')->beginTransaction();
@@ -363,6 +393,7 @@ class Documento extends Model
 
     public function eliminar()
     {
+        $this->validaEstado();
         try {
             DB::connection('controlrec')->beginTransaction();
             $this->delete();
@@ -375,10 +406,23 @@ class Documento extends Model
         }
     }
 
-    private function respaldo()
+    public function respaldo()
     {
         $this->eliminado->update([
-            'Elimino' => auth()->id()."*". date("d-m-Y") ."/". date("H:i:s"),
+            'Elimino' => auth()->id()."*ERP/". date("d-m-Y") ."/". date("H:i:s"),
         ]);
+    }
+
+    public function validaEstado()
+    {
+        if($this->solicitado)
+        {
+            abort(500, "Este documento ya se encuentra asociado a una solicitud.");
+        }
+
+        if($this->con_segmento)
+        {
+            abort(500, "Este documento ya tiene segmentos asignados.");
+        }
     }
 }

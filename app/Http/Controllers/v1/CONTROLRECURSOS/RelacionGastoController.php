@@ -62,4 +62,9 @@ class RelacionGastoController extends Controller
     {
         return $this->service->pdfRelacion($id);
     }
+
+    public function storeReembolsoXSolicitud(Request $request)
+    {
+        return $this->respondWithItem($this->service->storeReembolsoXSolicitud($request->all()));
+    }
 }

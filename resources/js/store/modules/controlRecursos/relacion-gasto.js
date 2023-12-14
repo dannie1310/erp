@@ -127,7 +127,7 @@ export default {
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Documento actualizado correctamente", {
+                                    swal("Relación de gastos actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

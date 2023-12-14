@@ -172,7 +172,7 @@ class AvanceObra extends Transaccion
     {
         foreach ($conceptos as $concepto)
         {
-            if($concepto['concepto_medible'] == 3 && (float) $concepto['avance'] != 0)
+            if(($concepto['concepto_medible'] == 1 || $concepto['concepto_medible'] == 3) && (float) $concepto['avance'] != 0)
             {
                 $conc = Concepto::where('id_concepto', $concepto['id_concepto'])->first();
                 $precio_prod = $conc->precioVenta ? $conc->precioVenta->precio_produccion : 0;

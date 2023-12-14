@@ -44,7 +44,7 @@
             ],
             data: [],
             total: 0,
-            query: { scope: ['porTipo:1,6'], sort: 'IdDocto', order: 'desc'},
+            query: { scope: ['porTipo:1,6', 'seriePorUsuario'], sort: 'IdDocto', order: 'desc'},
             estado: "",
             cargando: false,
         }
@@ -99,12 +99,12 @@
                     idmoneda: documento.moneda,
                     idserie: documento.serie,
                     idtipodocto: documento.tipo_documento,
-                    estatus: this.getEstado(documento.estado_descripcion, documento.estado_color),
+                    estatus: this.getEstado(documento.estado_descripcion, documento.estado_color, documento.solicitado, documento.con_segmento),
                     buttons: $.extend({}, {
                         con_cfdi : documento.cfdi ? true : false,
                         id : documento.id,
-                        edit : self.$root.can('editar_documento_recursos', true) && (documento.estado == 5 ||  documento.estado == 1)? true : false,
-                        delete : self.$root.can('eliminar_documento_recursos', true) && (documento.estado != 7 && documento.estado != 2)? true : false,
+                        edit : self.$root.can('editar_documento_recursos', true) && (documento.estado == 5 ||  documento.estado == 1) ? true : false,
+                        delete : self.$root.can('eliminar_documento_recursos', true) && (documento.estado != 7 && documento.estado != 2) ? true : false,
                     }),
                     consulta_uuid : $.extend({}, {
                         uuid: documento.cfdi ? documento.cfdi.uuid : '',

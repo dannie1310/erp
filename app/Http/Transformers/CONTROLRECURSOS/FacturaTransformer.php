@@ -43,7 +43,7 @@ class FacturaTransformer extends TransformerAbstract
             'empresa_descripcion' => $model->empresa_descripcion,
             'proveedor_descripcion' => $model->proveedor_descripcion,
             'importe_format' => $model->importe_format,
-            'retencion_format' => $model->importe_format,
+            'retencion_format' => $model->retenciones_format,
             'tasa_iva' => $model->TasaIVA,
             'iva_format' => $model->iva_format,
             'tc' => $model->TC,
@@ -57,7 +57,9 @@ class FacturaTransformer extends TransformerAbstract
             'otros' => $model->OtrosImpuestos,
             'estado' => $model->Estatus,
             'estado_descripcion' => $model->estatus_descripcion,
-            'estado_color' => $model->color_estado
+            'estado_color' => $model->color_estado,
+            'solicitado' => $model->solicitado,
+            'con_segmento' => $model->con_segmento
         ];
     }
 }

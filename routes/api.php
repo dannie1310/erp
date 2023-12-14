@@ -2049,6 +2049,10 @@ $api->version('v1', function ($api) {
      * CONTROL RECURSOS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'control-recursos'], function ($api) {
+        $api->group(['prefix' => 'caja-chica'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\CajaChicaController@index');
+        });
+
         $api->group(['prefix' => 'documento'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@show')->where(['id' => '[0-9]+']);
@@ -2061,6 +2065,10 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\EmpresaController@index');
         });
 
+        $api->group(['prefix' => 'entrega'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\EntregaController@index');
+        });
+
         $api->group(['prefix' => 'factura'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@paginate');
             $api->post('xml', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@cargaXML');
@@ -2070,13 +2078,57 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@destroy')->where(['id' => '[0-9]+']);
         });
 
+        $api->group(['prefix' => 'firma-firmante'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\FirmaFirmanteController@index');
+        });
+
+        $api->group(['prefix' => 'forma-pago'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\FormaPagoController@index');
+        });
+
         $api->group(['prefix' => 'moneda'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\MonedaController@index');
+        });
+
+        $api->group(['prefix' => 'pago-a-proveedor'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@index');
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'pago-reembolso-por-solicitud'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoReembolsoPorSolicitudController@index');
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoReembolsoPorSolicitudController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoReembolsoPorSolicitudController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoReembolsoPorSolicitudController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoReembolsoPorSolicitudController@destroy')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'proveedor'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@show')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'reembolso-caja-chica'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoCajaChicaController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoCajaChicaController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoCajaChicaController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'reembolso-gasto-sol'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoGastoSolController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'reembolso-pago-a-proveedor'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoPagoAProveedorController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoPagoAProveedorController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoPagoAProveedorController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ReembolsoPagoAProveedorController@destroy')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'relacion-gasto'], function ($api) {

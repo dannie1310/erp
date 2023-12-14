@@ -62,6 +62,8 @@ class RelacionGastoTransformer extends TransformerAbstract
             'total_format' => $model->total_format,
             'fecha_inicio' => $model->fecha_inicio,
             'fecha_final' => $model->fecha_fin,
+            'id_documento' => $model->id_documento,
+            'id_solicitud' => $model->id_solicitud
         ];
     }
 

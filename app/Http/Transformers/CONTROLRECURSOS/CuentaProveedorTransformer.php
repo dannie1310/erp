@@ -31,7 +31,8 @@ class CuentaProveedorTransformer  extends TransformerAbstract
             'numero_cuenta' => $model->Cuenta,
             'banco_nombre' => $model->bancoCuenta,
             'id_banco' => $model->IdBanco,
-            'cve_banco' => $model->banco_cve
+            'cve_banco' => $model->banco_cve,
+            'banco_descripcion' => $model->descripcion_banco
         ];
     }
 }
