@@ -417,14 +417,8 @@ class Documento extends Model
 
     public function validaEstado()
     {
-        if($this->solicitado)
-        {
+        if ($this->solicitado) {
             abort(500, "Este documento ya se encuentra asociado a una solicitud.");
-        }
-
-        if($this->con_segmento)
-        {
-            abort(500, "Este documento ya tiene segmentos asignados.");
         }
     }
 }
