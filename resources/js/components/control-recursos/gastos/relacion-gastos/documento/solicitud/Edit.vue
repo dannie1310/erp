@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="reembolso == null">
+        <div class="card" v-if="solicitud == null">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
@@ -15,8 +15,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <encabezado v-bind:reembolso="reembolso" />
-                        <tabla-datos v-bind:reembolso="reembolso" />
+                        <encabezado v-bind:reembolso="solicitud" />
+                        <tabla-datos v-bind:reembolso="solicitud" />
                         <hr />
                     </div>
                 </div>
@@ -135,7 +135,7 @@ export default {
         {
             this.findPorSolicitud();
         }
-        if(this.tipo == 12)
+        if(this.tipo == 700)
         {
             this.findPagoAProveedor();
         }
@@ -179,16 +179,16 @@ export default {
             });
         },
         editar() {
-            if(moment(this.reembolso.fecha_final_editar).format('YYYY/MM/DD') < moment(this.reembolso.fecha_inicio_editar).format('YYYY/MM/DD'))
+            if(moment(this.solicitud.fecha_final_editar).format('YYYY/MM/DD') < moment(this.solicitud.fecha_inicio_editar).format('YYYY/MM/DD'))
             {
                 swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
             }
             else {
                 return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/update', {
-                    id: this.reembolso.id,
-                    data: this.reembolso
+                    id: this.solicitud.id,
+                    data: this.solicitud
                 }).then((data) => {
-                    this.reembolso = data;
+                    this.solicitud = data;
                 })
             }
         },

@@ -192,7 +192,7 @@ export default {
                 instruccion : this.instruccion,
                 solicitante : this.solicitante
             }).then(data => {
-                // this.salir();
+                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: data.id, tipo: 600}});
             })
         },
         storePagoAProveedor() {
@@ -203,7 +203,7 @@ export default {
                 instruccion : this.instruccion,
                 solicitante : this.solicitante
             }).then(data => {
-                // this.salir();
+                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: data.id, tipo: 700}});
             })
         },
         getFormaPago() {

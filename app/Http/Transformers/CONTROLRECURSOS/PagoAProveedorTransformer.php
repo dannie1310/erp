@@ -22,7 +22,7 @@ class PagoAProveedorTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'proveedor',
     ];
 
     public function transform(PagoAProveedor $model){
@@ -43,5 +43,18 @@ class PagoAProveedorTransformer extends TransformerAbstract
             'idcuentaempresa' => '',
             'total_format' => $model->total_format
         ];
+    }
+
+    /**
+     * @param PagoAProveedor $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeProveedor(PagoAProveedor $model)
+    {
+        if($proveedor = $model->proveedor)
+        {
+            return $this->item($proveedor, new ProveedorTransformer);
+        }
+        return null;
     }
 }
