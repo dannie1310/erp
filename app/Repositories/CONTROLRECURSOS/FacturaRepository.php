@@ -26,7 +26,7 @@ class FacturaRepository extends Repository implements RepositoryInterface
     public function getProveedor(Array $datos){
         $proveedor = Proveedor::whereRaw("REPLACE(RFC,'-','') = '".str_replace("-","",$datos["rfc"])."'")
             ->where('Estatus', 1)
-            ->whereIn('TipoProveedor',[1,2])->first();
+            ->whereIn('TipoProveedor',[1,2,3])->first();
         $salida = null;
         if($proveedor){
             $salida =[
