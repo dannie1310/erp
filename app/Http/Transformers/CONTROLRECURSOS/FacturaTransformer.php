@@ -59,7 +59,8 @@ class FacturaTransformer extends TransformerAbstract
             'estado_descripcion' => $model->estatus_descripcion,
             'estado_color' => $model->color_estado,
             'solicitado' => $model->solicitado,
-            'con_segmento' => $model->con_segmento
+            'con_segmento' => $model->con_segmento,
+            'descuento' => $model->Descuento
         ];
     }
 }

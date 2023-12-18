@@ -70,9 +70,6 @@ export default {
                     if (this.factura.solicitado){
                         swal('¡Error!', 'El documento se encuentra solicitado, no se puede eliminar.', 'error')
                     }
-                    else if (this.factura.con_segmento){
-                        swal('¡Error!', 'El documento se encuentra con segmentos de negocio cargados, no se puede eliminar.', 'error')
-                    }
                     else {
                         this.destroy();
                     }

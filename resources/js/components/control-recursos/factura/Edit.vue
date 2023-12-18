@@ -120,6 +120,12 @@
                     <div class="form-group error-content float-right"> {{factura.iva_format}} </div>
                 </div>
                 <div class="col-md-10">
+                    <div class="form-group error-content float-right"><label for="descuento">Descuento:</label></div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group error-content float-right"> {{factura.descuento}} </div>
+                </div>
+                <div class="col-md-10">
                     <div class="form-group error-content float-right"><label for="retenciones">Retenciones:</label></div>
                 </div>
                 <div class="col-md-2">
