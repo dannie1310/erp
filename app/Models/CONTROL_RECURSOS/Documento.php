@@ -47,6 +47,14 @@ class Documento extends Model
         'IdGenero'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->whereIn('IdSerie', UsuarioSerie::porUsuario()->activo()->pluck('idseries'));
+        });
+    }
 
     /**
      * Relaciones
@@ -113,11 +121,6 @@ class Documento extends Model
     public function scopePorEstado($query, $estados)
     {
         return $query->whereIn('Estatus', [$estados]);
-    }
-
-    public function scopeSeriePorUsuario($query)
-    {
-        return $query->whereIn('IdSerie', UsuarioSerie::porUsuario()->activo()->pluck('idseries'));
     }
 
     /**

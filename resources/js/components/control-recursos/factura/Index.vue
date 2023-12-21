@@ -44,7 +44,7 @@
             ],
             data: [],
             total: 0,
-            query: { scope: 'seriePorUsuario', sort: 'IdDocto', order: 'desc'},
+            query: { sort: 'IdDocto', order: 'desc'},
             estado: "",
             cargando: false,
         }
