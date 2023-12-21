@@ -34,7 +34,7 @@
         <router-link :to="{ name: 'reembolso-pago-a-proveedor', params: {id: value.id_documento}}" v-if="value.reembolso_pago_a_proveedor" type="button" class="btn btn-sm btn-outline-dark" title="Reembolso X Caja Chica">
             <i class="fa fa-upload"></i>
         </router-link>
-        <router-link :to="{ name: 'solicitud-reembolso-edit', params: {id: value.id_solicitud, tipo: value.estado}}" v-if="value.sol_cheque_pago_a_proveedor" type="button" class="btn btn-sm btn-outline-dark" title="Solicitud">
+        <router-link :to="{ name: 'solicitud-reembolso-edit', params: {id: value.id}}" v-if="value.sol_cheque_pago_a_proveedor" type="button" class="btn btn-sm btn-outline-dark" title="Solicitud">
             <i class="fa fa-upload"></i>
         </router-link>
     </div>

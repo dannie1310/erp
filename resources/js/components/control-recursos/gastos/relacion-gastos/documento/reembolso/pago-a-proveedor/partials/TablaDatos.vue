@@ -53,14 +53,14 @@
                     </tr>
                     <tr>
                         <td>
-                            <input name="motivo"
-                                   id="motivo"
+                            <input name="concepto"
+                                   id="concepto"
                                    class="form-control"
-                                   v-model="reembolso.motivo"
+                                   v-model="reembolso.concepto"
                                    v-validate="{required: true}"
-                                   data-vv-as="Motivo"
-                                   :class="{'is-invalid': errors.has('motivo')}" />
-                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                   data-vv-as="Concepto"
+                                   :class="{'is-invalid': errors.has('concepto')}" />
+                            <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
                         </td>
                         <td>
                             {{reembolso.fecha_inicio_editar}}

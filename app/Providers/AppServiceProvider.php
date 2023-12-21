@@ -168,7 +168,10 @@ use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Venta;
 use App\Models\CADECO\Ventas\VentaCancelacion;
 use App\Models\CADECO\VentaPartida;
+use App\Models\CONTROL_RECURSOS\PagoAProveedor;
+use App\Models\CONTROL_RECURSOS\PagoReembolsoPorSolicitud;
 use App\Models\CONTROL_RECURSOS\RelacionGastoDocumento;
+use App\Models\CONTROL_RECURSOS\SolCheque;
 use App\Models\CTPQ\OtherMetadata\Documento;
 use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
@@ -372,8 +375,11 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
+use App\Observers\CONTROL_RECURSOS\PagoAProveedorObserver;
+use App\Observers\CONTROL_RECURSOS\PagoReembolsoPorSolicitudObserver;
 use App\Observers\CONTROL_RECURSOS\RelacionGastoDocumentoObserver;
 use App\Observers\CONTROL_RECURSOS\RelacionGastoObserver;
+use App\Observers\CONTROL_RECURSOS\SolChequeObserver;
 use App\Observers\CTPQ\DocumentoObserver;
 use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
 use App\Observers\REPSEG\FinDimIngresoPartidaObserver;
@@ -469,8 +475,11 @@ class AppServiceProvider extends ServiceProvider
         /**
          * CONTROL DE RECURSOS
          */
+        PagoAProveedor::observe(PagoAProveedorObserver::class);
+        PagoReembolsoPorSolicitud::observe(PagoReembolsoPorSolicitudObserver::class);
         RelacionGastoDocumento::observe(RelacionGastoDocumentoObserver::class);
         RelacionGasto::observe(RelacionGastoObserver::class);
+        SolCheque::observe(SolChequeObserver::class);
 
         /**
          * CTPQ

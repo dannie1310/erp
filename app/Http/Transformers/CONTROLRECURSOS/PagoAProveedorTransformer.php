@@ -13,7 +13,7 @@ class PagoAProveedorTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'cuentaProveedor'
     ];
 
     /**
@@ -23,6 +23,7 @@ class PagoAProveedorTransformer extends TransformerAbstract
      */
     protected $defaultIncludes = [
         'proveedor',
+        'empresa',
     ];
 
     public function transform(PagoAProveedor $model){
@@ -31,17 +32,24 @@ class PagoAProveedorTransformer extends TransformerAbstract
             'concepto' => $model->Concepto,
             'fecha' => $model->Fecha,
             'fecha_format' => $model->fecha_format,
+            'fecha_vencimiento' => $model->fecha_vencimiento_format,
             'importe' => $model->Importe,
             'importe_format' => $model->importe_format,
             'iva' => $model->IVA,
+            'iva_format' => $model->iva_format,
+            'otros_format' => $model->otros_format,
+            'retenciones_format' => $model->retenciones_format,
             'total' => $model->Total,
+            'total_format' => $model->total_format,
             'serie' => $model->Serie,
             'folio' => $model->Folio,
             'moneda' => $model->moneda_descripcion,
-            'idempresa' => $model->IdEmpresa,
-            'idproveedor' => $model->IdProveedor,
-            'idcuentaempresa' => '',
-            'total_format' => $model->total_format
+            'id_empresa' => $model->IdEmpresa,
+            'id_proveedor' => $model->IdProveedor,
+            'folio_compuesto' => $model->folio_compuesto,
+            'id_forma_pago' => $model->IdFormaPago,
+            'id_entrega' => $model->IdEntrega,
+            'cuenta' => $model->Cuenta2,
         ];
     }
 
@@ -54,6 +62,32 @@ class PagoAProveedorTransformer extends TransformerAbstract
         if($proveedor = $model->proveedor)
         {
             return $this->item($proveedor, new ProveedorTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param PagoAProveedor $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEmpresa(PagoAProveedor $model)
+    {
+        if($empresa =  $model->empresa)
+        {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param PagoAProveedor $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeCuentaProveedor(PagoAProveedor $model)
+    {
+        if($cuenta  = $model->cuentaProveedor)
+        {
+            return $this->item($cuenta, new CuentaProveedorTransformer);
         }
         return null;
     }
