@@ -29,7 +29,6 @@ class PagoAProveedor extends SolCheque
             DB::connection('controlrec')->beginTransaction();
 
             $sol_cheque = $this->create([
-                'Fecha' => date('Y-m-d'),
                 'Vencimiento' => $fecha_fin->format('Y-m-d'),
                 'IdEmpresa' => $reembolso->IdEmpresa,
                 'IdProveedor' => $reembolso->IdProveedor,
@@ -40,23 +39,17 @@ class PagoAProveedor extends SolCheque
                 'OtrosImpuestos' => $reembolso->OtrosImpuestos,
                 'Total' => $reembolso->Total,
                 'Concepto' => $datos['reembolso']['motivo'],
-                'Estatus' => 10,
-                'IdTipoSolicitud' => 6,
                 'IdFormaPago' => $datos['forma_pago'],
-                'IdTipoPago' => 6,
                 'IdEntrega' => $datos['instruccion'],
                 'Cuenta2' => $datos['cuenta'],
                 'IdSerie' => $reembolso->IdSerie,
                 'Serie' => $reembolso->Alias_Depto,
-                'IdGenero' => auth()->id(),
                 'FechaFactura' =>  $fecha->format("Y-m-d"),
-                'registro_portal' => 1
             ]);
 
             /*
-             * crear en documentos y solicitdes un id para saber q se creo desde el erp
+             * crear en documentos y solicitudes un id para saber q se creo desde el erp
              */
-
             foreach ($reembolso->ccDoctos as $docto)
             {
                 CcSolCheque::create([
@@ -79,6 +72,8 @@ class PagoAProveedor extends SolCheque
                 'IdSolCheque' => $sol_cheque->getKey(),
                 'IdDocto' => $reembolso->getKey()
             ]);
+
+            $sol_cheque->setFirmasSolicitantes($datos['solicitante']);
 
             $reembolso->update([
                 'Estatus'  => 2

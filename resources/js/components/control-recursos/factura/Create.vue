@@ -157,6 +157,12 @@
                         <div class="form-group error-content float-right"> {{parseFloat(data.impuesto).formatMoney(2)}} </div>
                     </div>
                     <div class="col-md-10">
+                        <div class="form-group error-content float-right"><label for="descuento">Descuento:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.descuento).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-10">
                         <div class="form-group error-content float-right"><label for="retenciones">Retenciones:</label></div>
                     </div>
                     <div class="col-md-2">

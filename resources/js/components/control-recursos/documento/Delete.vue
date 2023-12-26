@@ -53,7 +53,7 @@ export default {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/documento/find', {
                 id: this.id,
-                params: { scope: 'seriePorUsuario' }
+                params: { }
             }).then(data => {
                 this.factura = data
             })
@@ -69,9 +69,6 @@ export default {
                 if (result) {
                     if (this.factura.solicitado){
                         swal('¡Error!', 'El documento se encuentra solicitado, no se puede eliminar.', 'error')
-                    }
-                    else if (this.factura.con_segmento){
-                        swal('¡Error!', 'El documento se encuentra con segmentos de negocio cargados, no se puede eliminar.', 'error')
                     }
                     else {
                         this.destroy();

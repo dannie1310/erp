@@ -10,25 +10,25 @@
                                         <tbody>
                                             <tr>
                                                 <td colspan="2" style="border-bottom: 1px solid #9e9e9e; text-align: center">
-                                                    <b>Reembolso de Gastos</b>
+                                                    <b>Solicitud de Pago</b>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Folio:</td>
                                                 <td style="text-align: right">
-                                                    <b>{{reembolso.folio}}</b>
+                                                    <b>{{reembolso.folio_compuesto}}</b>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>Fecha Inicial:</td>
+                                                <td>Fecha:</td>
                                                 <td style="text-align: right">
-                                                    <b>{{reembolso.fecha_inicio_format}}</b>
+                                                    <b>{{reembolso.fecha_format}}</b>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td>Fecha Final:</td>
+                                                <td>Fecha Vencimiento:</td>
                                                 <td style="text-align: right">
-                                                    <b>{{reembolso.fecha_final_format}}</b>
+                                                    <b>{{reembolso.fecha_vencimiento}}</b>
                                                 </td>
                                             </tr>
                                         </tbody>

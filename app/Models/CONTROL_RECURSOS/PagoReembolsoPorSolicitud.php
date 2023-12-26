@@ -38,19 +38,14 @@ class PagoReembolsoPorSolicitud extends SolCheque
                 'OtrosImpuestos' => $reembolso->OtrosImpuestos,
                 'Total' => $reembolso->Total,
                 'Concepto' => $datos['reembolso']['motivo'],
-                'Estatus' => 30,
-                'IdTipoSolicitud' => 4,
                 'IdFormaPago' => $datos['forma_pago'],
-                'IdTipoPago' => 6,
                 'IdEntrega' => $datos['instruccion'],
                 'Cuenta2' => $datos['cuenta'],
                 'IdSerie' => $reembolso->IdSerie,
                 'Serie' => $reembolso->Alias_Depto,
-                'IdGenero' => auth()->id(),
                 'FechaFactura' =>  $fecha->format("Y-m-d"),
-                'registro_portal' => 1
             ]);
-
+dd("pasoooo---");
             foreach ($reembolso->ccDoctos as $docto)
             {
                 CcSolCheque::create([
@@ -73,6 +68,8 @@ class PagoReembolsoPorSolicitud extends SolCheque
                 'IdSolCheque' => $sol_cheque->getKey(),
                 'IdDocto' => $reembolso->getKey()
             ]);
+
+            $sol_cheque->setFirmasSolicitantes($datos['solicitante']);
 
             $reembolso->update([
                 'Estatus'  => 13

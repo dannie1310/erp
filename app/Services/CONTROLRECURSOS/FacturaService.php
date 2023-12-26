@@ -98,7 +98,7 @@ class FacturaService
         $arreglo_cfd = $cfd->getArregloFactura();
         $this->validaUUIDDocumento($arreglo_cfd["uuid"], $arreglo_cfd["tipo_comprobante"]);
         $arreglo["total"] = $arreglo_cfd["total"];
-        $arreglo["impuesto"] = $arreglo_cfd["total_impuestos_trasladados"];
+        $arreglo["impuesto"] = $arreglo_cfd["importe_iva"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
         if(array_key_exists('retenciones', $arreglo_cfd))
         {
