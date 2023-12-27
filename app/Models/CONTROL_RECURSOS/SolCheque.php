@@ -187,6 +187,15 @@ class SolCheque extends Model
         }
     }
 
+    public function getIdRelacionAttribute()
+    {
+        try {
+            return $this->solChequeDocto->documento->relacionXDocumento->idrelaciones_gastos;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */

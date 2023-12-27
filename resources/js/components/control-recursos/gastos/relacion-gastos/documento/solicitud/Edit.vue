@@ -209,27 +209,35 @@ export default {
     },
     mounted() {
         this.findPorSolicitud();
-        this.findPagoAProveedor();
+        if(this.solicitud.length > 0) {
+            this.findPagoAProveedor();
+        }
         this.getFirmasFirmantes();
         this.getFormaPago();
     },
     methods: {
+        find() {
+            this.cargando = true;
+            return this.$store.dispatch('controlRecursos/relacion-gasto/find', {
+                id: this.solicitud.id_relacion,
+                params:{include: []}
+            }).then(data => {
+                    this.reembolso = data
+            })
+        },
         findPorSolicitud() {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/pago-reembolso-por-solicitud/find', {
                 id: this.id,
                 params: {include: [ 'proveedor.cuentas' ]}
             }).then(data => {
-                console.log("1");
-                console.log(data.length);
-                if(data.length > 0) {
-                    this.solicitud = data;
-                    this.cuentas = data.proveedor.cuentas.data;
-                    this.solicitante = data.id_solicitante;
-                    this.forma_pago = data.id_forma_pago;
-                    this.instruccion = data.id_entrega;
-                    this.cuenta = data.cuenta;
-                }
+                this.solicitud = data;
+                this.cuentas = data.proveedor.cuentas.data;
+                this.solicitante = data.id_solicitante;
+                this.forma_pago = data.id_forma_pago;
+                this.instruccion = data.id_entrega;
+                this.cuenta = data.cuenta;
+                this.find();
             }).finally(() => {
                 this.cargando = false;
             })
@@ -240,18 +248,13 @@ export default {
                 id: this.id,
                 params: {include: [ 'proveedor.cuentas' ]}
             }).then(data => {
-                console.log("2");
-                console.log(data.length);
-                if(data.length > 0) {
-                    console.log("PASO?---",data.length)
-                    console.log("O ACA??")
                     this.solicitud = data;
                     this.cuentas = data.proveedor.cuentas.data;
                     this.solicitante = data.id_solicitante;
                     this.forma_pago = data.id_forma_pago;
                     this.instruccion = data.id_entrega;
                     this.cuenta = data.cuenta;
-                }
+                    this.find();
             }).finally(() => {
                 this.cargando = false;
             })

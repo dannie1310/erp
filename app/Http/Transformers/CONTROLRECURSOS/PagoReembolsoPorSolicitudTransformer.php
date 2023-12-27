@@ -43,7 +43,8 @@ class PagoReembolsoPorSolicitudTransformer extends TransformerAbstract
             'idproveedor' => $model->IdProveedor,
             'idcuentaempresa' => '',
             'total_format' => $model->total_format,
-            'id_solicitante' => $model->firma_solicitante
+            'id_solicitante' => $model->firma_solicitante,
+            'id_relacion' => $model->id_relacion
         ];
     }
 
