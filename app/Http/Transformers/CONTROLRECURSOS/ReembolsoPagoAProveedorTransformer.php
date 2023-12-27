@@ -68,7 +68,8 @@ class ReembolsoPagoAProveedorTransformer extends TransformerAbstract
             'suma_retenciones_format' => $model->retenciones_format,
             'suma_iva_format' => $model->iva_format,
             'suma_otros_imp_format' => $model->otros_impuestos_format,
-            'id_solicitante' => $model->firma_solicitante
+            'id_solicitante' => $model->firma_solicitante,
+            'id_relacion' => $model->id_relacion
         ];
     }
 

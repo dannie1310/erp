@@ -50,6 +50,8 @@ class PagoAProveedorTransformer extends TransformerAbstract
             'id_forma_pago' => $model->IdFormaPago,
             'id_entrega' => $model->IdEntrega,
             'cuenta' => $model->Cuenta2,
+            'id_solicitante' => $model->firma_solicitante,
+            'id_relacion' => $model->id_relacion
         ];
     }
 

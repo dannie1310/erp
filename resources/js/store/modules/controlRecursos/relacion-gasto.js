@@ -120,8 +120,7 @@ export default {
                             closeModal: false,
                         }
                     }
-                })
-                    .then((value) => {
+                }).then((value) => {
                         if (value) {
                             axios
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )

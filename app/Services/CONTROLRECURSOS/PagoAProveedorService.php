@@ -39,7 +39,7 @@ class PagoAProveedorService
     }
 
     public function update(array $data, $id)
-    {
+    {dd($data,$id);
         return $this->repository->show($id)->editar($data);
     }
 

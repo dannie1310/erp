@@ -22,7 +22,8 @@ class RelacionGastoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'documentos'
+        'documentos',
+        'reembolsos'
     ];
 
     public function transform(RelacionGasto $model){
@@ -76,6 +77,19 @@ class RelacionGastoTransformer extends TransformerAbstract
         if($documentos = $model->documentos)
         {
             return $this->collection($documentos, new RelacionGastoDocumentoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param RelacionGasto $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeReembolsos(RelacionGasto $model)
+    {
+        if($reembolso = $model->reembolso)
+        {
+            return $this->collection($reembolso, new DocumentoTransformer);
         }
         return null;
     }

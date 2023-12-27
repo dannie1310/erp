@@ -75,6 +75,11 @@ class ReembolsoGastoSol extends Documento
         return $this->belongsTo(DepartamentoSn::class, 'iddepartamento', 'iddepartamento');
     }
 
+    public function relacion()
+    {
+        return $this->hasManyThrough(RelacionGasto::class, RelacionGastoXDocumento::class, 'iddocumento','idrelaciones_gastos','IdDocto','idrelaciones_gastos');
+    }
+
     /**
      * Atributos
      */
@@ -115,6 +120,15 @@ class ReembolsoGastoSol extends Documento
     {
         try {
             return $this->relacionXDocumento->relacion->firmas[0]->idfirmas_firmantes;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getIdRelacionAttribute()
+    {
+        try {
+            return $this->relacionXDocumento->idrelaciones_gastos;
         } catch (\Exception $e) {
             return null;
         }

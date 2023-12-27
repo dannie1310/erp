@@ -4533,19 +4533,6 @@ export const routes = [
                                         }
                                     },
                                     {
-                                        path: ':id/caja',
-                                        name: 'reembolso-x-caja',
-                                        props: true,
-                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/caja-chica/Show').default,
-                                        meta: {
-                                            title: 'Reembolso por Caja Chica',
-                                            breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO POR CAJA CHICA'},
-                                            middleware: [auth, permission],
-                                            permission: 'editar_relacion_gastos_recursos',
-                                            general: true
-                                        }
-                                    },
-                                    {
                                         path: ':id/pago-a-proveedor',
                                         name: 'reembolso-pago-a-proveedor',
                                         props: true,
@@ -4583,7 +4570,7 @@ export const routes = [
                                         component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Create').default,
                                         meta: {
                                             title: 'Registrar Solicitud',
-                                            breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'relacion-gasto'},
+                                            breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'reembolso'},
                                             middleware: [auth, permission],
                                             permission: ['registrar_relacion_gastos_recursos'],
                                             general: true
@@ -4596,7 +4583,7 @@ export const routes = [
                                         component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Edit').default,
                                         meta: {
                                             title: 'Editar Solicitud',
-                                            breadcrumb: {parent: 'relacion-gasto', name: 'EDITAR'},
+                                            breadcrumb: {parent: 'reembolso', name: 'EDITAR'},
                                             middleware: [auth, permission],
                                             permission: 'editar_relacion_gastos_recursos',
                                             general: true

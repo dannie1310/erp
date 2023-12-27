@@ -27,4 +27,9 @@ class SolChequeDocto extends Model
     {
         return $this->belongsTo(PagoReembolsoPorSolicitud::class, 'IdSolCheques', 'IdSolCheque');
     }
+
+    public function documento()
+    {
+        return $this->belongsTo(Documento::class, 'IdDocto', 'IdDocto');
+    }
 }

@@ -17,4 +17,9 @@ class PagoAProveedorObserver extends SolChequeObserver
         $solCheque->IdTipoSolicitud = 6;
         $solCheque->IdTipoPago = 73;
     }
+
+    public function updating(SolCheque $solCheque)
+    {
+        parent::updating($solCheque);
+    }
 }
