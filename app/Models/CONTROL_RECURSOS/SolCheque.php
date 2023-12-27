@@ -4,6 +4,7 @@ namespace App\Models\CONTROL_RECURSOS;
 
 use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class SolCheque extends Model
 {
@@ -70,12 +71,17 @@ class SolCheque extends Model
 
     public function solChequeDocto()
     {
-        return $this->belongsTo(SolChequeDocto::class, 'IdSolCheque', 'IdSolCheques');
+        return $this->belongsTo(SolChequeDocto::class, 'IdSolCheques', 'IdSolCheque');
     }
 
     public function firmasSolicitantes()
     {
         return $this->hasMany(FirmaSolicitud::class, 'idsolcheque', 'IdSolCheques');
+    }
+
+    public function ccSolCheques()
+    {
+        return $this->hasMany(CcSolCheque::class, 'IdSolCheque','IdSolCheques');
     }
 
     /**
@@ -172,6 +178,15 @@ class SolCheque extends Model
         }
     }
 
+    public function getFirmaSolicitanteAttribute()
+    {
+        try {
+            return $this->firmasSolicitantes[0]->idfirmas_firmantes;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */
@@ -251,5 +266,20 @@ class SolCheque extends Model
                 }
             }
         }
+    }
+
+    public function updateFirmasSolicitantes($solicitante)
+    {
+        dd($this->firmasSolicitantes());
+        if($solicitante != $this->firmasSolicitantes[0]->idfirmas_firmantes)
+        {
+            $this->deleteFirmasSolicitantes();
+            $this->setFirmasSolicitantes($solicitante);
+        }
+    }
+
+    public function deleteFirmasSolicitantes()
+    {
+        $this->firmasSolicitantes()->delete();
     }
 }

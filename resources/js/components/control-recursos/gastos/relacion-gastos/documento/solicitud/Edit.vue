@@ -17,9 +17,6 @@
                     <div class="col-md-12">
                         <encabezado v-bind:reembolso="solicitud" />
                         <div class="row" v-if="reembolso && solicitud">
-                            <div class="col-md-12" style="text-align: right;">
-                                <h5><b>Con Segmentos Cargados (TOTALES)</b></h5>
-                            </div>
                             <div class="col-md-12">
                                 <div class="table-responsive">
                                     <table class="table table-sm">
@@ -71,7 +68,7 @@
                                                 <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
                                             </td>
 
-                                            <td>
+                                            <td style="text-align: center;">
                                                {{ solicitud.fecha_format }}
                                             </td>
                                         </tr>
@@ -111,7 +108,7 @@
                                                         name="forma_pago"
                                                         :class="{'is-invalid': errors.has('forma_pago')}"
                                                         v-validate="{required: true}"
-                                                        v-model="solicitud.id_forma_pago">
+                                                        v-model="forma_pago">
                                                     <option value>-- Selecionar --</option>
                                                     <option v-for="(m) in formas_pago" :value="m.id">{{m.nombre}}</option>
                                                 </select>
@@ -127,14 +124,14 @@
                                             <th class="encabezado">Solicitante</th>
                                         </tr>
                                         <tr>
-                                            <td v-if="solicitud.id_forma_pago != '' && solicitud.id_forma_pago != 1">
+                                            <td v-if="forma_pago != '' && forma_pago != 1">
                                                 <select class="form-control"
                                                         data-vv-as="Cuenta Bancaria"
                                                         id="cuenta"
                                                         name="cuenta"
                                                         :class="{'is-invalid': errors.has('cuenta')}"
                                                         v-validate="{required: true}"
-                                                        v-model="solicitud.cuenta">
+                                                        v-model="cuenta">
                                                     <option value>-- Selecionar --</option>
                                                     <option v-for="(m) in cuentas" :value="m.id">{{m.banco_descripcion}} {{m.numero_cuenta}} -</option>
                                                 </select>
@@ -143,14 +140,14 @@
                                             <td v-else>
                                                 <label class="form-control"> NO APLICA </label>
                                             </td>
-                                            <td v-if="solicitud.id_forma_pago != ''">
+                                            <td v-if="forma_pago != ''">
                                                 <select  class="form-control"
                                                          data-vv-as="Forma de Pago"
                                                          id="instruccion"
                                                          name="instruccion"
                                                          :class="{'is-invalid': errors.has('instruccion')}"
                                                          v-validate="{required: true}"
-                                                         v-model="solicitud.id_entrega">
+                                                         v-model="instruccion">
                                                     <option value>-- Selecionar --</option>
                                                     <option v-for="(m) in instrucciones" :value="m.id">{{m.descripcion}}</option>
                                                 </select><div style="display:block" class="invalid-feedback" v-show="errors.has('instruccion')">{{ errors.first('instruccion') }}</div>
@@ -165,7 +162,7 @@
                                                          name="solicitante"
                                                          :class="{'is-invalid': errors.has('solicitante')}"
                                                          v-validate="{required: true}"
-                                                         v-model="reembolso.id_solicitud">
+                                                         v-model="solicitud.id_solicitante">
                                                     <option value>-- Selecionar --</option>
                                                     <option v-for="(m) in solicitantes" :value="m.id">{{m.descripcion_st}}</option>
                                                 </select><div style="display:block" class="invalid-feedback" v-show="errors.has('solicitante')">{{ errors.first('solicitante') }}</div>
@@ -175,7 +172,6 @@
                                 </div>
                             </div>
                         </div>
-                        <hr />
                     </div>
                 </div>
             </div>
@@ -195,7 +191,7 @@ import Encabezado from "./partials/Encabezado";
 export default {
     name: "solicitud-edit",
     components: {Encabezado},
-    props: ['id', 'tipo'],
+    props: ['id'],
     data() {
         return {
             cargando: false,
@@ -212,37 +208,28 @@ export default {
         }
     },
     mounted() {
-        this.find();
+        this.findPorSolicitud();
+        this.findPagoAProveedor();
         this.getFirmasFirmantes();
         this.getFormaPago();
     },
     methods: {
-        find() {
-            this.cargando = true;
-            return this.$store.dispatch('controlRecursos/relacion-gasto/find', {
-                id: this.id,
-                params:{include: []}
-            }).then(data => {
-                this.reembolso = data
-                if(this.reembolso.estado == 600)
-                {
-                    this.findPorSolicitud();
-                }
-                if(this.reembolso.estado == 700)
-                {
-                    this.findPagoAProveedor();
-                }
-            })
-        },
         findPorSolicitud() {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/pago-reembolso-por-solicitud/find', {
-                id: this.reembolso.id_solicitud,
+                id: this.id,
                 params: {include: [ 'proveedor.cuentas' ]}
             }).then(data => {
-                this.solicitud = data;
-                this.cuentas = data.proveedor.cuentas.data;
-                this.solicitante = data.id_solicitante;
+                console.log("1");
+                console.log(data.length);
+                if(data.length > 0) {
+                    this.solicitud = data;
+                    this.cuentas = data.proveedor.cuentas.data;
+                    this.solicitante = data.id_solicitante;
+                    this.forma_pago = data.id_forma_pago;
+                    this.instruccion = data.id_entrega;
+                    this.cuenta = data.cuenta;
+                }
             }).finally(() => {
                 this.cargando = false;
             })
@@ -250,12 +237,21 @@ export default {
         findPagoAProveedor() {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/pago-a-proveedor/find', {
-                id: this.reembolso.id_solicitud,
+                id: this.id,
                 params: {include: [ 'proveedor.cuentas' ]}
             }).then(data => {
-                this.solicitud = data;
-                this.cuentas = data.proveedor.cuentas.data;
-                this.solicitante = data.id_solicitante;
+                console.log("2");
+                console.log(data.length);
+                if(data.length > 0) {
+                    console.log("PASO?---",data.length)
+                    console.log("O ACA??")
+                    this.solicitud = data;
+                    this.cuentas = data.proveedor.cuentas.data;
+                    this.solicitante = data.id_solicitante;
+                    this.forma_pago = data.id_forma_pago;
+                    this.instruccion = data.id_entrega;
+                    this.cuenta = data.cuenta;
+                }
             }).finally(() => {
                 this.cargando = false;
             })
@@ -271,26 +267,60 @@ export default {
             });
         },
         editar() {
-            if(moment(this.solicitud.fecha_final_editar).format('YYYY/MM/DD') < moment(this.solicitud.fecha_inicio_editar).format('YYYY/MM/DD'))
-            {
-                swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
+
+            this.solicitud.id_solicitante = this.solicitud;
+            this.solicitud.id_forma_pago = this.forma_pago;
+            this.solicitud.id_entrega = this.instruccion;
+            this.solicitud.cuenta = this.cuenta;
+            var id = this.solicitud.id;
+            var datos = {
+                'id_solicitante' : this.solicitud,
+                'id_forma_pago' : this.forma_pago,
+                'id_entrega' : this.instruccion,
+                'cuenta' : this.cuenta,
+                'solicitud' : this.solicitud
             }
-            else {
-                return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/update', {
-                    id: this.solicitud.id,
-                    data: this.solicitud
+
+            if(this.reembolso.estado == 600) {
+                console.log("E1");
+                return this.$store.dispatch('controlRecursos/pago-reembolso-por-solicitud/update', {
+                    id: id,
+                    data: datos
                 }).then((data) => {
-                    this.solicitud = data;
+                    this.salir()
                 })
+            }
+
+            if(this.reembolso.estado == 700) {
+                console.log("E2");
+                console.log(this.solicitud)
+                return this.$store.dispatch('controlRecursos/pago-a-proveedor/update', {
+                    id: id,
+                    data: datos
+                }).then((data) => {
+                    this.salir()
+                })
+
             }
         },
         eliminar() {
-            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/delete', {
-                id: this.id,
-                params: {}
-            }).then(() => {
-                this.salir();
-            })
+            if(this.reembolso.estado == 600) {
+                return this.$store.dispatch('controlRecursos/pago-reembolso-por-solicitud/delete', {
+                    id: this.solicitud.id,
+                    params: {}
+                }).then(() => {
+                    this.salir();
+                })
+            }
+
+            if(this.reembolso.estado == 700) {
+                return this.$store.dispatch('controlRecursos/pago-a-proveedor/delete', {
+                    id: this.solicitud.id,
+                    params: {}
+                }).then(() => {
+                    this.salir();
+                })
+            }
         },
         getFormaPago() {
             return this.$store.dispatch('controlRecursos/forma-pago/index', {

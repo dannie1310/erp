@@ -32,7 +32,10 @@ trait ControllerTrait
     public function show(Request $request, $id)
     {
         $item = $this->service->show($id);
-        return $this->respondWithItem($item);
+        if($item) {
+            return $this->respondWithItem($item);
+        }
+        return response()->json("{}", 200);;
     }
 
     public function update(Request $request, $id)

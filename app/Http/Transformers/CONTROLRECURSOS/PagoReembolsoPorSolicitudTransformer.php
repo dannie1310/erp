@@ -42,7 +42,48 @@ class PagoReembolsoPorSolicitudTransformer extends TransformerAbstract
             'idempresa' => $model->IdEmpresa,
             'idproveedor' => $model->IdProveedor,
             'idcuentaempresa' => '',
-            'total_format' => $model->total_format
+            'total_format' => $model->total_format,
+            'id_solicitante' => $model->firma_solicitante
         ];
+    }
+
+
+    /**
+     * @param PagoReembolsoPorSolicitud $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeProveedor(PagoReembolsoPorSolicitud $model)
+    {
+        if($proveedor = $model->proveedor)
+        {
+            return $this->item($proveedor, new ProveedorTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param PagoReembolsoPorSolicitud $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeEmpresa(PagoReembolsoPorSolicitud $model)
+    {
+        if($empresa =  $model->empresa)
+        {
+            return $this->item($empresa, new EmpresaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param PagoReembolsoPorSolicitud $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeCuentaProveedor(PagoReembolsoPorSolicitud $model)
+    {
+        if($cuenta  = $model->cuentaProveedor)
+        {
+            return $this->item($cuenta, new CuentaProveedorTransformer);
+        }
+        return null;
     }
 }

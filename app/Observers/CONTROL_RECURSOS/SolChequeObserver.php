@@ -16,4 +16,9 @@ class SolChequeObserver
         $solCheque->registro_portal = 1;
         $solCheque->IdGenero = auth()->id();
     }
+
+    public function updating(SolCheque $solCheque)
+    {
+        $solCheque->Modifica = auth()->id();
+    }
 }

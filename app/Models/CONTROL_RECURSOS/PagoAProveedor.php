@@ -8,6 +8,15 @@ use DateTimeZone;
 
 class PagoAProveedor extends SolCheque
 {
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->where('IdTipoSolicitud', '13');
+        });
+    }
+
     /**
      * Métodos
      */
@@ -16,20 +25,16 @@ class PagoAProveedor extends SolCheque
         try {
             $reembolso = ReembolsoPagoAProveedor::where('IdDocto',$datos['reembolso']['id'])->first();
 
-            if($reembolso->Estatus == 2)
+            if($reembolso->solChequeDocto != null)
             {
                 abort(500, "Este reembolso ya se encuentra asociado a una solicitud.");
             }
 
-            $fecha = new DateTime($datos['reembolso']['fecha_inicio_editar']);
-            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $fecha_fin = new DateTime($datos['reembolso']['fecha_final_editar']);
-            $fecha_fin->setTimezone(new DateTimeZone('America/Mexico_City'));
-
             DB::connection('controlrec')->beginTransaction();
 
             $sol_cheque = $this->create([
-                'Vencimiento' => $fecha_fin->format('Y-m-d'),
+                'Fecha' => date('Y-m-d'),
+                'Vencimiento' => $reembolso->Fecha,
                 'IdEmpresa' => $reembolso->IdEmpresa,
                 'IdProveedor' => $reembolso->IdProveedor,
                 'IdMoneda' => $reembolso->IdMoneda,
@@ -38,13 +43,13 @@ class PagoAProveedor extends SolCheque
                 'IVA' => $reembolso->IVA,
                 'OtrosImpuestos' => $reembolso->OtrosImpuestos,
                 'Total' => $reembolso->Total,
-                'Concepto' => $datos['reembolso']['motivo'],
+                'Concepto' => $datos['reembolso']['concepto'],
                 'IdFormaPago' => $datos['forma_pago'],
                 'IdEntrega' => $datos['instruccion'],
                 'Cuenta2' => $datos['cuenta'],
                 'IdSerie' => $reembolso->IdSerie,
                 'Serie' => $reembolso->Alias_Depto,
-                'FechaFactura' =>  $fecha->format("Y-m-d"),
+                'FechaFactura' =>  $reembolso->Fecha
             ]);
 
             /*
@@ -78,6 +83,11 @@ class PagoAProveedor extends SolCheque
             $reembolso->update([
                 'Estatus'  => 2
             ]);
+
+            $reembolso->relacion[0]->update([
+                'idestado' => 7
+            ]);
+
             DB::connection('controlrec')->commit();
             return $sol_cheque;
 
@@ -90,10 +100,46 @@ class PagoAProveedor extends SolCheque
     public function editar($data)
     {
         dd($data, "ed1");
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            $this->update([
+                'Concepto' => $datos['reembolso']['motivo'],
+                'IdFormaPago' => $datos['id_forma_pago'],
+                'IdEntrega' => $datos['id_entrega'],
+                'Cuenta2' => $datos['cuenta']
+            ]);
+
+            $this->updateFirmasSolicitantes($datos['id_solicitante']);
+
+            DB::connection('controlrec')->commit();
+            return $this;
+
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 
-    public function eliminar($data)
+    public function eliminar()
     {
-        dd($data, "E1");
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            $this->deleteFirmasSolicitantes();
+            $this->ccSolCheques()->delete();
+            $this->solChequeDocto()->delete();
+            $this->delete();
+
+
+
+            DB::connection('controlrec')->commit();
+            return [];
+
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+
     }
 }

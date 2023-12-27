@@ -16,7 +16,7 @@
                                             <tr>
                                                 <td>Folio:</td>
                                                 <td style="text-align: right">
-                                                    <b>{{reembolso.folio_compuesto}}</b>
+                                                    <b>{{reembolso.folio}}</b>
                                                 </td>
                                             </tr>
                                             <tr>

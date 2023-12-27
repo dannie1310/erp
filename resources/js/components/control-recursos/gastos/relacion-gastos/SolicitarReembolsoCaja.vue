@@ -226,12 +226,8 @@ export default {
             return this.$store.dispatch('controlRecursos/reembolso-caja-chica/store', this.relacion)
                 .then((data) => {
                     this.relacion = data;
-                    this.reembolso()
+                    this.salir()
                 });
-        },
-        reembolso()
-        {
-            this.$router.push({name:'reembolso-x-caja', params: { id: this.relacion.id }});
         },
         getCajaChica() {
             return this.$store.dispatch('controlRecursos/caja-chica/index', {

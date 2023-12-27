@@ -109,6 +109,12 @@ class Documento extends Model
         return $this->belongsTo(CcDocto::class, 'IdDocto', 'IdDocto');
     }
 
+    public function relacionXDocumento()
+    {
+        return $this->belongsTo(RelacionGastoXDocumento::class, 'IdDocto', 'iddocumento');
+    }
+
+
 
     /**
      * Scopes
@@ -288,6 +294,15 @@ class Documento extends Model
             return true;
         }else{
             return false;
+        }
+    }
+
+    public function getFirmaSolicitanteAttribute()
+    {
+        try {
+            return $this->relacionXDocumento->relacion->firmas[0]->idfirmas_firmantes;
+        } catch (\Exception $e) {
+            return null;
         }
     }
 

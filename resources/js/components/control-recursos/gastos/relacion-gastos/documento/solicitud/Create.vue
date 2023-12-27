@@ -14,9 +14,14 @@
         <div class="card" v-else>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-12">
-                        <encabezado v-bind:reembolso="reembolso" />
-                        <tabla-datos v-bind:reembolso="reembolso" />
+                    <div class="col-md-12" v-if="relacion.estado == 6">
+                        <encabezado-por-solicitud  v-bind:reembolso="relacion" />
+                        <tabla-datos-por-solicitud v-bind:reembolso="relacion" />
+                        <hr />
+                    </div>
+                    <div class="col-md-12" v-if="relacion.estado == 600">
+                        <encabezado-pago-a-proveedor  v-bind:reembolso="relacion" />
+                        <tabla-datos-pago-a-proveedor v-bind:reembolso="relacion" />
                         <hr />
                     </div>
                 </div>
@@ -108,15 +113,18 @@
 </template>
 
 <script>
-import Encabezado from "./partials/Encabezado";
-import TablaDatos from "./partials/TablaDatos";
+import EncabezadoPorSolicitud from "../reembolso/por-solicitud/partials/Encabezado";
+import EncabezadoPagoAProveedor from "../reembolso/pago-a-proveedor/partials/Encabezado";
+import TablaDatosPorSolicitud from "../reembolso/por-solicitud/partials/TablaDatos";
+import TablaDatosPagoAProveedor from "../reembolso/pago-a-proveedor/partials/TablaDatos";
 export default {
     name: "solicitud-create",
-    components: {Encabezado, TablaDatos},
-    props: ['id', 'tipo'],
+    components: {EncabezadoPagoAProveedor, TablaDatosPagoAProveedor, EncabezadoPorSolicitud, TablaDatosPorSolicitud},
+    props: ['id'],
     data() {
         return {
             cargando: false,
+            relacion: null,
             reembolso: null,
             formas_pago: [],
             forma_pago: '',
@@ -130,41 +138,20 @@ export default {
     },
     mounted() {
         this.getFirmasFirmantes();
-        if(this.tipo == 11)
-        {
-            this.findPorSolicitud();
-        }
-        if(this.tipo == 12)
-        {
-            this.findPagoAProveedor();
-        }
+        this.find();
         this.getFormaPago();
     },
     methods: {
-        findPorSolicitud() {
+        find() {
             this.cargando = true;
-            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/find', {
+            return this.$store.dispatch('controlRecursos/relacion-gasto/find', {
                 id: this.id,
-                params: {include: [ 'proveedor.cuentas' ]}
+                params:{include: ['reembolsos.proveedor.cuentas']}
             }).then(data => {
-                this.reembolso = data;
-                this.cuentas = data.proveedor.cuentas.data;
-                this.solicitante = data.id_solicitante;
-            }).finally(() => {
-                this.cargando = false;
-            })
-        },
-        findPagoAProveedor() {
-            this.cargando = true;
-            return this.$store.dispatch('controlRecursos/reembolso-pago-a-proveedor/find', {
-                id: this.id,
-                params: {include: [ 'proveedor.cuentas' ]}
-            }).then(data => {
-                this.reembolso = data;
-                this.cuentas = data.proveedor.cuentas.data;
-                this.solicitante = data.id_solicitante;
-            }).finally(() => {
-                this.cargando = false;
+                this.relacion = data
+                this.reembolso = data.reembolsos.data[0]
+                this.cuentas = this.reembolso.proveedor.cuentas.data;
+                this.solicitante = this.reembolso.id_solicitante;
             })
         },
         salir() {
@@ -173,11 +160,12 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    if(this.tipo == 11)
+                    console.log(this.relacion.estado)
+                    if(this.relacion.estado === 6)
                     {
                         this.storePagoReembolsoPorSolicitud();
                     }
-                    if(this.tipo == 12)
+                    if(this.relacion.estado === 600)
                     {
                         this.storePagoAProveedor();
                     }
@@ -192,7 +180,7 @@ export default {
                 instruccion : this.instruccion,
                 solicitante : this.solicitante
             }).then(data => {
-                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: data.id, tipo: 600}});
+                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: data.id}});
             })
         },
         storePagoAProveedor() {
@@ -203,7 +191,7 @@ export default {
                 instruccion : this.instruccion,
                 solicitante : this.solicitante
             }).then(data => {
-                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: data.id, tipo: 700}});
+                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: data.id}});
             })
         },
         getFormaPago() {

@@ -112,6 +112,11 @@ class RelacionGasto extends Model
         return $this->belongsTo(RelacionGastoXDocumento::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
     }
 
+    public function reembolso()
+    {
+        return $this->hasManyThrough(Documento::class, RelacionGastoXDocumento::class, 'idrelaciones_gastos','IdDocto','idrelaciones_gastos','iddocumento');
+    }
+
     /**
      * Scopes
      */
