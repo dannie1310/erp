@@ -84,6 +84,21 @@ class SolCheque extends Model
         return $this->hasMany(CcSolCheque::class, 'IdSolCheque','IdSolCheques');
     }
 
+    public function formaPago()
+    {
+        return $this->belongsTo(FormaPago::class, 'IdFormaPago', 'IdFormaPago');
+    }
+
+    public function tipoPago()
+    {
+        return $this->belongsTo(TipoPago::class, 'IdTipoPago', 'IdTipoPago');
+    }
+
+    public function entrega()
+    {
+        return $this->belongsTo(Entrega::class, 'IdEntrega', 'IdEntrega');
+    }
+
     /**
      * Scopes
      */
@@ -191,6 +206,15 @@ class SolCheque extends Model
     {
         try {
             return $this->solChequeDocto->documento->relacionXDocumento->idrelaciones_gastos;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getRelacionAttribute()
+    {
+        try {
+            return $this->solChequeDocto->documento->relacionXDocumento->relacion;
         } catch (\Exception $e) {
             return null;
         }

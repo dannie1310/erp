@@ -125,14 +125,14 @@ class PagoAProveedor extends SolCheque
     {
         try {
             DB::connection('controlrec')->beginTransaction();
-
             $this->deleteFirmasSolicitantes();
-            $this->ccSolCheques()->delete();
+            $reembolso = ReembolsoGastoSol::where('IdDocto',$this->solChequeDocto->IdDocto)->first();
             $this->solChequeDocto()->delete();
+            $reembolso->update([
+                'Estatus'  => 1
+            ]);
+            $this->ccSolCheques()->delete();
             $this->delete();
-
-
-
             DB::connection('controlrec')->commit();
             return [];
 

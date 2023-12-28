@@ -161,11 +161,11 @@ export default {
             this.$validator.validate().then(result => {
                 if (result) {
                     console.log(this.relacion.estado)
-                    if(this.relacion.estado === 6)
+                    if(this.reembolso.id_tipo == 13)
                     {
                         this.storePagoReembolsoPorSolicitud();
                     }
-                    if(this.relacion.estado === 600)
+                    if(this.reembolso.id_tipo == 12)
                     {
                         this.storePagoAProveedor();
                     }
@@ -180,7 +180,7 @@ export default {
                 instruccion : this.instruccion,
                 solicitante : this.solicitante
             }).then(data => {
-                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: data.id}});
+                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: this.relacion.id}});
             })
         },
         storePagoAProveedor() {
@@ -191,7 +191,7 @@ export default {
                 instruccion : this.instruccion,
                 solicitante : this.solicitante
             }).then(data => {
-                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: data.id}});
+                this.$router.push({name: 'solicitud-reembolso-edit', params: {id: this.relacion.id}});
             })
         },
         getFormaPago() {

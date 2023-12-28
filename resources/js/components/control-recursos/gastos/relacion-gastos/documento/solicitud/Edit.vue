@@ -179,6 +179,7 @@
                 <div class="pull-right">
                     <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar"><i class="fa fa-save" ></i> Actualizar</button>
                     <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar"><i class="fa fa-trash"></i> Eliminar</button>
+                    <PDF v-bind:id="this.solicitud.id"></PDF>
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
                 </div>
             </div>
@@ -188,9 +189,10 @@
 
 <script>
 import Encabezado from "./partials/Encabezado";
+import PDF from "./Formato";
 export default {
     name: "solicitud-edit",
-    components: {Encabezado},
+    components: {Encabezado, PDF},
     props: ['id'],
     data() {
         return {

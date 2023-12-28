@@ -101,16 +101,15 @@ class PagoReembolsoPorSolicitud extends SolCheque
     {
         try {
             DB::connection('controlrec')->beginTransaction();
-
             $this->deleteFirmasSolicitantes();
             $reembolso = ReembolsoGastoSol::where('IdDocto',$this->solChequeDocto->IdDocto)->first();
+            $this->solChequeDocto()->delete();
             $reembolso->update([
                 'Estatus'  => 1
             ]);
-            $this->solChequeDocto()->delete();
+
             $this->ccSolCheques()->delete();
             $this->delete();
-
             DB::connection('controlrec')->commit();
             return [];
 

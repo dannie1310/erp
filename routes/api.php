@@ -2151,6 +2151,7 @@ $api->version('v1', function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@descargaLayout');
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@index');
             $api->get('{id}/descarga', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@descarga')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato-reembolso', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@pdfReembolso')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'semana-anio'], function ($api) {
