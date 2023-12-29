@@ -11,8 +11,6 @@ class CtgMoneda extends Model
     protected $table = 'ctg_monedas';
     protected $primaryKey = 'id';
 
-
-
     public function getTipoCambioAttribute()
     {
         if ($this->id == 3) {

@@ -220,6 +220,60 @@ class SolCheque extends Model
         }
     }
 
+    public function getPartidasParaPdfAttribute()
+    {
+        return DB::connection('controlrec')->select(DB::raw(
+            "SELECT if(ccdoctos.Facturable='Y','F','-')as Facturable,
+                   if(centroscosto.NoSN is null,' - ',centroscosto.NoSN) as NS,
+                   count(centroscosto.Descripcion) as TotalCC,
+                   centroscosto.Descripcion AS `SN`,
+                   tiposgasto.Descripcion AS `TG`,
+                   documentos.Importe AS `ImporteDocumento`,
+                   documentos.Retenciones AS `RetencionesDocumento`,
+                documentos.OtrosImpuestos AS `OtrosImpuestosDocumento`,
+                   documentos.TasaIVA,
+                   documentos.IVA AS `IVADocumento`,
+                   documentos.Total AS `TotalDocumento`,
+                   FORMAT(SUM(ccdoctos.Importe),3) AS `ImporteSN`,
+                   FORMAT(SUM(ccdoctos.IVA),3) as `IVASN`,
+                   FORMAT(SUM(ccdoctos.Retenciones),3) as `RetencionesSN`,
+                   FORMAT(SUM(ccdoctos.OtrosImpuestos),3) as `OtrosImpuestos`,
+                   FORMAT(SUM(ccdoctos.Total),3) as `TotalSN`
+              FROM    (   (   (   (   controlrec.ccdoctos ccdoctos
+                                   INNER JOIN
+                                      controlrec.centroscosto centroscosto
+                                   ON (ccdoctos.IdCC = centroscosto.IdCC))
+                               INNER JOIN
+                                  controlrec.documentos documentos
+                               ON (ccdoctos.IdDocto = documentos.IdDocto))
+                           INNER JOIN
+                              controlrec.solchequesdoctos solchequesdoctos
+                           ON (solchequesdoctos.IdDocto = documentos.IdDocto))
+                       INNER JOIN
+                          controlrec.solcheques solcheques
+                       ON (solchequesdoctos.IdSolCheque = solcheques.IdSolCheques))
+                   INNER JOIN
+                      controlrec.tiposgasto tiposgasto
+                   ON (ccdoctos.IdTipoGasto = tiposgasto.IdTipoGasto)
+                   left join segmentos_negocio_contabilidad as SNC on(centroscosto.NoSN=SNC.NumeroSegmento)
+             WHERE (solcheques.IdSolCheques = " . $this->getKey() . ") GROUP BY  centroscosto.Descripcion,tiposgasto.Descripcion,ccdoctos.Facturable,centroscosto.NoSN,documentos.Importe,
+              documentos.Retenciones,documentos.OtrosImpuestos,documentos.TasaIVA,documentos.IVA,documentos.Total;"));
+    }
+
+    public function getUuidsAttribute()
+    {
+        $array = [];
+        $x=0;
+        foreach($this->solChequeDocto->documento->relacionXDocumento->relacion->documentos as $doc){
+            if($doc->uuid != null)
+            {
+                $array[$x] = $doc;
+                $x++;
+            }
+        }
+       return $array;
+    }
+
     /**
      * Métodos
      */

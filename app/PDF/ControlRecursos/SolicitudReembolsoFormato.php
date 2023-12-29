@@ -184,23 +184,22 @@ class SolicitudReembolsoFormato extends Rotation
 
         $this->SetFont('Arial', 'B', 8);
 
-        $this->Cell(19.5, .4, ' ', 0, 1, 'C');
-        $this->Cell(6.5, .4, 'TIPO DE PAGO', 1, 0, 'C', 1);
-        $this->Cell(5, .4, 'INTRUCCIONES DE ENTREGA', 1, 0, 'C', 1);
+        $this->Cell(20.5, .4, ' ', 0, 1, 'C');
+        $this->Cell(7, .4, 'TIPO DE PAGO', 1, 0, 'C', 1);
+        $this->Cell(5.5, .4, 'INTRUCCIONES DE ENTREGA', 1, 0, 'C', 1);
         $this->Cell(8, .4, 'CUENTA BANCARIA', 1, 1, 'C', 1);
 
         $this->SetFont('Arial', '', 8);
 
-        $this->Cell(6.5, .4, $this->sol->tipoPago->Descripcion, 1, 0, 'C');
-        $this->Cell(5, .4,  $this->sol->entrega->Descripcion, 1, 0, 'C');
-        $this->Cell(8, .4, $this->sol->Cuenta2 ? $this->sol->Cuenta2 : 'NO REGISTRADA', 1, 1, 'C');
+        $this->Cell(7, .4, $this->sol->tipoPago->Descripcion, 1, 0, 'C');
+        $this->Cell(5.5, .4,  $this->sol->entrega->Descripcion, 1, 0, 'C');
+        $this->Cell(8, .4, $this->sol->Cuenta2 != null ? $this->sol->Cuenta2 : 'NO REGISTRADA', 1, 1, 'C');
 
 
         $this->SetFont('Arial', 'B', 10);
 
-        $this->Cell(19.5, .4, ' ', 0, 1, 'L');
-        $this->Cell(19.5, .4, utf8_decode('APLICACIÓN DE SEGMENTOS DE NEGOCIO (Debe ser Llenada por el Solicitante)'), 0, 1, 'L');
-
+        $this->Cell(20.5, .4, ' ', 0, 1, 'L');
+        $this->Cell(20.5, .4, utf8_decode('APLICACIÓN DE SEGMENTOS DE NEGOCIO (Debe ser Llenada por el Solicitante)'), 0, 1, 'L');
     }
 
     public function create()
@@ -210,7 +209,7 @@ class SolicitudReembolsoFormato extends Rotation
         $this->AddPage();
         $this->SetAutoPageBreak(true,1);
 
-        //$this->partidas();
+        $this->partidas();
         try {
             $this->Output('I', "Formato - Solicitud_".$this->sol->folio.".pdf", 1);
         } catch (\Exception $ex) {
@@ -218,6 +217,163 @@ class SolicitudReembolsoFormato extends Rotation
         }
         exit;
     }
+
+    public function partidas()
+    {
+
+        $this->SetFont('Arial', 'B', 7);
+        $this->SetFillColor(204, 204, 204);
+        $w = 4.75;
+        if ($this->sol->IVA == 0.00) $w += 1;
+        if ($this->sol->Retenciones == 0.00) $w += 1;
+        if ($this->sol->Importe == 0.00) $w += 1;
+        if ($this->sol->OtrosImpuestos == 0.00) $w += 1;
+
+        $this->Cell($w + 0.7, .3, 'SEGMENTO DE NEGOCIO', 1, 0, 'C', 1);
+        $this->Cell($w - 0.7, .3, 'TIPO DE GASTO', 1, 0, 'C', 1);
+        if ($this->sol->Importe != 0.00)
+            $this->Cell(2.2, .3, 'IMPORTE', 1, 0, 'C', 1);
+        if ($this->sol->IVA != 0.00)
+            $this->Cell(2.2, .3, 'IVA', 1, 0, 'C', 1);
+        if ($this->sol->Retenciones != 0.00)
+            $this->Cell(2.2, .3, 'RETENCIONES', 1, 0, 'C', 1);
+        if ($this->sol->OtrosImpuestos != 0.00)
+            $this->Cell(2.2, .3, 'OTROS IMP.', 1, 0, 'C', 1);
+
+        $this->Cell(2.2, .3, 'TOTAL', 1, 1, 'C', 1);
+
+        $this->SetFont('Arial', '', 7);
+        $conter = 1;
+        foreach ($this->sol->partidas_para_pdf as $partida)
+        {
+            $this->CellFitScale(0.7, .3, $partida->NS, 1, 0, 'C');
+            $this->CellFitScale(0.7, .3, $partida->Facturable, 1, 0, 'C');
+            if ($partida->TotalCC == 1) {
+                $this->CellFitScale($w - 0.7, .3, $partida->SN, 1, 0, 'L');
+            } else {
+                $this->CellFitScale($w - 0.7, .3, $partida->SN . " (" . $partida->TotalCC . ")", 1, 0, 'L');
+            }
+
+            $this->CellFitScale($w - 0.7, .3, $partida->TG, 1, 0, 'L');
+            if ($this->sol->Importe != 0.00)
+                $this->Cell(2.2, .3, $partida->ImporteSN, 1, 0, 'R');
+            if ($this->sol->IVA != 0.00)
+                $this->Cell(2.2, .3,$partida->IVASN, 1, 0, 'R');
+            if ($this->sol->Retenciones != 0.00)
+                $this->Cell(2.2, .3, $partida->RetencionesSN, 1, 0, 'R');
+            if ($this->sol->OtrosImpuestos != 0.00)
+                $this->Cell(2.2, .3, $partida->OtrosImpuestos, 1, 0, 'R');
+
+            $this->Cell(2.2, .3, $partida->TotalSN, 1, 1, 'R');
+            $conter = $conter + 1;
+        }
+
+        $resto = 50 - $conter;
+
+        for ($b = 1; $b < $resto; $b++) {
+            $this->Cell(0.7, .3, ' ', 1, 0, 'C');
+            $this->Cell(0.7, .3, ' ', 1, 0, 'C');
+            $this->Cell($w - 0.7, .3, ' ', 1, 0, 'L');
+            $this->Cell($w - 0.7, .3, ' ', 1, 0, 'L');
+            if ($this->sol->Importe != 0.00)
+                $this->Cell(2.2, .3, ' ', 1, 0, 'R');
+            if ($this->sol->IVA != 0.00)
+                $this->Cell(2.2, .3, ' ', 1, 0, 'R');
+            if ($this->sol->Retenciones != 0.00)
+                $this->Cell(2.2, .3, ' ', 1, 0, 'R');
+            if ($this->sol->OtrosImpuestos != 0.00)
+                $this->Cell(2.2, .3, ' ', 1, 0, 'R');
+
+            $this->Cell(2.2, .3, ' ', 1, 1, 'R');
+        }
+
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell($w, .3, '', 0, 0, 'L');
+        $this->Cell($w, .3, "SUMAS:", 0, 0, 'R');
+        if ($this->sol->Importe != 0.00)
+            $this->Cell(2.2, .3, number_format($this->sol->Importe,3), 1, 0, 'R', 1);
+        if ($this->sol->IVA != 0.00)
+            $this->Cell(2.2, .3, number_format($this->sol->IVA,3), 1, 0, 'R', 1);
+        if ($this->sol->Retenciones != 0.00)
+            $this->Cell(2.2, .3, number_format($this->sol->Retenciones,3), 1, 0, 'R', 1);
+        if ($this->sol->OtrosImpuestos != 0.00)
+            $this->Cell(2.2, .3, number_format($this->sol->OtrosImpuestos,3), 1, 0, 'R', 1);
+
+        $this->Cell(2.2, .3, number_format($this->sol->Total,3), 1, 1, 'R', 1);
+
+
+        $this->SetFont('Arial', 'B', 7);
+        $this->Cell(20.5, .3, 'Documento de Soporte Recibido', 0, 1, 'L');
+        $this->SetFont('Arial', '', 4);
+        $this->Cell(2.3, .3, utf8_decode('REQUISICIÓN DEL USUARIO'), 'LRT', 0, 'C', 1);
+        $this->Cell(2.3, .3, 'SOLICITUD DE COMPRA', 'LRT', 0, 'C', 1);
+        $this->Cell(2.3, .3, utf8_decode('OFICIO DE AUTORIZACIÓN '), 'LRT', 0, 'C', 1);
+        $this->Cell(2.3, .3, 'COMPARATIVA DE ', 'LRT', 0, 'C', 1);
+        $this->Cell(2.3, .3, 'ORDEN DE COMPRA', 'LRT', 0, 'C', 1);
+        $this->Cell(2.3, .3, utf8_decode('ENTRADA DE ALMACÉN /'), 'LRT', 0, 'C', 1);
+        $this->Cell(2.25, .3, 'ORIGINAL', 'LRT', 0, 'C', 1);
+        $this->Cell(2.25, .3, 'COPIA', 'LRT', 0, 'C', 1);
+        $this->Cell(2.25, .3, 'OTRO', 'LRT', 1, 'C', 1);
+
+        $this->Cell(2.3, .3, '', 'LRB', 0, 'C', 1);
+        $this->Cell(2.3, .3, '', 'LRB', 0, 'C', 1);
+        $this->Cell(2.3, .3, 'DE COMPRA DE AF', 'LRB', 0, 'C', 1);
+        $this->Cell(2.3, .3, 'COTIZACIONES', 'LRB', 0, 'C', 1);
+        $this->Cell(2.3, .3, '', 'LRB', 0, 'C', 1);
+        $this->Cell(2.3, .3, utf8_decode('RECEPCIÓN DEL SERVICIO'), 'LRB', 0, 'C', 1);
+        $this->Cell(2.25, .3, 'FACTURA/COMPROBANTE', 'LRB', 0, 'C', 1);
+        $this->Cell(2.25, .3, 'FACTURA/COMPROBANTE', 'LRB', 0, 'C', 1);
+        $this->Cell(2.25, .3, '', 'LRB', 1, 'C', 1);
+
+
+        $this->Cell(1.15, 0.3, 'SI', 1, 0, 'C');
+        $this->Cell(1.15, 0.3, 'NO', 1, 0, 'C');
+
+        $this->Cell(1.15, 0.3, 'SI', 1, 0, 'C');
+        $this->Cell(1.15, 0.3, 'NO', 1, 0, 'C');
+
+        $this->Cell(1.15, 0.3, 'SI', 1, 0, 'C');
+        $this->Cell(1.15, 0.3, 'NO', 1, 0, 'C');
+
+        $this->Cell(1.15, 0.3, 'SI', 1, 0, 'C');
+        $this->Cell(1.15, 0.3, 'NO', 1, 0, 'C');
+
+        $this->Cell(1.15, 0.3, 'SI', 1, 0, 'C');
+        $this->Cell(1.15, 0.3, 'NO', 1, 0, 'C');
+
+        $this->Cell(1.15, 0.3, 'SI', 1, 0, 'C');
+        $this->Cell(1.15, 0.3, 'NO', 1, 0, 'C');
+
+        $this->Cell(1.125, 0.3, 'SI', 1, 0, 'C');
+        $this->Cell(1.125, 0.3, 'NO', 1, 0, 'C');
+
+        $this->Cell(1.125, 0.3, 'SI', 1, 0, 'C');
+        $this->Cell(1.125, 0.3, 'NO', 1, 0, 'C');
+
+        $this->Cell(1.125, 0.3, 'SI', 1, 0, 'C');
+        $this->Cell(1.125, 0.3, 'NO', 1, 1, 'C');
+
+        $this->SetFont('Arial', '', 7);
+        $this->SetWidths(array(1.15, 1.15, 1.15, 1.15, 1.15, 1.15, 1.15, 1.15, 1.15, 1.15, 1.15, 1.126, 1.126, 1.126, 1.126, 1.126, 1.126, 1.126));
+
+        if (count($this->sol->uuids) == 0) {
+            $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0',));
+        } else {
+            $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '0,0,0', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+            $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '255,255,255', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0',));
+        }
+
+        $uids_txt = implode(" ", $this->sol->uuids);
+        $this->SetDrawColor(117, 117, 117);
+        $this->SetHeights(array(0.4));
+        $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
+        $this->Row(array("", "", "", "", "", "", "", "", "", "", "", "", $uids_txt, "", "", "", "", ""));
+        $this->SetFont('Arial', '', 5);
+
+
+    }
+
 /*
     function Footer()
     {

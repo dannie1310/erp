@@ -3,8 +3,6 @@
 namespace App\Models\CONTROL_RECURSOS;
 
 use Illuminate\Support\Facades\DB;
-use DateTime;
-use DateTimeZone;
 
 class PagoAProveedor extends SolCheque
 {
