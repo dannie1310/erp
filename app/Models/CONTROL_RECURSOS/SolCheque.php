@@ -99,6 +99,11 @@ class SolCheque extends Model
         return $this->belongsTo(Entrega::class, 'IdEntrega', 'IdEntrega');
     }
 
+    public function estado()
+    {
+        return $this->belongsTo(EstatusSolicitud::class, 'Estatus', 'IDestatus');
+    }
+
     /**
      * Scopes
      */
@@ -272,6 +277,16 @@ class SolCheque extends Model
             }
         }
        return $array;
+    }
+
+    public function getDescripcionEstadoAttribute()
+    {
+        try {
+            return $this->estado->Descripcion;
+        } catch (\Exception $e)
+        {
+            return null;
+        }
     }
 
     /**
