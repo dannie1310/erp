@@ -32,6 +32,7 @@ class PagoReembolsoPorSolicitudTransformer extends TransformerAbstract
             'concepto' => $model->Concepto,
             'fecha' => $model->Fecha,
             'fecha_format' => $model->fecha_format,
+            'fecha_vencimiento_format' => $model->fecha_vencimiento_format,
             'importe' => $model->Importe,
             'importe_format' => $model->importe_format,
             'iva' => $model->IVA,
