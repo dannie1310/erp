@@ -36,6 +36,12 @@ class ReembolsoPagoAProveedorController extends Controller
     {
         $this->middleware('auth:api');
 
+
+        $this->middleware('permisoGlobal:consultar_reembolso_pago_a_proveedor')->only(['show','paginate','index']);
+        $this->middleware('permisoGlobal:registrar_reembolso_pago_a_proveedor')->only(['store']);
+        $this->middleware('permisoGlobal:editar_reembolso_pago_a_proveedor')->only(['update']);
+        $this->middleware('permisoGlobal:eliminar_reembolso_pago_a_proveedor')->only(['destroy']);
+
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;

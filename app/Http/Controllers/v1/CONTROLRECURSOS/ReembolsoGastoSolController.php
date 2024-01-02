@@ -37,15 +37,13 @@ class ReembolsoGastoSolController extends Controller
     {
         $this->middleware('auth:api');
 
-        $this->middleware('permisoGlobal:consultar_documento_recursos')->only(['show','paginate','index']);
+        $this->middleware('permisoGlobal:consultar_reembolso_por_solicitud')->only(['show','paginate','index']);
+        $this->middleware('permisoGlobal:registrar_reembolso_por_solicitud')->only(['store']);
+        $this->middleware('permisoGlobal:editar_reembolso_por_solicitud')->only(['update']);
+        $this->middleware('permisoGlobal:eliminar_reembolso_por_solicitud')->only(['destroy']);
 
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;
-    }
-
-    public function validarDocumentos(Request $request, $id)
-    {
-        return $this->respondWithItem($this->service->validarDocumentos($id));
     }
 }

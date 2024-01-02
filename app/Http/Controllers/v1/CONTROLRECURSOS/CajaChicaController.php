@@ -36,6 +36,8 @@ class CajaChicaController extends Controller
     {
         $this->middleware('auth:api');
 
+        $this->middleware('permisoGlobal:registrar_reembolso_por_caja_chica')->only(['store']);
+
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;

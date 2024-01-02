@@ -80,7 +80,7 @@
                                             <th class="encabezado">Importe</th>
                                         </tr>
                                         <tr>
-                                            <td>{{ solicitud.fecha_vencimiento }}</td>
+                                            <td>{{ solicitud.fecha_vencimiento_format }}</td>
                                             <td><b>{{ solicitud.moneda }}</b></td>
                                             <td style="text-align: right; font-size: 15px"><b>{{ solicitud.importe_format }}</b></td>
                                         </tr>
@@ -177,9 +177,9 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar"><i class="fa fa-save" ></i> Actualizar</button>
-                    <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar"><i class="fa fa-trash"></i> Eliminar</button>
-                    <PDF v-bind:id="this.solicitud.id"></PDF>
+                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar" v-if="$root.can('editar_solicitud_pago_reembolso', true)"><i class="fa fa-save" ></i> Actualizar</button>
+                    <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar" v-if="$root.can('eliminar_solicitud_pago_reembolso', true)"><i class="fa fa-trash"></i> Eliminar</button>
+                    <PDF v-bind:id="this.solicitud.id" v-if="$root.can('consultar_solicitud_pago_reembolso', true)"></PDF>
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
                 </div>
             </div>
