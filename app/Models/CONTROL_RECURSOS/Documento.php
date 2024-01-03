@@ -115,7 +115,6 @@ class Documento extends Model
     }
 
 
-
     /**
      * Scopes
      */

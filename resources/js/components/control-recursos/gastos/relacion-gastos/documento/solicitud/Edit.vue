@@ -80,7 +80,7 @@
                                             <th class="encabezado">Importe</th>
                                         </tr>
                                         <tr>
-                                            <td>{{ solicitud.fecha_vencimiento }}</td>
+                                            <td>{{ solicitud.fecha_vencimiento_format }}</td>
                                             <td><b>{{ solicitud.moneda }}</b></td>
                                             <td style="text-align: right; font-size: 15px"><b>{{ solicitud.importe_format }}</b></td>
                                         </tr>
@@ -177,8 +177,9 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar"><i class="fa fa-save" ></i> Actualizar</button>
-                    <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar"><i class="fa fa-trash"></i> Eliminar</button>
+                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar" v-if="$root.can('editar_solicitud_pago_reembolso', true)"><i class="fa fa-save" ></i> Actualizar</button>
+                    <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar" v-if="$root.can('eliminar_solicitud_pago_reembolso', true)"><i class="fa fa-trash"></i> Eliminar</button>
+                    <PDF v-bind:id="this.solicitud.id" v-if="$root.can('consultar_solicitud_pago_reembolso', true)"></PDF>
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
                 </div>
             </div>
@@ -188,9 +189,10 @@
 
 <script>
 import Encabezado from "./partials/Encabezado";
+import PDF from "./Formato";
 export default {
     name: "solicitud-edit",
-    components: {Encabezado},
+    components: {Encabezado, PDF},
     props: ['id'],
     data() {
         return {
@@ -208,10 +210,7 @@ export default {
         }
     },
     mounted() {
-        this.findPorSolicitud();
-        if(this.solicitud.length > 0) {
-            this.findPagoAProveedor();
-        }
+        this.find();
         this.getFirmasFirmantes();
         this.getFormaPago();
     },
@@ -219,16 +218,24 @@ export default {
         find() {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/relacion-gasto/find', {
-                id: this.solicitud.id_relacion,
+                id: this.id,
                 params:{include: []}
             }).then(data => {
                     this.reembolso = data
+                if(this.reembolso.reembolsos.data[0].id_tipo == 13)
+                {
+                    this.findPorSolicitud();
+                }
+                if(this.reembolso.reembolsos.data[0].id_tipo == 12)
+                {
+                    this.findPagoAProveedor();
+                }
             })
         },
         findPorSolicitud() {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/pago-reembolso-por-solicitud/find', {
-                id: this.id,
+                id: this.reembolso.id_solicitud,
                 params: {include: [ 'proveedor.cuentas' ]}
             }).then(data => {
                 this.solicitud = data;
@@ -237,7 +244,6 @@ export default {
                 this.forma_pago = data.id_forma_pago;
                 this.instruccion = data.id_entrega;
                 this.cuenta = data.cuenta;
-                this.find();
             }).finally(() => {
                 this.cargando = false;
             })
@@ -245,7 +251,7 @@ export default {
         findPagoAProveedor() {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/pago-a-proveedor/find', {
-                id: this.id,
+                id: this.reembolso.id_solicitud,
                 params: {include: [ 'proveedor.cuentas' ]}
             }).then(data => {
                     this.solicitud = data;
@@ -254,7 +260,6 @@ export default {
                     this.forma_pago = data.id_forma_pago;
                     this.instruccion = data.id_entrega;
                     this.cuenta = data.cuenta;
-                    this.find();
             }).finally(() => {
                 this.cargando = false;
             })
@@ -284,7 +289,7 @@ export default {
                 'solicitud' : this.solicitud
             }
 
-            if(this.reembolso.estado == 600) {
+            if(this.reembolso.reembolsos.data[0].id_tipo == 13) {
                 console.log("E1");
                 return this.$store.dispatch('controlRecursos/pago-reembolso-por-solicitud/update', {
                     id: id,
@@ -294,7 +299,7 @@ export default {
                 })
             }
 
-            if(this.reembolso.estado == 700) {
+            if(this.reembolso.reembolsos.data[0].id_tipo == 12) {
                 console.log("E2");
                 console.log(this.solicitud)
                 return this.$store.dispatch('controlRecursos/pago-a-proveedor/update', {
@@ -307,7 +312,7 @@ export default {
             }
         },
         eliminar() {
-            if(this.reembolso.estado == 600) {
+            if(this.reembolso.reembolsos.data[0].id_tipo == 13) {
                 return this.$store.dispatch('controlRecursos/pago-reembolso-por-solicitud/delete', {
                     id: this.solicitud.id,
                     params: {}
@@ -316,7 +321,7 @@ export default {
                 })
             }
 
-            if(this.reembolso.estado == 700) {
+            if(this.reembolso.reembolsos.data[0].id_tipo == 12) {
                 return this.$store.dispatch('controlRecursos/pago-a-proveedor/delete', {
                     id: this.solicitud.id,
                     params: {}

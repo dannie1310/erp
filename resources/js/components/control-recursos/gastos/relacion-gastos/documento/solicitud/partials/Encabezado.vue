@@ -28,7 +28,7 @@
                                             <tr>
                                                 <td>Fecha Vencimiento:</td>
                                                 <td style="text-align: right">
-                                                    <b>{{reembolso.fecha_vencimiento}}</b>
+                                                    <b>{{reembolso.fecha_vencimiento_format}}</b>
                                                 </td>
                                             </tr>
                                         </tbody>

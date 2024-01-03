@@ -25,4 +25,12 @@ class CcSolCheque extends Model
         'ImporteFacturar',
         'Facturable'
     ];
+
+    /**
+     * Relaciones
+     */
+    public function centroCosto()
+    {
+        return $this->belongsTo(CentroCosto::class, 'IdCC', 'IdCC');
+    }
 }

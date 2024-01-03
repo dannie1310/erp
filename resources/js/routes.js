@@ -4512,7 +4512,7 @@ export const routes = [
                                         name: 'reembolso',
                                         component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/Index').default,
                                         meta: {
-                                            title: 'Reembolso de Gvbm ,,,,,,+{}-.astos',
+                                            title: 'Reembolso de Gastos',
                                             breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO'},
                                             middleware: [auth, permission],
                                             permission: 'consultar_relacion_gastos_recursos',
@@ -4528,7 +4528,7 @@ export const routes = [
                                             title: 'Reembolso por Solicitud',
                                             breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO POR SOLICITUD'},
                                             middleware: [auth, permission],
-                                            permission: 'editar_relacion_gastos_recursos',
+                                            permission: 'consultar_reembolso_por_solicitud',
                                             general: true
                                         }
                                     },
@@ -4541,7 +4541,7 @@ export const routes = [
                                             title: 'Reembolso Pago a Proveedor',
                                             breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO PAGO A PROVEEDOR'},
                                             middleware: [auth, permission],
-                                            permission: 'editar_relacion_gastos_recursos',
+                                            permission: 'consultar_reembolso_pago_a_proveedor',
                                             general: true
                                         }
                                     },
@@ -4559,7 +4559,7 @@ export const routes = [
                                             title: 'Solicitud de Gastos',
                                             breadcrumb: {parent: 'reembolso', name: 'SOLICITUD'},
                                             middleware: [auth, permission],
-                                            permission: 'consultar_relacion_gastos_recursos',
+                                            permission: 'consultar_solicitud_pago_reembolso',
                                             general: true,
                                         }
                                     },
@@ -4572,7 +4572,7 @@ export const routes = [
                                             title: 'Registrar Solicitud',
                                             breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'reembolso'},
                                             middleware: [auth, permission],
-                                            permission: ['registrar_relacion_gastos_recursos'],
+                                            permission: ['registrar_solicitud_pago_reembolso'],
                                             general: true
                                         }
                                     },
@@ -4585,7 +4585,7 @@ export const routes = [
                                             title: 'Editar Solicitud',
                                             breadcrumb: {parent: 'reembolso', name: 'EDITAR'},
                                             middleware: [auth, permission],
-                                            permission: 'editar_relacion_gastos_recursos',
+                                            permission: ['editar_solicitud_pago_reembolso','eliminar_solicitud_pago_reembolso'],
                                             general: true
                                         }
                                     },
@@ -4600,7 +4600,7 @@ export const routes = [
                                     title: 'Solicitar Reembolso por Caja Chica',
                                     breadcrumb: {parent: 'relacion-gasto', name: 'SOLICITAR REEMBOLSO POR CAJA CHICA'},
                                     middleware: [auth, permission],
-                                    permission: 'editar_relacion_gastos_recursos',
+                                    permission: 'registrar_reembolso_por_caja_chica',
                                     general: true
                                 }
                             },
@@ -4613,7 +4613,7 @@ export const routes = [
                                     title: 'Solicitud Pago a Proveedor',
                                     breadcrumb: {parent: 'relacion-gasto', name: 'SOLICITUD PAGO A PROVEEDOR'},
                                     middleware: [auth, permission],
-                                    permission: 'editar_relacion_gastos_recursos',
+                                    permission: 'consultar_reembolso_pago_a_proveedor',
                                     general: true
                                 }
                             },

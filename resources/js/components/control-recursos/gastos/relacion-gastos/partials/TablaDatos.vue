@@ -28,7 +28,7 @@
                     </tr>
                     <tr>
                         <th class="encabezado  c130">
-                           Proyecto
+                           Proveedor
                         </th>
                         <th class="encabezado  c130">
                             Fecha Inicial

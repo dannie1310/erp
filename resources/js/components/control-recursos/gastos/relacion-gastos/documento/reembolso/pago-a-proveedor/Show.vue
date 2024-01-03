@@ -29,9 +29,9 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="solicitud"><i class="fa fa-save"></i> Registrar Solicitud</button>
-                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar"><i class="fa fa-save" ></i> Actualizar</button>
-                    <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar"><i class="fa fa-trash"></i> Eliminar</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="solicitud" v-if="$root.can('registrar_solicitud_pago_reembolso', true)" ><i class="fa fa-save"></i> Registrar Solicitud</button>
+                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar" v-if="$root.can('editar_reembolso_pago_a_proveedor', true)" ><i class="fa fa-save" ></i> Actualizar</button>
+                    <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar" v-if="$root.can('eliminar_reembolso_pago_a_proveedor', true)" ><i class="fa fa-trash"></i> Eliminar</button>
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
                 </div>
             </div>
