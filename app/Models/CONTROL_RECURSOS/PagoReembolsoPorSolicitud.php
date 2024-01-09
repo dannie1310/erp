@@ -92,9 +92,26 @@ class PagoReembolsoPorSolicitud extends SolCheque
         }
     }
 
-    public function editar($data)
+    public function editar($datos)
     {
-       dd($data, "ed");
+        try {
+            DB::connection('controlrec')->beginTransaction();
+            $this->update([
+                'Concepto' => $datos['concepto'],
+                'IdFormaPago' => $datos['id_forma_pago'],
+                'IdEntrega' => $datos['id_entrega'],
+                'Cuenta2' => array_key_exists('cuenta', $datos) ? $datos['cuenta'] : null,
+            ]);
+
+            $this->updateFirmasSolicitantes($datos['id_solicitante']);
+
+            DB::connection('controlrec')->commit();
+            return $this;
+
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 
     public function eliminar()
@@ -117,6 +134,5 @@ class PagoReembolsoPorSolicitud extends SolCheque
             DB::connection('controlrec')->rollBack();
             abort(400, $e->getMessage());
         }
-
     }
 }

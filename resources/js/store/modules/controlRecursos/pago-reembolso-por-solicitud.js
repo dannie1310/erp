@@ -106,8 +106,7 @@ export default {
                 })
                     .then((value) => {
                         if (value) {
-                            axios
-                                .patch(URI + payload.id, payload.data,{ params: payload.params } )
+                            axios.patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Solicitud actualizado correctamente", {
