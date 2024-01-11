@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Show" v-if="$root.can('registrar_marbetes_manualmente')">
+        <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Show">
             <i class="fa fa-eye"></i>
         </button>
          <div class="modal fade" ref="modal" role="dialog">
