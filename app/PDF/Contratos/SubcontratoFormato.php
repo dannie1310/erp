@@ -55,7 +55,7 @@ class SubcontratoFormato extends FPDI
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS_CCSL.pdf'));
                     $ln = 11.23;
                 }else{
-                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-01-31'))
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-02-05'))
                     {
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS2024.pdf'));
                         $ln = 20.55;
@@ -71,7 +71,7 @@ class SubcontratoFormato extends FPDI
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT_CCSL.pdf'));
                     $ln = 14.6;
                 }else{
-                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-01-31'))
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-02-05'))
                     {
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT2024.pdf'));
                         $ln = 19;
@@ -83,12 +83,7 @@ class SubcontratoFormato extends FPDI
                 }
             }
             else{
-                if(strtotime($this->subcontrato->fecha) >= strtotime('2024-01-31'))
-                {
-                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc2024.pdf'));
-                }else{
-                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc.pdf'));
-                }
+                $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc.pdf'));
             }
             $this->clausulado = $this->importPage(1);
             $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
@@ -139,10 +134,10 @@ class SubcontratoFormato extends FPDI
                     $this->Cell(11.5);
                     $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
 
-                    $this->Ln(.18);
-                    $this->Cell(13.2);
+                    $this->Ln(.175);
+                    $this->Cell(13.1);
                     $this->SetFillColor('255,255,255');
-                    $this->Cell(.7,.15,substr($fecha_exp[2], -1),'',0,'L', 1);
+                    $this->Cell(.7,.15,substr($fecha_exp[2], -2),'',0,'L', 1);
                 }else{
                     $this->Cell(18.15);
                     $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
@@ -152,9 +147,9 @@ class SubcontratoFormato extends FPDI
                     $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
 
                     $this->Ln(.18);
-                    $this->Cell(12.4);
+                    $this->Cell(12.5);
                     $this->SetFillColor('255,255,255');
-                    $this->Cell(.7,.15,$fecha_exp[2],'',0,'L', 1);
+                    $this->Cell(.7,.15,substr($fecha_exp[2],-2),'',0,'L', 1);
                 }
             }
         }else{
