@@ -45,28 +45,50 @@ class SubcontratoFormato extends FPDI
 
     function Header(){
         $ln = 0;
-        if($this->encola == 'clausulado' &&$this->subcontrato->clasificacionSubcontrato){
+        $nuevo = 0;
+        if($this->encola == 'clausulado' && $this->subcontrato->clasificacionSubcontrato){
             if(Context::getDatabase()  == "SAO1814_TERMINAL_NAICM"){
                 $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_ctvm.pdf'));
             }
             else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7){
                 if(Context::getDatabase()  == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS_CCSL.pdf'));
+                    $ln = 11.23;
                 }else{
-                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS.pdf'));
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-01-31'))
+                    {
+                        $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS2024.pdf'));
+                        $ln = 20.55;
+                        $nuevo = 1;
+                    }else{
+                        $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS.pdf'));
+                        $ln = 11.23;
+                    }
                 }
-                $ln = 11.23;
-
-            }else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
+            }
+            else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
                 if(Context::getDatabase()  == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT_CCSL.pdf'));
+                    $ln = 14.6;
                 }else{
-                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-01-31'))
+                    {
+                        $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT2024.pdf'));
+                        $ln = 19;
+                        $nuevo = 1;
+                    }else{
+                        $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
+                        $ln = 14.6;
+                    }
                 }
-                $ln = 14.6;
             }
             else{
-                $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc.pdf'));
+                if(strtotime($this->subcontrato->fecha) >= strtotime('2024-01-31'))
+                {
+                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc2024.pdf'));
+                }else{
+                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc.pdf'));
+                }
             }
             $this->clausulado = $this->importPage(1);
             $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
@@ -108,17 +130,32 @@ class SubcontratoFormato extends FPDI
 
                 $this->Ln($ln);
                 $this->SetFont('Arial', 'B', 5);
-                $this->Cell(18.15);
-                $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
+                if($nuevo == 1)
+                {
+                    $this->Cell(19.7);
+                    $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
 
-                $this->Ln(.22);
-                $this->Cell(10.3);
-                $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
+                    $this->Ln(.20);
+                    $this->Cell(11.5);
+                    $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
 
-                $this->Ln(.18);
-                $this->Cell(12.4);
-                $this->SetFillColor('255,255,255');
-                $this->Cell(.7,.15,$fecha_exp[2],'',0,'L', 1);
+                    $this->Ln(.18);
+                    $this->Cell(13.2);
+                    $this->SetFillColor('255,255,255');
+                    $this->Cell(.7,.15,substr($fecha_exp[2], -1),'',0,'L', 1);
+                }else{
+                    $this->Cell(18.15);
+                    $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
+
+                    $this->Ln(.22);
+                    $this->Cell(10.3);
+                    $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
+
+                    $this->Ln(.18);
+                    $this->Cell(12.4);
+                    $this->SetFillColor('255,255,255');
+                    $this->Cell(.7,.15,$fecha_exp[2],'',0,'L', 1);
+                }
             }
         }else{
             $postTitle=.7;
