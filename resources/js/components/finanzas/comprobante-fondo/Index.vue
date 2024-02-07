@@ -1,22 +1,20 @@
 <template>
-    <span>
-        <div class="row">
-            <div class="col-12">
-                <button @click="create" v-if="$root.can('registrar_comprobante_fondo')" class="btn btn-app pull-right">
-                    <i class="fa fa-plus"></i> Registrar
-                </button>
-            </div>
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <datatable v-bind="$data" />
-                        </div>
+    <div class="row">
+        <div class="col-12">
+            <button @click="create" v-if="$root.can('registrar_comprobante_fondo')" class="btn btn-app pull-right">
+                <i class="fa fa-plus"></i> Registrar
+            </button>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <datatable v-bind="$data" />
                     </div>
                 </div>
             </div>
         </div>
-    </span>
+    </div>
 </template>
 
 <script>

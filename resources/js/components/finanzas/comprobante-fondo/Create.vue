@@ -48,7 +48,7 @@
                                             type="text"
                                             name="referencia"
                                             data-vv-as="Referencia"
-                                            v-validate="{required: true}"
+                                            v-validate="{required: true, max: 64}"
                                             class="form-control"
                                             id="referencia"
                                             placeholder="Referencia"
@@ -215,7 +215,7 @@
                                                  id="observaciones"
                                                  class="form-control"
                                                  v-model="observaciones"
-                                                 v-validate="{required: true}"
+                                                 v-validate="{required: true,  max:4000}"
                                                  data-vv-as="Observaciones"
                                                  :class="{'is-invalid': errors.has('observaciones')}"
                                              ></textarea>
