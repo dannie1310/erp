@@ -78,6 +78,11 @@ class Documento extends Model
         return $this->belongsTo(Serie::class, 'IdSerie','idseries');
     }
 
+    public function serieSinGlobal()
+    {
+        return $this->belongsTo(Serie::class, 'IdSerie','idseries')->withoutGlobalScopes();
+    }
+
     public function tipo()
     {
         return $this->belongsTo(TipoDocto::class,'IdTipoDocto','IdTipoDocto');
@@ -143,7 +148,7 @@ class Documento extends Model
     public function getSerieDescripcionAttribute()
     {
         try {
-            return $this->serie->Descripcion;
+            return $this->serieSinGlobal->Descripcion;
         }catch (\Exception $e)
         {
             return null;
