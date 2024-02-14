@@ -85,7 +85,7 @@
                             Retenciones
                         </th>
                         <th class="encabezado">
-                            Total
+                            Otros Impuestos
                         </th>
                     </tr>
                     <tr>
@@ -105,14 +105,17 @@
                             {{ factura.retencion_format }}
                         </td>
                         <td class="money">
-                            {{ factura.total_format }}
+                            {{ factura.otros_format }}
                         </td>
                     </tr>
                     <tr>
                         <th class="encabezado">
+                            Total
+                        </th>
+                        <th class="encabezado">
                             Moneda
                         </th>
-                        <th class="encabezado" colspan="2">
+                        <th class="encabezado">
                             UUID
                         </th>
                         <th class="encabezado c150">
@@ -127,10 +130,13 @@
 
                     </tr>
                     <tr>
+                        <td class="money">
+                            {{ factura.total_format }}
+                        </td>
                         <td>
                             {{ factura.moneda }}
                         </td>
-                        <td colspan="2">
+                        <td>
                             {{factura.uuid}}
                         </td>
                         <td >
