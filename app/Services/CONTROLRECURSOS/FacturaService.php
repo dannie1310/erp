@@ -106,6 +106,7 @@ class FacturaService
         }else{
             $arreglo["retencion"] = 0;
         }
+        $bandera = 0;
         if(array_key_exists('traslados', $arreglo_cfd))
         {
             $suma = 0;
@@ -115,8 +116,16 @@ class FacturaService
                 {
                     $suma = $suma + $traslado['importe'];
                 }
+                if($traslado['impuesto'] == '002')
+                {
+                    $bandera = 1;
+                    $arreglo["impuesto"] = $arreglo_cfd['traslados'][0]['importe'];
+                    $arreglo["otros"] = $arreglo_cfd['traslados'][1]['importe'];
+                }
             }
-            $arreglo["otros"] = $suma;
+            if($bandera != 1) {
+                $arreglo["otros"] = $suma;
+            }
         }else{
             $arreglo["otros"] = 0;
         }
