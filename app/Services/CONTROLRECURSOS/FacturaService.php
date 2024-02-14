@@ -103,6 +103,9 @@ class FacturaService
         if(array_key_exists('retenciones', $arreglo_cfd))
         {
             $arreglo["retencion"] = $arreglo_cfd['retenciones'][0]['importe'];
+            if(count($arreglo_cfd['retenciones']) > 1) {
+                $arreglo["otros"] = $arreglo_cfd['retenciones'][1]['importe'];
+            }
         }else{
             $arreglo["retencion"] = 0;
         }
@@ -120,7 +123,9 @@ class FacturaService
                 {
                     $bandera = 1;
                     $arreglo["impuesto"] = $arreglo_cfd['traslados'][0]['importe'];
-                    $arreglo["otros"] = $arreglo_cfd['traslados'][1]['importe'];
+                    if(count($arreglo_cfd['traslados']) > 1) {
+                        $arreglo["otros"] = $arreglo_cfd['traslados'][1]['importe'];
+                    }
                 }
             }
             if($bandera != 1) {
