@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cfdi:Comprobante xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd" Version="4.0" Fecha="2024-01-05T06:10:01" Sello="Oqh3btZbLRyoNg1z6k3RKRkvDm5FehTqYV+Ui3VJmfcL8b2DadVpbF+znlpXSsRw27HLnu7rsaQBl0Q3SoS1JmD3/osYR+D56bo789GRii84SOz3draW6GgG3z/tl20LSPGdQ/WLh4lwgmHG6tPddHz29sz0e+k6kOj4wzvS4wk2+CCppbCnCA+aYtPNENUmn/HSlrbt8bulLUBnKBylbYo5tBQSIQhPRoSYSwJ9dzWkvCi4oac/EYMq1ybIdliaMemym01DO3uehoRxItkINBb2hWTwC0vPxuwYsT6Yxi32TwV/lDQ8D4x+e5dLHJLLXPFR4oQIQWerjLuVF+JVXg==" FormaPago="99" NoCertificado="00001000000511096886" Certificado="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" SubTotal="4400.00" Moneda="MXN" Total="5049.00" TipoDeComprobante="I" Exportacion="01" MetodoPago="PPD" LugarExpedicion="03720" xmlns:cfdi="http://www.sat.gob.mx/cfd/4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cartaporte30="http://www.sat.gob.mx/CartaPorte30">
+  <cfdi:Emisor Rfc="MEAM6806119ZA" Nombre="MAURICIO MEJIA ANDREU" RegimenFiscal="626" />
+  <cfdi:Receptor Rfc="OAP091030NV8" Nombre="OPERADORA DE ACTIVOS DE LA PENINSULAR" DomicilioFiscalReceptor="06500" RegimenFiscalReceptor="601" UsoCFDI="G03" />
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="60141000" Cantidad="1.00" ClaveUnidad="XLT" Unidad="Lote" Descripcion="LOTE DE JUGUETES PARA REGALOS DE DIA DE REYES 2024" ValorUnitario="4400" Importe="4400.00" ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="4400.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="704.00" />
+        </cfdi:Traslados>
+        <cfdi:Retenciones>
+          <cfdi:Retencion Base="4400.00" Impuesto="001" TipoFactor="Tasa" TasaOCuota="0.012500" Importe="55.00" />
+        </cfdi:Retenciones>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+  <cfdi:Impuestos TotalImpuestosTrasladados="704.00" TotalImpuestosRetenidos="55.00">
+    <cfdi:Retenciones>
+      <cfdi:Retencion Impuesto="001" Importe="55.00" />
+    </cfdi:Retenciones>
+    <cfdi:Traslados>
+      <cfdi:Traslado Base="4400.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="704.00" />
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital" xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd" Version="1.1" UUID="58566DB4-6DD5-4E6F-B17F-6B9D691F0801" FechaTimbrado="2024-01-05T06:10:36" RfcProvCertif="SAT970701NN3" SelloCFD="Oqh3btZbLRyoNg1z6k3RKRkvDm5FehTqYV+Ui3VJmfcL8b2DadVpbF+znlpXSsRw27HLnu7rsaQBl0Q3SoS1JmD3/osYR+D56bo789GRii84SOz3draW6GgG3z/tl20LSPGdQ/WLh4lwgmHG6tPddHz29sz0e+k6kOj4wzvS4wk2+CCppbCnCA+aYtPNENUmn/HSlrbt8bulLUBnKBylbYo5tBQSIQhPRoSYSwJ9dzWkvCi4oac/EYMq1ybIdliaMemym01DO3uehoRxItkINBb2hWTwC0vPxuwYsT6Yxi32TwV/lDQ8D4x+e5dLHJLLXPFR4oQIQWerjLuVF+JVXg==" NoCertificadoSAT="00001000000504465028" SelloSAT="eol93qVnmaZHqFGpyGks9TUdwjW16Ucg+Yh5rFzETThWBATOZY6j8ozczAYJ1MHBGHNN+Sjz+gv+AToneRo6Kn25IiPZmdG+332pYlfiEHODtCmGH3YR33Bm14FBQ2gC0J0+pBcEWMIpk74aOpyF+A7DWr5fJiRYhNL0VDS+D0N79VEk4rXQp9VR6vjoZg9dXCTiY6p0Xvx6TpTUFSP7tYmiiFyHVMZ3AzNDpLEKAsavrOa5XP8d2bUkYfSe+kGlUg3Q55yZJepx/b5jpGTCHkvDlH5go+rxSe0/xMgOmvY3VDuOSi55XW0gBD63z3v67pAg2Fmb8Bv5G6fgqzLU1w==" />
+  </cfdi:Complemento>
+</cfdi:Comprobante>

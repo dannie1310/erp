@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<cfdi:Comprobante xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd" xmlns:cfdi="http://www.sat.gob.mx/cfd/4" Version="4.0" Serie="TP" Folio="B1-284465160P1-3" Fecha="2023-10-28T08:51:00" Sello="UVP2A+dCDPaY4M1uNIqwJVS//gTd8DtCC7fQr0D4VKXteRs1CrBvVzFKoExptcgv2VKXFATxhfJYnyMb2M2o/NnzLQjv3WGR1jxfJnjSxTj3fq0cAoOSK4n+A+ocpaGybfnve4zotUmPKfbiK26vHqyv03Zkw+fA3TYocfmnQggOLuA6L6Jl5itseV9HYtS6+y1/uDc6yHY4wX4FvBZJTKD9qYQ22XsOzoFrgqFMQgHKXRUx+v18NdgUD1eGoxueXiAjH1F2ziJ8UcoF7i2QkSjhysgg/d37DkndCsQaXCVZGPY2ez5z/RhQDYQftHIlbBYmChPDRIaPw8PgAqd48A==" FormaPago="99" NoCertificado="00001000000510135420" Certificado="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" SubTotal="5500.00" Moneda="MXN" Total="6380" TipoDeComprobante="I" MetodoPago="PPD" LugarExpedicion="04519" Exportacion="01">
+  <cfdi:Emisor Rfc="TPT890516JP5" Nombre="TOTAL PLAY TELECOMUNICACIONES" RegimenFiscal="601"/>
+  <cfdi:Receptor Rfc="RCO031210G70" Nombre="RESULTADOS CORPORATIVOS" UsoCFDI="G03" DomicilioFiscalReceptor="06500" RegimenFiscalReceptor="601"/>
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="81161700" NoIdentificacion="SERVICIO_ENLACE" Cantidad="1" ClaveUnidad="E48" Descripcion="Servicio de Telecomunicaciones" ValorUnitario="5500.00" Importe="5500" ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="5500.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="880"/>
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+  <cfdi:Impuestos TotalImpuestosTrasladados="880">
+    <cfdi:Traslados>
+      <cfdi:Traslado Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="880.00" Base="5500.00"/>
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital Version="1.1" UUID="983B4865-07BE-4A1E-8572-326C31E285FA" FechaTimbrado="2023-10-28T09:11:57" RfcProvCertif="INT020124V62" SelloCFD="UVP2A+dCDPaY4M1uNIqwJVS//gTd8DtCC7fQr0D4VKXteRs1CrBvVzFKoExptcgv2VKXFATxhfJYnyMb2M2o/NnzLQjv3WGR1jxfJnjSxTj3fq0cAoOSK4n+A+ocpaGybfnve4zotUmPKfbiK26vHqyv03Zkw+fA3TYocfmnQggOLuA6L6Jl5itseV9HYtS6+y1/uDc6yHY4wX4FvBZJTKD9qYQ22XsOzoFrgqFMQgHKXRUx+v18NdgUD1eGoxueXiAjH1F2ziJ8UcoF7i2QkSjhysgg/d37DkndCsQaXCVZGPY2ez5z/RhQDYQftHIlbBYmChPDRIaPw8PgAqd48A==" NoCertificadoSAT="00001000000505211329" SelloSAT="JMVJWvA/K5FqhVrLXiursgC3ax9GMv1aa561IxsqbUJSUYc4U/JXo+lBiajCOwJMm+aCDV6pR367rE2/nZCjDDiBLTTxyARAH98xOUyCao+9g3XLBzAgM24Fc0WKzkO5mJf60HlFU7Boq8JZn6mFN/p/75a/j2vNpd5dtXzyOH1MvAPM2vvHG49JhBK2g+zsZMkBtEKKCYt3TjKKhclW6MpxZGze2OG9VMjlj/6oOKeykRnxVsxi4b4bqqevC/lGmRI1NeDTyA9RTtjrcHd0VPaNyTPrs9Oh6K9Lm7P6PKgk4iacIzXAzp5QobsZh8AEoT5cbL0ImsNP/GXb9f+13g==" xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd" xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital"/>
+  </cfdi:Complemento>
+  <cfdi:Addenda xmlns:tp="https://www.totalplay.com/Schemas/Documentos" xsi:schemaLocation="https://www.totalplay.com/Schemas/Documentos totalplay.xsd">
+    <tp:FacturaInterfactura TipoCliente="2" TipoDocumento="1" TipoDocumentoDesc="FacturaEnlace" TipoServicio="3">
+      <tp:Emisor RI="0109990" RegimenFiscalDesc="General de Ley Personas Morales" RegimenCapital="S.A.P.I. DE C.V."/>
+      <tp:Receptor Apellido="ESPINOSA HERNANDEZ" Direccion="AV PASEO DE LA REFORMA 383 INT PISO 8" Direccion2="Col. CUAUHTEMOC, CUAUHTEMOC" Direccion3="CIUDAD DE MEXICO, CIUDAD DE MEXICO" Direccion4="MX 06500" Nombre="LUIS HUMBERTO" NombreFiscal="RESULTADOS CORPORATIVOS"/>
+      <tp:Encabezado FolioReferencia="B1-284465160P1" FolioSerie="B1-284465160P1-3" IVA="880" IVAPCT="0.160000" MostrarProntoPago="0" NumTelefono="48575443A25458AA" Paperless="0" Plan="Internet Plus Simétrico 400 Pyme" SerieFolio="TPB1-284465160P1-3" TemplateId="TP_FacturaEnlace4.wfd" TemplateVersion="02022023" TipoCliente="2" TipoDocumento="1" TipoDocumentoDesc="FacturaEnlace" TipoServicio="3" TotalPagar="6380" TotalProntoPago="6380" cadenaOriginal="||4.0|TP|B1-284465160P1-3|2023-10-28T08:51:00|99|00001000000510135420|5500.00|MXN|6380|I|01|PPD|04519|TPT890516JP5|TOTAL PLAY TELECOMUNICACIONES|601|RCO031210G70|RESULTADOS CORPORATIVOS|06500|601|G03|81161700|SERVICIO_ENLACE|1|E48|Servicio de Telecomunicaciones|5500.00|5500|02|5500.00|002|Tasa|0.160000|880|5500.00|002|Tasa|0.160000|880.00|880||" cadenaOriginalTimbre="||1.1|983B4865-07BE-4A1E-8572-326C31E285FA|2023-10-28T09:11:57|INT020124V62|UVP2A+dCDPaY4M1uNIqwJVS//gTd8DtCC7fQr0D4VKXteRs1CrBvVzFKoExptcgv2VKXFATxhfJYnyMb2M2o/NnzLQjv3WGR1jxfJnjSxTj3fq0cAoOSK4n+A+ocpaGybfnve4zotUmPKfbiK26vHqyv03Zkw+fA3TYocfmnQggOLuA6L6Jl5itseV9HYtS6+y1/uDc6yHY4wX4FvBZJTKD9qYQ22XsOzoFrgqFMQgHKXRUx+v18NdgUD1eGoxueXiAjH1F2ziJ8UcoF7i2QkSjhysgg/d37DkndCsQaXCVZGPY2ez5z/RhQDYQftHIlbBYmChPDRIaPw8PgAqd48A==|00001000000505211329||" qrCode="https://verificacfdi.facturaelectronica.sat.gob.mx/default.aspx?id=983B4865-07BE-4A1E-8572-326C31E285FA&amp;re=TPT890516JP5&amp;rr=RCO031210G70&amp;tt=6380&amp;fe=Aqd48A==" FolioManual="B1-284465160P1-3" Folio="B1-284465160P1-3" FechaVisualizacion="10/2023" FechaProntoPago="2023-11-07" FechaPago="2023-11-16" Cuenta="0200602185" Correo="infraestructura@grupohi.mx" Code="AEAEAE" Ciclo="28" Segmento=".5.9.2">
+        <tp:Cuerpo AjustePorRedondeo="-0.99" CargosCreditos="0" ConsumosAdicionalesTel="0" ConsumosExtras="0" DescuentosPromociones="0" OtrosCargos="6380" OtrosCreditos="0.00" PeriodoFin="27-10-2023" PeriodoInicio="28-09-2023" SaldoALaFecha="0.99" SaldoAnterior="6380.99666" ServiciosExtras="0" SuPagoGracias="-6380" Subtotal="5500" UnidadDeMedidaFiscal="E48" TotalPagar="880" ConsumosExtrasIVA="0" ConsumosExtrasConIVA="0.00" ServiciosExtrasIVA="0" ServiciosExtrasConIVA="0.00" OtrosCreditosIVA="0.00" OtrosCreditosConIVA="0.00" CargosCreditosIVA="0" CargosCreditosConIVA="0.00" DescuentosPromocionesIVA="0" DescuentosPromocionesConIVA="0.00" Ajustes="0" TotalNubeConIVA="0">
+          <tp:Rentas>
+            <tp:Renta Descripcion="Internet Plus Simétrico 400 Pyme" Importe="5500" ImporteIVA="880" ImporteConIVA="6380.00"/>
+          </tp:Rentas>
+          <tp:Historicos>
+            <tp:Historico Mes="May 2023" Monto="6380" Renglon="5"/>
+            <tp:Historico Mes="Jun 2023" Monto="6380" Renglon="4"/>
+            <tp:Historico Mes="Jul 2023" Monto="6380" Renglon="3"/>
+            <tp:Historico Mes="Ago 2023" Monto="6380" Renglon="2"/>
+            <tp:Historico Mes="Sep 2023" Monto="6380" Renglon="1"/>
+            <tp:Historico Mes="Oct 2023" Monto="6380" Renglon="0"/>
+          </tp:Historicos>
+          <tp:Pagos>
+            <tp:Pago Desc="Transferencia Bancaria" Fecha="16-Oct-23" Monto="-6380" Renglon="1"/>
+          </tp:Pagos>
+          <tp:ResumenOCCs ImporteTotal="0">
+            <tp:OCCs Descripcion="Bonificaciones a la Cuenta" Importe="0"/>
+            <tp:OCCs Descripcion="Cargos a la Cuenta" Importe="0"/>
+            <tp:OCCs Descripcion="Ajustes a la Cuenta" Importe="0"/>
+          </tp:ResumenOCCs>
+          <tp:ReferenciasBancarias>
+            <tp:Referencia Banco="BANCO AZTECA / OXXO Ref: 08000002006021850" Renglon="0"/>
+            <tp:Referencia Banco="BANCOMER Conv: 1278800 Ref: 08000002006021850" Renglon="1"/>
+            <tp:Referencia Banco="BANORTE Emisora: 2052 Ref: 08000002006021850" Renglon="3"/>
+            <tp:Referencia Banco="SCOTIABANK No. Serv. 4005 Ref: 08000002006021850" Renglon="4"/>
+            <tp:Referencia Banco="SANTANDER Conv: 2745 Ref: 08000002006021850" Renglon="5"/>
+            <tp:Referencia Banco="BANAMEX B: 8192010800000200602185014" Renglon="6"/>
+            <tp:Referencia Banco="SPEI a BANCO AZTECA con tu CLABE personalizada: 127180802006021851" Renglon="7"/>
+          </tp:ReferenciasBancarias>
+          <tp:DetallesProntoPago>
+            <tp:DetalleProntoPago Cuenta="0200602185" Descripcion="Internet Plus Simétrico 400 Pyme" Importe="0"/>
+          </tp:DetallesProntoPago>
+          <tp:Cuentas>
+            <tp:Cuenta NumeroCuenta="0200602185">
+              <tp:Lineas>
+                <tp:Linea Numero="48575443A25458AA">
+                  <tp:Rentas Importe="5500">
+                    <tp:Renta Descripcion="Internet Plus Simétrico 400 Pyme" Importe="5500"/>
+                  </tp:Rentas>
+                  <tp:RentasAdicionales Importe="0"/>
+                  <tp:ConsumosServiciosExtras/>
+                </tp:Linea>
+              </tp:Lineas>
+            </tp:Cuenta>
+          </tp:Cuentas>
+          <tp:Lineas>
+            <tp:Linea Numero="48575443A25458AA">
+              <tp:Rentas Importe="5500">
+                <tp:Renta Descripcion="Internet Plus Simétrico 400 Pyme" Importe="5500"/>
+              </tp:Rentas>
+              <tp:RentasAdicionales Importe="0"/>
+              <tp:ConsumosServiciosExtras/>
+            </tp:Linea>
+          </tp:Lineas>
+          <tp:Emails>
+            <tp:Email Email="infraestructura@grupohi.mx" EmailOK="true" URL="h7AZ3ZS56thrrN%2B7m%2FYMcDhk%2FpUJL9EHP6cN67znkpf9MZb%2FXPwCVyf64fr81CRNyOtZyN4%2BpbStbhU6sst%2FpM7xQuIy%2FDXwfCza0SgvELuM2DuGW8%2BJ4MN6lT9bjziqKOcHe8MGijRqT%2FUeePPW3BgUmvmOCM0aerFBlcvfTmo%3D"/>
+          </tp:Emails>
+          <tp:Telefonos>
+            <tp:Telefono Descripcion="Atención a Clientes" Numero="800-303-3333"/>
+          </tp:Telefonos>
+        </tp:Cuerpo>
+      </tp:Encabezado>
+    </tp:FacturaInterfactura>
+  </cfdi:Addenda>
+</cfdi:Comprobante>

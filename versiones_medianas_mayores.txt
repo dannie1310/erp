@@ -1,0 +1,242 @@
+2019.1.0.0      Sistema Contable, Sistema de Tesorería, Sistema de Formatos con nueva versión de lenguaje
+2019.1.1.0      Solicitudes de Pago anticipado / token de autenticación
+2019.1.2.0      Mostrar sistemas externos dentro del apartado sao del portal de aplicaciones
+2019.2.0.0      Uso de token de Google Auth/ Asignar usuarios a áreas subcontratantes / PDF de solicitud de pago anticipado / Habilitar y deshabilitar sistemas por obra / Distribución de recursos autorizados en remesa / Primera versión del módulo de Auditoría para consulta de Permisos por Obra
+2019.3.0.0      Reorder versions	 2019.3.0.0 UNRELEASED 16/Jul/19 16/Aug/19 Detonar pagos a ERP con bitácora bancaria de Santander / ABC básico de fondos / ABC básico de cuentas bancarias de obra / Proceso para gestión de cuentas bancarias para depósito / Manejo de estado de consulta para proyecto / Evitar visualización de proyectos terminados
+2019.3.1.0      Eliminación de entradas y salidas de almacén
+2019.3.2.0      Scope de estimaciones para usuarios externos (contratista) / consulta de estimaciones / PDF de estimaciones / Consulta de Cuentas bancarias / Sección de configuración de finanzas para estimaciones
+2019.3.3.0      Sección para configurar si en una obra se pueden solicitar documentos manuales en remesa / Reestructurar validación para mostrar aplicaciones en página principal del portal de aplicaciones
+2019.4.0.0      Inicialización de inventario físico / Generación de PDF de marbetes con códigos de barras y control de folios / Descarga de Layout para captura masiva de conteos / Carga de conteos por medio de layout / Descarga de detalle de conteos por marbete en excel
+2019.4.1.0      Registro y consulta de ajustes de Inventarios (positivos, negativos y nuevos lotes) / Registro y eliminación de conteos / Registro y eliminación de marbetes
+2019.4.2.0      Eliminación de ajustes de inventario / Registro de pagos por layout / Registro de conteos con código de barras / Iniciar proceso de inventario físico total y parcial / Listado de facturas / Alta de familias e insumos tipo material, servicios y herramienta y equipo / descarga en excel de información de permisos por obra y por usuario / Actualización de firmas de formatos de entradas y salidas de almacén
+2019.5.0.0      Eliminación de estimaciones / Registro y Consulta de Entradas de Almacén / Registro y Consulta de Salidas de Almacén / Catálogos con alta de familias e Insumos / Movimientos Bancarios se Pasan de Tesorería a Finanzas
+2019.5.1.0      Búsqueda de insumos porid, número de parte y descripción, búsqueda de almacenes por descripción en los apartados de ajustes de inventario y salidas de almacén
+2020.0.1.0      Aplicar parametrización de formato de orden de pago de estimación de acuerdo a la configuración registrada
+2020.0.2.0      Agregar configuración "+ IVA" en retención de fondo de garantía / Mostrar monto de contrato en formato de orden d pago de estimación
+2020.1.0.0      Carga de requisiciones por layout / Registro, Consulta, PDF y Eliminación de Requisiciones / Asignar tipo de concepto al árbol de conceptos de la obra: CD, CI y Amortizables / Registro de ventas de activo fijo / Registro de Facturas con XML / PDF de CR / Consulta de Facturas / Eliminación de facturas / Registro de EFOS / Consulta de EFOS / ABC Empresas (proveedores, contratistas, clientes y destajistas) con validación de EFOS / Notificar por email incidencias de control interno / Carga de bitácora por dispersión
+2020.1.1.0      Alta de unidades
+2020.1.2.0      Edición y eliminación de unidades
+2020.1.3.0      Registro de insumos mano de obra
+2020.10.0.0     Merge pull request #2681 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-2025-editar-datos-de-seguimiento-de-conceptos to master
+2020.10.1.0     Merge pull request #2717 in HI/erp-hi from ~DBENITEZC/erp-hi:feature/ERP-2039-adecuar-firmas to master
+2020.10.2.0     Merge pull request #2728 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-1724-pasar-por-alto-algunas-validaciones-cfd-con-errores-recurrentes to master
+2020.10.3.0     Merge pull request #2744 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-2059-informe-de-efos-vs-cfdi-recibidos-detallado-pdf to master
+2020.10.4.0     Merge pull request #2750 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-2064-buscar-conceptos-a-asignar-por-clave to master
+2020.10.5.0     Merge pull request #2760 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-2016-representacion-de-xml to master
+2020.10.6.0     Visualizar representación de XML en listado de CFDI
+2020.10.7.0     ABC Catálogo almacenes
+2020.2.0.0      Consulta de transacciones relacionadas con EFOS (incluye descarga en xcel)/ Consulta de incidencias de control interno / Asociar CC a partida de requisición (formulario y excel) / Resúmen de estimación de acuerdo a la configuración de estimaciones/ Descuentos en estimaciones similar a Módulo SAO / Se retiene y cancela fondo de garantía al aprobar y desaprobar estimaciones / Se corrige falta de contexto en layout de pagos
+2020.2.1.0      Mejorar búsqueda de subcontrato al hacer estimación / no hacer obligatoria la captura de tipo de gasto al dar de alta un fondo
+2020.2.10.0     Carga de CFD de manera masiva con ZIP
+2020.2.11.0     Dar opción de usar concepto de póliza para los conceptos de los movimientos cuando se edita
+2020.2.12.0     Revertir revisión de factura
+2020.2.13.0     Presentar show de factura similar a SAOWEB
+2020.2.2.0      Retención de IVA en estimación
+2020.2.3.0      Retenciones y Liberaciones / Edición de Amortización de Anticipo / Registro de estimación con reglas de configuración de finanzas
+2020.2.4.0      Resumen de estimaciones en ventana de edición, eliminación y consulta
+2020.2.5.0      Consulta de pólizas
+2020.2.6.0      Edición de pólizas
+2020.2.7.0      Cargar partidas de ajuste positivo , negativo y nuevo lote con layout
+2020.2.8.0      Configuración de visibilidad y editabilidad de empresas de contpaq
+2020.2.9.0      Dar opción de registrar número de tarjetas en el registro de cuentas bancarias / Actualización de registro de unidades / Modificar tipo de entrega de salida de almacén / Modificar tipo de empresa contpaq (consolidadora, histórico)
+2020.3.0.0      Edición de estimaciones / complementar formato de estimación / Edición y baja de insumo servicio / Corrección de modales para dispositivos iOS / Relacionar empresa individual con consolidadora
+2020.3.1.0      Opción para consultar prepóliza desde ventana de consulta de factura
+2020.3.10.0     Procesar CFD desde directorio de servidor
+2020.3.11.0     Agregar a formato de estimación las retenciones de IVA / Reactivar obra
+2020.3.12.0     Reporte CFD EFOS
+2020.3.13.0     Aplicación de notas de crédito
+2020.3.14.0     Actualización de firmas de estimaciones y órdenes de pago
+2020.3.15.0     Generación de pagos con nueva versión de bitácora de portal de santander
+2020.3.2.0      permitir disminuir el monto de una factura para emular el uso de las notas de crédito
+2020.3.3.0      Registro, consulta y listado de solicitud de edición de póliza
+2020.3.4.0      Autorización / Rechazo de solicitudes de cambio de póliza
+2020.3.5.0      Aplicación de solicitud autorizada de cambio de pólizas
+2020.3.6.0      Dar opción para consultar manuales de usuario de los sistemas
+2020.3.7.0      Funcionalidad faltante en los catálogos de insumos (eliminación y edición)
+2020.3.8.0      Descarga de solicitud de edición en formato de excel
+2020.3.9.0      Registro de retención de 2/3 de IVA en estimación
+2020.4.0.0      Listado y consulta de subcontratos / Aplicar y liberar penalizaciones / Restructuración de liberación de retenciones / Registro, eliminación, listado y autorización de solicitudes
+2020.4.1.0      Registrar empresas SAT desde CFD en caso de que no existan en el catálogo
+2020.4.10.0     Búsqueda de empresas factureras por palabras clave
+2020.4.11.0     Informe de diferencias (web)
+2020.4.12.0     Informe de Listado de EFOS vs CFDI Recibidos (WEB y PDF)
+2020.4.13.0     Informe de diferencias de pólizas en PDF
+2020.4.14.0     Identificar CFD de ingreso y egreso en el procesamiento masivo / Restar CFD tipo egreso del informe de EFOS vs CFD
+2020.4.15.0     Informe cantidad de CFD x Empresa
+2020.4.16.0     Informar resultado de procesamiento de CFD
+2020.4.17.0     Control de cambios de EFOS al cargar lista y CFD
+2020.4.18.0     Envío de notificación por cambios de EFOS Hermes
+2020.4.19.0     Merge pull request #2236 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-1798-Módulo-para-CFD-EFOS-No-deducidos to master
+2020.4.2.0      Autorizar solicitudes considerando dos decimales / Corrección de error en scope de solicitudes de modificación de fondo de garantía / Corregir error durante amortización de anticipo y mejorar mensaje en caso de error / Corregir validación de existencia de configuración de finanzas para estimaciones cuando se ingresa por primera vez a una obra
+2020.4.20.0     Merge pull request #2240 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-1817-cargar-cfd-en-formato-lineal-txt to master
+2020.4.21.0     Merge pull request #2250 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-1831-separar-informe-efos-vs-cfd-por-tipos to master
+2020.4.22.0     Incluir fechas de DOF en catálogo de EFOS
+2020.4.23.0     Incluir fechas de DOF en informe de EFOS vs CFD
+2020.4.24.0     Mostrar en index de solicitudes la base de datos
+2020.4.25.0     Consulta de formatos de pólizas (dos caidas) desde listado de pólizas contpaq
+2020.4.26.0     Mostrar empresa en las solicitudes de edición de pólizas
+2020.4.27.0     Cargar CFD versión 3.2 en registro de facturas
+2020.4.28.0     Informe EFOS - Empresa desglosados por año
+2020.4.3.0      Identificación y listado de pólizas con inconsistencias
+2020.4.4.0      Impresión de pólizas relacionadas a solicitud de edición
+2020.4.5.0      Detectar pólizas con movimientos desordenados como un caso nuevo de diferencia de póllizas
+2020.4.6.0      Detonar solicitud de edición de pólizas a partir de diferencias
+2020.4.7.0      Listado y Consulta Solicitudes de Edición
+2020.4.8.0      Aprobación, Desaprobación y Aplicación de Solicitudes de Edición
+2020.4.9.0      PDF de pólizas para escenarios antes y después
+2020.5.0.0      Primera versión de padrón de proveedores
+2020.5.1.0      Usar registro patronal opcional en lugar de NSS obligatorio
+2020.5.2.0      Edición de pólizas contpaq
+2020.5.3.0      PDF de Pólizas nueva caida escenarios propuesta y original
+2020.5.4.0      Reconocer SAO ERP como aplicación en el portal
+2020.5.5.0      Mostrar manuales de usuario para aplicaciones del portal
+2020.5.6.0      Generar carpeta con determinados CFD
+2020.5.7.0      Adecuación a la generación de pagos por bitácora
+2020.5.8.0      Informe de CFDI recibidos por año
+2020.6.0.0      Sistema de Compras / Contratos Proyectados completos
+2020.7.0.0      Merge pull request #2589 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-1976-visualizar-transacciones-relacionadas to master
+2020.7.1.0      Obtener transacciones relacionadas sobre demanda
+2020.7.2.0      Consulta de Pago
+2020.7.3.0      Descarga de pólizas en ZIP / Consulta de pólizas por layout
+2020.8.0.0      Carga y consulta de archivos PDF en transacciones
+2020.8.1.0      Cargar y consultar imagenes en archivos de transacción
+2020.8.2.0      Eliminar documentos de transacción
+2020.8.3.0      Consulta general de archivos de transacción
+2020.8.4.0      Merge pull request #2631 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-2013-descarga-de-cfdi to master
+2020.8.5.0      Merge pull request #2643 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-1990-solicitudes-de-pago-anticipado-y-polizas-en-transacciones-relacionadas to master
+2020.9.0.0      Merge pull request #2661 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/-ERP-2024-Claves-de-presupuesto to master
+2020.9.1.0      Merge pull request #2670 in HI/erp-hi from ~EMARTINEZ/erp-hi:feature/ERP-2028-mostrar-detalle-de-destino-en-show-de-contrato-proyectado to master
+2021.0.1.0      Evitar registro de CFDI que no pertenecen a las empresas del catálogo
+2021.0.2.0      Mostrar datos de carga por parte de la obra en Index de CFDI del sistema de Fiscal
+2021.0.3.0      Permitir la consulta de CFDI por proyecto
+2021.0.4.0      Se muestra en los índices del CFDI la relación con las pólizas contpaq
+2021.0.5.0      Detonar solicitud de asociación de CFDI con Pólizas desde Contpaq
+2021.0.6.0      Sincronizar lista de empresas con contpaq
+2021.0.7.0      Merge pull request #2898 in HI/erp-hi from release/2021.0.7.0 to master
+2021.0.8.0      Identificación de Pólizas Contpaq que requieren tener CFDI asociado
+2021.0.9.0      Reporte de pólizas que requieren CFDI y no lo tienen
+2021.1.0.0      Migración de finanzas completa
+2021.2.0.0      Carga de CFDI por parte de proveedor y aprobación por parte del proyecto
+2021.2.1.0      Mejora en formularios de entrega y recepción de CFDI / Mejora en Index de factura y en formulario de revisión de factura
+2021.2.10.0.0   Quitar columna de fecha primera publicación en informes de proveedores no localizados
+2021.2.2.0      Editar rubro de factura
+2021.2.3.0      Cargar y consultar documentos de soporte de solicitud de revisión de CFDI
+2021.2.4.0      Avance en migración de acarreos: catálogo de origenes y tiros, descarga en excel y consulta de histórico de cambios en catálogos
+2021.2.5.0      Informe web de cuentas contables con saldo negativo / sincronización de saldos con contpaq
+2021.2.6.0      Proveedores no localizados
+2021.2.7.0      Calculo y presentación de fecha límite de aclaración ante el SAT
+2021.2.8.0      Registro, listado, consulta y cancelación de fondos fijos alcance CADECO
+2021.2.9.0      Avance catálogo de acarreos: Catálogo de marcas / empresas / materiales / operadores / impresoras
+2021.3.0.0      Sistema de contratos con misma funcionalidad que saoweb/ solicitud de cambio a subcontrato con opción de cargar por layout
+2021.3.1.0      Permitir utilizar id de concepto como clave en caso de que no estén registradas
+2021.3.2.0      Generación de póliza de interfaz al validar prepoliza SAO / generación de prepóliza SAO al revisar factura y factura de varios / llenado de tabla INTERFAZ.dbo.polizas_cfdi
+2021.3.3.0      Procesamiento automático de listado de EFOS del SAT
+2021.3.4.0      Limitar operación con proveedores no localizados en SAO ERP (compras y subcontratos) / Autorización de transacciones de proveedores no localizados para solicitar en remesa
+2021.4.0.0      Carga de CFDI a ADD Contpaq durante registro de facturas / Carga de CFDI a ADD on Demand / Asociación de Pólizas Contpaq con CFDI on demand
+2021.4.1.0      Se separa componente para seleccionar solicitud durante el registro de cotizaciones
+2021.4.2.0      Editar dirección de proyecto (texto y de plataforma digital)
+2021.5.0.0      Ciclo de Invitación de Proveedores a Cotizar / Portal de Proveedores
+2021.5.1.0      Control de cambios al presupuesto: aditiva/deductiva y extraordinario
+2021.6.0.0      Control de Cambio a Presupuesto incluyendo solicitud de cambio y cambios de insumos en costo directo
+2021.6.1.0      Procesamiento automático de listado No Localizados emitido por el SAT
+2021.6.2.0      Reorganización de sistema de control de presupuesto / habilitar publicación de avisos en ERP
+2021.6.3.0      Registro de exclusiones en cotizaciones de compra del proveedor / consulta de exclusiones en consulta de cotizaciones por parte de hermes
+2021.6.4.0      Personalización de avisos por rutas js
+2021.7.0.0      Exclusiones / Invitaciones en proceso de contratos
+2021.7.1.0      Revires de cotización (pedir contraofertas)
+2021.7.10.0     Informe SAT en sistema de contabilidad del SAO ERP
+2021.7.11.0     Asociar CFDI con empresas contpaq por medio de ADD
+2021.7.12.0     Actualización de informe SAT para utilizar estructura similar a un DWH
+2021.7.13.0     Consulta de CFDI de acuerdo a las distintas clasificaciones
+2021.7.14.0     Se identifican cfdi de dispersión de monederos y se omiten para la revisión con el sat
+2021.7.15.0     Se identifican cfdi reemplazados que no han sido cancelados
+2021.7.16.0     Se identifican cfdi reemplazados y cancelados en 2019 que fueron reemplazados en 2020 para agregarlos a los CFDI a aclarar con el SAT
+2021.7.17.0     Reestructuración de la forma de obtener cuentas y movimientos considerando las tablas del la estructura tipo DWH
+2021.7.18.0     Se agrega filtro para cuentas 2132 en informe sat
+2021.7.19.0     Recibir device id de los dispositivos móviles del sistema de acarreos
+2021.7.2.0      Funcionalidad para restablecer contraseña olvidada
+2021.7.20.0     Mostrar CFDI cancelados en una columna aparte en el informe SAT
+2021.7.21.0     Formulario para mapeo de cuentas contables con proveedores sat
+2021.7.22.0     Editar partidas de contrato proyectado
+2021.7.23.0     Eliminar asociación entre cuentas contables contpaq y proveedores sat
+2021.7.24.0     Informe multiempresa CFDI vs Pasivos
+2021.7.25.0     Validación para edición única de configuración contable en configuración de obra
+2021.7.26.0     Informe SAT permitir la consulta de pólizas en formato web
+2021.7.27.0     Validar edición de solicitudes en obras que requieren autorización
+2021.7.28.0     Asociación masiva de cuentas contables con proveedores
+2021.7.29.0     Mapeo de cuentas con proveedor por medio de RFC y tabla de proveedores contpaq
+2021.7.3.0      Informe SAT para apoyo a Fiscal LP 2020
+2021.7.30.0     Descarga de lista de CFDI en excel
+2021.7.4.0      Informe SAT-consultar listado de CFDI relacionados con un proveedor
+2021.7.5.0      Identificar si un CFDI fue reemplazado o si es un reemplazo
+2021.7.6.0      Informe SAT Se agrega filtro de empresas para movimientos
+2021.7.7.0      Informe SAT-Permitir consulta de movimientos de pólizas y formatos de póliza
+2021.7.8.0      Asociación de pólizas considerando bases de metadatos
+2021.7.9.0      Filtrar CFDI por empresa contpaq
+2021.8.0.0      Revires de ciclo de contratos / Mejoras solicitadas por LH en revires de compras / Catálogo de teléfonos con device id / Avance de obra
+2021.8.1.0      Ver estado de presupuestos / invitaciones
+2021.8.2.0      Se valida que checador tenga asignado el teléfono por device id o IMEI para poder acceder
+2021.8.3.0      Cumplimiento de observaciones realizadas en la reunión de noviembre a las comparativas  
+2021.8.4.0      Cargar CFDI en comprobantes de fondos
+2022.0.1.0      Carga de estimaciones por layout
+2022.0.10.0     Indicador de aplicación de pagos anticipados
+2022.0.11.0     considerar nodo descuento para la carga de CFDI en el registro de comprobantes de fondo
+2022.0.12.0      Carga de contratos proyectados con más de 1000 partidas por layout  / Edición de solicitud de avance por layout
+2022.0.2.0      Actualizar referencia para consumo de servicio del SAT de validación de CFDI
+2022.0.3.0      Asignación de proveedores y contratistas por layout
+2022.0.4.0      Mejoras a proceso de invitación
+2022.0.5.0      Validación de CFDI 4.0
+2022.0.6.0      Agregar columnas adicionales en informe de costos CFDI vs Costos Balanza
+2022.0.7.0      Validación semanal automática de estado de CFDI
+2022.0.8.0      Llevar registro de retenciones de CFDI en BD
+2022.0.9.0      Edición de estimación por layout
+2022.1.0.0      Aprobación de solicitudes de pago anticipado para incluir en remesa/ aprobación en formulario con token / notificaciones por SMS
+2022.1.1.0      Funcionalidad adicional para autorización de solicitudes de pago anticipado
+2022.1.2.0      Cálculo de anticipo en estimaciones para validar si se tiene que aplicar todo el porcentaje o solo el restante en caso de amortizar mayor anticipo por estimación anterior
+2022.2.0.0      Pagos y aplicación manual de pagos
+2022.2.1.0      Cambio y reclasificación de destinos con permisos especiales
+2022.2.2.0      Manejo de dos niveles de autorización de pagos anticipados
+2022.2.3.0      Conciliación bancaria similar CADECO
+2022.2.4.0      Columnas adicionales en informe costos CFDI vs costos balanza
+2022.3.0.0      Avance de subcontratos similar a modulos sao
+2022.3.1.0      Atención de obervaciones de reunión para la autorización de pagos anticipados
+2022.3.2.0      Validación de RFC con lista de EFOS y Boletinados
+2022.4.0.0      Primera versión de chatbot
+2022.4.1.0      Se agregan campos del catalogo de camiones al momento de enviarse a la app de acarreos
+2022.5.0.0      Chatbot con respuestas relacionadas con EFOS
+2022.6.0.0      Migración de consulta de resguardos
+2022.6.1.0      Mejoras a los formatos de asignación de proveedores y contratistas solicitadas por LHEH
+2022.6.2.0      Filtrar CFDI sin asociación a contpaq mas descarga en excel
+2023.1.0.0      Migración de ingresos a ERP
+2023.1.1.0      Informe REP pendiente por Empresa y Empresa->Proveedor / Ordenamiento por monto / Resaltar en color azul proveedores que son también empresas
+2023.1.2.0      Se adecua procesamiento de pagos para CFDI Ver. 4.0 (pago20)
+2023.1.3.0      al descargar CFDI se obtiene contenido de archivo de campo xml_file del registro cfd_sat correspondiente
+2023.1.4.0      Se muestran fechas de último rep y última validación de cancelaciones / se agregan textos para dar claridad a lo que es proveedor y empresa / se cambia color a verde para resaltar empresas que son del grupo hermes
+2023.1.5.0      Consulta de REP por proveedor
+2023.2.0.0      Comunicados pendientes REP se generan notificaciones que se envían por correo
+2023.2.1.0      Se agrega opción para editar cuerpo del correo a enviar en notificación REP
+2023.2.2.0      Kardex de materiales
+2023.2.3.0      Carga de cuentas de costo de la balanza desde el sistema
+2023.2.4.0      Correr validación de pólizas a partir de 2018 y solo validar diferencia en montos
+2023.2.5.0      Se agregan filtros iniciales a listado de proveedores que adeudan REPs / se agregan filtros de conjuntos para proveedores que son de hermes y no son de hermes así como proveedores que tienen y no tienen contactos en listado de  proveedores que adeudan REPs y en listado de CFDIs que que les falta REP / se reorganizan opciones relacionadas con REP en nuevo nodo padre
+2023.2.6.0      Se guarda comunicado PDF de notificación en directorio
+2023.2.7.0      Mejora tiempo de descarga del excel para los CFDI con adeudo REP y Proveedores que adeudan REP
+2023.2.8.0      Reenvío de correo para registro de facturas en sistema de seguimiento
+2023.2.9.0      Consulta de histórico de notificaciones de adeudos de REP enviadas
+2023.3.0.0      Sistema para apertura de concursos
+2023.3.1.0      Agregar ISR al 1.25% o 10 % en estimaciones
+CR-2021.2.0.0   Limitación de remesas extraordinarias
+PDC-2020.1.0.0  Primera versión de padrón de proveedores
+PDC-2020.1.2.0  Usar regitro patronal opcional en lugar de NSS obligatorio
+PDC-2020.1.3.0  Se generan n archivos para los tipos 13 y 14 / Se guarda archivo con nombre de hashfile en carpeta general / Archivos se guardan con nombre establecido en catálogo + complemento / obligatoriedad de archivos se guarda en registro de archivos
+PDC-2020.1.4.0  Ingresar representantes legales
+PDC-2020.1.5.0  Obligatoriedad de documentos por tipo de empresa y personalidad (fisica o moral)
+PDC-2020.1.6.0  Edición de representantes legales
+PDC-2020.1.7.0  Cargar varios archivos PDF en mismo registro por medio de un archivo zip y consolidarlo en uno
+PDC-2020.1.8.0  Subir varios PDF a la vez / No solicitar registro patronal a proveedores / Posicionar en primer lugar los archivos del área legal / No permitir reutilizar archivos aunque sea en el mismo tipo / Agregar DIOT y Pagos Provisionales / Corregir error que solicitaba representantes legales al actualizar datos de personas físicas / Ver imagenes en galería / Agregar varias imágenes
+PDC-2020.1.9.0  Merge pull request #2594 in HI/erp-hi from feature/PDC-100-Representantes-legales-extranjero to master
+SCAE-2020.1.0.0 Merge pull request #2647 in HI/erp-hi from ~DBENITEZC/erp-hi:feature/AE-1-asociacion-de-tiros-a-conceptos to master
+SCAE-2020.2.0.0 API relacionado a lala aplicación móvil de acarreos
+SCAE-2021.0.1.0 Hacer configurable la validación del IMEI
+SCAE-2021.1.0.0 Corregir error de inicio de sesión en APP acarreos cuando no se ha ingresado al portal antes / Validación de IMEI y N/A en caso de no enviarse desde APP Acarreos / Se corrige error de incio de sesión con api
+SCAE-2021.2.0.0 Merge pull request #2905 in HI/erp-hi from release/SCAE-2021.2.0.0 to master

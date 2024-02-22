@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cfdi:Comprobante xsi:schemaLocation="http://www.sat.gob.mx/cfd/4 http://www.sat.gob.mx/sitio_internet/cfd/4/cfdv40.xsd" Version="4.0" Serie="B" Folio="6" Fecha="2024-01-16T14:23:42" Sello="MXJ++IDNyKuyGY8jz6yqWd+hDcuaG4+P/p2U5DxXxiiMt/sIhDkm1z5QckVPPYWqkHJnYf/tKwjeoUaNAXF6wpMtPclTuCAG8CDESyR2GUXz1n4SPzPZPvkitB6YsAXb+eRZYRi8yc/1BXL2pa6Dv+rhXhOWS3o9sGXwNSokEaL3vmVEr9McicQVxfsStFtrmY/Cy07Ntwesi64xXXmHPu8X/Wr3/JexGw9IUfhkYBx4eN14l8iGB6RVcvOLmKdMkjzovWXXKwIJV272oC4TW9dg5emJO3FFyqK1rlFx29zvc+8E20+vh97Leeuo17FPfcxF7Kqpa4HhjrYzo0ylCA==" FormaPago="03" NoCertificado="00001000000703954066" Certificado="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" SubTotal="10150.00" Moneda="MXN" Total="11774.00" TipoDeComprobante="I" Exportacion="01" MetodoPago="PUE" LugarExpedicion="01180" xmlns:cfdi="http://www.sat.gob.mx/cfd/4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cartaporte30="http://www.sat.gob.mx/CartaPorte30">
+  <cfdi:Emisor Rfc="GUGG501217AL4" Nombre="GUILLERMO GUERRERO GONZALEZ" RegimenFiscal="612" />
+  <cfdi:Receptor Rfc="PCO811231EI4" Nombre="LA PENINSULAR COMPAÑIA CONSTRUCTORA" DomicilioFiscalReceptor="06500" RegimenFiscalReceptor="601" UsoCFDI="G03" />
+  <cfdi:Conceptos>
+    <cfdi:Concepto ClaveProdServ="46191601" Cantidad="2.00" ClaveUnidad="H87" Unidad="Pieza" Descripcion="RECARGA Y MANTENIMIENTO DE EXTINTOR A BASE DE POLVO QUÍMICO SECO DE 6.0 KG" ValorUnitario="250.00" Importe="500.00" ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="500.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.16" Importe="80.00" />
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="46191601" Cantidad="5.00" ClaveUnidad="H87" Unidad="Pieza" Descripcion="RECARGA Y MANTENIMIENTO DE EXTINTOR A BASE DE POLVO QUÍMICO SECO DE 4.5 KG" ValorUnitario="230.00" Importe="1150.00" ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="1150.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.16" Importe="184.00" />
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="46191601" Cantidad="7.00" ClaveUnidad="H87" Unidad="Pieza" Descripcion="RECARGA Y MANTENIMIENTO DE EXTINTOR A BASE DE BIÓXIDO DE CARBONO CO2 DE 10.0 LBS" ValorUnitario="330.00" Importe="2310.00" ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="2310.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="369.60" />
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="46191601" Cantidad="4.00" ClaveUnidad="H87" Unidad="Pieza" Descripcion="RECARGA Y MANTENIMIENTO DE EXTINTOR A BASE DE AGUA LIGERA AFF DE 10.0 L" ValorUnitario="360.00" Importe="1440.00" ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="1440.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.16" Importe="230.40" />
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="46191601" Cantidad="1.00" ClaveUnidad="H87" Unidad="Pieza" Descripcion="RECARGA Y MANTENIMIENTO DE UNIDAD MOVIL A BASE DE POLVO QUÍMICO SECO DE 50.0 KG" ValorUnitario="2550.00" Importe="2550.00" ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="2550.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.16" Importe="408.00" />
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+    <cfdi:Concepto ClaveProdServ="46191601" Cantidad="1.00" ClaveUnidad="H87" Unidad="Pieza" Descripcion="RECARGA Y MANTENIMIENTO DE UNIDAD MOVIL A BASE DE POLVO QUÍMICO SECO DE 35.0 KG" ValorUnitario="2200.00" Importe="2200.00" ObjetoImp="02">
+      <cfdi:Impuestos>
+        <cfdi:Traslados>
+          <cfdi:Traslado Base="2200.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.16" Importe="352.00" />
+        </cfdi:Traslados>
+      </cfdi:Impuestos>
+    </cfdi:Concepto>
+  </cfdi:Conceptos>
+  <cfdi:Impuestos TotalImpuestosTrasladados="1624.00">
+    <cfdi:Traslados>
+      <cfdi:Traslado Base="7840.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.16" Importe="1254.40" />
+      <cfdi:Traslado Base="2310.00" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="369.60" />
+    </cfdi:Traslados>
+  </cfdi:Impuestos>
+  <cfdi:Complemento>
+    <tfd:TimbreFiscalDigital xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital" xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd" Version="1.1" UUID="630FCE7F-E8C4-4080-8010-D5DE16ED037B" FechaTimbrado="2024-01-16T14:24:32" RfcProvCertif="SAT970701NN3" SelloCFD="MXJ++IDNyKuyGY8jz6yqWd+hDcuaG4+P/p2U5DxXxiiMt/sIhDkm1z5QckVPPYWqkHJnYf/tKwjeoUaNAXF6wpMtPclTuCAG8CDESyR2GUXz1n4SPzPZPvkitB6YsAXb+eRZYRi8yc/1BXL2pa6Dv+rhXhOWS3o9sGXwNSokEaL3vmVEr9McicQVxfsStFtrmY/Cy07Ntwesi64xXXmHPu8X/Wr3/JexGw9IUfhkYBx4eN14l8iGB6RVcvOLmKdMkjzovWXXKwIJV272oC4TW9dg5emJO3FFyqK1rlFx29zvc+8E20+vh97Leeuo17FPfcxF7Kqpa4HhjrYzo0ylCA==" NoCertificadoSAT="00001000000504465028" SelloSAT="Li3FVnT5NNge7VbfqQ9Y+eCMFI9JZe/Iahvqi92zHcX/Wxj6L0tlCIqnqSYSFS5KuimvebyGBi0lh9xR0kOgDOKSyhoALb6H3n+D2JNyTWdw9CFDTwDXs5BiVfowQhNsUlQpm6pnxE0NHokNHtzLXKgmxpXgZDO8VD23G+EytuYxXqB5F8nfGBE7v8HZC85W5XSmMrVXN8/Zcccz1XLpkwbUvC4qIyiHomcKWbsEPazk8aw1B84y+7p7TrKfjwC37YPmwcxizwHLqz/5J/tRDw+LghTXhN6H5CBnqoefaC7p8FTJ1/nx7JhaJw+YFFOYeCSky4+Qa7wZ8eptxdw8YQ==" />
+  </cfdi:Complemento>
+</cfdi:Comprobante>
