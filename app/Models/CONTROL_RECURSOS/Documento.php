@@ -227,6 +227,11 @@ class Documento extends Model
         return '$' . number_format(($this->IVA),2);
     }
 
+    public function getOtrosFormatAttribute()
+    {
+        return '$' . number_format(($this->OtrosImpuestos),2);
+    }
+
     public function getVencimientoEditarAttribute()
     {
         $date = date_create($this->Vencimiento);
