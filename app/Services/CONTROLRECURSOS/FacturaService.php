@@ -100,6 +100,7 @@ class FacturaService
         $arreglo["total"] = $arreglo_cfd["total"];
         $arreglo["impuesto"] = $arreglo_cfd["importe_iva"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
+        $arreglo["otros"] = 0;
         if(array_key_exists('retenciones', $arreglo_cfd))
         {
             $arreglo["retencion"] = $arreglo_cfd['retenciones'][0]['importe'];
