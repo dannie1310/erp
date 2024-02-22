@@ -207,8 +207,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\ContextServiceProvider::class,
-        Laravel\Passport\PassportServiceProvider::class,
-        \yajra\Oci8\Oci8ServiceProvider::class
+        Laravel\Passport\PassportServiceProvider::class
     ],
 
     /*

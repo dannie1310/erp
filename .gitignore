@@ -30,3 +30,6 @@ yarn-error.log
 /public/control_recursos_facturas
 /public/ControlRecursos
 /public/ControlRecursos/facturas/
+/public/php_errores.log
+/php_errores.log
+/downloads/fiscal/comunicados_notificaciones
