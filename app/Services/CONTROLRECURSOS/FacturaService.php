@@ -393,7 +393,7 @@ class FacturaService
         if ($documento && $repositorio_factura && $repositorio_factura->id_documento_cr != null)
         {
             abort(500, "CFDI utilizado previamente:
-                                Registró: ".$repositorio_factura->usuario->nombre_completo."
+                                Registró: ".$documento->usuario->nombre_completo."
                                 Serie: ".$documento->serie_descripcion."
                                 Folio: ".$documento->FolioDocto."
                                 Fecha Registro: ".$documento->fecha_format."
@@ -413,6 +413,17 @@ class FacturaService
                                 UUID: ".$uuid."
                                 Emisor: ".$repositorio_factura->proveedor->razon_social."
                                 RFC Emisor: ".$repositorio_factura->proveedor->rfc);
+        }
+        if ($documento)
+        {
+            abort(500, "CFDI utilizado previamente:
+                                Registró: ".$documento->usuario->nombre_completo."
+                                Serie: ".$documento->serie_descripcion."
+                                Folio: ".$documento->FolioDocto."
+                                Fecha Registro: ".$documento->fecha_format."
+                                UUID: ".$uuid."
+                                Emisor: ".$documento->proveedor_descripcion."
+                                RFC Emisor: ".$documento->rfc_proveedor);
         }
         if($tipo != 'I')
         {
