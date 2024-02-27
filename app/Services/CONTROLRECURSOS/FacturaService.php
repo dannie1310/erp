@@ -340,36 +340,37 @@ class FacturaService
 
     public function validaCFDI($uuid)
     {
-        $factura = FacturaRepositorio::where('uuid', $uuid)->first();
-        if($factura)
+        if($uuid == 'UUID' || $uuid == '')
         {
-            if ($factura->id_transaccion != null)
-            {
-                abort(500, "CFDI utilizado previamente:
-                                Registró: ".$factura->usuario->nombre_completo."
-                                DB: ".$factura->proyecto->base_datos."
-                                Proyecto: ".$factura->obra."
-                                Tipo Transacción: ". $factura->transaccion->tipo_transaccion_str."
-                                Folio Transacción: ".$factura->transaccion->numero_folio."
-                                Fecha Registro: ".$factura->fecha_hora_registro_format ."
-                                UUID: ".$uuid."
-                                Emisor: ".$factura->proveedor->razon_social."
-                                RFC Emisor: ".$factura->proveedor->rfc
-                );
-            }
-            if( $factura->id_documento_cr != null)
-            {
-                $cr_factura = $this->repository->show($factura->id_documento_cr);
-                if($cr_factura)
-                {
+            abort(500, "El documento no cuenta UUID, revisar con el proveedor.");
+        }else {
+            $factura = FacturaRepositorio::where('uuid', $uuid)->first();
+            if ($factura) {
+                if ($factura->id_transaccion != null) {
                     abort(500, "CFDI utilizado previamente:
-                                Registró: ".$factura->usuario->nombre_completo."
-                                Serie: ".$cr_factura->serie_descripcion."
-                                Folio: ".$cr_factura->FolioDocto."
-                                Fecha Registro: ".$cr_factura->fecha_format."
-                                UUID: ".$uuid."
-                                Emisor: ".$cr_factura->proveedor_descripcion."
-                                RFC Emisor: ".$cr_factura->rfc_proveedor);
+                                Registró: " . $factura->usuario->nombre_completo . "
+                                DB: " . $factura->proyecto->base_datos . "
+                                Proyecto: " . $factura->obra . "
+                                Tipo Transacción: " . $factura->transaccion->tipo_transaccion_str . "
+                                Folio Transacción: " . $factura->transaccion->numero_folio . "
+                                Fecha Registro: " . $factura->fecha_hora_registro_format . "
+                                UUID: " . $uuid . "
+                                Emisor: " . $factura->proveedor->razon_social . "
+                                RFC Emisor: " . $factura->proveedor->rfc
+                    );
+                }
+                if ($factura->id_documento_cr != null) {
+                    $cr_factura = $this->repository->show($factura->id_documento_cr);
+                    if ($cr_factura) {
+                        abort(500, "CFDI utilizado previamente:
+                                Registró: " . $factura->usuario->nombre_completo . "
+                                Serie: " . $cr_factura->serie_descripcion . "
+                                Folio: " . $cr_factura->FolioDocto . "
+                                Fecha Registro: " . $cr_factura->fecha_format . "
+                                UUID: " . $uuid . "
+                                Emisor: " . $cr_factura->proveedor_descripcion . "
+                                RFC Emisor: " . $cr_factura->rfc_proveedor);
+                    }
                 }
             }
         }
