@@ -113,6 +113,11 @@ class Documento extends Model
         return $this->belongsTo(CcDocto::class, 'IdDocto', 'IdDocto');
     }
 
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class,  'Creo','idusuario');
+    }
+
 
     /**
      * Scopes
