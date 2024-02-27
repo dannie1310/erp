@@ -34,6 +34,7 @@ class FacturaRepository extends Repository implements RepositoryInterface
                 "rfc"=>$proveedor->RFC,
                 "razon_social"=>$proveedor->RazonSocial,
                 "nuevo"=>0,
+                "importe_especial" => $proveedor->importe_especial
             ];
         }
         return $salida;
