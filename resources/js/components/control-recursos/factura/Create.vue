@@ -143,7 +143,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" v-if="data">
+                <div class="row" v-if="data && data.proveedor_bd.importe_especial == 0">
                     <div class="col-md-10">
                         <div class="form-group error-content float-right"><label for="importe">Importe:</label></div>
                     </div>
@@ -169,7 +169,6 @@
                         <div class="form-group error-content float-right"> {{parseFloat(data.retencion).formatMoney(2)}}</div>
                     </div>
                     <div class="col-md-5"></div>
-
                     <div class="col-md-5">
                         <div class="form-group error-content float-right"> <label for="otros">Otros Impuestos:</label></div>
                     </div>
@@ -177,7 +176,6 @@
                         <div class="form-group error-content float-right"> {{parseFloat(data.otros).formatMoney(2)}} </div>
                     </div>
                     <div class="col-md-5"></div>
-
                     <div class="col-md-5">
                         <div class="form-group error-content float-right"> <label for="total">Total:</label></div>
                     </div>
@@ -185,7 +183,59 @@
                         <div class="form-group error-content float-right"> {{parseFloat(data.total).formatMoney(2)}} </div>
                     </div>
                     <div class="col-md-5"></div>
-
+                    <div class="col-md-5">
+                        <div class="form-group error-content float-right"> <label for="moneda">Moneda:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right">{{data.moneda}}  </div>
+                    </div>
+                </div>
+                <div class="row" v-if="data && data.proveedor_bd.importe_especial == 1">
+                    <div class="col-md-10">
+                        <div class="form-group error-content float-right"><label for="importe">Importe antes de descuento:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.subtotal).formatMoney(2)}} </div>
+                    </div>
+                     <div class="col-md-10">
+                        <div class="form-group error-content float-right"><label for="descuento">Descuento:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.descuento).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="form-group error-content float-right"><label for="importe">Importe:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat((data.subtotal - data.descuento)).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="form-group error-content float-right"><label for="iva">IVA: {{data.tasa_iva}} %:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.impuesto).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-10">
+                        <div class="form-group error-content float-right"><label for="retenciones">Retenciones:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.retencion).formatMoney(2)}}</div>
+                    </div>
+                    <div class="col-md-5"></div>
+                    <div class="col-md-5">
+                        <div class="form-group error-content float-right"> <label for="otros">Otros Impuestos:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.otros).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-5"></div>
+                    <div class="col-md-5">
+                        <div class="form-group error-content float-right"> <label for="total">Total:</label></div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.total).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-5"></div>
                     <div class="col-md-5">
                         <div class="form-group error-content float-right"> <label for="moneda">Moneda:</label></div>
                     </div>
