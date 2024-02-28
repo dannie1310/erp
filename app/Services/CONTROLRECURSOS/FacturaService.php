@@ -100,41 +100,47 @@ class FacturaService
         $arreglo["total"] = $arreglo_cfd["total"];
         $arreglo["impuesto"] = $arreglo_cfd["importe_iva"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
+        $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
+        $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
+
+        $arreglo["receptor"]["rfc"] = $arreglo_cfd["receptor"]["rfc"];
+        $arreglo["receptor"]["nombre"] = $arreglo_cfd["receptor"]["nombre"];
+
+        $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
+
+        $arreglo["proveedor_bd"] = $this->repository->getProveedor([
+            "rfc" => $arreglo["emisor"]["rfc"],
+            "razon_social" => $arreglo["emisor"]["nombre"]
+        ]);
         $arreglo["otros"] = 0;
         $arreglo["retencion"] = 0;
         if(array_key_exists('retenciones', $arreglo_cfd))
         {
             foreach ($arreglo_cfd['retenciones'] as $retencion)
             {
-                $arreglo['retencion'] = $arreglo['retencion'] +  $retencion['importe'];
+                $arreglo['retencion'] = $arreglo['retencion'] + $retencion['importe'];
             }
         }
-       /* REVISAR CUANDO MUESTREN LO QUE AGREGAN A OTROS IMPUESTOS
-        if(array_key_exists('traslados', $arreglo_cfd))
-        {
-            $suma = 0;
-            foreach ($arreglo_cfd['traslados'] as $traslado)
-            {
-                if($traslado['impuesto'] == '003')
-                {
+       // REVISAR CUANDO MUESTREN LO QUE AGREGAN A OTROS IMPUESTOS
+        if(array_key_exists('traslados', $arreglo_cfd)) {
+            if ($arreglo['proveedor_bd']['importe_especial'] == 1)
+                $suma = 0;
+            foreach ($arreglo_cfd['traslados'] as $traslado) {
+                if ($traslado['impuesto'] == '003') {
                     $suma = $suma + $traslado['importe'];
                 }
-                if($traslado['impuesto'] == '002')
-                {
+                if ($traslado['impuesto'] == '002') {
                     $bandera = 1;
                     $arreglo["impuesto"] = $arreglo_cfd['traslados'][0]['importe'];
-                    if(count($arreglo_cfd['traslados']) > 1) {
+                    if (count($arreglo_cfd['traslados']) > 1) {
                         $arreglo["otros"] = $arreglo_cfd['traslados'][1]['importe'];
                     }
                 }
             }
-            if($bandera != 1) {
+            if ($bandera != 1) {
                 $arreglo["otros"] = $suma;
             }
-        }else{
-            $arreglo["otros"] = 0;
         }
-       */
         $arreglo["serie"] = $arreglo_cfd["serie"];
         $arreglo["folio"] = $arreglo_cfd["folio"] == "" ? substr($arreglo_cfd["uuid"],0,5) : $arreglo_cfd["folio"];
         $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("m/d/Y");
@@ -146,19 +152,6 @@ class FacturaService
         $arreglo["certificado"] = $arreglo_cfd["certificado"];
         $arreglo["sello"] = $arreglo_cfd["sello"];
         $arreglo["concepto"] = $arreglo_cfd['conceptos'][0]['descripcion'];
-
-        $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
-        $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
-
-        $arreglo["receptor"]["rfc"] = $arreglo_cfd["receptor"]["rfc"];
-        $arreglo["receptor"]["nombre"] = $arreglo_cfd["receptor"]["nombre"];
-
-        $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
-
-        $arreglo["proveedor_bd"] = $this->repository->getProveedor([
-                "rfc" => $arreglo["emisor"]["rfc"],
-                "razon_social" => $arreglo["emisor"]["nombre"]
-        ]);
 
         $arreglo["id_proveedor"] = $arreglo['proveedor_bd'] != null ? $arreglo["proveedor_bd"]['id'] : '';
 
