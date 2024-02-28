@@ -101,16 +101,15 @@ class FacturaService
         $arreglo["impuesto"] = $arreglo_cfd["importe_iva"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
         $arreglo["otros"] = 0;
+        $arreglo["retencion"] = 0;
         if(array_key_exists('retenciones', $arreglo_cfd))
         {
-            $arreglo["retencion"] = $arreglo_cfd['retenciones'][0]['importe'];
-            if(count($arreglo_cfd['retenciones']) > 1) {
-                $arreglo["otros"] = $arreglo_cfd['retenciones'][1]['importe'];
+            foreach ($arreglo_cfd['retenciones'] as $retencion)
+            {
+                $arreglo['retencion'] = $arreglo['retencion'] +  $retencion['importe'];
             }
-        }else{
-            $arreglo["retencion"] = 0;
         }
-        $bandera = 0;
+       /* REVISAR CUANDO MUESTREN LO QUE AGREGAN A OTROS IMPUESTOS
         if(array_key_exists('traslados', $arreglo_cfd))
         {
             $suma = 0;
@@ -135,6 +134,7 @@ class FacturaService
         }else{
             $arreglo["otros"] = 0;
         }
+       */
         $arreglo["serie"] = $arreglo_cfd["serie"];
         $arreglo["folio"] = $arreglo_cfd["folio"] == "" ? substr($arreglo_cfd["uuid"],0,5) : $arreglo_cfd["folio"];
         $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("m/d/Y");
