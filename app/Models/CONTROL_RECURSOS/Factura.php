@@ -90,12 +90,12 @@ class Factura extends Documento
             "Fecha" => $fecha->format('Y-m-d'),
             "Vencimiento" => $vencimiento->format('Y-m-d'),
             'Concepto' => $data["concepto"],
-            "Importe" => $data["subtotal"],
+            "Importe" => $data['proveedor_bd']['importe_especial'] == 1 ? ($data['subtotal'] - $data['descuento']) : $data["subtotal"],
             "IVA" => $data["impuesto"],
             "Total" => $data["total"],
             "Retenciones" => $data["retencion"],
             "TasaIva" => (int) $data['tasa_iva'],
-            "OtrosImpuestos" => $data["otros"],
+            "OtrosImpuestos" => array_key_exists('otros',$data) ? $data["otros"] : 0,
             "IdMoneda" => $data["id_moneda"],
             'Alias_Depto' => $usuario->departamento ? $usuario->departamento->departamento_abreviatura : '',
             'Departamento' => $usuario->departamento ? $usuario->departamento->departamento : '',
@@ -107,7 +107,7 @@ class Factura extends Documento
             'Estatus' => $data['idtipodocto'] == 1 ? 1 : 5,
             'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
             'registro_portal' => 1,
-            'Descuento' => $data['descuento']
+            'Descuento' => $data['proveedor_bd']['importe_especial'] == 1 ? 0 : $data['descuento']
         ]);
     }
 

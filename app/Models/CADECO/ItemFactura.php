@@ -84,23 +84,29 @@ class ItemFactura extends Item
         }else if($this->numero == 5){
             return 'Cuotas Sindicales';
         }else{
+			if($this->antecedente){
+				
+				
+				switch ($this->antecedente->tipo_transaccion){
+					case 51:
+						return 'SUBCONTRATO ' . $this->antecedente->numero_folio_format;
+						break;
+					case 52:
+						return 'ESTIMACIÓN ' . $this->antecedente->numero_folio_format;
+						break;
+					case 33:
+						return $this->material->descripcion;
+						break;
+					case 19:
+						return $this->material->descripcion;
+						break;
+					default:
+						return 'Item';
+				}
+				
+				
+			}
             // dd($this);
-            switch ($this->antecedente->tipo_transaccion){
-                case 51:
-                    return 'SUBCONTRATO ' . $this->antecedente->numero_folio_format;
-                    break;
-                case 52:
-                    return 'ESTIMACIÓN ' . $this->antecedente->numero_folio_format;
-                    break;
-                case 33:
-                    return $this->material->descripcion;
-                    break;
-                case 19:
-                    return $this->material->descripcion;
-                    break;
-                default:
-                    return 'Item';
-            }
         }
     }
 
