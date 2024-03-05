@@ -122,7 +122,8 @@ class FacturaService
             }
         }
        // REVISAR CUANDO MUESTREN LO QUE AGREGAN A OTROS IMPUESTOS
-        if(array_key_exists('traslados', $arreglo_cfd)) {
+         $bandera = 0;
+        if(array_key_exists('traslados', $arreglo_cfd) && $arreglo_cfd['traslados'] != []) {
             if ($arreglo['proveedor_bd']['importe_especial'] == 1)
                 $suma = 0;
             foreach ($arreglo_cfd['traslados'] as $traslado) {
