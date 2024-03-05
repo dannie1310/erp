@@ -108,11 +108,11 @@ class OrdenCompraFormato extends FPDI
         $this->NuevoClausulado = 0;
         $this->archivo='';
 
-        if (strtotime($this->fecha) >= strtotime('2024-02-05') and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
+        if (strtotime($this->fecha) >= strtotime('2024-02-29') and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
             $this->NuevoClausulado = 1;
             $this->archivo = 'Clausulado_2024.pdf';
         }
-        else if ((strtotime('2024-02-05') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08')) and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
+        else if ((strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08')) and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
             $this->archivo = 'Clausulado_2019.pdf';
         }
         else {
@@ -192,10 +192,10 @@ class OrdenCompraFormato extends FPDI
                     if($this->ordenCompra->obra->id_obra == 3){
                         $this->archivo = "ClausuladoTransitsmico.pdf";
                     }else{
-                        if(strtotime($this->fecha) >= strtotime('2024-02-05'))
+                        if(strtotime($this->fecha) >= strtotime('2024-02-29'))
                         {
                             $this->archivo = "Clausulado_2024.pdf";
-                        }elseif (strtotime('2024-02-05') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                        }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
                         {
                             $this->archivo = "Clausulado_2019.pdf";
                         }else{
@@ -207,10 +207,10 @@ class OrdenCompraFormato extends FPDI
                     if($this->ordenCompra->obra->id_obra == 1){
                         $this->archivo = "ClausuladoTrolebus.pdf";
                     }else{
-                        if(strtotime($this->fecha) >= strtotime('2024-02-05'))
+                        if(strtotime($this->fecha) >= strtotime('2024-02-29'))
                         {
                             $this->archivo = "Clausulado_2024.pdf";
-                        }elseif (strtotime('2024-02-05') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                        }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
                         {
                             $this->archivo = "Clausulado_2019.pdf";
                         }else{
@@ -222,10 +222,10 @@ class OrdenCompraFormato extends FPDI
                     if($this->ordenCompra->obra->id_obra == 4){
                         $this->archivo = "ClausuladoCutzamala.pdf";
                     }else{
-                        if(strtotime($this->fecha) >= strtotime('2024-02-05'))
+                        if(strtotime($this->fecha) >= strtotime('2024-02-29'))
                         {
                             $this->archivo = "Clausulado_2024.pdf";
-                        }elseif (strtotime('2024-02-05') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                        }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
                         {
                             $this->archivo = "Clausulado_2019.pdf";
                         }else{
@@ -234,10 +234,10 @@ class OrdenCompraFormato extends FPDI
                     }
                     break;
                 default:
-                    if(strtotime($this->fecha) >= strtotime('2024-02-05'))
+                    if(strtotime($this->fecha) >= strtotime('2024-02-29'))
                     {
                         $this->archivo = "Clausulado_2024.pdf";
-                    }elseif (strtotime('2024-02-05') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                    }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
                     {
                         $this->archivo = "Clausulado_2019.pdf";
                     }else{
