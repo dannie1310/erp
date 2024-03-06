@@ -275,49 +275,52 @@ class PolizaFormatoT1A extends Rotation
         $this->suma_cfdi = 0;
         $this->encola = 'cfdi';
         foreach ($this->cfdis as $key => $cfdi) {
-            $this->SetFont('Arial', '', 9);
-            $this->SetFillColor(255, 255, 255);
-            $this->setXY(0.5, $this->getY());
-            $this->Cell(0.3, 0.5, $key+1, '', 0, 'L');
-            $this->setXY(1, $this->getY());
-            $this->Cell(2, 0.5, $cfdi->fecha_emision_format, 0, 0, 'L');
-            $this->setXY(2.9, $this->getY());
-            $this->Cell(1, 0.5, $cfdi->tipo_descripcion, '', 0, 'L');
-            $this->setXY(4.1, $this->getY());
-            if (strlen($cfdi->serie) > 7) {
-                $s = substr($cfdi->serie, 0, 4);
-                $s = $s.'..';
-            } else {
-                $s = $cfdi->serie;
-            }
-            $this->Cell(1, 0.5, $s, '', 0, 'L');
-            $this->setXY(5.5, $this->getY());
-            if (strlen($cfdi->folio) > 8) {
-                $folio = substr($cfdi->folio, 0, 6) . '..';
-            } else {
-                $folio = $cfdi->folio;
-            }
-            $this->Cell(1.7, 0.5, $folio, '', 0, 'L');
-            $this->setXY(7, $this->getY()); // 33 + ..
-            if (strlen($cfdi->uuid) > 27) {
-                $uuid = substr($cfdi->uuid, 0, 27) . '..';
-            } else {
-                $uuid = $cfdi->uuid;
-            }
-            $this->Cell(5.6, 0.5, $uuid, '', 0, 'L');
-            $this->setXY(12.2, $this->getY());
-            $this->Cell(2.6, 0.5, $cfdi->rfc_emisor, '', 0, 'L');
-            $this->setXY(15, $this->getY());//14 ..
-            if (strlen($cfdi->proveedor->razon_social) > 16) {
-                $ra = substr($cfdi->proveedor->razon_social, 0, 14) . '..';
-            } else {
-                $ra = $cfdi->proveedor->razon_social;
-            }
-            $this->Cell(3, 0.5, $ra, '', 0, 'L');
-            $this->setXY(18.5, $this->getY());
-            $this->Cell(2, 0.5, number_format($cfdi->total, 2, ".", ","), '', 0, 'R');
-            $this->suma_cfdi = $this->suma_cfdi + $cfdi->total;
-            $this->ln(0.3);
+			if($cfdi){
+				$this->SetFont('Arial', '', 9);
+				$this->SetFillColor(255, 255, 255);
+				$this->setXY(0.5, $this->getY());
+				$this->Cell(0.3, 0.5, $key+1, '', 0, 'L');
+				$this->setXY(1, $this->getY());
+				$this->Cell(2, 0.5, $cfdi->fecha_emision_format, 0, 0, 'L');
+				$this->setXY(2.9, $this->getY());
+				$this->Cell(1, 0.5, $cfdi->tipo_descripcion, '', 0, 'L');
+				$this->setXY(4.1, $this->getY());
+				if (strlen($cfdi->serie) > 7) {
+					$s = substr($cfdi->serie, 0, 4);
+					$s = $s.'..';
+				} else {
+					$s = $cfdi->serie;
+				}
+				$this->Cell(1, 0.5, $s, '', 0, 'L');
+				$this->setXY(5.5, $this->getY());
+				if (strlen($cfdi->folio) > 8) {
+					$folio = substr($cfdi->folio, 0, 6) . '..';
+				} else {
+					$folio = $cfdi->folio;
+				}
+				$this->Cell(1.7, 0.5, $folio, '', 0, 'L');
+				$this->setXY(7, $this->getY()); // 33 + ..
+				if (strlen($cfdi->uuid) > 27) {
+					$uuid = substr($cfdi->uuid, 0, 27) . '..';
+				} else {
+					$uuid = $cfdi->uuid;
+				}
+				$this->Cell(5.6, 0.5, $uuid, '', 0, 'L');
+				$this->setXY(12.2, $this->getY());
+				$this->Cell(2.6, 0.5, $cfdi->rfc_emisor, '', 0, 'L');
+				$this->setXY(15, $this->getY());//14 ..
+				if (strlen($cfdi->proveedor->razon_social) > 16) {
+					$ra = substr($cfdi->proveedor->razon_social, 0, 14) . '..';
+				} else {
+					$ra = $cfdi->proveedor->razon_social;
+				}
+				$this->Cell(3, 0.5, $ra, '', 0, 'L');
+				$this->setXY(18.5, $this->getY());
+				$this->Cell(2, 0.5, number_format($cfdi->total, 2, ".", ","), '', 0, 'R');
+				$this->suma_cfdi = $this->suma_cfdi + $cfdi->total;
+				$this->ln(0.3);
+			}
+            
         }
         $this->ln(0.2);
         $this->setXY(15, $this->getY());

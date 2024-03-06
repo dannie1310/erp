@@ -104,18 +104,17 @@ class OrdenCompraFormato extends FPDI
         $this->requisicion_folio_sao =str_pad($this->ordenCompra->solicitud->numero_folio_format, 5, '0', STR_PAD_LEFT);
         $this->obra_nombre = $this->obra->nombre_obra_formatos;
 
-
-
         // @ TODO clausulado provisional hasta definir estructura nueva -Gsus-
         $this->NuevoClausulado = 0;
         $this->archivo='';
 
-
-
-        if (strtotime($this->fecha) >= '2019-04-08' and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
+        if (strtotime($this->fecha) >= strtotime('2024-02-29') and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
             $this->NuevoClausulado = 1;
+            $this->archivo = 'Clausulado_2024.pdf';
+        }
+        else if ((strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08')) and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
             $this->archivo = 'Clausulado_2019.pdf';
-        } // fin if comparación de fecha
+        }
         else {
             if (Context::getDatabase() == "SAO_CORP") {
                 $this->conFirmaDAF = true;
@@ -193,25 +192,57 @@ class OrdenCompraFormato extends FPDI
                     if($this->ordenCompra->obra->id_obra == 3){
                         $this->archivo = "ClausuladoTransitsmico.pdf";
                     }else{
-                        $this->archivo = "Clausulado_2019.pdf";
+                        if(strtotime($this->fecha) >= strtotime('2024-02-29'))
+                        {
+                            $this->archivo = "Clausulado_2024.pdf";
+                        }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                        {
+                            $this->archivo = "Clausulado_2019.pdf";
+                        }else{
+                            $this->archivo = "Clausulado.pdf";
+                        }
                     }
                     break;
                 case "SAO1814_TROLEBUS":
                     if($this->ordenCompra->obra->id_obra == 1){
                         $this->archivo = "ClausuladoTrolebus.pdf";
                     }else{
-                        $this->archivo = "Clausulado_2019.pdf";
+                        if(strtotime($this->fecha) >= strtotime('2024-02-29'))
+                        {
+                            $this->archivo = "Clausulado_2024.pdf";
+                        }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                        {
+                            $this->archivo = "Clausulado_2019.pdf";
+                        }else{
+                            $this->archivo = "Clausulado.pdf";
+                        }
                     }
                     break;
                 case "SAO1814_CUTZAMALA":
                     if($this->ordenCompra->obra->id_obra == 4){
                         $this->archivo = "ClausuladoCutzamala.pdf";
                     }else{
-                        $this->archivo = "Clausulado_2019.pdf";
+                        if(strtotime($this->fecha) >= strtotime('2024-02-29'))
+                        {
+                            $this->archivo = "Clausulado_2024.pdf";
+                        }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                        {
+                            $this->archivo = "Clausulado_2019.pdf";
+                        }else{
+                            $this->archivo = "Clausulado.pdf";
+                        }
                     }
                     break;
                 default:
-                    $this->archivo = "Clausulado_2019.pdf";
+                    if(strtotime($this->fecha) >= strtotime('2024-02-29'))
+                    {
+                        $this->archivo = "Clausulado_2024.pdf";
+                    }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                    {
+                        $this->archivo = "Clausulado_2019.pdf";
+                    }else{
+                        $this->archivo = "Clausulado.pdf";
+                    }
             }
         }
 

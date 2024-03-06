@@ -30,7 +30,7 @@ class Documento extends Model
         'IVA',
         'Total',
         'Retenciones',
-        'TasaIVA',
+        'TasaIva',
         'OtrosImpuestos',
         'IdMoneda',
         'Alias_Depto',
@@ -79,6 +79,11 @@ class Documento extends Model
         return $this->belongsTo(Serie::class, 'IdSerie','idseries');
     }
 
+    public function serieSinGlobal()
+    {
+        return $this->belongsTo(Serie::class, 'IdSerie','idseries')->withoutGlobalScopes();
+    }
+
     public function tipo()
     {
         return $this->belongsTo(TipoDocto::class,'IdTipoDocto','IdTipoDocto');
@@ -107,6 +112,11 @@ class Documento extends Model
     public function segmento()
     {
         return $this->belongsTo(CcDocto::class, 'IdDocto', 'IdDocto');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class,  'Creo','idusuario');
     }
 
     public function relacionXDocumento()
@@ -149,7 +159,7 @@ class Documento extends Model
     public function getSerieDescripcionAttribute()
     {
         try {
-            return $this->serie->Descripcion;
+            return $this->serieSinGlobal->Descripcion;
         }catch (\Exception $e)
         {
             return null;
@@ -231,6 +241,11 @@ class Documento extends Model
     public function getIvaFormatAttribute()
     {
         return '$' . number_format(($this->IVA),2);
+    }
+
+    public function getOtrosFormatAttribute()
+    {
+        return '$' . number_format(($this->OtrosImpuestos),2);
     }
 
     public function getVencimientoEditarAttribute()

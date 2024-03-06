@@ -1,6 +1,6 @@
 <template>
       <span>
-          <button @click="pdf" type="button" class="btn btn-sm btn-outline-primary" title="PDF" v-if="$root.can('registrar_marbetes_manualmente')">
+          <button @click="pdf" type="button" class="btn btn-sm btn-outline-primary" title="PDF" >
               <i class="fa fa-file-pdf-o"></i>
           </button>
           <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">

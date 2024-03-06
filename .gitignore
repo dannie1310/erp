@@ -28,4 +28,10 @@ yarn-error.log
 /public/pdf_emitidos
 /public/xml_emitidos
 /public/control_recursos_facturas
+/public/ControlRecursos
+/public/ControlRecursos/facturas/
+/public/php_errores.log
+/php_errores.log
+/php_errors.log
+/downloads/fiscal/comunicados_notificaciones
 /public/control_recursos_relacion_gastos
