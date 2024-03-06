@@ -30,7 +30,7 @@ class Documento extends Model
         'IVA',
         'Total',
         'Retenciones',
-        'TasaIva',
+        'TasaIVA',
         'OtrosImpuestos',
         'IdMoneda',
         'Alias_Depto',
