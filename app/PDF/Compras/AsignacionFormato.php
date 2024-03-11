@@ -1059,42 +1059,48 @@ class AsignacionFormato extends Rotation
         }
         else if (Context::getDatabase() == "SAO1814_TROLEBUS" && Context::getIdObra() == 1 && $this->asignacion->solicitud->id_area_compradora == 4)
         {
-            $this->Cell(4.2, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode('VoBo Admon. Proyecto'), 'TRLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode('VoBo Dir. Proyecto'), 'TRLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode('VoBo Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Cell(3.6, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode('VoBo Admon. Proyecto'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode('VoBo Dir. Proyecto'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.7, .4, utf8_decode('VoBo Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode('VoBo Dir. Gral'), 'TRLB', 0, 'C', 0);
             $this->Ln();
-            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
-            $this->Cell(.25);
-            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
-            $this->Cell(.25);
-            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
-            $this->Cell(.25);
-            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
-            $this->Cell(.25);
-            $this->Cell(4.2, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(.25);
-            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(3.6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(.2);
+            $this->Cell(3.6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(.2);
+            $this->Cell(3.6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(.2);
+            $this->Cell(3.6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(.2);
+            $this->Cell(3.7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.2);
+            $this->Cell(3.6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(.2);
+            $this->Cell(3.6, 1.2, '', 'TRLB', 0, 'C');
 
             $this->Ln();
-            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
-            $this->Cell(.25);
-            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(3.6, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.7, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.2);
+            $this->Cell(3.6, .4, utf8_decode('Ing. Gaspar Guerreriro Gonzalez'), 'TRLB', 0, 'C', 0);
 
         }
         else if($this->asignacion->solicitud->id_area_compradora == 4 &&
