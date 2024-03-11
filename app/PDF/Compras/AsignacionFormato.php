@@ -1100,7 +1100,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.2);
             $this->Cell(3.6, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(.2);
-            $this->Cell(3.6, .4, utf8_decode('Ing. Gaspar Guerreriro Gonzalez'), 'TRLB', 0, 'C', 0);
+            $this->Cell(3.6, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
 
         }
         else if($this->asignacion->solicitud->id_area_compradora == 4 &&
