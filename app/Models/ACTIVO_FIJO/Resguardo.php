@@ -54,7 +54,7 @@ class Resguardo extends Model
     }
 
     public function usuario(){
-        return $this->belongsTo(Usuario::class, 'IdEsmpleado', 'idusuarnio');
+        return $this->belongsTo(Usuario::class, 'IdEmpleado', 'idusuario');
     }
 
     public function ubicacion(){
