@@ -95,14 +95,15 @@ export default {
             HeaderSettings: false,
             columns: [
                 { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                { title: 'Nombre Empleado', field: 'empleado', sortable: true},
-                { title: 'Ubicación', field: 'ubicacion', sortable: true},
-                { title: 'Tipo de Activo', field: 'tipo', sortable: true},
+                { title: 'Nombre Empleado', field: 'IdEmpleado', sortable: false},
+                { title: 'Ubicación', field: 'IdProyecto', sortable: true},
+                { title: 'Tipo de Activo', field: 'GrupoEquipo', sortable: true},
+                { title: 'Fecha de Registro', field: 'FechaCreo', sortable: true},
                 { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
             ],
             data: [],
             total: 0,
-            query: {scope:'', sort: '', order: '',tipo:'', ubicacion:'', empleado:''},
+            query: {scope:'', sort: 'FechaCreo', order: 'asc', tipo:'', ubicacion:'', empleado:''},
             estado: "",
             buscando: false,
             cargando: false,
@@ -177,9 +178,10 @@ export default {
                 self.$data.data = []
                 self.$data.data = activos.map((activo, i) => ({
                     index: (i + 1) + self.query.offset,
-                    empleado: activo.nombreEmpleado,
-                    ubicacion: activo.ubicacion,
-                    tipo: activo.grupoEquipoNombre,
+                    IdEmpleado: activo.nombreEmpleado,
+                    IdProyecto: activo.ubicacion,
+                    GrupoEquipo: activo.grupoEquipoNombre,
+                    FechaCreo: activo.fecha_creo,
                     buttons: $.extend({}, {
                         id: activo.id,
                     })

@@ -54,7 +54,7 @@ class Resguardo extends Model
     }
 
     public function usuario(){
-        return $this->belongsTo(Usuario::class, 'IdEmpleado', 'idusuario');
+        return $this->belongsTo(Usuario::class, 'IdEsmpleado', 'idusuarnio');
     }
 
     public function ubicacion(){
@@ -115,5 +115,10 @@ class Resguardo extends Model
         return $this->firmasPorResguardo()
         ->join('resguardos_firmas', 'resguardos_firmas.IdFirma', 'resguardos_firmas_x_resguardo.IdFirma')
         ->orderBy('resguardos_firmas.Orden', 'ASC')->get();
+    }
+
+    public function getNombreUsuarioInfoAttribute(){
+        $usuario = DB::connection('sci')->select(DB::raw("select nombre, apaterno, amaterno from igh.usuario  where idusuario=".$this->IdEmpleado));
+        return $usuario ? $usuario[0]->nombre." ".$usuario[0]->apaterno." ".$usuario[0]->amaterno : 'NO SE ENCONTRO EL USUARIO';
     }
 }
