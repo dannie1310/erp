@@ -95,7 +95,7 @@ export default {
             HeaderSettings: false,
             columns: [
                 { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                { title: 'Nombre Empleado', field: 'IdEmpleado', sortable: false},
+                { title: 'Nombre Empleado', field: 'IdEmpleado', sortable: true},
                 { title: 'Ubicación', field: 'IdProyecto', sortable: true},
                 { title: 'Tipo de Activo', field: 'GrupoEquipo', sortable: true},
                 { title: 'Fecha de Registro', field: 'FechaCreo', sortable: true},
