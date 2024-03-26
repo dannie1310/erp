@@ -11,6 +11,7 @@ class ResguardoFirmasPorResguardo extends Model
     public $primaryKey = 'IdResguardo';
     protected $fillable = [
     ];
+    public $timestamps = false;
 
     /**
      * Relaciones Eloquent

@@ -13,11 +13,12 @@ class ResguardoTransformer extends TransformerAbstract
         return [
             'id' => $model->IdResguardo,
             'idEmpleado' => $model->IdEmpleado,
-            'nombreEmpleado' => $model->usuario->nombre_completo,
+            'nombreEmpleado' => $model->nombre_usuario_info,
             'idUbicacion' => $model->IdProyecto,
             'ubicacion' => $model->ubicacion->ubicacion,
             'grupoEquipo' => $model->GrupoEquipo,
-            'grupoEquipoNombre' => $model->grupoActivo->descripcion
+            'grupoEquipoNombre' => $model->grupoActivo ? $model->grupoActivo->descripcion : '',
+            'fecha_creo' => $model->FechaCreo
         ];
     }
 }

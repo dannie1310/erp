@@ -136,11 +136,11 @@
                                             <td v-if="partida.concepto_medible != 3"><b>{{partida.descripcion}}</b></td>
                                             <td v-else> {{partida.descripcion}}</td>
                                             <td style="text-align:center;">{{partida.unidad}}</td>
-                                            <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.cantidad_presupuestada}}</td>
+                                            <td v-if="partida.concepto_medible == 1 || partida.concepto_medible == 3" style="text-align:right;">{{partida.cantidad_presupuestada}}</td>
                                             <td v-else></td>
-                                            <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.cantidad_anterior_format}}</td>
+                                            <td v-if="partida.concepto_medible == 1 || partida.concepto_medible == 3" style="text-align:right;">{{partida.cantidad_anterior_format}}</td>
                                             <td v-else></td>
-                                            <td v-if="partida.concepto_medible == 3">
+                                            <td v-if="partida.concepto_medible == 1 || partida.concepto_medible == 3">
                                                 <input type="text"
                                                        class="form-control"
                                                        v-on:keyup="getEditarCantidades(partida)"
@@ -153,15 +153,15 @@
                                                 <div class="invalid-feedback" v-show="errors.has(`avance[${i}]`)">{{ errors.first(`avance[${i}]`) }}</div>
                                             </td>
                                             <td v-else></td>
-                                            <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.precio_venta}}</td>
+                                            <td v-if="partida.concepto_medible == 1 || partida.concepto_medible == 3" style="text-align:right;">{{partida.precio_venta}}</td>
                                             <td v-else></td>
-                                            <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.monto_avance}}</td>
+                                            <td v-if="partida.concepto_medible == 1 || partida.concepto_medible == 3" style="text-align:right;">{{partida.monto_avance}}</td>
                                             <td v-else></td>
-                                            <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.cantidad_actual}}</td>
+                                            <td v-if="partida.concepto_medible == 1 || partida.concepto_medible == 3" style="text-align:right;">{{partida.cantidad_actual}}</td>
                                             <td v-else></td>
-                                            <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.monto_actual}}</td>
+                                            <td v-if="partida.concepto_medible == 1 || partida.concepto_medible == 3" style="text-align:right;">{{partida.monto_actual}}</td>
                                             <td v-else></td>
-                                            <td v-if="partida.concepto_medible == 3">
+                                            <td v-if="partida.concepto_medible == 1 || partida.concepto_medible == 3">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" value="" id="cumplido" :name="`cumplido[${i}]`" v-model="partida.cumplido">
                                                     <label class="form-check-label" for="cumplido">Si</label>
@@ -271,7 +271,7 @@
                         }
                         else {
                             for (const k in this.hijos.data) {
-                                if (this.hijos['data'][k]['concepto_medible'] == 3) {
+                                if (this.hijos['data'][k]['concepto_medible'] == 1 || this.hijos['data'][k]['concepto_medible'] == 3) {
                                     if (parseFloat(this.hijos['data'][k]['avance']) != 0) {
                                         partida = true;
                                     }

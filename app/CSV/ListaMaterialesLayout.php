@@ -13,16 +13,24 @@ class ListaMaterialesLayout implements FromCollection, WithHeadings
 {
     use Exportable;
     protected $material;
+    protected $id;
 
-    public function __construct(Material $material)
+    public function __construct(Material $material, $id)
     {
         $this->material = $material;
+        $this->id = $id;
     }
 
     public function collection()
     {
         $insumos = array();
-        foreach($this->material->requisicionInsumos() as $insumo)
+        if(is_numeric($this->id))
+        {
+            $materiales = $this->material->materialesPorAlmacen($this->id);
+        }else{
+            $materiales= $this->material->requisicionInsumos();
+        }
+        foreach($materiales as $insumo)
         {
             $insumos[] = array(
                 'id' => $insumo->id_material,
@@ -32,7 +40,7 @@ class ListaMaterialesLayout implements FromCollection, WithHeadings
             );
         }return collect($insumos);
     }
-    
+
     public function headings(): array
     {
          return array(['ID. Material',

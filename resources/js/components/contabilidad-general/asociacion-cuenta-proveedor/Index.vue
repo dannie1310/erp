@@ -11,6 +11,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span style="font-weight: bold;">{{currentEmpresa.Descripcion +' ('+currentEmpresa.AliasBDD+')'}}</span>
+                            </div>
+                        </div>
+                    </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
@@ -33,6 +40,7 @@ export default {
     props: ['id_empresa'],
     data() {
         return {
+            empresa : '',
             HeaderSettings: false,
             columns: [
                 { title: '#', thClass: 'th_index', field: 'index', sortable: false },
@@ -50,15 +58,14 @@ export default {
         }
     },
     mounted(){
-       this.$Progress.start();
-            this.paginate()
-                .finally(() => {
-                    this.$Progress.finish();
-                })
+        if(parseInt(this.id_empresa) !== parseInt(this.currentEmpresa.Id))
+        {
+            this.$router.push({name: 'asociacion-cuenta-proveedor'});
+        }
     },
-
     methods: {
         paginate(){
+            this.$Progress.start();
             this.query.id_empresa = this.id_empresa;
             this.cargando = true;
             this.$Progress.start();
@@ -98,7 +105,10 @@ export default {
         },
         tbodyStyle() {
             return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
-        }
+        },
+        currentEmpresa(){
+            return this.$store.getters['auth/currentEmpresa']
+        },
     },
     watch: {
             cuentas: {
@@ -115,7 +125,7 @@ export default {
                             id_cuenta: cuenta.id,
                             id_empresa: this.id_empresa,
                             nombre: cuenta.descripcion,
-                            eliminar: cuenta.cuenta_contpaq_proveedor_sat?true:false 
+                            eliminar: cuenta.cuenta_contpaq_proveedor_sat?true:false
                         })
                     }));
                 },

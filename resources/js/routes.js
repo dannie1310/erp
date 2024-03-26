@@ -2495,6 +2495,24 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'cuentas-proveedor',
+                        props:true,
+                        component: require('./components/contabilidad/asociacion-cuenta-proveedor/Index.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"cuentas-proveedor-en-sao",
+                                component: require('./components/contabilidad/asociacion-cuenta-proveedor/Index.vue').default,
+                                meta: {
+                                    title: 'Asociación Cuenta Proveedor',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIACIÓN CTA PROVEEDOR'},
+                                    middleware: [auth,context, permission],
+                                    permission: ['asociar_cuentas_contpaq_con_proveedor'],
+                                }
+                            }
+                        ]
+                    },
+                    {
                         path: 'poliza-cfdi',
                         component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
                         children:[
@@ -2504,7 +2522,7 @@ export const routes = [
                                 component: require('./components/contabilidad/poliza-cfdi/Index.vue').default,
                                 meta: {
                                     title: 'Pólizas-CFDI',
-                                    breadcrumb: {parent: 'contabilidad', name: 'PÓLIZAS CFDI'},
+                                    breadcrumb: {parent: 'sistema_contable', name: 'PÓLIZAS CFDI'},
                                     middleware: [auth, context, permission],
                                     permission: ['consultar_poliza'],
                                     general: true
@@ -2531,7 +2549,7 @@ export const routes = [
                         component: require('./components/contabilidad/informes/InformeSAT.vue').default,
                         meta: {
                             title: 'Informe CFDI vs Pasivos',
-                            breadcrumb: {name: 'INFORME CFDI vs Pasivos', parent: 'contabilidad'},
+                            breadcrumb: {name: 'INFORME CFDI vs Pasivos', parent: 'sistema_contable'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_sat'],
                             general: true
@@ -2575,9 +2593,50 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'editar_prepolizas_generadas'
                                 }
-                            }
+                            },
                         ]
-                    }
+                    },
+                    {
+                        path: 'poliza-contpaq',
+                        component: require('./components/contabilidad/poliza-contpaq/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"poliza-contpaq-en-sao",
+                                component: require('./components/contabilidad/poliza-contpaq/Index.vue').default,
+                                meta: {
+                                    title: 'Pólizas Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'PÓLIZAS CONTPAQ'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_poliza_ctpq'],
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'poliza-contpaq-en-sao-show',
+                                props: true,
+                                component: require('./components/contabilidad/poliza-contpaq/Show').default,
+                                meta: {
+                                    title: 'Ver Póliza Contpaq',
+                                    breadcrumb: {parent: 'poliza-contpaq-en-sao', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_poliza_ctpq'
+                                }
+                            },
+                            {
+                                path: ':id/asociar-cfdi',
+                                name: 'poliza-contpaq-en-sao-asociar-cfdi',
+                                props: true,
+                                component: require('./components/contabilidad/poliza-contpaq/AsociaCFDI.vue').default,
+                                meta: {
+                                    title: 'Asociar CFDI a Póliza',
+                                    breadcrumb: {parent: 'poliza-contpaq-en-sao', name: 'ASOCIAR CFDI'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'asociar-cfdi-a-poliza-contpaq-desde-sao',
+                                }
+                            },
+                        ]
+                    },
                 ]
             },
             {
@@ -3484,7 +3543,7 @@ export const routes = [
                 name:"seleccionar-empresa",
                 component: require('./components/contabilidad-general/poliza/SeleccionarEmpresa.vue').default,
                 meta: {
-                    title: 'Seleccionar Empresa',
+                    title: 'Editar Pólizas',
                     breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
                     middleware: [auth, permission],
                     permission: ['editar_poliza','consultar_poliza'],
@@ -3502,7 +3561,7 @@ export const routes = [
                         props: true,
                         component: require('./components/contabilidad-general/poliza/Index.vue').default,
                         meta: {
-                            title: 'Pólizas',
+                            title: 'Listado de pólizas para edición',
                             breadcrumb: {parent: 'seleccionar-empresa', name: 'PÓLIZAS'},
                             middleware: [auth, permission],
                             permission: ['editar_poliza','consultar_poliza'],
@@ -3539,12 +3598,69 @@ export const routes = [
                         path: ':id/asociar-cfdi',
                         name: 'poliza-contpaq-asociar-cfdi',
                         props: true,
-                        component: require('./components/contabilidad-general/poliza/AsociaCFDI.vue').default,
+                        component: require('./components/contabilidad-general/poliza/asociacion/AsociaCFDI.vue').default,
                         meta: {
                             title: 'Asociar CFDI a Póliza',
                             breadcrumb: {parent: 'poliza-contpaq', name: 'ASOCIAR CFDI'},
                             middleware: [auth, permission],
-                            permission: 'editar_poliza',
+                            permission: ['editar_poliza','asociar-cfdi-a-poliza-contpaq'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path:"seleccionar-empresa-asociacion",
+                name:"seleccionar-empresa-asociacion",
+                component: require('./components/contabilidad-general/poliza/asociacion/SeleccionarEmpresaAsoacion.vue').default,
+                meta: {
+                    title: 'Asociación de Pólizas con CFDI',
+                    breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
+                    middleware: [auth, permission],
+                    permission: ['asociar-cfdi-a-poliza-contpaq'],
+                    general: true
+                }
+            },
+            {
+                path: ':id_empresa/polizas-asociacion',
+                component: require('./components/contabilidad-general/poliza/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"poliza-contpaq-asociacion",
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/asociacion/Index.vue').default,
+                        meta: {
+                            title: 'Listado de polizas para asociación con CFDI',
+                            breadcrumb: {parent: 'seleccionar-empresa-asociacion', name: 'ASOCIACIÓN DE PÓLIZAS'},
+                            middleware: [auth, permission],
+                            permission: ['asociar-cfdi-a-poliza-contpaq'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'poliza-contpaq-asociacion-show',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/asociacion/Show').default,
+                        meta: {
+                            title: 'Consultar Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq-asociacion', name: 'CONSULTAR'},
+                            middleware: [auth, permission],
+                            permission: 'asociar-cfdi-a-poliza-contpaq',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/asociar-cfdi',
+                        name: 'poliza-contpaq-asociacion-asociar-cfdi',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/asociacion/AsociaCFDI.vue').default,
+                        meta: {
+                            title: 'Asociar CFDI a Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq-asociacion', name: 'ASOCIAR CFDI'},
+                            middleware: [auth, permission],
+                            permission: 'asociar-cfdi-a-poliza-contpaq',
                             general: true
                         }
                     },
@@ -3822,7 +3938,7 @@ export const routes = [
                         name:"asociacion-cuenta-proveedor",
                         component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/SeleccionarEmpresa.vue').default,
                         meta: {
-                            title: 'Seleccionar Empresa',
+                            title: 'Asociar Cuentas Con Proveedores',
                             breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
                             middleware: [auth,permission],
                             permission:['asociar_cuentas_contpaq_con_proveedor'],
@@ -3842,7 +3958,7 @@ export const routes = [
                         component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/Index.vue').default,
                         meta: {
                             title: 'Asociación Cuenta Proveedor',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'ASOCIACIÓN CTA PROVEEDOR'},
+                            breadcrumb: {parent: 'asociacion-cuenta-proveedor', name: 'ASOCIACIÓN CTA PROVEEDOR'},
                             middleware: [auth],
                             general: true
                         }
@@ -4104,6 +4220,191 @@ export const routes = [
                     general: true,
 
                 }
+            },
+        ]
+    },
+    {
+        path: '/control-recursos',
+        components:  {
+            default: require('./components/control-recursos/partials/Layout.vue').default,
+            menu: require('./components/control-recursos/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'control-recursos',
+                meta: {
+                    title: 'CONTROL RECURSOS',
+                    middleware: [auth],
+                }
+            },
+            {
+                path: 'documento-cfdi',
+                component: require('./components/control-recursos/factura/Layout.vue').default,
+                children: [
+                    /*{
+                        path: '/',
+                        name: 'factura-recurso',
+                        component: require('./components/control-recursos/factura/Index').default,
+                        meta: {
+                            title: 'Facturas',
+                            breadcrumb: {parent: 'control-recursos', name: 'FACTURAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_factura_recursos','registrar_factura_recursos'],
+                            general: true,
+                        }
+                    },*/
+                    /*{
+                        path: 'create',
+                        name: 'factura-recurso-create',
+                        component: require('./components/control-recursos/factura/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Documento con CFDI',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'documento'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_factura_recursos'],
+                            general: true
+                        }
+                    },*/
+                    {
+                        path: ':id',
+                        name: 'factura-recurso-show',
+                        component: require('./components/control-recursos/factura/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Documento con CFDI',
+                            breadcrumb: { parent: 'documento', name: 'VER DOCUMENTO CON CFDI'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_factura_recursos',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'factura-recurso-edit',
+                        props: true,
+                        component: require('./components/control-recursos/factura/Edit').default,
+                        meta: {
+                            title: 'Editar Documento con CFDI',
+                            breadcrumb: {parent: 'documento', name: 'EDITAR DOCUMENTO CON CFDI'},
+                            middleware: [auth, permission],
+                            permission: 'editar_factura_recursos',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/delete',
+                        name: 'factura-recurso-delete',
+                        component: require('./components/control-recursos/factura/Delete').default,
+                        props: true,
+                        meta: {
+                            title: 'Eliminar Documento con CFDI',
+                            breadcrumb: { parent: 'documento', name: 'ELIMINAR DOCUMENTO CON CFDI'},
+                            middleware: [auth, permission],
+                            permission: 'eliminar_factura_recursos',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'documento',
+                component: require('./components/control-recursos/documento/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'documento',
+                        component: require('./components/control-recursos/documento/Index').default,
+                        meta: {
+                            title: 'Documentos',
+                            breadcrumb: {parent: 'control-recursos', name: 'DOCUMENTOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_documento_recursos','editar_documento_recursos','registrar_documento_recursos'],
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'create-manual',
+                        name: 'documento-create-manual',
+                        component: require('./components/control-recursos/documento/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Documento Manualmente',
+                            breadcrumb: {name: 'REGISTRAR MANUALMENTE', parent: 'documento'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_documento_recursos'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'create-cfdi',
+                        name: 'documento-create-cfdi',
+                        component: require('./components/control-recursos/factura/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Documento con CFDI',
+                            breadcrumb: {name: 'REGISTRAR CON CFDI', parent: 'documento'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_documento_recursos'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'documento-recurso-show',
+                        component: require('./components/control-recursos/documento/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Documento',
+                            breadcrumb: { parent: 'documento', name: 'VER DOCUMENTO'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_documento_recursos',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/edit',
+                        name: 'documento-recurso-edit',
+                        props: true,
+                        component: require('./components/control-recursos/documento/Edit').default,
+                        meta: {
+                            title: 'Editar Documento',
+                            breadcrumb: {parent: 'documento', name: 'EDITAR DOCUMENTO'},
+                            middleware: [auth, permission],
+                            permission: 'editar_documento_recursos',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/delete',
+                        name: 'documento-recurso-delete',
+                        component: require('./components/control-recursos/documento/Delete').default,
+                        props: true,
+                        meta: {
+                            title: 'Eliminar Documento',
+                            breadcrumb: { parent: 'documento', name: 'ELIMINAR DOCUMENTO'},
+                            middleware: [auth, permission],
+                            permission: 'eliminar_documento_recursos',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'layout-bancario',
+                component: require('./components/control-recursos/layout-bancario/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'layout-bancario',
+                        component: require('./components/control-recursos/layout-bancario/DescargaLayout').default,
+                        meta: {
+                            title: 'Descargar Layout Bancario',
+                            breadcrumb: {parent: 'control-recursos', name: 'LAYOUT BANCARIO'},
+                            middleware: [auth, permission],
+                            permission: ['descargar_layout_bancario_recursos'],
+                            general: true,
+                        }
+                    }
+                ]
             },
         ]
     },

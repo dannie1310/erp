@@ -97,7 +97,7 @@ class Material extends Model
         }
         Storage::disk('lista_insumos')->delete(Storage::disk('lista_insumos')->allFiles());
         $nombre_archivo = 'Lista-Materiales' . date('dmYY_His') . '.csv';
-        (new ListaMaterialesLayout($this))->store($nombre_archivo, 'lista_insumos');
+        (new ListaMaterialesLayout($this,$data))->store($nombre_archivo, 'lista_insumos');
         return Storage::disk('lista_insumos')->download($nombre_archivo);
     }
 
@@ -187,17 +187,19 @@ class Material extends Model
 
     public function actualizarInsumo($data)
     {
-        $this->nivel = $data['tipo'];
-        $nivel = $this->nivelConsecutivo();
         try{
-            $this->numero_parte = $data['numero_parte'];
-            $this->unidad = $data['unidad'];
-            $this->unidad_compra = $data['unidad'];
-            $this->descripcion = $data['descripcion'];
-            $this->nivel = $nivel;
-            $this->save();
+            DB::connection('cadeco')->beginTransaction();
+            $this->nivel = $data['tipo'];
+            $nivel = $this->nivelConsecutivo();
+            $this->update([
+                'nivel' => $nivel,
+                'numero_parte' => $data['numero_parte'],
+                'unidad' => $data['unidad'],
+                'unidad_compra' => $data['unidad'],
+                'descripcion' => $data['descripcion']
+            ]);
             DB::connection('cadeco')->commit();
-            exit;
+            return $this;
         } catch(\Exception $e){
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
@@ -285,6 +287,13 @@ class Material extends Model
     public function scopeMaterialesParaCompras($query)
     {
         return $query->whereRaw('LEN(nivel) > 4')->where('unidad','<>','jornal')->where('tipo_material', '!=', 8);
+    }
+
+    public function scopeMaterialesPorAlmacen($query, $id_almacen)
+    {
+        return $query->join('items','materiales.id_material', 'items.id_material')
+            ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
+            ->where('inventarios.id_almacen', $id_almacen)->orderBy('materiales.descripcion')->get();
     }
 
     public function validarExistente()
@@ -375,15 +384,54 @@ class Material extends Model
     public function nivelConsecutivo()
     {
         $this->nivel = str_replace ( ".", "", $this->nivel);
-        $num = $this->where('tipo_material','=',$this->tipo_material)->where('nivel','LIKE',$this->nivel.'.%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'desc')->get()->pluck('nivel')->first();
-        if($num == null){
-            $num = 0;
+        $hijos_familia = $this->where('tipo_material','=',$this->tipo_material)->where('nivel','LIKE',$this->nivel.'.%')->whereRaw('LEN(nivel) = 8')->where('id_material','!=', $this->id_material)->orderBy('nivel', 'asc')->get()->pluck('nivel');
+        $num_faltante = $this->buscarConsecutivoFaltante($hijos_familia);
+        if($num_faltante == 1000){
+            $familia = Familia::where('nivel','=',$this->nivel.'.')->first();
+            if($familia->nombre_original_familia == null) {
+                 $familia->update([
+                     'consecutivo_familia' => 1,
+                     'nombre_original_familia' => $familia->descripcion
+                 ]);
+                 $nueva_familia= Familia::create([
+                     'tipo_material' => $familia->tipo_material,
+                     'descripcion' => $familia->descripcion .' -1'
+                 ]);
+                $nivel_completo = $nueva_familia->nivel.'000.';
+            }else{
+                $nueva_familia = Familia::where('descripcion','=',$familia->descripcion.' -'.$familia->consecutivo_familia)->first();
+                $hijos_familia = self::where('tipo_material','=',$nueva_familia->tipo_material)->where('nivel','LIKE',$nueva_familia->nivel.'%')->whereRaw('LEN(nivel) = 8')->orderBy('nivel', 'asc')->get()->pluck('nivel');
+                $num_faltante = $this->buscarConsecutivoFaltante($hijos_familia);
+                if($num_faltante == 1000){
+                    $familia->update([
+                        'consecutivo_familia' => ((int) $familia->consecutivo_familia+1)
+                    ]);
+                    $nueva_familia = Familia::create([
+                        'tipo_material' => $familia->tipo_material,
+                        'descripcion' => $familia->descripcion ." -". ((int) $familia->consecutivo_familia)
+                    ]);
+                    $nivel_completo = $nueva_familia->nivel . '000.';
+                }else{
+                    $nivel_completo = $nueva_familia->nivel.str_pad($num_faltante, 3, "0", STR_PAD_LEFT).'.';
+                }
+            }
         }else{
-            $num = substr($num, 4,3);
-            $num = $num +1;
+            $nivel_completo = $this->nivel.'.'.str_pad($num_faltante, 3, "0", STR_PAD_LEFT).'.';
         }
-        $num = str_pad($num, 3, "0", STR_PAD_LEFT);
-        return $this->nivel.'.'.$num.'.';
+        return $nivel_completo;
+    }
+
+    public function buscarConsecutivoFaltante($numeros)
+    {
+        if(count($numeros) < 999) {
+            foreach ($numeros as $key => $numero) {
+                $num = substr($numero, 4, 3);
+                if ($key != (int)$num) {
+                    return $key; //buscar el faltante del consecutivo de una familia
+                }
+            }
+        }
+        return count($numeros);
     }
 
     public function getSaldoInventarioAttribute()

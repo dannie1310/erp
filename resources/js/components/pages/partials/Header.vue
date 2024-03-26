@@ -8,7 +8,19 @@
                     <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
                 </li>
                 <li v-if="currentObra" class="nav-item d-none d-sm-inline-block">
-                    <router-link :to="{name: 'obras'}" class="nav-link" title="Cambiar Obra">{{ currentObra.nombre }}</router-link>
+                    <router-link :to="{name: 'obras'}" class="nav-link" title="Cambiar Obra">
+                        {{ currentObra.nombre }}
+                        {{currentObra && currentEmpresa && currentEmpresa.AliasBDD !=='null'
+                    && currentEmpresa.AliasBDD !== undefined
+                        ? '('+currentEmpresa.AliasBDD+')' :''}}
+                    </router-link>
+                </li>
+                <li v-if="!currentObra && currentEmpresa" class="nav-item d-none d-sm-inline-block">
+                    <span class="nav-link">
+                        {{ currentEmpresa && currentEmpresa.AliasBDD !=='null'
+                        && currentEmpresa.AliasBDD !== undefined
+                        ? currentEmpresa.AliasBDD :''}}
+                    </span>
                 </li>
             </ul>
 
@@ -25,9 +37,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <router-link :to="{name: 'portal'}" class="nav-link" @click="logout" data-slide="true" href="#" title="Ir al Portal">
+                    <a href="#" class="nav-link" @click="irAPortal" data-slide="true" title="Ir a Portal de Aplicaciones">
                         <i class="fa fa-th-large"></i>
-                    </router-link>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" @click="logout" data-slide="true" href="#" title="Cerrar Sesión">
@@ -79,6 +91,22 @@
                                 })
                         }
                     });
+            },
+            irAPortal(){
+
+                this.$store.commit('auth/setObra', { obra: null });
+                this.$store.commit('auth/setPermisos', { permisos: [] });
+                this.$store.commit('auth/setEmpresa', null);
+
+                this.$session.remove('permisos');
+                this.$session.remove('db');
+                this.$session.remove('id_obra');
+                this.$session.remove('sistemas');
+                this.$session.remove('id_empresa');
+                this.$session.remove('empresa');
+
+                this.$router.push({name: 'portal', params: {}});
+
             }
         },
         computed:{
@@ -87,7 +115,10 @@
             },
             currentObra() {
                 return this.$store.getters['auth/currentObra']
-            }
+            },
+            currentEmpresa(){
+                return this.$store.getters['auth/currentEmpresa']
+            },
         }
     }
 </script>

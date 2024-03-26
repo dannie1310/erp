@@ -69,4 +69,9 @@ class LayoutPasivoCargaController extends Controller
     {
         return $this->service->descargarLayoutIFS($id);
     }
+
+    public function descargarLayoutErrores(Request $request, $hash)
+    {
+        return $this->service->descargarLayoutErrores($hash);
+    }
 }

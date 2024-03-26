@@ -151,6 +151,16 @@ import tarjeta from './modules/controlPresupuesto/tarjeta';
 import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
 import extraordinario from './modules/controlPresupuesto/extraordinario';
 
+//CONTROL RECURSOS
+import documentoRecurso from "./modules/controlRecursos/documento";
+import empresaRecurso from "./modules/controlRecursos/empresa";
+import facturaRecurso from "./modules/controlRecursos/factura";
+import monedaRecurso from "./modules/controlRecursos/moneda";
+import proveedorRecurso from "./modules/controlRecursos/proveedor";
+import serie from "./modules/controlRecursos/serie";
+import semanaAnio from "./modules/controlRecursos/semana-anio";
+import solicitudCheque from "./modules/controlRecursos/solicitud-cheque";
+
 //ENTREGA CFDI
 import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
 import tipoArchivo from './modules/entregaCFDI/ctg-tipo-archivo';
@@ -370,6 +380,15 @@ export default new Vuex.Store({
         'control-presupuesto/tarjeta': tarjeta,
         'control-presupuesto/concepto-tarjeta': conceptoTarjeta,
         'control-presupuesto/extraordinario': extraordinario,
+
+        'controlRecursos/documento' : documentoRecurso,
+        'controlRecursos/empresa' : empresaRecurso,
+        'controlRecursos/factura' : facturaRecurso,
+        'controlRecursos/moneda' : monedaRecurso,
+        'controlRecursos/proveedor' : proveedorRecurso,
+        'controlRecursos/serie' : serie,
+        'controlRecursos/semana-anio' : semanaAnio,
+        'controlRecursos/solicitud-cheque' : solicitudCheque,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/comprobante-fondo' : comprobanteFondo,

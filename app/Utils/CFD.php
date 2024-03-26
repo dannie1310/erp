@@ -14,6 +14,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CTPQ\Parametro;
 use App\Models\SEGURIDAD_ERP\Finanzas\AvisoSATOmitir;
 use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Webpatser\Uuid\Uuid;

@@ -322,6 +322,8 @@ $api->version('v1', function ($api) {
             $api->post('cargar-layout','App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@procesaLayoutPasivos');
             $api->get('{id}/valida-descargar-layout-ifs', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@validaDescargarLayoutIFS')->where(['id' => '[0-9]+']);
             $api->get('{id}/descargar-layout-ifs', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@descargarLayoutIFS')->where(['id' => '[0-9]+']);
+            $api->get('{hash}/descargar-layout-errores', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoCargaController@descargarLayoutErrores');
+
         });
 
         $api->group(['prefix' => 'layout-pasivo-partida'], function ($api) {
@@ -332,6 +334,9 @@ $api->version('v1', function ($api) {
             $api->post('{id}/asociar-cfdi', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@asociarCFDI')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@update')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('index_casos_sin_cfdi', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@indexCasosSinCFDI');
+            $api->post('{id}/clasifica', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\LayoutPasivoPartidaController@clasifica')->where(['id' => '[0-9]+']);
+
         });
 
         $api->group(['prefix' => 'contabilidad-electronica'], function ($api) {
@@ -366,6 +371,7 @@ $api->version('v1', function ($api) {
             $api->post('actualizar-cfdi', 'App\Http\Controllers\v1\CTPQ\PolizaController@getAsociacionCFDI');
             $api->post('{id}/lista-cfdi-asociar', 'App\Http\Controllers\v1\CTPQ\PolizaController@listarPosiblesCFDI')->where(['id' => '[0-9]+']);
             $api->post('asociar-cfdi', 'App\Http\Controllers\v1\CTPQ\PolizaController@asociarCFDI');
+            $api->post('{id}/desasociar-cfdi', 'App\Http\Controllers\v1\CTPQ\PolizaController@desasociarCFDI')->where(['id' => '[0-9]+']);
         });
         $api->group(['prefix' => 'poliza-cfdi'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@index');
@@ -374,6 +380,7 @@ $api->version('v1', function ($api) {
             $api->get('/egresos-sin-cfdi-xls', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@descargarXLS');
         });
         $api->group(['prefix' => 'proveedor-sat'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ProveedorSATController@index');
             $api->get('buscarProveedoresSat', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ProveedorSATController@buscarProveedorAsociar');
         });
 
@@ -2036,5 +2043,53 @@ $api->version('v1', function ($api) {
             });
         });
 
+    });
+
+    /**
+     * CONTROL RECURSOS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'control-recursos'], function ($api) {
+        $api->group(['prefix' => 'documento'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'empresa'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\EmpresaController@index');
+        });
+
+        $api->group(['prefix' => 'factura'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@paginate');
+            $api->post('xml', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@cargaXML');
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\FacturaController@destroy')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'moneda'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\MonedaController@index');
+        });
+
+        $api->group(['prefix' => 'proveedor'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ProveedorController@index');
+        });
+
+        $api->group(['prefix' => 'serie'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SerieController@index');
+        });
+
+        $api->group(['prefix' => 'solicitud-cheque'], function ($api) {
+            $api->post('layout', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@descargaLayout');
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@index');
+            $api->get('{id}/descarga', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@descarga')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'semana-anio'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolRecSemanaAnioController@index');
+        });
     });
 });

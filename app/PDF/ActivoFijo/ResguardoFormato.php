@@ -139,7 +139,7 @@ class ResguardoFormato extends Rotation
 		$this->SetHeights(array(0.7));
 		$this->SetFills(array('255,255,255'));
 		$this->SetRounds(array('34'));
-		$this->Row(array(utf8_decode($this->resguardo->usuario->nombreCompleto)));
+		$this->Row(array(utf8_decode($this->resguardo->nombre_usuario_info)));
 
         $this->Ln(1);
 		$this->SetFont('Arial', 'b', 9);

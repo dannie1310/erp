@@ -36,7 +36,7 @@ class CuentaRepository extends Repository implements RepositoryInterface
     public function generaSolicitudAsociacion($data)
     {
         $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
-        $data['id_empresa'] = $empresaLocal->IdEmpresaContpaq;
+        //$data['id_empresa'] = $empresaLocal->IdEmpresaContpaq;
         $empresa = \App\Models\CTPQ\Empresa::find($empresaLocal->IdEmpresaContpaq);
 
         if (!SolicitudAsociacionCuentaProveedor::getSolicitudActiva($data["id_empresa"])) {

@@ -73,6 +73,7 @@ class Kernel extends HttpKernel
         'lectura' => \App\Http\Middleware\Lectura::class,
         'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
         'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
+        'accesoEmpresaContpaq' => \App\Http\Middleware\CheckAccesoEmpresaContpaq::class,
     ];
 
     /**

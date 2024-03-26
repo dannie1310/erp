@@ -13,6 +13,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Factura;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Transaccion;
+use App\Models\CONTROL_RECURSOS\Documento;
 use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use App\Models\CTPQ\Parametro;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
@@ -40,7 +41,8 @@ class FacturaRepositorio extends Model
         'rfc_emisor',
         'rfc_receptor',
         'tipo_comprobante',
-        'tipo_transaccion'
+        'tipo_transaccion',
+        'id_documento_cr'
     ];
 
     public function proyecto()
@@ -177,5 +179,15 @@ class FacturaRepositorio extends Model
     public function getTotalFormatAttribute()
     {
         return '$' . number_format(($this->total),2);
+    }
+
+    public function getDocumentoRegistradoAttribute()
+    {
+        try {
+            return Documento::where('IdDocto', $this->id_documento_cr)->first();
+        }catch (\Exception $e)
+        {
+            return null;
+        }
     }
 }

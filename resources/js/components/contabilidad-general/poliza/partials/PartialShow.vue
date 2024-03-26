@@ -9,7 +9,7 @@
                     <table class="table table-sm table-fs-sm">
                         <thead>
                             <tr>
-                                <th class="c200">Empresa</th>
+                                <th colspan="3">Empresa</th>
                                 <th class="c90">Fecha de Póliza</th>
                                 <th class="c90">Folio de Poliza</th>
                                 <th class="c90">Tipo de Póliza</th>
@@ -19,7 +19,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>
+                                <td colspan="3">
                                     {{poliza.empresa}}
                                 </td>
                                 <td style="text-align: center">
@@ -32,40 +32,44 @@
                                     {{poliza.tipo.nombre}}
                                 </td>
                                 <td>
-                                    <div  v-for="(uuid, i) in poliza.asociacion_cfdi.data">
-                                        <CFDI v-if="uuid.cfdi" v-bind:txt="uuid.cfdi.uuid" v-bind:id="uuid.cfdi.id" @click="uuid.cfdi.id" ></CFDI>
-                                        <span v-else>
-                                            {{uuid.uuid}}
-                                        </span>
+                                    <div  v-for="(cfdi, i) in poliza.cfdi.data">
+                                        <CFDI v-if="cfdi" v-bind:txt="cfdi.uuid" v-bind:id="cfdi.id" @click="cfdi.id" ></CFDI>
                                     </div>
                                 </td>
                                 <td>
                                     {{poliza.concepto}}
                                 </td>
                             </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 table-responsive" style="overflow-y: auto;max-height: 600px;">
-                    <table class="table table-sm table-fs-sm">
-                        <thead>
-                            <tr>
-                                <th class="index_corto">#</th>
-                                <th class="no_parte">Cuenta</th>
-                                <th class="no_parte">Descripción</th>
-                                <th class="">Cargo</th>
-                                <th class="">Abono</th>
-                                <th class="">Referencia</th>
-                                <th class="c200">CFDI Asociado</th>
-                                <th class="">Concepto</th>
+                            <tr style="border: none">
+                                <td colspan="8" style="border: none">
+                                    &nbsp;
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
+                            <tr >
+                                <th class="index_corto" style="text-align: center; background-color: #f2f4f5">#</th>
+                                <th class="no_parte" style="text-align: center; background-color: #f2f4f5">Cuenta</th>
+                                <th class="no_parte" style="text-align: center; background-color: #f2f4f5">Descripción</th>
+                                <th style="text-align: center; background-color: #f2f4f5">Cargo</th>
+                                <th style="text-align: center; background-color: #f2f4f5">Abono</th>
+                                <th style="text-align: center; background-color: #f2f4f5">Referencia</th>
+                                <th class="c200" style="text-align: center; background-color: #f2f4f5">CFDI Asociado</th>
+                                <th style="text-align: center; background-color: #f2f4f5">Concepto</th>
+                            </tr>
                             <tr v-for="(movimiento, i) in poliza.movimientos_poliza.data">
                                 <td>{{ i + 1 }}</td>
-                                <td>{{movimiento.cuenta.cuenta_format}}</td>
+                                <td>
+                                    <i class="fa fa-times-circle" style="color: red" v-if="!movimiento.cuenta.cuenta_contpaq_proveedor_sat && movimiento.cuenta.requiere_proveedor && para_asociar"></i>
+                                    <asociacion-cuenta-proveedor-show
+                                        v-bind:id_cuenta="movimiento.cuenta.id"
+                                        v-bind:nombre="movimiento.cuenta.descripcion"
+                                        v-bind:id_poliza="id"
+                                        v-bind:id_empresa="id_empresa"
+                                        v-bind:txt="movimiento.cuenta.cuenta_format"
+                                        v-if="!movimiento.cuenta.cuenta_contpaq_proveedor_sat && movimiento.cuenta.requiere_proveedor && para_asociar"/>
+                                    <span v-else>
+                                        {{movimiento.cuenta.cuenta_format}}
+                                    </span>
+                                </td>
                                 <td>{{movimiento.cuenta.descripcion}}</td>
                                 <td style="text-align: right">{{movimiento.cargo_format}}</td>
                                 <td style="text-align: right">{{movimiento.abono_format}}</td>
@@ -90,6 +94,11 @@
             </div>
             <div class="row">
                 <div class="col-md-12">
+                    <poliza-contpaq-lista-cfdi-asociados v-bind:para_eliminar="this.para_eliminar"></poliza-contpaq-lista-cfdi-asociados>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                     Usuario Registró: <strong>{{poliza.usuario_nombre}}</strong>
                 </div>
 
@@ -101,10 +110,13 @@
 
 <script>
 import CFDI from "../../../fiscal/cfd/cfd-sat/CFDI";
+import PolizaContpaqListaCfdiAsociados from "./ListaCFDIAsociados.vue";
+import AsociacionCuentaProveedor from "../../asociacion-cuenta-proveedor/Index.vue";
+import AsociacionCuentaProveedorShow from "../../asociacion-cuenta-proveedor/partials/AsociarCuentaProveedor.vue";
 export default {
     name: "poliza-partial-show",
-    props : ['id', 'id_empresa','poliza_parametro'],
-    components : {CFDI},
+    props : ['id', 'id_empresa','poliza_parametro','para_eliminar', 'para_asociar'],
+    components : {AsociacionCuentaProveedorShow, PolizaContpaqListaCfdiAsociados, CFDI},
     data(){
         return {
             cargando:false,
@@ -122,7 +134,7 @@ export default {
                 return this.$store.dispatch('contabilidadGeneral/poliza/find', {
                     id: this.id,
                     params: {
-                        include: ['movimientos_poliza.asociacion_cfdi', 'tipo', 'asociacion_cfdi', 'posibles_cfdi'],
+                        include: ['movimientos_poliza.asociacion_cfdi','movimientos_poliza.cuenta.cuenta_contpaq_proveedor_sat', 'tipo', 'asociacion_cfdi', 'posibles_cfdi'],
                         id_empresa: this.id_empresa
                     }
                 }).then(data => {
@@ -137,7 +149,7 @@ export default {
                 return this.$store.dispatch('contabilidadGeneral/poliza/find', {
                     id: this.id,
                     params: {
-                        include: ['movimientos_poliza.asociacion_cfdi', 'tipo', 'asociacion_cfdi'],
+                        include: ['movimientos_poliza.asociacion_cfdi','movimientos_poliza.cuenta.cuenta_contpaq_proveedor_sat', 'tipo', 'asociacion_cfdi', 'posibles_cfdi'],
                         id_empresa: this.id_empresa
                     }
                 }).then(data => {

@@ -174,6 +174,9 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            'options'   => [
+                PDO::ATTR_EMULATE_PREPARES => true
+            ]
         ],
 
         'igh92' => [
@@ -323,6 +326,41 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+        ],
+
+        'controlrec' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_CONTROL_RECURSOS', '127.0.0.1'),
+            'port' => env('DB_PORT_CONTROL_RECURSOS', '3306'),
+            'database' => env('DB_DATABASE_CONTROL_RECURSOS', 'forge'),
+            'username' => env('DB_USERNAME_CONTROL_RECURSOS', 'forge'),
+            'password' => env('DB_PASSWORD_CONTROL_RECURSOS', ''),
+            'unix_socket' => env('DB_SOCKET_CONTROL_RECURSOS', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+
+        'oracle' => [
+            'driver'         => 'oracle',
+            'tns'            => env('DB_TNS_ORACLE', ''),
+            'host'           => env('DB_HOST_ORACLE', ''),
+            'port'           => env('DB_PORT_ORACLE', '1521'),
+            'database'       => env('DB_DATABASE_ORACLE', ''),
+            'service_name'   => env('DB_SERVICE_NAME_ORACLE', ''),
+            'username'       => env('DB_USERNAME_ORACLE', ''),
+            'password'       => env('DB_PASSWORD_ORACLE', ''),
+            'prefix_schema'  => env('DB_SCHEMA_PREFIX_ORACLE', ''),
+            'edition'        => env('DB_EDITION_ORACLE', 'ora$base'),
+            'server_version' => env('DB_SERVER_VERSION_ORACLE', '12c'),
+            'load_balance'   => env('DB_LOAD_BALANCE_ORACLE', 'yes'),
+            'dynamic'        => [],
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
         ],
     ],
 

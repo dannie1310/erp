@@ -11,4 +11,16 @@ class Usuario extends Model
     protected $primaryKey = 'Id';
     public $timestamps = false;
 
+    public function empresas()
+    {
+        return $this->hasManyThrough(Empresa::class,EmpresaUsuario::class,"IdUsuario"
+            ,"Id","IdUsuario", "IdEmpresa");
+    }
+
+    public function empresasUsuario()
+    {
+        return $this->hasMany(EmpresaUsuario::class,"IdUsuario"
+            ,"Id");
+    }
+
 }

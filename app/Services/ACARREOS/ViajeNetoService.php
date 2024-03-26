@@ -92,11 +92,11 @@ class ViajeNetoService
             /**
              * Validar telefono asignado al proyecto y al usuario.
              */
-            if ($this->repository->getTelefonoActivo('imei',$data['IMEI']) || $this->repository->getTelefonoActivo('device_id',$data['deviceId'])) {
+            if ($this->repository->getTelefonoActivo('imei',$data['IMEI'],$usuario->first()->id_usuario_intranet) || $this->repository->getTelefonoActivo('device_id',$data['deviceId'],$usuario->first()->id_usuario_intranet)) {
                 return json_encode(array("error" => "El usuario no tiene autorización para operar este telefono."));
             }
         }else{
-            if ($this->repository->getTelefonoActivo('device_id',$data['deviceId'])) {
+            if ($this->repository->getTelefonoActivo('device_id',$data['deviceId'], $usuario->first()->id_usuario_intranet)) {
                 return json_encode(array("error" => "El usuario no tiene autorización para operar este telefono."));
             }
         }

@@ -138,6 +138,10 @@ return [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_EMITIDOS')),
         ],
+        'xml_control_recursos' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_XML_CONTROL_RECURSOS')),
+        ],
         'pdf_emitidos' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_PDF_EMITIDOS')),
@@ -161,6 +165,14 @@ return [
         'contabilidad_electronica' =>[
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_LAYOUT_CONTABILIDAD_ELECTRONICA')),
+        ],
+        'bancario_recurso_descarga' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA')),
+        ],
+        'bancario_recurso_descarga_zip' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('SANTANDER_RECURSO_BANCARIO_STORAGE_DESCARGA_ZIP')),
         ],
     ],
 ];

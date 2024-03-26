@@ -104,18 +104,17 @@ class OrdenCompraFormato extends FPDI
         $this->requisicion_folio_sao =str_pad($this->ordenCompra->solicitud->numero_folio_format, 5, '0', STR_PAD_LEFT);
         $this->obra_nombre = $this->obra->nombre_obra_formatos;
 
-
-
         // @ TODO clausulado provisional hasta definir estructura nueva -Gsus-
         $this->NuevoClausulado = 0;
         $this->archivo='';
 
-
-
-        if (strtotime($this->fecha) >= '2019-04-08' and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
+        if (strtotime($this->fecha) >= strtotime('2024-02-29') and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
             $this->NuevoClausulado = 1;
+            $this->archivo = 'Clausulado_2024.pdf';
+        }
+        else if ((strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08')) and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
             $this->archivo = 'Clausulado_2019.pdf';
-        } // fin if comparación de fecha
+        }
         else {
             if (Context::getDatabase() == "SAO_CORP") {
                 $this->conFirmaDAF = true;
@@ -184,7 +183,7 @@ class OrdenCompraFormato extends FPDI
                     }
                     break;
                 case "SAO1814_TERMINAL_NAICM":
-                    $this->archivo = "Clausulado_ctvm.jpg";
+                    $this->archivo = "Clausulado_ctvm.pdf";
                     break;
                 case "SAO1814_TUNEL_DRENAJE_PRO":
                     $this->archivo = "Clausulado_tunel_drenaje_pro.jpg";
@@ -193,29 +192,60 @@ class OrdenCompraFormato extends FPDI
                     if($this->ordenCompra->obra->id_obra == 3){
                         $this->archivo = "ClausuladoTransitsmico.pdf";
                     }else{
-                        $this->archivo = "Clausulado_2019.pdf";
+                        if(strtotime($this->fecha) >= strtotime('2024-02-29'))
+                        {
+                            $this->archivo = "Clausulado_2024.pdf";
+                        }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                        {
+                            $this->archivo = "Clausulado_2019.pdf";
+                        }else{
+                            $this->archivo = "Clausulado.pdf";
+                        }
                     }
                     break;
                 case "SAO1814_TROLEBUS":
                     if($this->ordenCompra->obra->id_obra == 1){
                         $this->archivo = "ClausuladoTrolebus.pdf";
                     }else{
-                        $this->archivo = "Clausulado_2019.pdf";
+                        if(strtotime($this->fecha) >= strtotime('2024-02-29'))
+                        {
+                            $this->archivo = "Clausulado_2024.pdf";
+                        }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                        {
+                            $this->archivo = "Clausulado_2019.pdf";
+                        }else{
+                            $this->archivo = "Clausulado.pdf";
+                        }
                     }
                     break;
                 case "SAO1814_CUTZAMALA":
                     if($this->ordenCompra->obra->id_obra == 4){
                         $this->archivo = "ClausuladoCutzamala.pdf";
                     }else{
-                        $this->archivo = "Clausulado_2019.pdf";
+                        if(strtotime($this->fecha) >= strtotime('2024-02-29'))
+                        {
+                            $this->archivo = "Clausulado_2024.pdf";
+                        }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                        {
+                            $this->archivo = "Clausulado_2019.pdf";
+                        }else{
+                            $this->archivo = "Clausulado.pdf";
+                        }
                     }
                     break;
                 default:
-                    $this->archivo = "Clausulado_2019.pdf";
+                    if(strtotime($this->fecha) >= strtotime('2024-02-29'))
+                    {
+                        $this->archivo = "Clausulado_2024.pdf";
+                    }elseif (strtotime('2024-02-29') > strtotime($this->fecha) and strtotime($this->fecha) >= strtotime('2019-04-08'))
+                    {
+                        $this->archivo = "Clausulado_2019.pdf";
+                    }else{
+                        $this->archivo = "Clausulado.pdf";
+                    }
             }
         }
 
-        //$this->clausulado_page=public_path('pdf/clausulados/'.$this->archivo);
         $this->SetAutoPageBreak(true, 3);
 
         $this->setSourceFile(public_path('pdf/ClausuladosPDF/'.$this->archivo));
@@ -378,6 +408,15 @@ class OrdenCompraFormato extends FPDI
                 $this->SetHeights([0.5]);
                 $this->SetFont('Arial', '', 9);
                 $this->SetWidths([19.5]);
+            } else if ($this->encola == "centro_costo") {
+                $this->SetRounds(['12']);
+                $this->SetRadius([0]);
+                $this->SetWidths([19.5]);
+                $this->SetFills(['255,255,255']);
+                $this->SetTextColors(['0,0,0']);
+                $this->SetHeights([0.5]);
+                $this->SetFont('Arial', '', 9);
+                $this->SetAligns(['']);
             }
         } else {
             //Es par y lleva encabezado corto
@@ -538,7 +577,12 @@ class OrdenCompraFormato extends FPDI
 
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(4, .5, 'Anticipo ('. $this->ordenCompra->cotizacion->complemento->anticipo .' %): ', 0, 0,'L');
+        if($this->ordenCompra->cotizacion && $this->ordenCompra->cotizacion->complemento){
+            $this->CellFitScale(4, .5, 'Anticipo ('. $this->ordenCompra->cotizacion->complemento->anticipo .' %): ', 0, 0,'L');
+        }
+        else{
+            $this->CellFitScale(4, .5, 'Anticipo: ', 0, 0,'L');
+        }
         $this->SetFont('Arial', '', 9);
         $this->CellFitScale(2, .5, number_format($anticipo_monto, 2, '.', ','), 1, 0,'R');
 
@@ -552,7 +596,9 @@ class OrdenCompraFormato extends FPDI
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Fecha de entrega: ', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(2, .5,$this->ordenCompra->complemento->fecha_entrega_format, 1, 0,'R');
+        if($this->ordenCompra->complemento){
+            $this->CellFitScale(2, .5,$this->ordenCompra->complemento->fecha_entrega_format, 1, 0,'R');
+        }
 
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(11.5, .5, 'Descuento Global ('. $descuento .'%):', 0, 0,'R');
@@ -563,7 +609,11 @@ class OrdenCompraFormato extends FPDI
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(4, .5, 'Forma de Pago:', 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(5, .5, utf8_decode(($this->ordenCompra->complemento->formaPago)?$this->ordenCompra->complemento->formaPago->descripcion:""), 1, 0,'L');
+        if($this->ordenCompra->complemento){
+            $this->CellFitScale(5, .5, utf8_decode(($this->ordenCompra->complemento->formaPago)?$this->ordenCompra->complemento->formaPago->descripcion:""), 1, 0,'L');
+        }else{
+            $this->CellFitScale(5, .5, "", 1, 0,'L');
+        }
 
         $this->SetFont('Arial', 'B', 9);
         $this->CellFitScale(8.5, .5, 'Subtotal:', 0, 0,'R');
@@ -1284,8 +1334,11 @@ class OrdenCompraFormato extends FPDI
         $this->partidas();
         $this->totales();
 
-        $this->AddPage();
-        $this->useTemplate($this->clausulado,0, 0.5, 22);
+        if(Context::getDatabase() != 'SAO1814_TERMINAL_NAICM')
+        {
+            $this->AddPage();
+            $this->useTemplate($this->clausulado,0, 0.5, 22);
+        }
 
         try {
             $this->Output('I', 'Formato - Orden de Compra.pdf', 1);

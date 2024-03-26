@@ -35,10 +35,16 @@ class SolicitudAsociacionCuentaProveedor extends Model
         return $this->hasMany(SolicitudAsociacionCuentaProveedorPartida::class,"id_solicitud_asociacion", "id");
     }
 
-    public static function getSolicitudActiva($id_empresa)
+    public static function getSolicitudActiva($id_empresa_local)
     {
-        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($id_empresa);
-        return SolicitudAsociacionCuentaProveedor::whereNull("fecha_hora_fin")->where("id_empresa_contpaq","=",$empresaLocal->IdEmpresaContpaq)->first();
+        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($id_empresa_local);
+        if($empresaLocal)
+        {
+            $id_empresa_contpaq = $empresaLocal->IdEmpresaContpaq;
+            return SolicitudAsociacionCuentaProveedor::whereNull("fecha_hora_fin")->where("id_empresa_contpaq","=", $id_empresa_contpaq)->first();
+        }else{
+            abort(500,"Empresa no encontrada: ".$id_empresa_local);
+        }
     }
 
     public function getFechaHoraInicioFormatAttribute()

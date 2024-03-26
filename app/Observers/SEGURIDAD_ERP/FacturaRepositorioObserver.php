@@ -18,9 +18,14 @@ class FacturaRepositorioObserver
     public function creating(FacturaRepositorio $factura)
     {
         $factura->usuario_registro = auth()->id();
-        $factura->id_proyecto = Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey();
-        $factura->id_obra = Context::getIdObra();
-        if ($factura->id_transaccion > 0) {
+        if ($factura->id_documento_cr == null) {
+            $factura->id_proyecto = Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey();
+            $factura->id_obra = Context::getIdObra();
+            if ($factura->id_transaccion > 0) {
+                $factura->usuario_asocio = auth()->id();
+                $factura->fecha_hora_asociacion = Carbon::now();
+            }
+        } else {
             $factura->usuario_asocio = auth()->id();
             $factura->fecha_hora_asociacion = Carbon::now();
         }
@@ -28,13 +33,16 @@ class FacturaRepositorioObserver
 
     public function updating(FacturaRepositorio $factura)
     {
-        if($factura->getOriginal("id_transaccion") == null && $factura->id_transaccion >0)
-        {
+        if ($factura->getOriginal("id_transaccion") == null && $factura->id_transaccion > 0) {
             $factura->usuario_asocio = auth()->id();
             $factura->fecha_hora_asociacion = Carbon::now();
             $factura->id_proyecto = Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey();
             $factura->id_obra = Context::getIdObra();
         }
-    }
 
+        if ($factura->getOriginal("id_documento_cr") == null && $factura->id_documento_cr > 0) {
+            $factura->usuario_asocio = auth()->id();
+            $factura->fecha_hora_asociacion = Carbon::now();
+        }
+    }
 }

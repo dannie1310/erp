@@ -701,7 +701,7 @@ class Estimacion extends Transaccion
             if ($this->configuracion->ret_fon_gar_con_iva == 1) {
                 return $this->suma_importes * ($this->retencion / 100) * 1.16;
             } else {
-                return $this->suma_importes * ($this->retencion / 100);
+                return $this->total_orden_pago * ($this->retencion / 100);
             }
         } else {
             return $this->suma_importes * ($this->retencion / 100);
@@ -794,7 +794,11 @@ class Estimacion extends Transaccion
 
     public function getTasaIvaAttribute()
     {
-        return $this->impuesto / $this->subtotal_orden_pago;
+        if($this->subtotal_orden_pago != 0) {
+            return $this->impuesto / $this->subtotal_orden_pago;
+        }else{
+            return 0.16;
+        }
     }
 
     public function getTasaIvaFormatAttribute()

@@ -79,6 +79,8 @@ class CFDINomina
             $this->arreglo_cfdi["subtotal"] = (float)$cfdi_xml["SubTotal"];
             $this->arreglo_cfdi["descuento"] = (float)$cfdi_xml["Descuento"];
             $this->arreglo_cfdi["total"] = (float)$cfdi_xml["Total"];
+            $this->arreglo_cfdi["tipo_comprobante"] = (string)$cfdi_xml["TipoDeComprobante"];
+
 
             $emisor = $cfdi_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_cfdi["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
@@ -104,6 +106,31 @@ class CFDINomina
             $this->arreglo_cfdi["percepciones"] = $this->getPercepciones($cfdi_xml);
             $this->arreglo_cfdi["deducciones"] = $this->getDeducciones($cfdi_xml);
             $this->arreglo_cfdi["otros_pagos"] = $this->getOtrosPagos($cfdi_xml);
+            $this->arreglo_cfdi["receptor_nomina"] = $this->getReceptorNomina($cfdi_xml);
+            $this->arreglo_cfdi["emisor_nomina"] = $this->getEmisorNomina($cfdi_xml);
+
+            if(key_exists("registro_patronal", $this->arreglo_cfdi["emisor_nomina"]))
+            {
+                $this->arreglo_cfdi["emisor"]["registro_patronal"] = $this->arreglo_cfdi["emisor_nomina"]["registro_patronal"];
+            }
+
+
+            if(key_exists("nss", $this->arreglo_cfdi["receptor_nomina"]))
+            {
+                $this->arreglo_cfdi["receptor"]["nss"] = $this->arreglo_cfdi["receptor_nomina"]["nss"];
+            }
+            if(key_exists("curp", $this->arreglo_cfdi["receptor_nomina"]))
+            {
+                $this->arreglo_cfdi["receptor"]["curp"] = $this->arreglo_cfdi["receptor_nomina"]["curp"];
+            }
+            if(key_exists("departamento", $this->arreglo_cfdi["receptor_nomina"]))
+            {
+                $this->arreglo_cfdi["departamento"] = $this->arreglo_cfdi["receptor_nomina"]["departamento"];
+            }
+            if(key_exists("puesto", $this->arreglo_cfdi["receptor_nomina"]))
+            {
+                $this->arreglo_cfdi["puesto"] = $this->arreglo_cfdi["receptor_nomina"]["puesto"];
+            }
 
         } catch (\Exception $e) {
             $this->log["archivos_no_cargados_error_app"] += 1;
@@ -157,6 +184,39 @@ class CFDINomina
             $i++;
         }
         return $conceptos;
+    }
+
+    private function getReceptorNomina($cfdi_xml)
+    {
+        $ns = $cfdi_xml->getNamespaces(true);
+        if (key_exists("nomina12", $ns)) {
+            $cfdi_xml->registerXPathNamespace('n12', $ns['nomina12']);
+        }
+
+        $receptor_nomina = [];
+        $receptor_nomina_cfdi = $cfdi_xml->xpath('//n12:Receptor')[0];
+
+        $receptor_nomina["nss"] = (string)$receptor_nomina_cfdi["NumSeguridadSocial"];
+        $receptor_nomina["curp"] = (string)$receptor_nomina_cfdi["Curp"];
+        $receptor_nomina["departamento"] = (string)$receptor_nomina_cfdi["Departamento"];
+        $receptor_nomina["puesto"] = (string)$receptor_nomina_cfdi["Puesto"];
+
+        return $receptor_nomina;
+    }
+
+    private function getEmisorNomina($cfdi_xml)
+    {
+        $ns = $cfdi_xml->getNamespaces(true);
+        if (key_exists("nomina12", $ns)) {
+            $cfdi_xml->registerXPathNamespace('n12', $ns['nomina12']);
+        }
+
+        $emisor_nomina = [];
+        $emisor_nomina_cfdi = $cfdi_xml->xpath('//n12:Emisor')[0];
+
+        $emisor_nomina["registro_patronal"] = (string)$emisor_nomina_cfdi["RegistroPatronal"];
+
+        return $emisor_nomina;
     }
 
     private function getPercepciones($cfdi_xml)
@@ -244,7 +304,11 @@ class CFDINomina
                 $fecha_xml = substr($fecha, 0, 19);
             }
         }
-        return $fecha_xml->format('Y-m-d H:i:s');
+
+        if(is_string($fecha_xml))
+            return "";
+        else
+            return $fecha_xml->format('Y-m-d H:i:s');
     }
 
     private function getValidacionCFDI33($arreglo_cfd)

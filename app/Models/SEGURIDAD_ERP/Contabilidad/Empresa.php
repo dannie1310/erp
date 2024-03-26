@@ -1,6 +1,8 @@
 <?php
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
+use App\Models\CTPQ\GeneralesSQL\EmpresaUsuario;
+use App\Models\CTPQ\GeneralesSQL\Usuario;
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\EmpresaSATvsEmpresaContabilidad;
@@ -28,6 +30,7 @@ class Empresa extends Model
         'AliasBDD',
         'SincronizacionPolizasCFDI',
         "IdEmpresaContpaq",
+        "IdEmpresaSAT",
         "GuidDSL",
         "con_acceso_other_metadata",
         "con_acceso_other_content",
@@ -74,6 +77,11 @@ class Empresa extends Model
     public function empresaSAT()
     {
         return $this->belongsTo(EmpresaSAT::class,"IdEmpresaSAT","id");
+    }
+
+    public function empresaContpaq()
+    {
+        return $this->hasOne(\App\Models\CTPQ\GeneralesSQL\Empresa::class,"AliasBDD","AliasBDD");
     }
 
     public function polizas()
@@ -180,6 +188,21 @@ class Empresa extends Model
     public function scopeEditable($query)
     {
         return $query->where('Visible',1)->where('Editable', 1);
+    }
+
+    public function scopePorUsuario($query)
+    {
+        /*if(auth()->user()->idusuario == '180'){
+            $id_empresas_contpaq = Empresa::all()->pluck("IdEmpresaContpaq");
+        }else{
+            $usuario = strtoupper(auth()->user()->usuario);
+            $empresas = Usuario::with(["empresasUsuario"])->where("codigo","=",$usuario)
+                ->where("EsBaja","=",0)->first();
+            $id_empresas_contpaq = $empresas->empresasUsuario->pluck("IdEmpresa");
+        }*/
+
+        return $query->join("Contabilidad.empresas_usuarios","empresas_usuarios.id_empresa","ListaEmpresas.Id")
+            ->where("id_usuario","=",auth()->user()->idusuario);
     }
 
     public function scopeParaInformeCostosCFDIvsCostosBza($query)
