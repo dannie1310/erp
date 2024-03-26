@@ -1290,22 +1290,22 @@ class AsignacionFormato extends Rotation
         else if (Context::getDatabase() == "SAO1814_OPERADORA_ACTIVOS")
         {
             $this->Cell(5.2, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
-            $this->Cell(5.2, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
             $this->Cell(5.2, .4, utf8_decode('Autoriza Dir. Gral. De Hermes Construcción'), 'TRLB', 0, 'C', 0);
-            $this->Cell(5.2, .4, utf8_decode('Autoriza Dir. De Admón. y Finanzas para Construcción y Operación de Infraestructura'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.6, .4, utf8_decode('Autoriza Dir. Admón. y Finanzas Const y Operac de Inf'), 'TRLB', 0, 'C', 0);
             $this->Cell(5.2, .4, utf8_decode('Autoriza Dir. Ejec. Admón y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Ln();
             $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(4.8, 1.2, '', 'TRLB', 0, 'C');
             $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
-            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.6, 1.2, '', 'TRLB', 0, 'C');
             $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
 
             $this->Ln();
             $this->Cell(5.2, .4, utf8_decode($this->asignacion->usuario), 'TRLB', 0, 'C', 0);
-            $this->Cell(5.2, .4, utf8_decode('ING. RAFAEL COLMENERO VEGA'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('ING. RAFAEL COLMENERO VEGA'), 'TRLB', 0, 'C', 0);
             $this->Cell(5.2, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
-            $this->Cell(5.2, .4, utf8_decode('Lic. FRANCISCO MANUEL OSUNA Y PEREZ DE CELIS'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.6, .4, utf8_decode('Lic. FRANCISCO MANUEL OSUNA Y PEREZ DE CELIS'), 'TRLB', 0, 'C', 0);
             $this->Cell(5.2, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 0);
         }
         else if($this->asignacion->solicitud->id_area_compradora == 4){
