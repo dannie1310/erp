@@ -1287,7 +1287,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
         }
-        else if (Context::getDatabase() == "SAO1814_OPERADORA_ACTIVOS")
+        else if (Context::getDatabase() == "SAO1814_OPERADORA_ACTIVOS" && Context::getIdObra() == 16)
         {
             $this->Cell(5.2, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
             $this->Cell(4.8, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
