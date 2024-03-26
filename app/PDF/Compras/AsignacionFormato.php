@@ -806,7 +806,7 @@ class AsignacionFormato extends Rotation
         $this->SetFont('Arial', 'BI', 6.5);
         $this->SetTextColor('0,0,0');
         $this->SetX(4.5);
-        $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de compras. Fecha de registro: ' . date("d-m-Y", strtotime($this->asignacion->fecha_format))).' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
+        $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de compras. Fecha de registro: ') . $this->asignacion->fecha_format.' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
         $this->Cell(15, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
@@ -1286,6 +1286,27 @@ class AsignacionFormato extends Rotation
             $this->Cell(4.3, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
+        }
+        else if (Context::getDatabase() == "SAO1814_OPERADORA_ACTIVOS")
+        {
+            $this->Cell(5.2, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Autoriza Dir. Gral. De Hermes Construcción'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.6, .4, utf8_decode('Autoriza Dir. Admón. y Finanzas Const y Operac de Inf'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Autoriza Dir. Ejec. Admón y Finanzas'), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(4.8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.6, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->Cell(5.2, .4, utf8_decode($this->asignacion->usuario), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('ING. RAFAEL COLMENERO VEGA'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.6, .4, utf8_decode('Lic. FRANCISCO MANUEL OSUNA Y PEREZ DE CELIS'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 0);
         }
         else if($this->asignacion->solicitud->id_area_compradora == 4){
             $this->Cell(4.1, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
