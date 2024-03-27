@@ -55,7 +55,10 @@ WHERE
         ")
         ;
         $total_solicitudes_con_orden_pago = $qry_total_solicitudes_con_orden_pago[0]->completas;
-        $razon_solicitudes = number_format($total_solicitudes_con_orden_pago / $total_solicitudes *100, "0") ;
+        $razon_solicitudes = 0;
+        if($total_solicitudes_con_orden_pago != 0){
+            $razon_solicitudes = number_format($total_solicitudes_con_orden_pago / $total_solicitudes *100, "0") ;
+        }
 
         if($razon_solicitudes>=90)
         {
