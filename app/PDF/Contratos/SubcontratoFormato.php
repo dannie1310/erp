@@ -476,7 +476,8 @@ class SubcontratoFormato extends FPDI
                 $this->CellFitScale(4, .3, utf8_decode('Gerente de Procuración'), 1, 0,'C');
                 $this->CellFitScale(4, .3, ('Administrador de Subcontratos de Control de Proyectos'), 1, 0,'C');
             //$this->SetFillColor(255, 255, 255);
-			}else if(Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO"){
+			}
+            else if(Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO"){
                  //if(true){
                 $this->SetFont('Arial', 'B', 6);
                 $this->SetFont('Arial', 'B', 5);
@@ -496,7 +497,8 @@ class SubcontratoFormato extends FPDI
                 $this->CellFitScale(5.3, .3, utf8_decode('Gerente Administrativo'), 1, 0,'C');
                 $this->CellFitScale(5.3, .3, ('Gerente de Proyecto'), 1, 0,'C');
                 //$this->SetFillColor(255, 255, 255);
-             }else if(Context::getDatabase() == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
+             }
+            else if(Context::getDatabase() == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
 
                 $this->SetFont('Arial', 'B', 6);
                 $this->SetY(-5.7);
@@ -549,7 +551,6 @@ class SubcontratoFormato extends FPDI
 			}
             else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7 && $this->subcontrato->contratoProyectado->contratoAreaSubcontratante->id_area_subcontratante != 1 )
             {
-                dd("AQUI");
                 $this->SetFont('Arial', 'B', 6);
                 $this->SetY(-5.7);
                 $this->Cell(3);
@@ -576,22 +577,19 @@ class SubcontratoFormato extends FPDI
                 $this->SetFont('Arial', 'B', 5);
                 $this->SetY(-2.7);
                 $this->Cell(2);
-                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
-                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
-                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
-                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(5.5, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(5.5, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(5.5, .4, ('Vo.Bo.'), 1, 0,'C');
                 $this->Ln(.4);
                 $this->Cell(2);
-                $this->CellFitScale(4, .8, '', 1, 0,'C');
-                $this->CellFitScale(4, .8, '', 1, 0,'C');
-                $this->CellFitScale(4, .8, '', 1, 0,'C');
-                $this->CellFitScale(4, .8, '', 1, 0,'C');
+                $this->CellFitScale(5.5, .8, '', 1, 0,'C');
+                $this->CellFitScale(5.5, .8, '', 1, 0,'C');
+                $this->CellFitScale(5.5, .8, '', 1, 0,'C');
                 $this->Ln(.8);
                 $this->Cell(2);
-                $this->CellFitScale(4, .3, utf8_decode('Elaboró'), 1, 0,'C');
-                $this->CellFitScale(4, .3, ('Control de Proyecto'), 1, 0,'C');
-                $this->CellFitScale(4, .3, utf8_decode('Administración'), 1, 0,'C');
-                $this->CellFitScale(4, .3, '', 1, 0,'C');
+                $this->CellFitScale(5.5, .3, utf8_decode('ELABORO'), 1, 0,'C');
+                $this->CellFitScale(5.5, .3, ('CONTROL DE PROYECTO'), 1, 0,'C');
+                $this->CellFitScale(5.5, .3, utf8_decode('ADMINISTRACIÓN'), 1, 0,'C');
             }
             else{
                 $this->SetFont('Arial', 'B', 6);
