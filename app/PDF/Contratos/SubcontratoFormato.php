@@ -152,7 +152,8 @@ class SubcontratoFormato extends FPDI
                     $this->Cell(.7,.15,substr($fecha_exp[2],-2),'',0,'L', 1);
                 }
             }
-        }else{
+        }
+        else{
             $postTitle=.7;
             if( Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41){
                 $this->image('../../img/subcontrato/LOGOTIPO_REHABILITACION_ATLACOMULCO.png',1,.3,5,2);
@@ -646,7 +647,7 @@ class SubcontratoFormato extends FPDI
             $this->Cell(10,.3,(''),0,1,'L');
         }
         $this->SetFont('Arial','BI',6);
-        $this->Cell(10,.3,(utf8_decode('Formato generado desde el módulo de contratos. Fecha de registro: '. $this->subcontrato->fecha_format)),0,0,'L');
+        $this->Cell(10,.3,(utf8_decode('Formato generado desde el módulo de contratos. Fecha de registro: '. $this->subcontrato->fecha_format). ' Fecha de consulta: '.date("d-m-Y H:i:s")),0,0,'L');
         $this->Cell(9.5,.3,utf8_decode('Página ').$this->PageNo().'/{nb}',0,0,'R');
     }
 
