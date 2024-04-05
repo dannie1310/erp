@@ -131,9 +131,9 @@ class FacturaService
                     $suma = $suma + $traslado['importe'];
                 }
                 if ($traslado['impuesto'] == '002') {
-                    $bandera = 1;
-                    $arreglo["impuesto"] = $arreglo_cfd['traslados'][0]['importe'];
-                    if (count($arreglo_cfd['traslados']) > 1) {
+
+                    if (count($arreglo_cfd['traslados']) > 1 && $arreglo_cfd['traslados'][1]['importe'] != $arreglo['impuesto']) {
+                        $bandera = 1;
                         $arreglo["otros"] = $arreglo_cfd['traslados'][1]['importe'];
                     }
                 }
