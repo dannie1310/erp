@@ -124,22 +124,23 @@ class FacturaService
        // REVISAR CUANDO MUESTREN LO QUE AGREGAN A OTROS IMPUESTOS
          $bandera = 0;
         if(array_key_exists('traslados', $arreglo_cfd) && $arreglo_cfd['traslados'] != []) {
-            if ($arreglo['proveedor_bd']['importe_especial'] == 1)
+            if ($arreglo['proveedor_bd']['importe_especial'] == 1) {
                 $suma = 0;
-            foreach ($arreglo_cfd['traslados'] as $traslado) {
-                if ($traslado['impuesto'] == '003') {
-                    $suma = $suma + $traslado['importe'];
-                }
-                if ($traslado['impuesto'] == '002') {
+                foreach ($arreglo_cfd['traslados'] as $traslado) {
+                    if ($traslado['impuesto'] == '003') {
+                        $suma = $suma + $traslado['importe'];
+                    }
+                    if ($traslado['impuesto'] == '002') {
 
-                    if (count($arreglo_cfd['traslados']) > 1 && $arreglo_cfd['traslados'][1]['importe'] != $arreglo['impuesto']) {
-                        $bandera = 1;
-                        $arreglo["otros"] = $arreglo_cfd['traslados'][1]['importe'];
+                        if (count($arreglo_cfd['traslados']) > 1 && $arreglo_cfd['traslados'][1]['importe'] != $arreglo['impuesto']) {
+                            $bandera = 1;
+                            $arreglo["otros"] = $arreglo_cfd['traslados'][1]['importe'];
+                        }
                     }
                 }
-            }
-            if ($bandera != 1) {
-                $arreglo["otros"] = $suma;
+                if ($bandera != 1) {
+                    $arreglo["otros"] = $suma;
+                }
             }
         }
         $arreglo["serie"] = $arreglo_cfd["serie"];
