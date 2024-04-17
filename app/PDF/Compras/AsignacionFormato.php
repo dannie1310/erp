@@ -1376,7 +1376,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(.2);
-            $this->Cell(4.3, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(4.3, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'RLB', 0, 'C', 0);
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
         }
