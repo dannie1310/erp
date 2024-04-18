@@ -859,7 +859,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(4.1, .4, utf8_decode('ING. JOSE MARTÍN ORTIZ VAZQUEZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(4, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 0);
             $this->Cell(4.2, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
-            $this->Cell(5, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(4.2, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
 
         }
@@ -896,7 +896,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.8, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'RLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'RLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
         }
@@ -907,7 +907,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4.3, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4, .4, utf8_decode('VoBo Dir. Ejec. de Oper. e Infra.'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4, .4, utf8_decode('Dir. Ejec. de Oper. e Infra.'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4.8, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
@@ -933,11 +933,11 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4.3, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
+            $this->Cell(4, .4, utf8_decode('LIC. ANTONIO MAGALLANES GARCÍA'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.8, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'RLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'RLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
+            $this->Cell(4, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
         }
         else if (Context::getDatabase() == "SAO1814_CHIMALHUACAN" && Context::getIdObra() == 3 && $this->asignacion->solicitud->id_area_compradora == 4)
         {
@@ -975,7 +975,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.8, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'RLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'RLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
         }
@@ -1015,7 +1015,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'RLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'RLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
         }
@@ -1055,7 +1055,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
         }
@@ -1095,7 +1095,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
         }
@@ -1136,7 +1136,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'RLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'RLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
         }
@@ -1165,7 +1165,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(3, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(3, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(4, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
-            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(4.3, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
 
         }
@@ -1376,7 +1376,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(.2);
-            $this->Cell(4.3, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'RLB', 0, 'C', 0);
+            $this->Cell(4.3, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'RLB', 0, 'C', 0);
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
         }
