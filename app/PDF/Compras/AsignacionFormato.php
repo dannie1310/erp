@@ -317,7 +317,7 @@ class AsignacionFormato extends Rotation
                 $this->SetDrawColor('200', '200', '200');
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font2);
-                $this->CellFitScale($anchos["des"], $heigth, $partida_solicitud->material->descripcion, 1, 0, 'L', 0, '');
+                $this->CellFitScale($anchos["des"], $heigth, utf8_decode($partida_solicitud->material->descripcion), 1, 0, 'L', 0, '');
                 $this->SetFont('Arial', 'B', $font2-0.5);
                 $this->CellFitScale($anchos["u"], $heigth, $partida_solicitud->unidad, 1, 0, 'L', 0, '');
                 $this->SetFont('Arial', 'B', $font_importes);
