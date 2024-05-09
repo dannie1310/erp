@@ -30,7 +30,7 @@ class Documento extends Model
         'IVA',
         'Total',
         'Retenciones',
-        'TasaIVA',
+        'TasaIva',
         'OtrosImpuestos',
         'IdMoneda',
         'Alias_Depto',
@@ -44,6 +44,7 @@ class Documento extends Model
         'uuid',
         'registro_portal',
         'Descuento',
+        'Descuento_CFDI',
         'IdGenero'
     ];
 
@@ -123,7 +124,6 @@ class Documento extends Model
     {
         return $this->belongsTo(RelacionGastoXDocumento::class, 'IdDocto', 'iddocumento');
     }
-
 
     /**
      * Scopes

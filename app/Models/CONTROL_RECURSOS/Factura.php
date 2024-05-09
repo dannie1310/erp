@@ -107,7 +107,8 @@ class Factura extends Documento
             'Estatus' => $data['idtipodocto'] == 1 ? 1 : 5,
             'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
             'registro_portal' => 1,
-            'Descuento' => $data['proveedor_bd']['importe_especial'] == 1 ? 0 : $data['descuento']
+            'Descuento' => $data['proveedor_bd']['importe_especial'] == 1 ? 0 : $data['descuento'],
+            'Descuento_CFDI' => $data['descuento']
         ]);
     }
 
