@@ -36,6 +36,9 @@ class PagoReembolsoPorSolicitudTransformer extends TransformerAbstract
             'importe' => $model->Importe,
             'importe_format' => $model->importe_format,
             'iva' => $model->IVA,
+            'iva_format' => $model->iva_format,
+            'otros_format' => $model->otros_format,
+            'retenciones_format' => $model->retenciones_format,
             'total' => $model->Total,
             'serie' => $model->Serie,
             'folio' => $model->Folio,
@@ -48,6 +51,7 @@ class PagoReembolsoPorSolicitudTransformer extends TransformerAbstract
             'id_relacion' => $model->id_relacion,
             'id_forma_pago' => $model->IdFormaPago,
             'id_entrega' => $model->IdEntrega,
+            'cuenta' => $model->Cuenta2,
         ];
     }
 

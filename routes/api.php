@@ -2096,7 +2096,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@update')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@destroy')->where(['id' => '[0-9]+']);
-            $api->post('/editar', 'App\Http\Controllers\v1\CONTROLRECURSOS\PagoAProveedorController@editar');
         });
 
         $api->group(['prefix' => 'pago-reembolso-por-solicitud'], function ($api) {

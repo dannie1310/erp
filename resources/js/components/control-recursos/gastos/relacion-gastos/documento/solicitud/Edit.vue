@@ -69,7 +69,7 @@
                                             </td>
 
                                             <td style="text-align: center;">
-                                               {{ solicitud.fecha_format }}
+                                                <b>{{ solicitud.fecha_format }}</b>
                                             </td>
                                         </tr>
                                         <tr>
@@ -115,7 +115,7 @@
                                                 <div style="display:block" class="invalid-feedback" v-show="errors.has('forma_pago')">{{ errors.first('forma_pago') }}</div>
                                             </td>
                                             <td>
-                                                <label class="form-control">Pago a Proveedor</label>
+                                                <b>Pago a Proveedor</b>
                                             </td>
                                         </tr>
                                         <tr>
@@ -138,11 +138,11 @@
                                                 <div style="display:block" class="invalid-feedback" v-show="errors.has('cuenta')">{{ errors.first('cuenta') }}</div>
                                             </td>
                                             <td v-else>
-                                                <label class="form-control"> NO APLICA </label>
+                                                <b>NO APLICA </b>
                                             </td>
                                             <td v-if="forma_pago != ''">
                                                 <select  class="form-control"
-                                                         data-vv-as="Forma de Pago"
+                                                         data-vv-as="Instrucción"
                                                          id="instruccion"
                                                          name="instruccion"
                                                          :class="{'is-invalid': errors.has('instruccion')}"
@@ -162,7 +162,7 @@
                                                          name="solicitante"
                                                          :class="{'is-invalid': errors.has('solicitante')}"
                                                          v-validate="{required: true}"
-                                                         v-model="solicitud.id_solicitante">
+                                                         v-model="solicitante">
                                                     <option value>-- Selecionar --</option>
                                                     <option v-for="(m) in solicitantes" :value="m.id">{{m.descripcion_st}}</option>
                                                 </select><div style="display:block" class="invalid-feedback" v-show="errors.has('solicitante')">{{ errors.first('solicitante') }}</div>
@@ -210,9 +210,9 @@ export default {
         }
     },
     mounted() {
-        this.find();
         this.getFirmasFirmantes();
         this.getFormaPago();
+        this.find();
     },
     methods: {
         find() {
@@ -239,11 +239,11 @@ export default {
                 params: {include: [ 'proveedor.cuentas' ]}
             }).then(data => {
                 this.solicitud = data;
+                this.forma_pago = data.id_forma_pago;
                 this.cuentas = data.proveedor.cuentas.data;
                 this.solicitante = data.id_solicitante;
-                this.forma_pago = data.id_forma_pago;
-                this.instruccion = data.id_entrega;
                 this.cuenta = data.cuenta;
+                this.instruccion = data.id_entrega;
             }).finally(() => {
                 this.cargando = false;
             })
@@ -255,9 +255,9 @@ export default {
                 params: {include: [ 'proveedor.cuentas' ]}
             }).then(data => {
                     this.solicitud = data;
+                    this.forma_pago = data.id_forma_pago;
                     this.cuentas = data.proveedor.cuentas.data;
                     this.solicitante = data.id_solicitante;
-                    this.forma_pago = data.id_forma_pago;
                     this.instruccion = data.id_entrega;
                     this.cuenta = data.cuenta;
             }).finally(() => {
@@ -275,22 +275,16 @@ export default {
             });
         },
         editar() {
-
-            this.solicitud.id_solicitante = this.solicitud;
-            this.solicitud.id_forma_pago = this.forma_pago;
-            this.solicitud.id_entrega = this.instruccion;
-            this.solicitud.cuenta = this.cuenta;
             var id = this.solicitud.id;
             var datos = {
-                'id_solicitante' : this.solicitud,
-                'id_forma_pago' : this.forma_pago,
+                'id_solicitante' : this.solicitante,
                 'id_entrega' : this.instruccion,
+                'id_forma_pago' : this.forma_pago,
                 'cuenta' : this.cuenta,
-                'solicitud' : this.solicitud
+                'concepto' : this.solicitud.concepto
             }
 
             if(this.reembolso.reembolsos.data[0].id_tipo == 13) {
-                console.log("E1");
                 return this.$store.dispatch('controlRecursos/pago-reembolso-por-solicitud/update', {
                     id: id,
                     data: datos
@@ -298,17 +292,13 @@ export default {
                     this.salir()
                 })
             }
-
             if(this.reembolso.reembolsos.data[0].id_tipo == 12) {
-                console.log("E2");
-                console.log(this.solicitud)
                 return this.$store.dispatch('controlRecursos/pago-a-proveedor/update', {
                     id: id,
-                    data: datos
+                    data: this.reembolso
                 }).then((data) => {
                     this.salir()
                 })
-
             }
         },
         eliminar() {
@@ -357,6 +347,10 @@ export default {
             if (value) {
                 if(value != '') {
                     this.getInstrucciones();
+                    if(value == 1)
+                    {
+                        this.cuenta = null
+                    }
                 }
 
             }

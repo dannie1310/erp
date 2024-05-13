@@ -45,25 +45,42 @@ class SubcontratoFormato extends FPDI
 
     function Header(){
         $ln = 0;
-        if($this->encola == 'clausulado' &&$this->subcontrato->clasificacionSubcontrato){
+        $nuevo = 0;
+        if($this->encola == 'clausulado' && $this->subcontrato->clasificacionSubcontrato){
             if(Context::getDatabase()  == "SAO1814_TERMINAL_NAICM"){
                 $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_ctvm.pdf'));
             }
             else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7){
                 if(Context::getDatabase()  == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS_CCSL.pdf'));
+                    $ln = 11.23;
                 }else{
-                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS.pdf'));
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-02-29'))
+                    {
+                        $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS2024.pdf'));
+                        $ln = 20.55;
+                        $nuevo = 1;
+                    }else{
+                        $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS.pdf'));
+                        $ln = 11.23;
+                    }
                 }
-                $ln = 11.23;
-
-            }else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
+            }
+            else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
                 if(Context::getDatabase()  == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT_CCSL.pdf'));
+                    $ln = 14.6;
                 }else{
-                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-02-29'))
+                    {
+                        $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT2024.pdf'));
+                        $ln = 19;
+                        $nuevo = 1;
+                    }else{
+                        $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
+                        $ln = 14.6;
+                    }
                 }
-                $ln = 14.6;
             }
             else{
                 $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc.pdf'));
@@ -108,19 +125,35 @@ class SubcontratoFormato extends FPDI
 
                 $this->Ln($ln);
                 $this->SetFont('Arial', 'B', 5);
-                $this->Cell(18.15);
-                $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
+                if($nuevo == 1)
+                {
+                    $this->Cell(19.7);
+                    $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
 
-                $this->Ln(.22);
-                $this->Cell(10.3);
-                $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
+                    $this->Ln(.20);
+                    $this->Cell(11.5);
+                    $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
 
-                $this->Ln(.18);
-                $this->Cell(12.4);
-                $this->SetFillColor('255,255,255');
-                $this->Cell(.7,.15,$fecha_exp[2],'',0,'L', 1);
+                    $this->Ln(.175);
+                    $this->Cell(13.1);
+                    $this->SetFillColor('255,255,255');
+                    $this->Cell(.7,.15,substr($fecha_exp[2], -2),'',0,'L', 1);
+                }else{
+                    $this->Cell(18.15);
+                    $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
+
+                    $this->Ln(.22);
+                    $this->Cell(10.3);
+                    $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
+
+                    $this->Ln(.18);
+                    $this->Cell(12.5);
+                    $this->SetFillColor('255,255,255');
+                    $this->Cell(.7,.15,substr($fecha_exp[2],-2),'',0,'L', 1);
+                }
             }
-        }else{
+        }
+        else{
             $postTitle=.7;
             if( Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41){
                 $this->image('../../img/subcontrato/LOGOTIPO_REHABILITACION_ATLACOMULCO.png',1,.3,5,2);
@@ -444,7 +477,8 @@ class SubcontratoFormato extends FPDI
                 $this->CellFitScale(4, .3, utf8_decode('Gerente de Procuración'), 1, 0,'C');
                 $this->CellFitScale(4, .3, ('Administrador de Subcontratos de Control de Proyectos'), 1, 0,'C');
             //$this->SetFillColor(255, 255, 255);
-			}else if(Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO"){
+			}
+            else if(Context::getDatabase() == "SAO1814_TUNEL_DRENAJE_PRO"){
                  //if(true){
                 $this->SetFont('Arial', 'B', 6);
                 $this->SetFont('Arial', 'B', 5);
@@ -464,7 +498,8 @@ class SubcontratoFormato extends FPDI
                 $this->CellFitScale(5.3, .3, utf8_decode('Gerente Administrativo'), 1, 0,'C');
                 $this->CellFitScale(5.3, .3, ('Gerente de Proyecto'), 1, 0,'C');
                 //$this->SetFillColor(255, 255, 255);
-             }else if(Context::getDatabase() == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
+             }
+            else if(Context::getDatabase() == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
 
                 $this->SetFont('Arial', 'B', 6);
                 $this->SetY(-5.7);
@@ -514,7 +549,50 @@ class SubcontratoFormato extends FPDI
                 $this->CellFitScale(4, .3, ('Gerente de Subcontratos Corporativo'), 1, 0,'C');
                 $this->CellFitScale(4, .3, ('Gerente de Seguros y Fianzas'), 1, 0,'C');
                 $this->CellFitScale(4, .3, ('Gerente de Proyecto'), 1, 0,'C');
-			}else{
+			}
+            else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7 && $this->subcontrato->contratoProyectado->contratoAreaSubcontratante->id_area_subcontratante != 1 )
+            {
+                $this->SetFont('Arial', 'B', 6);
+                $this->SetY(-5.7);
+                $this->Cell(3);
+                $this->CellFitScale(7, .5, utf8_decode($this->subcontrato->empresa->razon_social), 1, 0,'C');
+                $this->CellFitScale(7, .5, utf8_decode($this->obra->facturar), 1, 0,'C');
+                $this->Ln(.5);
+                $this->Cell(3);
+                $this->CellFitScale(7, 1.2, ' ', 1, 0,'R');
+                $this->CellFitScale(7, 1.2, ' ', 1, 0,'R');
+                $this->Ln(1.2);
+                $this->Cell(3);
+                $this->CellFitScale(7, .7, ' ', 1, 0,'R');
+                $this->CellFitScale(7, .7, ' ', 1, 0,'R');
+                $this->SetY(-4);
+                $this->Cell(3);
+                $this->SetFont('Arial', '', 5);
+                $this->CellFitScale(7, .3, 'Acepta:', 0, 0,'C');
+                $this->CellFitScale(7, .3, 'Autoriza: Director de Proyecto', 0, 2,'C');
+                $this->SetY(-3.7);
+                $this->Cell(3);
+                $this->CellFitScale(7, .3, '', 0, 0,'C');
+                $this->CellFitScale(7, .3, '', 0, 1,'C');
+
+                $this->SetFont('Arial', 'B', 5);
+                $this->SetY(-2.7);
+                $this->Cell(2);
+                $this->CellFitScale(5.5, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(5.5, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->CellFitScale(5.5, .4, ('Vo.Bo.'), 1, 0,'C');
+                $this->Ln(.4);
+                $this->Cell(2);
+                $this->CellFitScale(5.5, .8, '', 1, 0,'C');
+                $this->CellFitScale(5.5, .8, '', 1, 0,'C');
+                $this->CellFitScale(5.5, .8, '', 1, 0,'C');
+                $this->Ln(.8);
+                $this->Cell(2);
+                $this->CellFitScale(5.5, .3, utf8_decode('ELABORO'), 1, 0,'C');
+                $this->CellFitScale(5.5, .3, ('CONTROL DE PROYECTO'), 1, 0,'C');
+                $this->CellFitScale(5.5, .3, utf8_decode('ADMINISTRACIÓN'), 1, 0,'C');
+            }
+            else{
                 $this->SetFont('Arial', 'B', 6);
                 $this->SetY(-5.7);
                 $this->Cell(3);
@@ -569,7 +647,7 @@ class SubcontratoFormato extends FPDI
             $this->Cell(10,.3,(''),0,1,'L');
         }
         $this->SetFont('Arial','BI',6);
-        $this->Cell(10,.3,(utf8_decode('Formato generado desde el módulo de contratos. Fecha de registro: '. $this->subcontrato->fecha_format)),0,0,'L');
+        $this->Cell(10,.3,(utf8_decode('Formato generado desde el módulo de contratos. Fecha de registro: '. $this->subcontrato->fecha_format). ' Fecha de consulta: '.date("d-m-Y H:i:s")),0,0,'L');
         $this->Cell(9.5,.3,utf8_decode('Página ').$this->PageNo().'/{nb}',0,0,'R');
     }
 

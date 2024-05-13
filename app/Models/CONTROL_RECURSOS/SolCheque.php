@@ -372,7 +372,6 @@ class SolCheque extends Model
 
     public function updateFirmasSolicitantes($solicitante)
     {
-        dd($this->firmasSolicitantes());
         if($solicitante != $this->firmasSolicitantes[0]->idfirmas_firmantes)
         {
             $this->deleteFirmasSolicitantes();

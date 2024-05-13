@@ -41,10 +41,4 @@ class PagoAProveedorController extends Controller
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
-
-    public function editar(Request $request)
-    {dd($request->all());
-        $item = $this->service->editar($request->all());
-        return $this->respondWithItem($item);
-    }
 }
