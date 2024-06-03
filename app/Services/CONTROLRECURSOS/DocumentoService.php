@@ -10,6 +10,8 @@ use App\Models\CONTROL_RECURSOS\TipoDocto;
 use App\Repositories\CONTROLRECURSOS\DocumentoRepository as Repository;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Support\Facades\Storage;
+use Spatie\ArrayToXml\ArrayToXml;
 
 class DocumentoService
 {
@@ -109,5 +111,100 @@ class DocumentoService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar();
+    }
+
+    public function xml($id)
+    {
+        $documento = $this->show($id);
+        $segmentos_negocio = $documento->consultaXML();
+
+        $array_segmento = [];
+
+        foreach ($segmentos_negocio as $key => $item)
+        {
+            $array_segmento [$key] = [
+                'NAME' => 'INVOICE_ITEM',
+                'N00' => $key+1,
+                'N01' => $item->importe_segmento,
+                'N02' => $item->iva_segmento,
+                'N03' => '0', //?
+                'C00' => '',
+                'C01' => '',
+                'C02' => 'serv',
+                'N03' => '1', // ?
+                'C03' => '00001111',
+                'C04' => $item->segmento_negocio,
+                'N05' => $item->subtotal,
+                'C05' => 'FALSE',
+                'C06' => '',
+                'N06' => '',
+                'N07' => '',
+                'C07' => ''
+            ];
+        }
+
+        $array = [
+            'CLASS_ID' => 'INVOIC',
+            'RECEIVER' => 'IFS_APPLICATIONS',
+            'SENDER' => 'SISTEMA_CONTROL_RECURSOS',
+            'LINES' => [
+                'IN_MESSAGE_LINE' => [
+                    [
+                        'NAME' => 'INVOICE_HEADER',
+                        'C00' => 'I',
+                        'C01' => $documento->empresa->rfc_sin_guiones,
+                        'C02' => $documento->proveedor->rfc_sin_guiones,
+                        'C03' => '',
+                        'C04' => '',
+                        'C06' => 'PROJECT_ID (PENDIENTE)',
+                        'C07' => $documento->Alias_Depto,
+                        'C08' => $documento->FolioDocto,
+                        'C09' => $documento->moneda->corto,
+                        'N00' => $documento->TC,
+                        'D00' => $documento->Fecha.'-00.00.00',
+                        'C10' => '0',
+                        'N01' => $documento->Total,
+                        'N02' => $documento->OtrosImpuestos,
+                        'N03' => $documento->Retenciones,
+                        'C11' => 'FALSE',
+                        'D01' => $documento->Fecha.'-00.00.00',
+                        'C12' => $documento->uuid,
+                        'C13' => $documento->Concepto,
+                        'C14' => $documento->uuid .'.xml'
+                    ],
+                    $array_segmento,
+                    [
+                        'NAME' => 'INVOICE_ITEM_TAX',
+                        'N00' => '1',
+                        'C00' => 'IVA16',
+                        'N01' => '16',
+                        'N02' => $documento->IVA
+                    ],
+                    [
+                        'NAME' => 'INVOICE_ITEM_POSTING',
+                        'N00' => '1',
+                        'NO1' => '48989.93',
+                        'C00' => 'TEXTO DE EJEMPLO',
+                        'C01' => 'Referencia',
+                        'C02' => '0000-11111',
+                        'C03' => 'DEPTO',
+                        'C04' => '',
+                        'C05' => '',
+                        'C06' => '',
+                        'C07' => '',
+                        'C08' => '',
+                        'C09' => '',
+                        'C10' => '',
+                        'N02' => '1536',
+                    ]
+                ],
+            ]
+        ];
+
+        $a = new ArrayToXml($array, "IN_MESSAGE");
+        $a->setDomProperties(['formatOutput' => true]);
+        $result = $a->toXml();
+        Storage::disk('ifs_solicitud_recurso')->put(  'archivo_ifs'.$documento->uuid.'.xml', $result);
+        return Storage::disk('ifs_solicitud_recurso')->download(  'archivo_ifs'.$documento->uuid.'.xml');
     }
 }

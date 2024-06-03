@@ -169,6 +169,17 @@ export default {
                     });
             });
         },
+        descargaXML(context, payload){
+            var urr = URI + 'descargaXML?id=' + payload.id + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+            win.onbeforeunload = () => {
+                swal("XML descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
     },
 
     getters: {

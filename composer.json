@@ -26,6 +26,7 @@
         "setasign/fpdi": "^2.0",
         "simplesoftwareio/simple-qrcode": "^2.0",
         "sonata-project/google-authenticator": "^2.2",
+        "spatie/array-to-xml": "^2.15",
         "twilio/sdk": "^6.35",
         "tymon/jwt-auth": "1.0.0-rc.3",
         "webpatser/laravel-uuid": "^3.0"

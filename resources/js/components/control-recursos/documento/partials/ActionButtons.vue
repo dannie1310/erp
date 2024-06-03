@@ -20,13 +20,15 @@
         <router-link v-if="!value.con_cfdi && value.delete" :to="{ name: 'documento-recurso-delete', params: {id: value.id}}" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
             <i class="fa fa-trash"></i>
         </router-link>
+        <DescargaXML v-if="value.xml_ifs" v-bind:id="value.id" />
     </div>
 </template>
 
 <script>
+    import DescargaXML from "../DescargaXML";
     export default {
         name: "documento-action-buttons",
-        components: {},
+        components: { DescargaXML },
         props: ['value'],
         methods: {
 

@@ -51,6 +51,10 @@ class Proveedor extends Model
     /**
      * Atributos
      */
+    public function getRfcSinGuionesAttribute()
+    {
+        return str_replace("-", "", $this->RFC);
+    }
 
     /**
      * Métodos
