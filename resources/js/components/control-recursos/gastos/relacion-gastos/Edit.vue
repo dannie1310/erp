@@ -686,7 +686,6 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
-
             });
         },
         destroy(index){
