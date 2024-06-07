@@ -441,11 +441,12 @@ class Documento extends Model
     public function consultaXML()
     {
         return DB::connection('controlrec')->select(DB::raw("
-                    SELECT
+                   SELECT
                         solcheques.Serie
                         ,solcheques.Folio
                         ,solcheques.IdSolCheques
                         ,solcheques.Concepto
+                        ,centroscosto.NoSN
                         ,centroscosto.Descripcion AS segmento_negocio
                         ,tiposgasto.Descripcion AS tipo_gasto
                         ,solcheques.Importe AS subtotal
@@ -469,6 +470,6 @@ class Documento extends Model
                         ON solcheques.IdProveedor = proveedores.IdProveedor
                     INNER JOIN controlrec.tiposgasto
                         ON ccdoctos.IdTipoGasto = tiposgasto.IdTipoGasto
-                    WHERE documentos.IdDocto = " . $this->getKey()));
+                    WHERE documentos.IdDocto = " . $this->getKey() . "order by centroscosto.Descripcion"));
     }
 }

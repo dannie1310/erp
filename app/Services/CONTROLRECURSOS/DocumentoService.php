@@ -123,23 +123,21 @@ class DocumentoService
         foreach ($segmentos_negocio as $key => $item)
         {
             $array_segmento [$key] = [
-                'NAME' => 'INVOICE_ITEM',
+                'NAME' => 'INVOICE_ITEM_POSTING',
                 'N00' => $key+1,
-                'N01' => $item->importe_segmento,
-                'N02' => $item->iva_segmento,
-                'N03' => '0', //?
-                'C00' => '',
+                'NO1' => $item->importe_segmento,
+                'C00' => $item->segmento_negocio,
                 'C01' => '',
-                'C02' => 'serv',
-                'N03' => '1', // ?
-                'C03' => '00001111',
-                'C04' => $item->segmento_negocio,
-                'N05' => $item->subtotal,
-                'C05' => 'FALSE',
-                'C06' => '',
-                'N06' => '',
-                'N07' => '',
-                'C07' => ''
+                'C02' => 'CUENTA PENDIENTE',
+                'C03' => '',
+                'C04' => '',
+                'C05' => '',
+                'C06' => $item->NoSN,
+                'C07' => '',
+                'C08' => '',
+                'C09' => '',
+                'C10' => '',
+                'N02' => '',
             ];
         }
 
@@ -181,21 +179,23 @@ class DocumentoService
                         'N02' => $documento->IVA
                     ],
                     [
-                        'NAME' => 'INVOICE_ITEM_POSTING',
-                        'N00' => '1',
-                        'NO1' => '48989.93',
-                        'C00' => 'TEXTO DE EJEMPLO',
-                        'C01' => 'Referencia',
-                        'C02' => '0000-11111',
-                        'C03' => 'DEPTO',
-                        'C04' => '',
+                        'NAME' => 'INVOICE_ITEM',
+                        'N00' => '',
+                        'N01' => $documento->importe,
+                        'N02' => $documento->IVA,
+                        'N03' => '',
+                        'C00' => '',
+                        'C01' => '',
+                        'C02' => '',
+                        'N04' => '',
+                        'C03' => '',
+                        'C04' => $documento->concepto,
+                        'N05' => $item->subtotal,
                         'C05' => '',
                         'C06' => '',
-                        'C07' => '',
-                        'C08' => '',
-                        'C09' => '',
-                        'C10' => '',
-                        'N02' => '1536',
+                        'N06' => '',
+                        'N07' => '',
+                        'C07' => ''
                     ]
                 ],
             ]
