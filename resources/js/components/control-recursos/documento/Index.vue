@@ -105,7 +105,7 @@
                         id : documento.id,
                         edit : self.$root.can('editar_documento_recursos', true) && (documento.estado == 5 ||  documento.estado == 1) ? true : false,
                         delete : self.$root.can('eliminar_documento_recursos', true) && (documento.estado != 7 && documento.estado != 2) ? true : false,
-                        xml_ifs : true
+                        xml_ifs : (documento.estado == 7 && documento.uuid != null) ? true : false,
                     }),
                     consulta_uuid : $.extend({}, {
                         uuid: documento.cfdi ? documento.cfdi.uuid : '',

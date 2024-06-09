@@ -470,6 +470,6 @@ class Documento extends Model
                         ON solcheques.IdProveedor = proveedores.IdProveedor
                     INNER JOIN controlrec.tiposgasto
                         ON ccdoctos.IdTipoGasto = tiposgasto.IdTipoGasto
-                    WHERE documentos.IdDocto = " . $this->getKey() . "order by centroscosto.Descripcion"));
+                    WHERE documentos.IdDocto = " . $this->getKey() . " order by centroscosto.Descripcion"));
     }
 }

@@ -170,14 +170,6 @@ class DocumentoService
                         'C13' => $documento->Concepto,
                         'C14' => $documento->uuid .'.xml'
                     ],
-                    $array_segmento,
-                    [
-                        'NAME' => 'INVOICE_ITEM_TAX',
-                        'N00' => '1',
-                        'C00' => 'IVA16',
-                        'N01' => '16',
-                        'N02' => $documento->IVA
-                    ],
                     [
                         'NAME' => 'INVOICE_ITEM',
                         'N00' => '',
@@ -196,7 +188,15 @@ class DocumentoService
                         'N06' => '',
                         'N07' => '',
                         'C07' => ''
-                    ]
+                    ],
+                    [
+                        'NAME' => 'INVOICE_ITEM_TAX',
+                        'N00' => '1',
+                        'C00' => 'IVA16',
+                        'N01' => '16',
+                        'N02' => $documento->IVA
+                    ],
+                    $array_segmento,
                 ],
             ]
         ];
