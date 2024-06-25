@@ -82,7 +82,8 @@ class SistemaService
 
     public function getAviso($ruta)
     {
-        $aviso = Aviso::noLeidoPorUsuario()->where("ruta_sistema","=",$ruta)->where("estatus","=",1)->first();
+        // $aviso = Aviso::noLeidoPorUsuario()->where("ruta_sistema","=",$ruta)->where("estatus","=",1)->first();
+        $aviso = Aviso::where("ruta_sistema","=",$ruta)->where("estatus","=",1)->first();
         if($aviso){
             return $aviso;
         }
