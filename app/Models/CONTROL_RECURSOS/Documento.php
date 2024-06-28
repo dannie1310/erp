@@ -455,6 +455,8 @@ class Documento extends Model
                         ,ccdoctos.Importe AS importe_segmento
                         ,ccdoctos.IVA AS iva_segmento
                         ,ccdoctos.Total AS total_segmento
+                        ,cuentascontables.ClaveCuenta as cuenta,
+                        cuentascontables.DescripcionCuenta as descripcion_cuenta
                     FROM controlrec.documentos
                     INNER JOIN controlrec.solchequesdoctos
                         ON documentos.IdDocto = solchequesdoctos.IdDocto
@@ -470,6 +472,8 @@ class Documento extends Model
                         ON solcheques.IdProveedor = proveedores.IdProveedor
                     INNER JOIN controlrec.tiposgasto
                         ON ccdoctos.IdTipoGasto = tiposgasto.IdTipoGasto
+                    INNER JOIN controlrec.cuentascontables
+						ON cuentascontables.IdCuentaContable = tiposgasto.IdCuentaContable
                     WHERE documentos.IdDocto = " . $this->getKey() . " order by centroscosto.Descripcion"));
     }
 }

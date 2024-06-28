@@ -128,7 +128,7 @@ class DocumentoService
                 'N01' => $item->importe_segmento,
                 'C00' => $item->segmento_negocio,
                 'C01' => '',
-                'C02' => 'CUENTA PENDIENTE',
+                'C02' => $item->cuenta,
                 'C03' => '',
                 'C04' => '',
                 'C05' => '',
@@ -142,7 +142,7 @@ class DocumentoService
         }
 
         $array = [
-            'CLASS_ID' => 'INVOIC',
+            'CLASS_ID' => 'INVHI',
             'RECEIVER' => 'IFS_APPLICATIONS',
             'SENDER' => 'SISTEMA_CONTROL_RECURSOS',
             'LINES' => [
@@ -173,7 +173,7 @@ class DocumentoService
                     [
                         'NAME' => 'INVOICE_ITEM',
                         'N00' => 1,
-                        'N01' => $documento->importe,
+                        'N01' => $documento->Importe,
                         'N02' => $documento->IVA,
                         'N03' => 0,
                         'C00' => '',
@@ -182,7 +182,7 @@ class DocumentoService
                         'N04' => 1,
                         'C03' => '',
                         'C04' => '',
-                        'N05' => $item->subtotal,
+                        'N05' => $documento->Total,
                         'C05' => 'FALSE',
                         'C06' => '',
                         'N06' => '',
