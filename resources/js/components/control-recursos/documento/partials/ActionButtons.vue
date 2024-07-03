@@ -21,6 +21,9 @@
             <i class="fa fa-trash"></i>
         </router-link>
         <DescargaXML v-if="value.xml_ifs" v-bind:id="value.id" />
+        <button @click="correo" v-if="value.xml_ifs" type="button" class="btn btn-sm btn-outline-success" title="Envio Correo de XML">
+            <i class="fa fa-envelope"></i>
+        </button>
     </div>
 </template>
 
@@ -31,7 +34,13 @@
         components: { DescargaXML },
         props: ['value'],
         methods: {
-
+            correo() {
+                return this.$store.dispatch('controlRecursos/documento/correo', {
+                    id: this.value.id,
+                    params: {}})
+                    .then((data) => {
+                    })
+            },
         }
     }
 </script>

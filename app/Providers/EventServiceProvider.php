@@ -128,6 +128,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\Concursos\RegistroFalloConcurso' => [
             'App\Listeners\Concursos\SendRegistroFalloConcursoNotificationWA'
         ],
+        'App\Events\IFS\EnvioXMLDocumentoRecursos' => [
+            'App\Listeners\IFS\SendXMLDocumentoRecursosNotification',
+        ],
 
             Registered::class => [
             SendEmailVerificationNotification::class,

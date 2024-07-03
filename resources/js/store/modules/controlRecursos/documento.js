@@ -180,6 +180,45 @@ export default {
                 })
             }
         },
+        correo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Envio de correo",
+                    text: "¿Está seguro de que desea enviar el correo?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Enviar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id+'/correo', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Correo enviado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

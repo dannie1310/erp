@@ -2,6 +2,7 @@
 
 namespace App\Services\CONTROLRECURSOS;
 
+use App\Events\IFS\EnvioXMLDocumentoRecursos;
 use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Documento;
 use App\Models\CONTROL_RECURSOS\Proveedor;
@@ -206,5 +207,28 @@ class DocumentoService
         $result = $a->toXml();
         Storage::disk('ifs_solicitud_recurso')->put(  'archivo_ifs'.$documento->uuid.'.xml', $result);
         return Storage::disk('ifs_solicitud_recurso')->download(  'archivo_ifs'.$documento->uuid.'.xml');
+    }
+
+    public function correo($id)
+    {
+        $documento = $this->show($id);
+        $archivo = $this->getBase64XML($documento->uuid);
+        if($archivo != null) {
+            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio-dev.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+        }else{
+            $this->xml($id);
+            $archivo = $this->getBase64XML($documento->uuid);
+            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio-dev.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+        }
+    }
+
+    private function getBase64XML($uuid)
+    {
+        if (Storage::disk('ifs_solicitud_recurso')->exists('archivo_ifs'.$uuid.'.xml'))
+        {
+            $archivo = Storage::disk("ifs_solicitud_recurso")->get('archivo_ifs'.$uuid.'.xml');
+            return "data:text/xml;base64,".base64_encode($archivo);
+        }
+        return null;
     }
 }

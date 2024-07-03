@@ -17,7 +17,7 @@ class NotificacionIngresoFacturaEnviada extends Mailable
     public $archivo;
     public $xml;
 
-    
+
     /**
      * @param $factura
      * @param $archivo

@@ -55,4 +55,9 @@ class DocumentoController extends Controller
     {
         return $this->service->xml($request->all()['id']);
     }
+
+    public function correo(Request $request, $id)
+    {
+        return $this->service->correo($id);
+    }
 }
