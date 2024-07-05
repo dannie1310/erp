@@ -127,7 +127,7 @@ class DocumentoService
                 'NAME' => 'INVOICE_ITEM_POSTING',
                 'N00' => 1,
                 'N01' => $item->importe_segmento,
-                'C00' => $item->segmento_negocio,
+                'C00' => utf8_decode($item->segmento_negocio),
                 'C01' => '',
                 'C02' => $item->cuenta,
                 'C03' => '',
@@ -168,8 +168,9 @@ class DocumentoService
                         'C11' => 'FALSE',
                         'D01' => $documento->Fecha.'-00.00.00',
                         'C12' => $documento->uuid,
-                        'C13' => $documento->Concepto,
-                        'C14' => $documento->uuid .'.xml'
+                        'C13' => utf8_decode($documento->Concepto),
+                        'C14' => $documento->uuid .'.xml',
+                        'C15' => auth()->user()->usuario
                     ],
                     [
                         'NAME' => 'INVOICE_ITEM',

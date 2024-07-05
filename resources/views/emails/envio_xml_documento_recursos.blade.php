@@ -44,11 +44,11 @@
     </style>
 </head>
 <div id="app">
-    <span style="font-weight:bold; color: #000000">Se le notifica el envió del XML para migración a IFS</span>
+    <span style="font-weight:bold; color: #000000">Se le notifica el envió del XML para migración a IFS.</span>
     <br>
     <i><strong>
             <span class="leyenda">
-                Mensaje enviado desde el módulo de documentos de recursos SAO ERP
+                Mensaje enviado desde el módulo de documentos de recursos SAO ERP.
                 <br>SAO - Hermes Infraestructura.
             </span>
         </strong>
