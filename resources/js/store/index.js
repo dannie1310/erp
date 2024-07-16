@@ -272,6 +272,7 @@ import ingresoPartida from './modules/seguimiento/ingreso-partida';
 import monedaSeg from './modules/seguimiento/moneda';
 import proyectoSeg from './modules/seguimiento/proyecto';
 import tipoIngresoSeg from './modules/seguimiento/tipo-ingreso';
+import vwIngreso from './modules/seguimiento/vw-ingreso';
 
 //SCI
 import marca from "./modules/sci/marca";
@@ -518,6 +519,7 @@ export default new Vuex.Store({
         'seguimiento/moneda' : monedaSeg,
         'seguimiento/proyecto' : proyectoSeg,
         'seguimiento/tipo-ingreso' : tipoIngresoSeg,
+        'seguimiento/vw-ingreso' : vwIngreso,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

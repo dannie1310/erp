@@ -11,6 +11,12 @@
                     <p>Facturas</p>
                 </router-link>
             </li>
+            <li class="nav-item"  v-if="$root.can('consultar_factura_cuenta_x_cobrar',true)">
+                <router-link :to="{name: 'ingreso'}" class="nav-link" :class="{active: this.$route.name == 'ingreso'}">
+                    <i class="fa fa-file-invoice-dollar nav-icon"></i>
+                    <p>Ingresos</p>
+                </router-link>
+            </li>
         </ul>
 
     </nav>
