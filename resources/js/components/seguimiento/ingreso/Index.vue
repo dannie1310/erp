@@ -40,7 +40,7 @@
                     { title: 'Factura', tdClass: 'td_c100', field: 'factura', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Moneda', field: 'idmoneda', tdClass: 'td_c100', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Total', field: 'total', tdClass: 'money', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                  //  { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
