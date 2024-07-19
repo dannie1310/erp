@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CONTROLRECURSOS\DocumentoTransformer;
 use App\Services\CONTROLRECURSOS\DocumentoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class DocumentoController extends Controller
@@ -44,5 +45,19 @@ class DocumentoController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;
+    }
+
+    /**
+     * Descargar XML con documento para IFS
+     * @return mixed
+     */
+    public function descarga(Request $request)
+    {
+        return $this->service->xml($request->all()['id']);
+    }
+
+    public function correo(Request $request, $id)
+    {
+        return $this->service->correo($id);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\CONTROLRECURSOS;
 
+use App\Events\IFS\EnvioXMLDocumentoRecursos;
 use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\Documento;
 use App\Models\CONTROL_RECURSOS\Proveedor;
@@ -10,6 +11,8 @@ use App\Models\CONTROL_RECURSOS\TipoDocto;
 use App\Repositories\CONTROLRECURSOS\DocumentoRepository as Repository;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Support\Facades\Storage;
+use Spatie\ArrayToXml\ArrayToXml;
 
 class DocumentoService
 {
@@ -109,5 +112,124 @@ class DocumentoService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar();
+    }
+
+    public function xml($id)
+    {
+        $documento = $this->show($id);
+        $segmentos_negocio = $documento->consultaXML();
+
+        $array_segmento = [];
+
+        foreach ($segmentos_negocio as $key => $item)
+        {
+            $array_segmento [$key] = [
+                'NAME' => 'INVOICE_ITEM_POSTING',
+                'N00' => 1,
+                'N01' => $item->importe_segmento,
+                'C00' => utf8_decode($item->segmento_negocio),
+                'C01' => '',
+                'C02' => $item->cuenta,
+                'C03' => '',
+                'C04' => '',
+                'C05' => '',
+                'C06' => $item->NoSN,
+                'C07' => '',
+                'C08' => '',
+                'C09' => '',
+                'C10' => '',
+                'N02' => '',
+            ];
+        }
+
+        $array = [
+            'CLASS_ID' => 'INVHI',
+            'RECEIVER' => 'IFS_APPLICATIONS',
+            'SENDER' => 'SISTEMA_CONTROL_RECURSOS',
+            'LINES' => [
+                'IN_MESSAGE_LINE' => [
+                    [
+                        'NAME' => 'INVOICE_HEADER',
+                        'C00' => 'I',
+                        'C01' => $documento->empresa->rfc_sin_guiones,
+                        'C02' => $documento->proveedor->rfc_sin_guiones,
+                        'C03' => '',
+                        'C04' => '',
+                        'C06' => '',
+                        'C07' => $documento->Alias_Depto,
+                        'C08' => $documento->FolioDocto,
+                        'C09' => $documento->moneda->corto,
+                        'N00' => $documento->TC,
+                        'D00' => $documento->Fecha.'-00.00.00',
+                        'C10' => '0',
+                        'N01' => $documento->Total,
+                        'N02' => $documento->OtrosImpuestos,
+                        'N03' => $documento->Retenciones,
+                        'C11' => 'FALSE',
+                        'D01' => $documento->Fecha.'-00.00.00',
+                        'C12' => $documento->uuid,
+                        'C13' => utf8_decode($documento->Concepto),
+                        'C14' => $documento->uuid .'.xml',
+                        'C15' => auth()->user()->usuario
+                    ],
+                    [
+                        'NAME' => 'INVOICE_ITEM',
+                        'N00' => 1,
+                        'N01' => $documento->Importe,
+                        'N02' => $documento->IVA,
+                        'N03' => 0,
+                        'C00' => '',
+                        'C01' => '',
+                        'C02' => '',
+                        'N04' => 1,
+                        'C03' => '',
+                        'C04' => '',
+                        'N05' => $documento->Total,
+                        'C05' => 'FALSE',
+                        'C06' => '',
+                        'N06' => '',
+                        'N07' => '',
+                        'C07' => ''
+                    ],
+                    [
+                        'NAME' => 'INVOICE_ITEM_TAX',
+                        'N00' => '1',
+                        'C00' => 'IVA16',
+                        'N01' => '16',
+                        'N02' => $documento->IVA
+                    ],
+                    $array_segmento,
+                ],
+            ]
+        ];
+
+        $a = new ArrayToXml($array, "IN_MESSAGE");
+        $a->setDomProperties(['formatOutput' => true]);
+        $result = $a->toXml();
+        Storage::disk('ifs_solicitud_recurso')->put(  'archivo_ifs'.$documento->uuid.'.xml', $result);
+        return Storage::disk('ifs_solicitud_recurso')->download(  'archivo_ifs'.$documento->uuid.'.xml');
+    }
+
+    public function correo($id)
+    {
+        $documento = $this->show($id);
+        $archivo = $this->getBase64XML($documento->uuid);
+        if($archivo != null) {
+            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio-dev.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+        }else{
+            $this->xml($id);
+            $archivo = $this->getBase64XML($documento->uuid);
+            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio-dev.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+        }
+    }
+
+    private function getBase64XML($uuid)
+    {
+        if (Storage::disk('ifs_solicitud_recurso')->exists('archivo_ifs'.$uuid.'.xml'))
+        {
+            $archivo = Storage::disk("ifs_solicitud_recurso")->get('archivo_ifs'.$uuid.'.xml');
+            return "data:text/xml;base64,".base64_encode($archivo);
+        }
+        return null;
     }
 }
