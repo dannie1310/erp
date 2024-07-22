@@ -2059,6 +2059,8 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@store');
             $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@update')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('descargaXML', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@descarga');
+            $api->get('{id}/correo', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@correo')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'empresa'], function ($api) {

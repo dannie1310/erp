@@ -437,4 +437,43 @@ class Documento extends Model
             abort(500, "Este documento ya se encuentra asociado a una solicitud.");
         }
     }
+
+    public function consultaXML()
+    {
+        return DB::connection('controlrec')->select(DB::raw("
+                   SELECT
+                        solcheques.Serie
+                        ,solcheques.Folio
+                        ,solcheques.IdSolCheques
+                        ,solcheques.Concepto
+                        ,centroscosto.NoSN
+                        ,centroscosto.Descripcion AS segmento_negocio
+                        ,tiposgasto.Descripcion AS tipo_gasto
+                        ,solcheques.Importe AS subtotal
+                        ,solcheques.IVA
+                        ,solcheques.Total
+                        ,ccdoctos.Importe AS importe_segmento
+                        ,ccdoctos.IVA AS iva_segmento
+                        ,ccdoctos.Total AS total_segmento
+                        ,cuentascontables.ClaveCuenta as cuenta,
+                        cuentascontables.DescripcionCuenta as descripcion_cuenta
+                    FROM controlrec.documentos
+                    INNER JOIN controlrec.solchequesdoctos
+                        ON documentos.IdDocto = solchequesdoctos.IdDocto
+                    INNER JOIN controlrec.solcheques
+                        ON solchequesdoctos.IdSolCheque = solcheques.IdSolCheques
+                    INNER JOIN controlrec.empresas
+                        ON solcheques.IdEmpresa = empresas.IdEmpresa
+                    INNER JOIN controlrec.ccdoctos
+                        ON documentos.IdDocto = ccdoctos.IdDocto
+                    INNER JOIN controlrec.centroscosto
+                        ON centroscosto.IdCC = ccdoctos.IdCC
+                    INNER JOIN controlrec.proveedores
+                        ON solcheques.IdProveedor = proveedores.IdProveedor
+                    INNER JOIN controlrec.tiposgasto
+                        ON ccdoctos.IdTipoGasto = tiposgasto.IdTipoGasto
+                    INNER JOIN controlrec.cuentascontables
+						ON cuentascontables.IdCuentaContable = tiposgasto.IdCuentaContable
+                    WHERE documentos.IdDocto = " . $this->getKey() . " order by centroscosto.Descripcion"));
+    }
 }
