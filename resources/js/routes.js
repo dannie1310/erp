@@ -5586,7 +5586,7 @@ export const routes = [
                             title: 'Lista de Ingresos',
                             breadcrumb: {parent: 'seguimiento', name: 'INGRESOS'},
                             middleware: [auth, permission],
-                            permission: 'consultar_factura_cuenta_x_cobrar',
+                            permission: 'consultar_ingreso_seguimiento',
                             general: true
                         }
                     },

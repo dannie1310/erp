@@ -100,7 +100,7 @@
                         total: ingreso.total_format,
                         buttons: $.extend({}, {
                             id: ingreso.id,
-                            envioCorreo: (this.$root.can('reenviar_email_factura_cuenta_x_cobrar',true)) ? true : false,
+                            envioCorreo: (this.$root.can('reenviar_email_ingreso_seguimiento',true)) ? true : false,
                         })
                     }));
                 },

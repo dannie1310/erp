@@ -37,6 +37,9 @@ class VwFinIngresoRegistradoController extends Controller
     {
         $this->middleware('auth:api');
 
+        $this->middleware('permisoGlobal:consultar_ingreso_seguimiento')->only(['show','paginate','index','find']);
+        $this->middleware('permisoGlobal:reenviar_email_ingreso_seguimiento')->only('envioCorreo');
+
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
