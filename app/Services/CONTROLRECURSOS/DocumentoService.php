@@ -215,11 +215,11 @@ class DocumentoService
         $documento = $this->show($id);
         $archivo = $this->getBase64XML($documento->uuid);
         if($archivo != null) {
-            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio-dev.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
         }else{
             $this->xml($id);
             $archivo = $this->getBase64XML($documento->uuid);
-            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio-dev.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
         }
     }
 
