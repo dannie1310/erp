@@ -3,11 +3,12 @@
 namespace App\Models\CORREOS;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class EmailRegister extends Model
 {
     protected $connection = 'correos';
-    protected $table = 'email_register';
+    protected $table = 'Correos.dbo.email_register';
     protected $primaryKey = 'id';
     public $timestamps = false;
 
@@ -39,4 +40,19 @@ class EmailRegister extends Model
     /**
      * Métodos
      */
+    public function reenviarEmail()
+    {
+        try {
+            DB::connection('correos')->beginTransaction();
+            $this->update([
+                'status' => 0
+            ]);
+            DB::connection('correos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('correos')->rollBack();
+            abort(500, $e->getMessage());
+            throw $e;
+        }
+    }
 }

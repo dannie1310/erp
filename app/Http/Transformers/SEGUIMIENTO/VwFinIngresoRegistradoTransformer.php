@@ -32,7 +32,8 @@ class VwFinIngresoRegistradoTransformer extends TransformerAbstract
             'proyecto_tipo' => $model->proyecto_tipo,
             'cuenta_ingresa' => $model->cuenta_ingresa,
             'moneda' => $model->moneda,
-            'total' => $model->total
+            'total' => $model->total,
+            'total_format' => $model->total_format
         ];
     }
 }

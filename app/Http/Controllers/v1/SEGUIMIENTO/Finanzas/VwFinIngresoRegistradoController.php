@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGUIMIENTO\VwFinIngresoRegistradoTransformer;
 use App\Services\SEGUIMIENTO\Finanzas\VwFinIngresoRegistradoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class VwFinIngresoRegistradoController extends Controller
@@ -39,5 +40,10 @@ class VwFinIngresoRegistradoController extends Controller
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function envioCorreo(Request $request, $id)
+    {
+        return $this->service->envioCorreo($id);
     }
 }

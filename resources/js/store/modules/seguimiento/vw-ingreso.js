@@ -36,6 +36,50 @@ export default {
                     });
             });
         },
+        envioCorreo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Enviar el Correo de Ingreso",
+                    text: "¿Está seguro de envio del ingreso?",
+                    dangerMode: true,
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, reenviar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value)
+                        {
+                            axios
+                                .patch(URI+ payload.id+'/envioCorreo',  {id:payload.id}, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Ingreso enviado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                        else if(value == '')
+                        {
+                            swal("Ingrese el motivo de cancelación de la factura.",{icon: "error"});
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

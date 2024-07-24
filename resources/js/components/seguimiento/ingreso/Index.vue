@@ -40,11 +40,11 @@
                     { title: 'Factura', tdClass: 'td_c100', field: 'factura', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Moneda', field: 'idmoneda', tdClass: 'td_c100', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Total', field: 'total', tdClass: 'money', sortable: true, thComp: require('../../globals/th-Filter').default},
-                  //  { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {include: [], sort: 'id_ingreso', order: 'desc'},
+                query: {include: [], sort: 'idingreso_registrado', order: 'desc'},
                 search: '',
                 cargando: false
             }
@@ -91,7 +91,17 @@
                     self.$data.data = ingresos.map((ingreso, i) => ({
                         index: (i + 1) + self.query.offset,
                         id: ingreso.id,
-
+                        fecha: ingreso.fecha,
+                        area: ingreso.proyecto_tipo,
+                        idproyecto: ingreso.proyecto,
+                        cuenta: ingreso.cuenta_ingresa,
+                        factura: ingreso.numero,
+                        idmoneda: ingreso.moneda,
+                        total: ingreso.total_format,
+                        buttons: $.extend({}, {
+                            id: ingreso.id,
+                            envioCorreo: (this.$root.can('reenviar_email_factura_cuenta_x_cobrar',true)) ? true : false,
+                        })
                     }));
                 },
                 deep: true

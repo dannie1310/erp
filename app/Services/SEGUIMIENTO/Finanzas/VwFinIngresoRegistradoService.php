@@ -75,4 +75,17 @@ class VwFinIngresoRegistradoService
         return $this->repository->paginate($data);
     }
 
+    public function envioCorreo($id)
+    {
+        $ingreso = $this->repository->show($id);
+        $correo = $ingreso->buscarEmail();
+        if($correo != null)
+        {
+            $correo->reenviarEmail();
+
+        }else{
+            $ingreso->registrarEmail();
+        }
+        return $ingreso;
+    }
 }
