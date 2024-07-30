@@ -29,6 +29,13 @@ class SolicitudCambioSubcontrato extends Transaccion
         'id_empresa',
         'id_moneda',
     ];
+
+    public $searchable = [
+        'numero_folio',
+        'observaciones',
+        'subcontrato.referencia'
+    ];
+
     protected static function boot()
     {
         parent::boot();
