@@ -160,6 +160,20 @@ return [
             ],*/
         ],
 
+        'cntpq_nom' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_CNTPQ_NOM', 'localhost'),
+            'database' => env('DB_DATABASE_CNTPQ_NOM', 'forge'),
+            'username' => env('DB_USERNAME_CNTPQ_NOM', 'forge'),
+            'password' => env('DB_PASSWORD_CNTPQ_NOM', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            /*'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],*/
+        ],
+
         'igh' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_IGH', '127.0.0.1'),

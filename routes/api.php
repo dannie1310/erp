@@ -2094,4 +2094,13 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolRecSemanaAnioController@index');
         });
     });
+
+    /**
+     * NÓMINAS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'nominas'], function ($api){
+        $api->group(['prefix'=>'empresa'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CTPQ_NOM\EmpresaController@index');
+        });
+    });
 });

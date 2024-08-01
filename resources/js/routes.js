@@ -5650,6 +5650,45 @@ export const routes = [
         ]
     },
     {
+        path: '/nominas',
+        components:  {
+            default: require('./components/nominas/partials/Layout.vue').default,
+            menu: require('./components/nominas/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'nominas',
+                component: require('./components/nominas/Index').default,
+                meta: {
+                    title: 'Nóminas',
+                    middleware: [auth, permission],
+                    breadcrumb: {name: 'NÓMINAS'},
+                    permission: ['consultar_poliza_nominas_ctpq'],
+                    general: true
+                }
+            },
+            {
+                path: 'pre-nomina',
+                component: require('./components/nominas/pre-nomina/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'pre-nomina',
+                        component: require('./components/nominas/pre-nomina/SeleccionarEmpresa').default,
+                        meta: {
+                            title: 'Lista de Nómina',
+                            breadcrumb: {parent: 'nominas', name: 'PRENÓMINA'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza_nominas_ctpq',
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/auth',
         name: 'login',
         component: require('./components/pages/Login.vue').default,

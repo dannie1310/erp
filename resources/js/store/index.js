@@ -110,7 +110,6 @@ import polizaCFDIProyecto from './modules/contabilidad/poliza-cfdi';
 import CFDIPolizaProyecto from './modules/contabilidad/cfdi-poliza';
 
 //CONTABILIDAD GRAL
-
 import layoutPasivoPartida from "./modules/contabilidadGeneral/layout-pasivo-partida";
 import layoutPasivo from "./modules/contabilidadGeneral/layout-pasivo";
 import contabilidadElectronica from "./modules/contabilidadGeneral/contabilidad-electronica";
@@ -194,6 +193,9 @@ import CFDSATObra from './modules/finanzas/cfd-sat';
 
 import solicitudPagoAplicada from './modules/finanzasGeneral/solicitud-pago-aplicada';
 import solicitudPago from './modules/finanzasGeneral/solicitud-pago';
+
+//NÓMINAS
+import empresaContpaqNom from './modules/nominas/empresa-contpaq';
 
 //PADRON PROVEEDORES
 import archivoPrestadoraExpediente from './modules/padronProveedores/archivo-prestadora';
@@ -453,6 +455,8 @@ export default new Vuex.Store({
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
         'igh/tipo-cambio' : tipoCambio,
+
+        'nominas/empresa-contpaq' : empresaContpaqNom,
 
         'sci/marca': marca,
         'sci/modelo': modelo,
