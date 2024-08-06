@@ -17,9 +17,8 @@ class EmpresaTransformer extends TransformerAbstract
     public function transform(Nom10000 $model) {
         return [
             'id' => (int) $model->getKey(),
-            'descripcion' => (string) $model->Nombre . ' (' .  $model->AliasBDD . ')',
-            'nombre' => (string) $model->Nombre,
-            'alias_bdd' => (string) $model->AliasBDD
+            'descripcion' => (string) $model->NombreEmpresa,
+            'ruta_db' => (string) $model->RutaEmpresa
         ];
     }
 }

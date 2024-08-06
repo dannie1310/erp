@@ -42,9 +42,9 @@ class EmpresaService
 
     public function conectar($id)
     {
-        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::with(['empresaContpaq'])->find($id);
-        $this->config->set('database.connections.cntpq.database', $empresa->AliasBDD);
-        \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
+        $empresa = $this->show($id);
+        $this->config->set('database.connections.cntpq_nom.database', $empresa->RutaEmpresa);
+        \Config::set('database.connections.cntpq_nom.database',$empresa->RutaEmpresa);
         return $empresa;
     }
 }

@@ -196,6 +196,7 @@ import solicitudPago from './modules/finanzasGeneral/solicitud-pago';
 
 //NÓMINAS
 import empresaContpaqNom from './modules/nominas/empresa-contpaq';
+import polizaContpaqNom from './modules/nominas/poliza-contpaq';
 
 //PADRON PROVEEDORES
 import archivoPrestadoraExpediente from './modules/padronProveedores/archivo-prestadora';
@@ -457,6 +458,7 @@ export default new Vuex.Store({
         'igh/tipo-cambio' : tipoCambio,
 
         'nominas/empresa-contpaq' : empresaContpaqNom,
+        'nominas/poliza-contpaq' : polizaContpaqNom,
 
         'sci/marca': marca,
         'sci/modelo': modelo,

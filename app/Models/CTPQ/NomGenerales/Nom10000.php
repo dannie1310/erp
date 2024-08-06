@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Nom10000 extends Model
 {
-    protected $connection = 'cntpq_nom';
+    protected $connection = 'cntpq_nom_gen';
     protected $table = 'NOM10000';
     protected $primaryKey = 'IDEmpresa';
     public $timestamps = false;
@@ -20,7 +20,7 @@ class Nom10000 extends Model
      */
     public function scopeEditable($query)
     {
-        return $query; //->where('Visible',1)->where('Editable', 1);
+        return $query->where('RutaEmpresa', 'like','nm%');
     }
 
     /**

@@ -41,6 +41,8 @@ class DocumentoController extends Controller
         $this->middleware('permisoGlobal:registrar_documento_recursos')->only(['store']);
         $this->middleware('permisoGlobal:editar_documento_recursos')->only(['update']);
         $this->middleware('permisoGlobal:eliminar_documento_recursos')->only(['destroy']);
+        $this->middleware('permisoGlobal:descargar_xml_documento_ifs_recursos')->only(['descarga']);
+        $this->middleware('permisoGlobal:enviar_correo_xml_documento_ifs_recursos')->only(['correo']);
 
         $this->service = $service;
         $this->transformer = $transformer;

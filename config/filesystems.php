@@ -178,5 +178,9 @@ return [
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_IFS_SOLICITUD_RECURSO')),
         ],
+        'ifs_poliza_nominas' =>[
+            'driver' => 'local',
+            'root' => storage_path(env('STORAGE_IFS_NOMINAS')),
+        ],
     ],
 ];

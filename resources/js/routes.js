@@ -5651,7 +5651,7 @@ export const routes = [
     },
     {
         path: '/nominas',
-        components:  {
+        components: {
             default: require('./components/nominas/partials/Layout.vue').default,
             menu: require('./components/nominas/partials/Menu.vue').default
         },
@@ -5659,28 +5659,39 @@ export const routes = [
             {
                 path: '',
                 name: 'nominas',
-                component: require('./components/nominas/Index').default,
                 meta: {
-                    title: 'Nóminas',
-                    middleware: [auth, permission],
-                    breadcrumb: {name: 'NÓMINAS'},
+                    title: 'NÓMINAS',
+                    middleware: [auth],
                     permission: ['consultar_poliza_nominas_ctpq'],
                     general: true
                 }
             },
             {
-                path: 'pre-nomina',
-                component: require('./components/nominas/pre-nomina/Layout').default,
+                path: 'seleccionar-empresa-nom',
+                name: 'seleccionar-empresa-nom',
+                component: require('./components/nominas/poliza-nomina/SeleccionarEmpresa').default,
+                meta: {
+                    title: 'Conectar Empresa Nómina',
+                    breadcrumb: {parent: 'nominas', name: 'SELECCIONAR EMPRESA'},
+                    middleware: [auth, permission],
+                    permission: 'consultar_poliza_nominas_ctpq',
+                    general: true
+                }
+            },
+            {
+                path:":id_empresa/poliza-nomina",
+                component: require('./components/nominas/poliza-nomina/Layout').default,
                 children: [
                     {
                         path: '/',
-                        name: 'pre-nomina',
-                        component: require('./components/nominas/pre-nomina/SeleccionarEmpresa').default,
+                        name:"poliza-nomina",
+                        props: true,
+                        component: require('./components/nominas/poliza-nomina/Index').default,
                         meta: {
-                            title: 'Lista de Nómina',
-                            breadcrumb: {parent: 'nominas', name: 'PRENÓMINA'},
+                            title: 'Lista de Polizas Nómina',
+                            breadcrumb: {parent: 'seleccionar-empresa-nom', name: 'PÓLIZAS NÓMINAS'},
                             middleware: [auth, permission],
-                            permission: 'consultar_poliza_nominas_ctpq',
+                            permission: ['consultar_poliza_nominas_ctpq'],
                             general: true
                         }
                     },

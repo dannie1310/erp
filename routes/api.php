@@ -2101,6 +2101,12 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'nominas'], function ($api){
         $api->group(['prefix'=>'empresa'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CTPQ_NOM\EmpresaController@index');
+            $api->post('/connect','App\Http\Controllers\v1\CTPQ_NOM\EmpresaController@conectar');
+        });
+
+        $api->group(['prefix'=>'poliza'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CTPQ_NOM\PolizaController@paginate');
+            $api->get('descargaXML', 'App\Http\Controllers\v1\CTPQ_NOM\PolizaController@descarga');
         });
     });
 });

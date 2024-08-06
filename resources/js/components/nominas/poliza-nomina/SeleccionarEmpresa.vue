@@ -65,7 +65,6 @@ export default {
     },
 
     methods: {
-
         changeSelect(){
             this.conectando = false;
             var busqueda = this.empresas.find(x=>x.id === this.id_empresa);
@@ -76,12 +75,12 @@ export default {
         },
 
         nombreAliasBDD (item) {
-            return `${item.nombre} - ${item.alias_bdd}`
+            return `${item.descripcion} -  ${item.ruta_db}`
         },
 
         conectar(){
             this.conectando = true;
-            return this.$store.dispatch('contabilidadGeneral/empresa-contpaq/conectar',
+            return this.$store.dispatch('nominas/empresa-contpaq/conectar',
                 {
                     data: {id: this.id_empresa},
                     config: {
@@ -89,12 +88,11 @@ export default {
                     }
                 })
                 .then(data => {
-                    this.$session.set('id_empresa', data.Id);
+                    this.$session.set('id_empresa', data.id);
                     this.$store.commit("auth/setEmpresa", data);
-
-                    if(this.empresa_seleccionada.alias_bdd === data.AliasBDD){
+                    if(this.empresa_seleccionada.ruta_db === data.RutaEmpresa){
                         this.conectado = true;
-                        this.$router.push({name: 'poliza-contpaq', params: {id_empresa: this.id_empresa}});
+                        this.$router.push({name: 'poliza-nomina', params: {id_empresa: this.id_empresa}});
                     }
                 }).finally(() => {
                     this.conectando = false;
@@ -103,7 +101,7 @@ export default {
         getEmpresas() {
             this.empresas = [];
             this.cargando = true;
-            return this.$store.dispatch('nominas/empresa/index', {
+            return this.$store.dispatch('nominas/empresa-contpaq/index', {
                 params: {
                     sort: 'NombreEmpresa',
                     order: 'asc',

@@ -45,7 +45,7 @@ class EmpresaController extends Controller
     public function __construct(Manager $fractal, EmpresaService $service, EmpresaTransformer $transformer)
     {
         $this->middleware('auth:api');
-       // $this->middleware('accesoEmpresaContpaq')->only(['conectar']);
+       // $this->middleware('CheckAccesoEmpresaContpaqNom')->only(['conectar']);
 
 
         $this->fractal = $fractal;
