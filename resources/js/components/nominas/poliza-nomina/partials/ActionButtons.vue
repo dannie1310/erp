@@ -1,6 +1,6 @@
 <template>
     <div class="btn-group">
-        <DescargaXML v-if="value.xml_ifs" v-bind:id="value.id" v-bind:bd_empresa="value.bd_empresa" />
+        <DescargaXML v-if="value.xml_ifs" v-bind:id="value.id" v-bind:id_empresa="value.id_empresa" />
     </div>
 </template>
 

@@ -48,6 +48,6 @@ class PolizaController extends Controller
      */
     public function descarga(Request $request)
     {
-        return $this->service->xml($request->all()['id'], $request->all('bd'));
+        return $this->service->xml($request->all()['id'], $request->all('empresa'));
     }
 }

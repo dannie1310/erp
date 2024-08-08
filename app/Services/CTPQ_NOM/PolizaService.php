@@ -4,6 +4,7 @@ namespace App\Services\CTPQ_NOM;
 
 use App\Models\CTPQ\NmNominas\Nom10015;
 use App\Models\CTPQ\NomGenerales\Nom10000;
+use App\Models\MODULOSSAO\InterfazNominas\CuentaContableIFS;
 use App\Repositories\Repository;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Support\Facades\Storage;
@@ -40,25 +41,27 @@ class PolizaService
         return $this->repository->show($id);
     }
 
-    public function xml($id, $bd)
+    public function xml($id, $id_empresa)
     {
-        \Config::set('database.connections.cntpq_nom.database',$bd['bd']);
-        $polizas = Nom10015::datosPoliza($bd['bd'], $id);
-        $base = $bd['bd'];
-        $array_base = explode( '_', $base );
+        $id_empresa = $id_empresa['empresa'];
+        $empresa = Nom10000::where('IDEmpresa', $id_empresa)->first();
+        \Config::set('database.connections.cntpq_nom.database',$empresa->RutaEmpresa);
+        $poliza = Nom10015::where('idpoliza', $id)->first();
+        $polizas = Nom10015::datosPoliza($empresa->RutaEmpresa, $id);
+        $array_base = explode( '_', $empresa->RutaEmpresa );
         $proyecto = substr($array_base[0], 2, strlen($array_base[0]));
         $array_poliza = [];
 
         foreach ($polizas as $key => $item)
         {
-            $date = date_create($item->fecha);
+            $cuenta = CuentaContableIFS::where('cuenta_contpaq', $item->cuenta)->first();
             $array_poliza [$key] = [
                 'NAME' => 'VOUCHER_LINE',
                 'C00' => $item->company,
                 'N00' => $item->ejercicio_contable,
                 'D00' => $item->fecha,
                 'C01' => $item->Tipo_asiento,
-                'C02' => $item->cuenta,
+                'C02' => $cuenta->cuenta_ifs,
                 'C03' => $proyecto,
                 'C04' => $item->tramfrenra,
                 'C05' => $item->divisa,
@@ -91,7 +94,7 @@ class PolizaService
         $a = new ArrayToXml($array, "IN_MESSAGE");
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
-        Storage::disk('ifs_poliza_nominas')->put(  'archivo_ifs'.date('Y_m_d_H_i_s').'.xml', $result);
-        return Storage::disk('ifs_poliza_nominas')->download(  'archivo_ifs'.date('Y_m_d_H_i_s').'.xml');
+        Storage::disk('ifs_poliza_nominas')->put(  'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'_'.date('Y_m_d_H_i').'.xml', $result);
+        return Storage::disk('ifs_poliza_nominas')->download(  'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'_'.date('Y_m_d_H_i').'.xml');
     }
 }

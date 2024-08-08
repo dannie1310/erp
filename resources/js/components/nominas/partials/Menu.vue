@@ -8,7 +8,7 @@
             <li class="nav-item"  v-if="$root.can('consultar_factura_cuenta_x_cobrar',true)">
                 <router-link :to="{name: 'seleccionar-empresa-nom'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-empresa-nom'}">
                     <i class="fa fa-file-invoice-dollar nav-icon"></i>
-                    <p>Nómina</p>
+                    <p>Polizas de Nómina</p>
                 </router-link>
             </li>
         </ul>

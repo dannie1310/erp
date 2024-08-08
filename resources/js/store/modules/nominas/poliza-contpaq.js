@@ -60,7 +60,7 @@ export default {
             })
         },
         descargaXML(context, payload){
-            var urr = URI + 'descargaXML?id=' + payload.id + '&bd=' + payload.bd_empresa +'&access_token=' + this._vm.$session.get('jwt');
+            var urr = URI + 'descargaXML?id=' + payload.id + '&empresa=' + payload.id_empresa +'&access_token=' + this._vm.$session.get('jwt');
             var win = window.open(urr, "_blank");
             win.onbeforeunload = () => {
                 swal("XML descargado correctamente.", {

@@ -9,7 +9,7 @@
 <script>
     export default {
         name: "descarga-xml",
-        props: ['id', 'bd_empresa'],
+        props: ['id', 'id_empresa'],
         data(){
             return{
                 cargando: false,
@@ -18,7 +18,8 @@
         methods: {
             descargar() {
                 this.cargando = true;
-                return this.$store.dispatch('nominas/poliza-contpaq/descargaXML', {id: this.id, bd_empresa: this.bd_empresa})
+                console.log(this.id_empresa)
+                return this.$store.dispatch('nominas/poliza-contpaq/descargaXML', {id: this.id, id_empresa: this.id_empresa})
                     .then(() => {
                         this.$emit('success')
                         this.cargando = false;

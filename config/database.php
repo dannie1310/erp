@@ -390,6 +390,21 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
         ],
+
+        'interfaz_nominas' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_INTERFAZ_NOMINAS', 'localhost'),
+            //'port' => env('DB_PORT_MODULOSAO', '1433'),
+            'database' => env('DB_DATABASE_INTERFAZ_NOMINAS', 'forge'),
+            'username' => env('DB_USERNAME_INTERFAZ_NOMINAS', 'forge'),
+            'password' => env('DB_PASSWORD_INTERFAZ_NOMINAS', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            /*'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],*/
+        ],
     ],
 
     /*

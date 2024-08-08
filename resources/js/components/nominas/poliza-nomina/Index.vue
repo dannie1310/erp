@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="buscando">
+        <div class="card" v-if="cargando">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
@@ -61,11 +61,6 @@ export default {
             total: 0,
             query: {sort:'fechapoliza',order:'desc', scope: 'conGuid'},
             search: '',
-            file:'',
-            nombre: '',
-            sin_cfdi : true,
-            con_cfdi : false,
-
         }
     },
 
@@ -96,8 +91,7 @@ export default {
                     concepto: poliza.concepto,
                     buttons: $.extend({}, {
                         id : poliza.id,
-                        id_empresa: this.currentEmpresa.Id,
-                        bd_empresa: this.currentEmpresa.RutaEmpresa,
+                        id_empresa: this.currentEmpresa.IDEmpresa,
                         xml_ifs : self.$root.can('descargar_xml_documento_ifs_recursos', true) ? true : false,
                     })
                 }));
@@ -141,7 +135,7 @@ export default {
             this.$Progress.start();
             this.query.id_empresa = this.currentEmpresa.Id;
             this.query.bd_empresa = this.currentEmpresa.RutaEmpresa;
-            //this.buscando = true;
+            this.buscando = true;
             this.cargando = true;
             this.$Progress.start();
             if(this.polizas)
@@ -156,7 +150,7 @@ export default {
                     this.empresa = data.data[0].empresa;
                     this.encontradas = true;
                     this.$store.commit('nominas/poliza-contpaq/SET_POLIZAS', data.data);
-                    this.$store.commit('nominas/empresa-contpaq/SET_META', data.meta);
+                    this.$store.commit('nominas/poliza-contpaq/SET_META', data.meta);
                 }).finally(() => {
                     this.cargando = false;
                     this.$Progress.finish();
