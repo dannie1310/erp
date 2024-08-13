@@ -92,7 +92,8 @@ export default {
                     buttons: $.extend({}, {
                         id : poliza.id,
                         id_empresa: this.currentEmpresa.IDEmpresa,
-                        xml_ifs : self.$root.can('descargar_xml_documento_ifs_recursos', true) ? true : false,
+                        xml_ifs : self.$root.can('descargar_xml_poliza_ifs_nomina_ctpq', true) ? true : false,
+                        correo_xml_ifs : self.$root.can('enviar_correo_xml_poliza_ifs_nomina_ctpq', true) ? true : false,
                     })
                 }));
             },

@@ -37,6 +37,10 @@ class PolizaController extends Controller
     {
         $this->middleware('auth:api');
 
+        $this->middleware('permisoGlobal:consultar_poliza_nominas_ctpq')->only(['show','paginate','index']);
+        $this->middleware('permisoGlobal:descargar_xml_poliza_ifs_nomina_ctpq')->only(['descarga']);
+        $this->middleware('permisoGlobal:enviar_correo_xml_poliza_ifs_nomina_ctpq')->only(['correo']);
+
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
@@ -49,5 +53,10 @@ class PolizaController extends Controller
     public function descarga(Request $request)
     {
         return $this->service->xml($request->all()['id'], $request->all('empresa'));
+    }
+
+    public function correo(Request $request, $id)
+    {
+        return $this->service->correo($id,$request->all('id_empresa')['id_empresa']);
     }
 }

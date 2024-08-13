@@ -2,11 +2,11 @@
 
 namespace App\Services\CTPQ_NOM;
 
+use App\Events\IFS\EnvioXMLPolizaNominas;
 use App\Models\CTPQ\NmNominas\Nom10015;
 use App\Models\CTPQ\NomGenerales\Nom10000;
 use App\Models\MODULOSSAO\InterfazNominas\CuentaContableIFS;
 use App\Repositories\Repository;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ArrayToXml\ArrayToXml;
 
@@ -48,8 +48,6 @@ class PolizaService
         \Config::set('database.connections.cntpq_nom.database',$empresa->RutaEmpresa);
         $poliza = Nom10015::where('idpoliza', $id)->first();
         $polizas = Nom10015::datosPoliza($empresa->RutaEmpresa, $id);
-        $array_base = explode( '_', $empresa->RutaEmpresa );
-        $proyecto = substr($array_base[0], 2, strlen($array_base[0]));
         $array_poliza = [];
 
         foreach ($polizas as $key => $item)
@@ -62,7 +60,7 @@ class PolizaService
                 'D00' => $item->fecha,
                 'C01' => $item->Tipo_asiento,
                 'C02' => $cuenta->cuenta_ifs,
-                'C03' => $proyecto,
+                'C03' => $empresa->empresa_nombre,
                 'C04' => $item->tramfrenra,
                 'C05' => $item->divisa,
                 'C06' => $item->depcate,
@@ -72,7 +70,7 @@ class PolizaService
                 'C10' => $item->DEUDORES,
                 'C11' => $item->LIBRE,
                 'C12' => $item->codigo_divisa,
-                'N01' => $array_base[1],
+                'N01' => $empresa->actividad,
                 'N02' => $item->debe,
                 'N03' => $item->haber,
                 'C13' => $item->Referencia,
@@ -94,7 +92,33 @@ class PolizaService
         $a = new ArrayToXml($array, "IN_MESSAGE");
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
-        Storage::disk('ifs_poliza_nominas')->put(  'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'_'.date('Y_m_d_H_i').'.xml', $result);
-        return Storage::disk('ifs_poliza_nominas')->download(  'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'_'.date('Y_m_d_H_i').'.xml');
+        $poliza->log($empresa, 1);
+        Storage::disk('ifs_poliza_nominas')->put(  'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'.xml', $result);
+        return Storage::disk('ifs_poliza_nominas')->download(  'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'.xml');
+    }
+
+    public function correo($id, $id_empresa)
+    {
+        $empresa = Nom10000::where('IDEmpresa', $id_empresa)->first();
+        \Config::set('database.connections.cntpq_nom.database',$empresa->RutaEmpresa);
+        $poliza = $this->show($id);
+        $archivo = $this->getBase64XML($id,$id_empresa);
+        if($archivo == null) {
+            $this->xml($id);
+            $archivo = $this->getBase64XML($id,$id_empresa);
+        }
+        event(new EnvioXMLPolizaNominas($poliza, 'dbenitezc@grupohi.mx', 'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'.xml', $archivo));
+        $poliza->log($empresa, 2);
+        return $poliza;
+    }
+
+    private function getBase64XML($id, $id_empresa)
+    {
+        if (Storage::disk('ifs_poliza_nominas')->exists('nominas_ifs_'.$id.'_'.$id_empresa.'.xml'))
+        {
+            $archivo = Storage::disk("ifs_poliza_nominas")->get('nominas_ifs_'.$id.'_'.$id_empresa.'.xml');
+            return "data:text/xml;base64,".base64_encode($archivo);
+        }
+        return null;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\CTPQ\NmNominas;
 
+use App\Models\MODULOSSAO\InterfazNominas\LogXmlPolizaNominaIFS;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -15,6 +16,10 @@ class Nom10015 extends Model
     /**
      * Relaciones
      */
+    public function logPoliza()
+    {
+        return $this->belongsTo(LogXmlPolizaNominaIFS::class, 'id_poliza_contpaq', 'idpoliza');
+    }
 
     /**
      * Scopes
@@ -68,5 +73,16 @@ class Nom10015 extends Model
                 [".$bd."].[dbo].[nom10016] MP
         where	LP.idpoliza = ".$id."
         and		MP.idpoliza = LP.idpoliza"));
+    }
+
+    public function log($empresa, $estatus)
+    {
+        LogXmlPolizaNominaIFS::create([
+            'empresa' => $empresa->empresa_nombre,
+            'actividad' => $empresa->actividad,
+            'id_poliza_contpaq' => $this->getKey(),
+            'usuario_carga' => auth()->id(),
+            'estatus' => $estatus
+        ]);
     }
 }

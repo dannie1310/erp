@@ -26,7 +26,17 @@ class Nom10000 extends Model
     /**
      * Atributos
      */
+    public function getEmpresaNombreAttribute()
+    {
+        $array_base = explode( '_', $this->RutaEmpresa);
+        return substr($array_base[0], 2, strlen($array_base[0]));
+    }
 
+    public function getActividadAttribute()
+    {
+        $array_base = explode( '_', $this->RutaEmpresa);
+        return $array_base[1];
+    }
 
     /**
      * Métodos
