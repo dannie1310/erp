@@ -3,7 +3,6 @@
 namespace App\Listeners\IFS;
 
 use App\Events\IFS\EnvioXMLPolizaNominas;
-use App\Mail\NotificacionXMLDocumentoRecursosEnviada;
 use App\Mail\NotificacionXMLPolizaNominas;
 use Illuminate\Support\Facades\Mail;
 
@@ -27,7 +26,7 @@ class SendXMLPolizaNominasNotification
     {
         $destinatarios = $event->destinatarios;
         $bcc = [
-            'dbenitezc@grupohi.mx','ebriones@grupohi.mx'
+            'dbenitezc@grupohi.mx','ebriones@grupohi.mx', 'jegarcia@grupohi.mx'
         ];
         Mail::to($destinatarios)->bcc($bcc)->sendNow(new NotificacionXMLPolizaNominas($event->poliza, $event->xml, $event->archivo));
     }

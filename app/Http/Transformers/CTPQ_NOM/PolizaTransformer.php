@@ -15,7 +15,10 @@ class PolizaTransformer extends TransformerAbstract
             'concepto' => (string) $model->concepto,
             'fecha' => (string) $model->fechapoliza,
             'fecha_format' => $model->fecha_format,
-            'ejercicio' => $model->ejercicio
+            'ejercicio' => $model->ejercicio,
+            'estado_log' => $model->estado_log,
+            'estado_log_format' => $model->estado_log_format,
+            'estado_log_color' => $model->color_estado_log
         ];
     }
 }

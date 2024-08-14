@@ -2,8 +2,10 @@
 
 namespace App\Models\CTPQ\NmNominas;
 
+use App\Models\CTPQ\NomGenerales\Nom10000;
 use App\Models\MODULOSSAO\InterfazNominas\LogXmlPolizaNominaIFS;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class Nom10015 extends Model
@@ -43,6 +45,45 @@ class Nom10015 extends Model
         $date = date_create($this->fechapoliza);
         return date_format($date,"d/m/Y");
     }
+
+    public function getEstadoLogAttribute()
+    {
+       $empresa = Nom10000::where('RutaEmpresa', Config::get('database.connections.cntpq_nom.database'))->first();
+
+       $log = LogXmlPolizaNominaIFS::where('empresa', $empresa->empresa_nombre)
+           ->where('actividad', $empresa->actividad)
+           ->where('id_poliza_contpaq', $this->getKey())->orderByRaw('fecha_hora_registro, estatus desc')->pluck('estatus')->first();
+       return $log ? $log : "0";
+    }
+
+    public function getEstadoLogFormatAttribute()
+    {
+        if($this->estado_log == 0)
+        {
+            return 'PENDIENTE';
+        }elseif ($this->estado_log == 1)
+        {
+            return 'DESCARGADO';
+        }elseif ($this->estado_log == 2)
+        {
+            return 'ENVIADO';
+        }
+    }
+
+    public function getColorEstadoLogAttribute()
+    {
+        if($this->estado_log == 0)
+        {
+            return '#FFFFFF';
+        }elseif ($this->estado_log == 1)
+        {
+            return ' #efec4b';
+        }elseif ($this->estado_log == 2)
+        {
+            return '#34ae3a';
+        }
+    }
+
 
     /**
      * Métodos

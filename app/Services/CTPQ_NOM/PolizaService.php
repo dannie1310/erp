@@ -9,6 +9,8 @@ use App\Models\MODULOSSAO\InterfazNominas\CuentaContableIFS;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ArrayToXml\ArrayToXml;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class PolizaService
 {
@@ -32,9 +34,89 @@ class PolizaService
 
     public function paginate($data)
     {
-        \Config::set('database.connections.cntpq_nom.database',$data['bd_empresa']);
-        return $this->repository->paginate($data);
+        $poliza = $this->repository;
+
+        if(isset($data["bd_empresa"])) {
+            try {
+                DB::purge('cntpq_nom');
+                \Config::set('database.connections.cntpq_nom.database', $data['bd_empresa']);
+
+            } catch (\Exception $e) {
+                abort(500, "Error de lectura a la base de datos: " . Config::get('database.connections.cntpq_nom.database') . ". \n \n Favor de contactar a soporte a aplicaciones.");
+                throw $e;
+            }
+        }else {
+            abort(500, "Error en empresa de ContPaqNom.\n \n Favor de contactar a soporte a aplicaciones.");
+
+        }
+        return $poliza->paginate($data);
     }
+/*
+    public function paginate($data)
+    {
+        $poliza = $this->repository;
+        if(isset($data["id_empresa"])) {
+            try {
+                $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
+
+                $empresa = Empresa::find($empresaLocal->IdEmpresaContpaq);
+                DB::purge('cntpq');
+                Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+            } catch (\Exception $e) {
+                abort(500, "Error de lectura a la base de datos: " . Config::get('database.connections.cntpq.database') . ". \n \n Favor de contactar a soporte a aplicaciones.");
+                throw $e;
+            }
+
+            if (isset($data['ejercicio'])) {
+                if ($data['ejercicio'] != "") {
+                    $poliza->where([['Ejercicio', '=', $data['ejercicio']]]);
+                }
+            }
+
+            if (isset($data['periodo'])) {
+                if ($data['periodo'] != "") {
+                    $poliza->where([['Periodo', '=', $data['periodo']]]);
+                }
+            }
+
+            if (isset($data['folio'])) {
+                if ($data['folio'] != '') {
+                    $poliza = $poliza->where([['Folio', '=', request('folio')]]);
+                }
+            }
+
+            if (isset($data['concepto'])) {
+                if ($data['concepto'] != "") {
+                    $poliza = $poliza->where([['Concepto', 'like', '%' . $data['concepto'] . '%']]);
+                }
+            }
+
+            if (isset($data['cargos'])) {
+                if ($data['cargos'] != "") {
+                    $cargos_str = str_replace("$", "", $data['cargos']);
+                    $cargos_str = str_replace(",", "", $cargos_str);
+                    $poliza = $poliza->where([['Cargos', '=', $cargos_str]]);
+                }
+            }
+
+            if (isset($data['tipopol'])) {
+                if ($data['tipopol'] != '') {
+                    $tipo = TipoPoliza::where('Nombre', 'like', '%' . ucfirst(request('tipopol')) . '%')->first();
+                    if ($tipo) {
+                        $poliza = $poliza->where([['TipoPol', '=', $tipo->Id]]);
+                    } else {
+                        $poliza = $poliza->where([['TipoPol', '=', 0]]);
+                    }
+                }
+            }
+        }else{
+            abort(500, "No hay una empresa de ContPaq asociada a la obra del SAO actual.\n \n Favor de contactar a soporte a aplicaciones.");
+
+        }
+        return $poliza->paginate($data);
+
+    }
+*/
 
     public function show($id)
     {
@@ -107,7 +189,7 @@ class PolizaService
             $this->xml($id);
             $archivo = $this->getBase64XML($id,$id_empresa);
         }
-        event(new EnvioXMLPolizaNominas($poliza, 'dbenitezc@grupohi.mx', 'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'.xml', $archivo));
+        event(new EnvioXMLPolizaNominas($poliza, config('app.env_variables.EMAIL_IFS'), 'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'.xml', $archivo));
         $poliza->log($empresa, 2);
         return $poliza;
     }

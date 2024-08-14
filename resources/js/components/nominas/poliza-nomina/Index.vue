@@ -55,6 +55,7 @@ export default {
                 { title: 'Fecha', field: 'fecha', tdClass: 'td_fecha', thClass: 'th_fecha', sortable: true },
                 { title: 'Folio', field: 'numeropoliza', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true},
                 { title: 'Concepto', field: 'concepto',thComp: require('../../globals/th-Filter').default, sortable: false},
+                { title: 'Estado del XML', field: 'estado_nom', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
                 { title: 'Acciones', field: 'buttons', tdClass: 'td_c120',  thClass: 'th_c120',  tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
@@ -89,6 +90,7 @@ export default {
                     fecha: poliza.fecha_format,
                     numeropoliza: poliza.numeropoliza,
                     concepto: poliza.concepto,
+                    estado_nom: this.getEstado(poliza.estado_log_format, poliza.estado_log_color),
                     buttons: $.extend({}, {
                         id : poliza.id,
                         id_empresa: this.currentEmpresa.IDEmpresa,
@@ -172,6 +174,12 @@ export default {
                     this.empresas = data.data;
                     this.cargando = false;
                 })
+        },
+        getEstado(estado, color) {
+            return {
+                color: color,
+                descripcion: estado
+            }
         },
     }
 }

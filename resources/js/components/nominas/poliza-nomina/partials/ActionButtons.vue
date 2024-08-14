@@ -21,6 +21,7 @@
                         id_empresa: this.value.id_empresa,
                     }})
                     .then((data) => {
+                        this.$store.commit('nominas/poliza-contpaq/UPDATE_POLIZA', data);
                     })
             },
         }

@@ -18,9 +18,9 @@
         methods: {
             descargar() {
                 this.cargando = true;
-                console.log(this.id_empresa)
                 return this.$store.dispatch('nominas/poliza-contpaq/descargaXML', {id: this.id, id_empresa: this.id_empresa})
                     .then(() => {
+                        this.$store.commit('nominas/poliza-contpaq/UPDATE_POLIZA', data);
                         this.$emit('success')
                         this.cargando = false;
                     })

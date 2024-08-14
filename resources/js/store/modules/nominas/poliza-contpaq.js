@@ -19,7 +19,7 @@ export default {
         UPDATE_POLIZA(state, data) {
             state.poliza = state.polizas.map(poliza => {
                 if (poliza.id === data.id) {
-                    return Object.assign({}, empresa, data)
+                    return Object.assign({}, poliza, data)
                 }
                 return poliza
             })
