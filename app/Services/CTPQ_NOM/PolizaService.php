@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Storage;
 use Spatie\ArrayToXml\ArrayToXml;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use DateTime;
+use DateTimeZone;
 
 class PolizaService
 {
@@ -51,72 +53,6 @@ class PolizaService
         }
         return $poliza->paginate($data);
     }
-/*
-    public function paginate($data)
-    {
-        $poliza = $this->repository;
-        if(isset($data["id_empresa"])) {
-            try {
-                $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
-
-                $empresa = Empresa::find($empresaLocal->IdEmpresaContpaq);
-                DB::purge('cntpq');
-                Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
-            } catch (\Exception $e) {
-                abort(500, "Error de lectura a la base de datos: " . Config::get('database.connections.cntpq.database') . ". \n \n Favor de contactar a soporte a aplicaciones.");
-                throw $e;
-            }
-
-            if (isset($data['ejercicio'])) {
-                if ($data['ejercicio'] != "") {
-                    $poliza->where([['Ejercicio', '=', $data['ejercicio']]]);
-                }
-            }
-
-            if (isset($data['periodo'])) {
-                if ($data['periodo'] != "") {
-                    $poliza->where([['Periodo', '=', $data['periodo']]]);
-                }
-            }
-
-            if (isset($data['folio'])) {
-                if ($data['folio'] != '') {
-                    $poliza = $poliza->where([['Folio', '=', request('folio')]]);
-                }
-            }
-
-            if (isset($data['concepto'])) {
-                if ($data['concepto'] != "") {
-                    $poliza = $poliza->where([['Concepto', 'like', '%' . $data['concepto'] . '%']]);
-                }
-            }
-
-            if (isset($data['cargos'])) {
-                if ($data['cargos'] != "") {
-                    $cargos_str = str_replace("$", "", $data['cargos']);
-                    $cargos_str = str_replace(",", "", $cargos_str);
-                    $poliza = $poliza->where([['Cargos', '=', $cargos_str]]);
-                }
-            }
-
-            if (isset($data['tipopol'])) {
-                if ($data['tipopol'] != '') {
-                    $tipo = TipoPoliza::where('Nombre', 'like', '%' . ucfirst(request('tipopol')) . '%')->first();
-                    if ($tipo) {
-                        $poliza = $poliza->where([['TipoPol', '=', $tipo->Id]]);
-                    } else {
-                        $poliza = $poliza->where([['TipoPol', '=', 0]]);
-                    }
-                }
-            }
-        }else{
-            abort(500, "No hay una empresa de ContPaq asociada a la obra del SAO actual.\n \n Favor de contactar a soporte a aplicaciones.");
-
-        }
-        return $poliza->paginate($data);
-
-    }
-*/
 
     public function show($id)
     {
@@ -135,11 +71,17 @@ class PolizaService
         foreach ($polizas as $key => $item)
         {
             $cuenta = CuentaContableIFS::where('cuenta_contpaq', $item->cuenta)->first();
+            if ($cuenta == null)
+            {
+                abort(500, "La cuenta (".$item->cuenta.") de CONTPAQ-NOM de la empresa (".$empresa->NombreEmpresa .") no existe en IFS.\n \n Favor de contactar a soporte a aplicaciones.");
+            }
+            $fecha = DateTime::createFromFormat('d/m/Y', $item->fecha);
+
             $array_poliza [$key] = [
                 'NAME' => 'VOUCHER_LINE',
                 'C00' => $item->company,
                 'N00' => $item->ejercicio_contable,
-                'D00' => $item->fecha,
+                'D00' => $fecha->format('Y-m-d').'-00.00.00',
                 'C01' => $item->Tipo_asiento,
                 'C02' => $cuenta->cuenta_ifs,
                 'C03' => $empresa->empresa_nombre,
