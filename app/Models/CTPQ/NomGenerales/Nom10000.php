@@ -2,6 +2,7 @@
 
 namespace App\Models\CTPQ\NomGenerales;
 
+use App\Models\MODULOSSAO\InterfazNominas\ProyectoIFS;
 use Illuminate\Database\Eloquent\Model;
 
 class Nom10000 extends Model
@@ -14,6 +15,10 @@ class Nom10000 extends Model
     /**
      * Relaciones
      */
+    public function proyecto()
+    {
+        return $this->belongsTo(ProyectoIFS::class, 'nombre_base_contpaq', 'RutaEmpresa');
+    }
 
     /**
      * Scopes
@@ -21,6 +26,12 @@ class Nom10000 extends Model
     public function scopeEditable($query)
     {
         return $query->where('RutaEmpresa', 'like','nm%');
+    }
+
+    public function scopeConProyectoIfs($query)
+    {
+        $empresas = ProyectoIFS::whereNotNull('secuencia_ifs')->pluck('nombre_base_contpaq');
+        return $query->whereIn('RutaEmpresa', $empresas);
     }
 
     /**

@@ -105,7 +105,7 @@ export default {
                 params: {
                     sort: 'NombreEmpresa',
                     order: 'asc',
-                    scope:'editable',
+                    scope: ['editable','conProyectoIfs'],
                 }
             })
                 .then(data => {

@@ -100,12 +100,10 @@ class Nom10015 extends Model
                 convert(varchar,LP.fechapoliza,103) [fecha],
                 'M' [Tipo_asiento],
                 MP.cuentacw [cuenta],
-                'XXXXX' [proyecto], -- Poner la columna de proyecto de la tabla de empresas
                 '' [tramfrenra], '' [divisa],
                 csegmentonegocio [depcate],
                 '' [EMPLEADO], '' [INTERCOMPA], '' [ACTFIJO], '' [DEUDORES], '' [LIBRE],
                 'MXN' [codigo_divisa],
-                'XXXXXXXXX' [secuencia_actividad], -- Poner la columna de actividad de la tabla de empresas
                 isnull(cargo,0) [debe],
                 isnull(abono,0) [haber],
                 '' [Referencia],
