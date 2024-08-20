@@ -6,13 +6,13 @@ use App\Events\IFS\EnvioXMLPolizaNominas;
 use App\Models\CTPQ\NmNominas\Nom10015;
 use App\Models\CTPQ\NomGenerales\Nom10000;
 use App\Models\MODULOSSAO\InterfazNominas\CuentaContableIFS;
+use App\Models\MODULOSSAO\InterfazNominas\ProyectoIFS;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\Storage;
 use Spatie\ArrayToXml\ArrayToXml;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use DateTime;
-use DateTimeZone;
 
 class PolizaService
 {
@@ -67,6 +67,7 @@ class PolizaService
         $poliza = Nom10015::where('idpoliza', $id)->first();
         $polizas = Nom10015::datosPoliza($empresa->RutaEmpresa, $id);
         $array_poliza = [];
+        $proyecto_ifs = ProyectoIFS::where('nombre_base_contpaq', $empresa->RutaEmpresa)->first();
 
         foreach ($polizas as $key => $item)
         {
@@ -76,7 +77,6 @@ class PolizaService
                 abort(500, "La cuenta (".$item->cuenta.") de CONTPAQ-NOM de la empresa (".$empresa->NombreEmpresa .") no existe en IFS.\n \n Favor de contactar a soporte a aplicaciones.");
             }
             $fecha = DateTime::createFromFormat('d/m/Y', $item->fecha);
-
             $array_poliza [$key] = [
                 'NAME' => 'VOUCHER_LINE',
                 'C00' => $item->company,
@@ -84,17 +84,17 @@ class PolizaService
                 'D00' => $fecha->format('Y-m-d').'-00.00.00',
                 'C01' => $item->Tipo_asiento,
                 'C02' => $cuenta->cuenta_ifs,
-                'C03' => $empresa->empresa_nombre,
+                'C03' => $proyecto_ifs->id_proyecto_ifs,
                 'C04' => $item->tramfrenra,
                 'C05' => $item->divisa,
-                'C06' => $item->depcate,
+                'C06' => (int) $item->depcate == 0 ? '' : $item->depcate,
                 'C07' => $item->EMPLEADO,
                 'C08' => $item->INTERCOMPA,
                 'C09' => $item->ACTFIJO,
                 'C10' => $item->DEUDORES,
                 'C11' => $item->LIBRE,
                 'C12' => $item->codigo_divisa,
-                'N01' => $empresa->actividad,
+                'N01' => $proyecto_ifs->secuencia_ifs,
                 'N02' => $item->debe,
                 'N03' => $item->haber,
                 'C13' => $item->Referencia,
@@ -128,7 +128,7 @@ class PolizaService
         $poliza = $this->show($id);
         $archivo = $this->getBase64XML($id,$id_empresa);
         if($archivo == null) {
-            $this->xml($id);
+            $this->xml($id, $id_empresa);
             $archivo = $this->getBase64XML($id,$id_empresa);
         }
         event(new EnvioXMLPolizaNominas($poliza, config('app.env_variables.EMAIL_IFS'), 'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'.xml', $archivo));
