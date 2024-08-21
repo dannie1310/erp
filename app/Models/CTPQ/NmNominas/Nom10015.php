@@ -52,7 +52,7 @@ class Nom10015 extends Model
 
        $log = LogXmlPolizaNominaIFS::where('empresa', $empresa->empresa_nombre)
            ->where('actividad', $empresa->actividad)
-           ->where('id_poliza_contpaq', $this->getKey())->orderByRaw('fecha_hora_registro, estatus desc')->pluck('estatus')->first();
+           ->where('id_poliza_contpaq', $this->getKey())->orderByRaw('fecha_hora_registro desc, estatus desc')->pluck('estatus')->first();
        return $log ? $log : "0";
     }
 

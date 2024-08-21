@@ -16,8 +16,12 @@ export default {
             state.meta = data;
         },
 
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentPoliza, data.attribute, data.value);
+        },
+
         UPDATE_POLIZA(state, data) {
-            state.poliza = state.polizas.map(poliza => {
+            state.polizas = state.polizas.map(poliza => {
                 if (poliza.id === data.id) {
                     return Object.assign({}, poliza, data)
                 }

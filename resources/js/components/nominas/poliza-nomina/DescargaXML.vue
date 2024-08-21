@@ -9,7 +9,7 @@
 <script>
     export default {
         name: "descarga-xml",
-        props: ['id', 'id_empresa'],
+        props: ['id', 'id_empresa', 'bd_empresa'],
         data(){
             return{
                 cargando: false,
@@ -20,9 +20,15 @@
                 this.cargando = true;
                 return this.$store.dispatch('nominas/poliza-contpaq/descargaXML', {id: this.id, id_empresa: this.id_empresa})
                     .then(() => {
-                        this.$store.commit('nominas/poliza-contpaq/UPDATE_POLIZA', data);
+                        return this.$store.dispatch('nominas/poliza-contpaq/paginate',
+                            {
+                                params: {sort:'fechapoliza',order:'desc', scope: 'conGuid', id_empresa: this.id_empresa, bd_empresa: this.bd_empresa},
+                            })
+                            .then(data => {
+                                this.$store.commit('nominas/poliza-contpaq/SET_POLIZAS', data.data);
+                                this.$store.commit('nominas/poliza-contpaq/SET_META', data.meta);
+                            })
                         this.$emit('success')
-                        this.cargando = false;
                     })
             }
         },

@@ -3,6 +3,7 @@
 namespace App\Services\CTPQ_NOM;
 
 use App\Events\IFS\EnvioXMLPolizaNominas;
+use App\Http\Transformers\CTPQ_NOM\PolizaTransformer;
 use App\Models\CTPQ\NmNominas\Nom10015;
 use App\Models\CTPQ\NomGenerales\Nom10000;
 use App\Models\MODULOSSAO\InterfazNominas\CuentaContableIFS;
@@ -61,7 +62,6 @@ class PolizaService
 
     public function xml($id, $id_empresa)
     {
-        $id_empresa = $id_empresa['empresa'];
         $empresa = Nom10000::where('IDEmpresa', $id_empresa)->first();
         \Config::set('database.connections.cntpq_nom.database',$empresa->RutaEmpresa);
         $poliza = Nom10015::where('idpoliza', $id)->first();
@@ -123,6 +123,7 @@ class PolizaService
 
     public function correo($id, $id_empresa)
     {
+        $poliza_transformer = new PolizaTransformer();
         $empresa = Nom10000::where('IDEmpresa', $id_empresa)->first();
         \Config::set('database.connections.cntpq_nom.database',$empresa->RutaEmpresa);
         $poliza = $this->show($id);
@@ -133,7 +134,8 @@ class PolizaService
         }
         event(new EnvioXMLPolizaNominas($poliza, config('app.env_variables.EMAIL_IFS'), 'nominas_ifs_'.$poliza->idpoliza.'_'.$empresa->getKey().'.xml', $archivo));
         $poliza->log($empresa, 2);
-        return $poliza;
+        $poliza->refresh();
+        return $poliza_transformer->transform($poliza);
     }
 
     private function getBase64XML($id, $id_empresa)
