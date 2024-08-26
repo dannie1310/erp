@@ -522,7 +522,7 @@ class Transaccion extends Model
 
     public function getSubtotalAttribute()
     {
-        return $this->monto - $this->impuesto;
+        return $this->monto - $this->impuesto + $this->impuesto_retenido;
     }
 
     public function getSubtotalFormatAttribute(){

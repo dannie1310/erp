@@ -473,6 +473,9 @@ class Factura extends Transaccion
         if ($this->opciones == 65537) {
             $tipo = 'Materiales / Servicios';
         }
+        if ($this->opciones == 131073) {
+            $tipo = 'Anticipos y Destajos';
+        }
         return $tipo;
     }
 
