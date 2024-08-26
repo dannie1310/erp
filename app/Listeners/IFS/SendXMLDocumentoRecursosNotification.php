@@ -26,7 +26,7 @@ class SendXMLDocumentoRecursosNotification
     {
         $destinatarios = $event->destinatarios;
         $bcc = [
-            'dbenitezc@grupohi.mx','ebriones@grupohi.mx'
+            'dbenitezc@grupohi.mx','ebriones@grupohi.mx', 'jegarcia@grupohi.mx', 'melievana@grupohi.mx'
         ];
         Mail::to($destinatarios)->bcc($bcc)->sendNow(new NotificacionXMLDocumentoRecursosEnviada($event->documento, $event->xml, $event->archivo));
     }

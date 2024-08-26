@@ -1,6 +1,6 @@
 <template>
     <div class="btn-group">
-        <DescargaXML v-if="value.xml_ifs" v-bind:id="value.id" v-bind:id_empresa="value.id_empresa" />
+        <DescargaXML v-if="value.xml_ifs" v-bind:id="value.id" v-bind:id_empresa="value.id_empresa" v-bind:bd_empresa="value.bd_empresa"/>
         <button @click="correo" v-if="value.correo_xml_ifs" type="button" class="btn btn-sm btn-outline-success" title="Envio Correo de XML">
             <i class="fa fa-envelope"></i>
         </button>
