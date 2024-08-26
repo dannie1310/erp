@@ -26,7 +26,7 @@ class SendXMLPolizaNominasNotification
     {
         $destinatarios = $event->destinatarios;
         $bcc = [
-            'dbenitezc@grupohi.mx','ebriones@grupohi.mx', 'jegarcia@grupohi.mx'
+            'dbenitezc@grupohi.mx','ebriones@grupohi.mx', 'jegarcia@grupohi.mx', 'melievana@grupohi.mx'
         ];
         Mail::to($destinatarios)->bcc($bcc)->sendNow(new NotificacionXMLPolizaNominas($event->poliza, $event->xml, $event->archivo));
     }
