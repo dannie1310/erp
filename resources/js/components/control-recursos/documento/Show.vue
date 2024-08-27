@@ -54,7 +54,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('controlRecursos/documento/find', {
                     id: this.id,
-                    params:{include: []}
+                    params: { }
                 }).then(data => {
                     this.factura = data
                 })

@@ -7,7 +7,6 @@ use App\Repositories\Repository;
 
 class MonedaService
 {
-
     /**
      * @var Repository
      */

@@ -152,14 +152,27 @@ import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
 import extraordinario from './modules/controlPresupuesto/extraordinario';
 
 //CONTROL RECURSOS
+import cajaChica from "./modules/controlRecursos/caja-chica";
 import documentoRecurso from "./modules/controlRecursos/documento";
 import empresaRecurso from "./modules/controlRecursos/empresa";
+import entrega from "./modules/controlRecursos/entrega";
 import facturaRecurso from "./modules/controlRecursos/factura";
+import firmaFirmante from "./modules/controlRecursos/firma-firmante";
+import formaPago from "./modules/controlRecursos/forma-pago";
 import monedaRecurso from "./modules/controlRecursos/moneda";
+import pagoAProveedor from "./modules/controlRecursos/pago-a-proveedor";
+import pagoReembolsoPorSolicitud from "./modules/controlRecursos/pago-reembolso-por-solicitud";
 import proveedorRecurso from "./modules/controlRecursos/proveedor";
-import serie from "./modules/controlRecursos/serie";
+import reembolsoCajaChica from "./modules/controlRecursos/reembolso-caja-chica";
+import reembolsoGastoSol from "./modules/controlRecursos/reembolso-gasto-sol";
+import reembolsoPagoAProveedor from "./modules/controlRecursos/reembolso-pago-a-proveedor";
+import relacionGasto from "./modules/controlRecursos/relacion-gasto";
 import semanaAnio from "./modules/controlRecursos/semana-anio";
+import serie from "./modules/controlRecursos/serie";
 import solicitudCheque from "./modules/controlRecursos/solicitud-cheque";
+import tipoDocComp from "./modules/controlRecursos/tipo-doc-comp";
+import tipoGastoComp from "./modules/controlRecursos/tipo-gasto-comp";
+import ubicacionRelacion from "./modules/controlRecursos/ubicacion-relacion";
 
 //ENTREGA CFDI
 import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
@@ -381,14 +394,27 @@ export default new Vuex.Store({
         'control-presupuesto/concepto-tarjeta': conceptoTarjeta,
         'control-presupuesto/extraordinario': extraordinario,
 
+        'controlRecursos/caja-chica' : cajaChica,
         'controlRecursos/documento' : documentoRecurso,
         'controlRecursos/empresa' : empresaRecurso,
+        'controlRecursos/entrega' : entrega,
         'controlRecursos/factura' : facturaRecurso,
+        'controlRecursos/firma-firmante' : firmaFirmante,
+        'controlRecursos/forma-pago' : formaPago,
         'controlRecursos/moneda' : monedaRecurso,
+        'controlRecursos/pago-a-proveedor' : pagoAProveedor,
+        'controlRecursos/pago-reembolso-por-solicitud' : pagoReembolsoPorSolicitud,
         'controlRecursos/proveedor' : proveedorRecurso,
-        'controlRecursos/serie' : serie,
+        'controlRecursos/reembolso-caja-chica' : reembolsoCajaChica,
+        'controlRecursos/reembolso-gasto-sol' : reembolsoGastoSol,
+        'controlRecursos/reembolso-pago-a-proveedor' : reembolsoPagoAProveedor,
+        'controlRecursos/relacion-gasto': relacionGasto,
         'controlRecursos/semana-anio' : semanaAnio,
+        'controlRecursos/serie' : serie,
         'controlRecursos/solicitud-cheque' : solicitudCheque,
+        'controlRecursos/tipo-doc-comp' : tipoDocComp,
+        'controlRecursos/tipo-gasto-comp' : tipoGastoComp,
+        'controlRecursos/ubicacion-relacion' : ubicacionRelacion,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/comprobante-fondo' : comprobanteFondo,
