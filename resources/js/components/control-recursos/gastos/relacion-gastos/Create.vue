@@ -653,8 +653,8 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
-
             });
+            this.no_cfdi();
         },
         destroy(index){
             this.partidas.splice(index, 1);
@@ -699,6 +699,7 @@ export default {
                 });
         },
         modalCFDI(){
+            $(this.$refs.modal_cfdi).appendTo('body')
             $(this.$refs.modal_cfdi).modal('show');
         },
         cerrarModalCFDI(){
@@ -763,6 +764,7 @@ export default {
                 xml : concepto.xml,
                 contenido_xml : concepto.contenido_xml
             });
+            this.no_cfdi();
         },
         cargarXML(){
             this.cargando_a = true;
@@ -778,11 +780,11 @@ export default {
                 })
                 .then(data => {
                     var count = Object.keys(data).length;
-                    if(count > 0){
+                    if((count > 0) == true){
                         this.agregaPartidasConConceptos(data);
-                        $(this.$refs.modal_cfdi).modal('hide');
                         this.$refs.archivo.value = '';
-                        this.archivo = null;
+                        this.archivo = null
+                        this.cerrarModalCFDI();
                     }else{
                         if(this.$refs.archivo.value !== ''){
                             this.$refs.archivo.value = '';
@@ -800,6 +802,7 @@ export default {
                 })
                 .finally(() => {
                     this.cargando_a = false;
+                    this.cerrarModalCFDI();
                 });
         },
         createImage(file) {
