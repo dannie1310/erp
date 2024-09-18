@@ -171,7 +171,7 @@ class DocumentoService
                         'C13' => utf8_decode($documento->Concepto),
                         'C14' => $documento->uuid ? $documento->uuid .'.xml' : $documento->FolioDocto,
                         'C15' => auth()->user()->usuario,
-                        'C16' => $documento->folio_solicitud
+                        'C16' => str_replace('-', '', $documento->folio_solicitud),
                     ],
                     [
                         'NAME' => 'INVOICE_ITEM',

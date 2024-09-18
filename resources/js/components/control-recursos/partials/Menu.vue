@@ -21,7 +21,7 @@
                 </router-link>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                <a href="#" class="nav-link" v-if="$root.can('consultar_relacion_gastos_recursos')" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa-money-check"></i>
                     <p>
                         Gastos del Personal
