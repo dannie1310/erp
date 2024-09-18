@@ -32,4 +32,9 @@ class SolChequeDocto extends Model
     {
         return $this->belongsTo(Documento::class, 'IdDocto', 'IdDocto');
     }
+
+    public function solCheque()
+    {
+        return $this->belongsTo(SolCheque::class, 'IdSolCheque','IdSolCheques');
+    }
 }

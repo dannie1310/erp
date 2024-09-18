@@ -320,6 +320,16 @@ class Documento extends Model
         }
     }
 
+    public function getFolioSolicitudAttribute()
+    {
+        try {
+            return $this->solChequeDocto->solCheque->Serie.'-'.$this->solChequeDocto->solCheque->Folio;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */
