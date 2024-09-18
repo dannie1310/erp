@@ -167,10 +167,11 @@ class DocumentoService
                         'N03' => $documento->Retenciones,
                         'C11' => 'FALSE',
                         'D01' => $documento->Fecha.'-00.00.00',
-                        'C12' => $documento->uuid,
+                        'C12' => $documento->uuid ? $documento->uuid : '',
                         'C13' => utf8_decode($documento->Concepto),
-                        'C14' => $documento->uuid .'.xml',
-                        'C15' => auth()->user()->usuario
+                        'C14' => $documento->uuid ? $documento->uuid .'.xml' : $documento->FolioDocto,
+                        'C15' => auth()->user()->usuario,
+                        'C16' => $documento->folio_solicitud
                     ],
                     [
                         'NAME' => 'INVOICE_ITEM',
@@ -206,28 +207,30 @@ class DocumentoService
         $a = new ArrayToXml($array, "IN_MESSAGE");
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
-        Storage::disk('ifs_solicitud_recurso')->put(  'archivo_ifs'.$documento->uuid.'.xml', $result);
-        return Storage::disk('ifs_solicitud_recurso')->download(  'archivo_ifs'.$documento->uuid.'.xml');
+        $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
+        Storage::disk('ifs_solicitud_recurso')->put(  'archivo_ifs_'.$name.'.xml', $result);
+        return Storage::disk('ifs_solicitud_recurso')->download(  'archivo_ifs_'.$name.'.xml');
     }
 
     public function correo($id)
     {
         $documento = $this->show($id);
-        $archivo = $this->getBase64XML($documento->uuid);
+        $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
+        $archivo = $this->getBase64XML($name);
         if($archivo != null) {
-            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio.mx', 'archivo_ifs_' . $name . '.xml', $archivo));
         }else{
             $this->xml($id);
-            $archivo = $this->getBase64XML($documento->uuid);
-            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio.mx', 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+            $archivo = $this->getBase64XML($name);
+            event(new EnvioXMLDocumentoRecursos($documento, 'notificaciones@hi-mercurio.mx', 'archivo_ifs_' . $name . '.xml', $archivo));
         }
     }
 
-    private function getBase64XML($uuid)
+    private function getBase64XML($name)
     {
-        if (Storage::disk('ifs_solicitud_recurso')->exists('archivo_ifs'.$uuid.'.xml'))
+        if (Storage::disk('ifs_solicitud_recurso')->exists('archivo_ifs_'.$name.'.xml'))
         {
-            $archivo = Storage::disk("ifs_solicitud_recurso")->get('archivo_ifs'.$uuid.'.xml');
+            $archivo = Storage::disk("ifs_solicitud_recurso")->get('archivo_ifs_'.$name.'.xml');
             return "data:text/xml;base64,".base64_encode($archivo);
         }
         return null;

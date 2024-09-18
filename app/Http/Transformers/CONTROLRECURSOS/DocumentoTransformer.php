@@ -72,6 +72,7 @@ class DocumentoTransformer extends TransformerAbstract
             'con_segmento' => $model->con_segmento,
             'descuento' => $model->Descuento,
             'id_solicitante' => $model->firma_solicitante,
+            'folio_solicitud' => $model->folio_solicitud
         ];
     }
 
