@@ -39,7 +39,7 @@
                 { title: 'Total', field: 'total', thClass :'th_c220', tdClass: 'right', sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Moneda', field: 'idmoneda',thClass: 'th_c100',sortable: true, thComp: require('../../globals/th-Filter').default},
                 { title: 'Folio de Solicitud', field: 'folioSolicitud',thClass: 'th_c100',sortable: false},
-                { title: 'UUID', field: 'consulta_uuid',thClass: 'th_c100',sortable: true, thComp: require('../../globals/th-Filter').default, tdComp: require('../../fiscal/cfd/cfd-sat/CFDI').default},
+                { title: 'UUID', field: 'consulta_uuid',thClass: 'th_c100',sortable: true, thComp: require('../../globals/th-Filter').default, tdComp: require('../partials/CFDI').default},
                 { title: 'Estatus', field: 'estatus', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
                 { title: 'Acciones', field: 'buttons',thClass: 'th_c100', tdComp: require('./partials/ActionButtons').default},
             ],
