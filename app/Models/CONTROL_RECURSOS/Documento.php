@@ -480,7 +480,8 @@ class Documento extends Model
                         ,ccdoctos.IVA AS iva_segmento
                         ,ccdoctos.Total AS total_segmento
                         ,cuentascontables.ClaveCuenta as cuenta,
-                        cuentascontables.DescripcionCuenta as descripcion_cuenta
+                        cuentascontables.DescripcionCuenta as descripcion_cuenta,
+                        ccdoctos.IdTipoGasto as id_tipo_gasto
                     FROM controlrec.documentos
                     INNER JOIN controlrec.solchequesdoctos
                         ON documentos.IdDocto = solchequesdoctos.IdDocto
