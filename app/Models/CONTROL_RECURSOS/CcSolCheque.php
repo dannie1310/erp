@@ -33,4 +33,9 @@ class CcSolCheque extends Model
     {
         return $this->belongsTo(CentroCosto::class, 'IdCC', 'IdCC');
     }
+
+    public function tipoGasto()
+    {
+        return $this->belongsTo(TipoGasto::class, 'IdTipoGasto', 'IdTipoGasto');
+    }
 }
