@@ -1,10 +1,10 @@
 <template>
-    <span v-if="this.id">
-            <span v-if="txt" @click="init" style="cursor: pointer"
-                  :style="cancelado ==1?`text-decoration: line-through; color: #F00`:`text-decoration: underline; color: #003eff`"
+    <span v-if="value.id">
+            <span v-if="value.uuid" @click="init" style="cursor: pointer"
+                  :style="value.cancelado ==1?`text-decoration: line-through; color: #F00`:`text-decoration: underline; color: #003eff`"
             >
-                <span v-if="corto">{{txt.substring(0,8)}}...</span>
-                <span v-else>{{txt}}</span>
+                <span v-if="value.corto">{{value.txt.substring(0,8)}}...</span>
+                <span v-else>{{value.txt}}</span>
             </span>
             <button @click="init" v-else type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato CFDI" :disabled="cargandoEstado">
                 <i class="fa fa-file-invoice-dollar"></i> </button>
@@ -34,7 +34,7 @@
 <script>
     export default {
         name: "CFDI",
-        props: [ 'uuid', 'corto', 'txt', 'id', 'cancelado'],
+        props: [ 'value'],
         data(){
             return {
             }
@@ -49,7 +49,7 @@
                 this.pdf()
             },
             pdf(){
-                var url = '/api/fiscal/cfd-sat/' + this.id +'/cfdi-pdf?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
+                var url = '/api/fiscal/cfd-sat/' + this.value.id +'/cfdi-pdf?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato de CFDI</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
