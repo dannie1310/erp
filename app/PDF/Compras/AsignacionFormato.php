@@ -843,7 +843,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(4.1, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
             $this->Cell(4, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
             $this->Cell(4.2, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
-            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(4.2, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
             $this->Ln();
@@ -872,7 +872,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Dir. Ejec. de Oper. e Infra.'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.8, .4, utf8_decode('Autoriza Dir. Admon. Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('Autoriza Dir. Admon y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
             $this->Ln();
@@ -909,7 +909,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Dir. Ejec. de Oper. e Infra.'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.8, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -949,7 +949,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.8, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -989,7 +989,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1029,7 +1029,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1069,7 +1069,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1110,7 +1110,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1147,7 +1147,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(3, .4, utf8_decode('VoBo Admon. Proyecto'), 'TRLB', 0, 'C', 0);
             $this->Cell(3, .4, utf8_decode('VoBo Dir. Proyecto'), 'TRLB', 0, 'C', 0);
             $this->Cell(4, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(4.3, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
             $this->Ln();
@@ -1179,7 +1179,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1221,7 +1221,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Dir. Ejec. de Oper. e Infra.'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1261,7 +1261,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1300,7 +1300,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon, Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1370,7 +1370,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4.2, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4.2, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1430,7 +1430,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
             $this->Cell(.2);
-            $this->Cell(4.3, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.3, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
@@ -1469,7 +1469,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
             $this->Cell(.2);
-            $this->Cell(4.3, .4, utf8_decode('Autoriza Dir. Admon., Finanzas y Operaciones'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.3, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.2);
             $this->Cell(4.3, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
 
