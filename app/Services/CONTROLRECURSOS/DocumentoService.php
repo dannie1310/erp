@@ -4,6 +4,7 @@ namespace App\Services\CONTROLRECURSOS;
 
 use App\Events\IFS\EnvioXMLDocumentoRecursos;
 use App\Models\CONTROL_RECURSOS\CtgMoneda;
+use App\Models\CONTROL_RECURSOS\CuentaContableIFS;
 use App\Models\CONTROL_RECURSOS\Documento;
 use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\CONTROL_RECURSOS\Serie;
@@ -123,13 +124,14 @@ class DocumentoService
 
         foreach ($segmentos_negocio as $key => $item)
         {
+            $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
             $array_segmento [$key] = [
                 'NAME' => 'INVOICE_ITEM_POSTING',
                 'N00' => 1,
                 'N01' => $item->importe_segmento,
                 'C00' => utf8_decode($item->segmento_negocio),
                 'C01' => '',
-                'C02' => $item->cuenta,
+                'C02' => $cuenta ? $cuenta->cuenta_ifs : '',
                 'C03' => '',
                 'C04' => '',
                 'C05' => '',
