@@ -15,6 +15,7 @@ class DocumentoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'cfdi',
+        'proveedor'
 
     ];
 
@@ -69,14 +70,34 @@ class DocumentoTransformer extends TransformerAbstract
             'estado_color' => $model->color_estado,
             'solicitado' => $model->solicitado,
             'con_segmento' => $model->con_segmento,
-            'descuento' => $model->Descuento
+            'descuento' => $model->Descuento,
+            'id_solicitante' => $model->firma_solicitante,
+            'folio_solicitud' => $model->folio_solicitud
         ];
     }
+
+    /**
+     * @param Documento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeCFDI(Documento $model)
     {
         if($item = $model->CFDI)
         {
             return $this->item($item, new CFDSATTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Documento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeProveedor(Documento $model)
+    {
+        if($proveedor = $model->proveedor)
+        {
+            return $this->item($proveedor, new ProveedorTransformer);
         }
         return null;
     }
