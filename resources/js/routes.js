@@ -5789,6 +5789,24 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'ingreso',
+                component: require('./components/seguimiento/ingreso/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'ingreso',
+                        component: require('./components/seguimiento/ingreso/Index').default,
+                        meta: {
+                            title: 'Lista de Ingresos',
+                            breadcrumb: {parent: 'seguimiento', name: 'INGRESOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_ingreso_seguimiento',
+                            general: true
+                        }
+                    },
+                ]
+            }
         ]
     },
     {

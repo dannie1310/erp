@@ -261,6 +261,26 @@ class FinFacIngresoFactura extends Model
         }
     }
 
+    public function getTotalSinSignoAttribute()
+    {
+        try {
+            return $this->partidas()->where('idpartida', 17)->first()->total_sin_signo_format;
+
+        } catch (\Exception $exception) {
+            return 0;
+        }
+    }
+
+    public function getTotalDetalleAttribute()
+    {
+        try {
+            return $this->partidas()->where('idpartida', 17)->pluck('total')->first();
+
+        } catch (\Exception $exception) {
+            return 0;
+        }
+    }
+
     /**
      * Métodos
      */

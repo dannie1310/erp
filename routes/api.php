@@ -1803,6 +1803,11 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\TipoIngresoController@index');
             $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\TipoIngresoController@store');
         });
+
+        $api->group(['prefix'=>'vw-ingreso'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\VwFinIngresoRegistradoController@paginate');
+            $api->patch('{id}/envioCorreo', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\VwFinIngresoRegistradoController@envioCorreo')->where(['id' => '[0-9]+']);
+        });
     });
 
     /**
