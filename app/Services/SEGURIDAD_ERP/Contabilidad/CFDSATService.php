@@ -2377,7 +2377,12 @@ class CFDSATService
             }else{
                 $arreglo_cfd["retenciones"] = 0;
             }
-            $arreglo_cfd["otros_imp"] = $arreglo_cfd['descuento'];
+
+            if(array_key_exists('trasladosLocales', $arreglo_cfd)) {
+                $arreglo_cfd["otros_imp"] = $this->sumarTraslados($arreglo_cfd['trasladosLocales']);
+            }else {
+                $arreglo_cfd["otros_imp"] = $arreglo_cfd['descuento'];
+            }
             $conceptos[$i] =  $arreglo_cfd;
             $i++;
         }
@@ -2415,6 +2420,16 @@ class CFDSATService
         foreach ($retenciones as $retencion)
         {
             $suma = $suma + $retencion['total'];
+        }
+        return $suma;
+    }
+
+    private function sumarTraslados($trastados)
+    {
+        $suma = 0;
+        foreach ($trastados as $t)
+        {
+            $suma = $suma + $t['total'];
         }
         return $suma;
     }

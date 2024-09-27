@@ -288,7 +288,7 @@
                                         $ 0.00
                                     </td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                        $ {{ parseFloat(partida.otro_imp).formatMoney(2) }}
+                                        $ {{ parseFloat(partida.otros_imp).formatMoney(2) }}
                                     </td>
                                     <td style="text-align: right"  v-else>
                                         $ 0.00

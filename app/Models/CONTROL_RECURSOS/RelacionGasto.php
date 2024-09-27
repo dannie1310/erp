@@ -743,7 +743,7 @@ class RelacionGasto extends Model
                 'importe' => (float)str_replace(',', '', $data['importe']),
                 'iva' => (float)str_replace(',', '', $data['IVA']),
                 'retenciones' => (float)str_replace(',', '', $data['retenciones']),
-                'otros_impuestos' => (float)str_replace(',', '', $data['otro_imp']),
+                'otros_impuestos' => (float)str_replace(',', '', $data['otros_imp']),
                 'total' => (float)str_replace(',', '', $data['total']),
                 'observaciones' => $data['observaciones'],
                 'uuid' => $data['uuid']

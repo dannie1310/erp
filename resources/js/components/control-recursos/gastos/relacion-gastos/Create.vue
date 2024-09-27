@@ -292,7 +292,7 @@
                                                     $ 0.00
                                                  </td>
                                                  <td style="text-align: right" v-if="partida.uuid != null">
-                                                    $ {{ parseFloat(partida.otro_imp).formatMoney(2) }}
+                                                    $ {{ parseFloat(partida.otros_imp).formatMoney(2) }}
                                                  </td>
                                                  <td style="text-align: right" v-else>
                                                      $ 0.00
@@ -517,7 +517,7 @@ export default {
         {
             let otros = 0;
             this.partidas.forEach(function (doc, i) {
-                otros += parseFloat(doc.otro_imp);
+                otros += parseFloat(doc.otros_imp);
             })
             this.otros = otros;
             return otros
@@ -755,8 +755,8 @@ export default {
                 concepto : concepto.conceptos[0].descripcion,
                 importe : concepto.subtotal,
                 IVA : concepto.importe_iva,
-                retenciones : 0,
-                otro_imp : 0,
+                retenciones : concepto.retenciones,
+                otros_imp : concepto.otros_imp,
                 total: concepto.total,
                 no_personas: 1,
                 observaciones: '',
