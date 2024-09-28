@@ -2385,6 +2385,18 @@ class CFDSATService
             }else {
                 $arreglo_cfd["otros_imp"] = $arreglo_cfd['descuento'];
             }
+            /**
+             * Validación para el caso de facturas TELMEX
+             */
+            if($arreglo_cfd['otros_imp'] == $arreglo_cfd['descuento'])
+            {
+                foreach ($arreglo_cfd['traslados'] as  $x) {
+                    if ($x['impuesto'] == '003') {
+                        $arreglo_cfd['descuento_IEPS'] =  $x['importe'] ;
+                    }
+                }
+                $arreglo_cfd['otros_imp'] =  0;
+            }
             $conceptos[$i] =  $arreglo_cfd;
             $i++;
         }

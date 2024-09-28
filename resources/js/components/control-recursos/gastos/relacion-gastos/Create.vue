@@ -349,9 +349,17 @@
                                                              <th style="text-align: left">IVA:</th>
                                                              <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(iva).formatMoney(2) }}</b></td>
                                                          </tr>
+                                                          <tr v-if="descuentos != 0">
+                                                             <th style="text-align: left">Descuentos:</th>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(descuentos).formatMoney(2) }}</b></td>
+                                                         </tr>
+                                                          <tr v-if="descuento_IEPS != 0">
+                                                             <th style="text-align: left">Descuentos IEPS:</th>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(descuento_IEPS).formatMoney(2) }}</b></td>
+                                                         </tr>
                                                          <tr>
                                                              <th style="text-align: left">Retenciones:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(sumaDescuentos).formatMoney(2) }}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(sumaRetenciones).formatMoney(2) }}</b></td>
                                                          </tr>
                                                          <tr>
                                                              <th style="text-align: left">Otros Impuestos:</th>
@@ -476,7 +484,7 @@ export default {
             subtotal : 0,
             iva : 0,
             total : 0,
-            descuento : 0,
+            retenciones : 0,
             otros : 0,
             archivo:null,
             archivo_name:null,
@@ -489,7 +497,8 @@ export default {
             observaciones: '',
             series: [],
             idserie: '',
-            descuentos: 0
+            descuentos: 0,
+            descuento_IEPS: 0
         }
     },
     computed: {
@@ -498,23 +507,26 @@ export default {
             let iva = 0;
             let result = 0;
             let descuentos = 0;
+            let descuento_IEPS = 0;
             this.partidas.forEach(function (doc, i) {
                 result += parseFloat(doc.importe);
                 iva += parseFloat(doc.IVA);
                 descuentos += parseFloat(doc.descuento)
+                descuento_IEPS += parseFloat(doc.descuento_IEPS)
             })
             this.subtotal = result;
             this.iva = iva;
             this.descuentos = descuentos
+            this.descuento_IEPS = descuento_IEPS
             return result
         },
-        sumaDescuentos()
+        sumaRetenciones()
         {
             let result = 0;
             this.partidas.forEach(function (doc, i) {
                 result += parseFloat(doc.retenciones);
             })
-            this.descuento = result;
+            this.retenciones = result;
             return result
         },
         sumaOtros()
@@ -527,7 +539,7 @@ export default {
             return otros
         },
         sumaTotal() {
-            this.total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.descuento)) + parseFloat(this.otros));
+            this.total = (((((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.retenciones)) + parseFloat(this.otros)) - parseFloat(this.descuentos)) + parseFloat(this.descuento_IEPS));
             return this.total
         },
         no_cfdi()
@@ -657,7 +669,8 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
-                descuentos: 0
+                descuentos: 0,
+                descuento_IEPS: 0
             });
             this.no_cfdi();
         },
@@ -697,6 +710,7 @@ export default {
             datos ["retenciones"] = parseFloat(this.$data.retenciones) ;
             datos["iddepartamento"] = this.$data.empleado.usuario.departamento.id;
             datos["descuentos"]= this.$data.descuentos;
+            datos["descuento_IEPS"]= this.$data.descuento_IEPS;
             datos ["partidas"] = this.$data.partidas;
             return this.$store.dispatch('controlRecursos/relacion-gasto/store', datos)
                 .then((data) => {
@@ -769,7 +783,8 @@ export default {
                 uuid : concepto.uuid,
                 xml : concepto.xml,
                 contenido_xml : concepto.contenido_xml,
-                descuento : concepto.descuento
+                descuento : concepto.descuento,
+                descuento_IEPS: concepto.descuento_IEPS
             });
             this.no_cfdi();
         },
