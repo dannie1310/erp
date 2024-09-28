@@ -489,6 +489,7 @@ export default {
             observaciones: '',
             series: [],
             idserie: '',
+            descuentos: 0
         }
     },
     computed: {
@@ -496,12 +497,15 @@ export default {
         {
             let iva = 0;
             let result = 0;
+            let descuentos = 0;
             this.partidas.forEach(function (doc, i) {
                 result += parseFloat(doc.importe);
                 iva += parseFloat(doc.IVA);
+                descuentos += parseFloat(doc.descuento)
             })
             this.subtotal = result;
             this.iva = iva;
+            this.descuentos = descuentos
             return result
         },
         sumaDescuentos()
@@ -653,6 +657,7 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
+                descuentos: 0
             });
             this.no_cfdi();
         },
@@ -689,8 +694,9 @@ export default {
             datos ["iva"] = parseFloat(this.$data.iva);
             datos ["total"] = parseFloat(this.$data.total);
             datos ["otros_imp"] = parseFloat(this.$data.otros);
-            datos ["retenciones"] = parseFloat(this.$data.descuento) ;
-            datos["iddepartamento"] = this.$data.empleado.usuario.departamento.id
+            datos ["retenciones"] = parseFloat(this.$data.retenciones) ;
+            datos["iddepartamento"] = this.$data.empleado.usuario.departamento.id;
+            datos["descuentos"]= this.$data.descuentos;
             datos ["partidas"] = this.$data.partidas;
             return this.$store.dispatch('controlRecursos/relacion-gasto/store', datos)
                 .then((data) => {
@@ -762,7 +768,8 @@ export default {
                 observaciones: '',
                 uuid : concepto.uuid,
                 xml : concepto.xml,
-                contenido_xml : concepto.contenido_xml
+                contenido_xml : concepto.contenido_xml,
+                descuento : concepto.descuento
             });
             this.no_cfdi();
         },

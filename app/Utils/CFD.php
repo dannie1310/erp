@@ -442,6 +442,20 @@ class CFD
                 $i++;
             }
 
+            try {
+                $complemento = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//implocal:ImpuestosLocales//implocal:TrasladosLocales');
+                if($complemento != false) {
+                    foreach ($complemento as $key => $c) {
+                        $this->arreglo_factura["trasladosLocales"][$key]['descripcion'] = (string)$c['ImpLocTrasladado'];
+                        $this->arreglo_factura["trasladosLocales"][$key]['total'] = (float)$c['Importe'];
+                        $this->arreglo_factura["trasladosLocales"][$key]['tasa'] = (float)$c['TasadeTraslado'];
+                    }
+                }
+            } catch (\Exception $e)
+            {
+
+            }
+
             $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[0]["totalImpuestosRetenidos"][0];
 
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');

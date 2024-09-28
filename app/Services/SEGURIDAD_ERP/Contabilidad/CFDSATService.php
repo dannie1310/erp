@@ -2372,7 +2372,9 @@ class CFDSATService
             $contenido_xml = base64_decode($exp[1]);
             $arreglo_cfd["contenido_xml"] = $contenido_xml;
             $this->validaTipo($arreglo_cfd['tipo_comprobante']);
-            if(array_key_exists('retencionesLocales', $arreglo_cfd)) {
+            if(array_key_exists('retenciones', $arreglo_cfd)) {
+                $arreglo_cfd["retenciones"] = $this->sumarRetencionesEsp($arreglo_cfd['retenciones']);
+            }else if(array_key_exists('retencionesLocales', $arreglo_cfd)) {
                 $arreglo_cfd["retenciones"] = $this->sumarRetenciones($arreglo_cfd['retencionesLocales']);
             }else{
                 $arreglo_cfd["retenciones"] = 0;
@@ -2430,6 +2432,16 @@ class CFDSATService
         foreach ($trastados as $t)
         {
             $suma = $suma + $t['total'];
+        }
+        return $suma;
+    }
+
+    private function sumarRetencionesEsp($retenciones)
+    {
+        $suma = 0;
+        foreach ($retenciones as $retencion)
+        {
+            $suma = $suma + $retencion['importe'];
         }
         return $suma;
     }
