@@ -2388,6 +2388,7 @@ class CFDSATService
             /**
              * Validación para el caso de facturas TELMEX
              */
+            $arreglo_cfd['descuento_IEPS'] = 0;
             if($arreglo_cfd['otros_imp'] == $arreglo_cfd['descuento'])
             {
                 foreach ($arreglo_cfd['traslados'] as  $x) {

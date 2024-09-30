@@ -746,7 +746,8 @@ class RelacionGasto extends Model
                 'otros_impuestos' => (float)str_replace(',', '', $data['otros_imp']),
                 'total' => (float)str_replace(',', '', $data['total']),
                 'observaciones' => $data['observaciones'],
-                'uuid' => $data['uuid']
+                'uuid' => $data['uuid'],
+                'descuento_cfdi' => $data["descuento"] - $data["descuento_IEPS"]
             ]);
 
             DB::connection('controlrec')->commit();

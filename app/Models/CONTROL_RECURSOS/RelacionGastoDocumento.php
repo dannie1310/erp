@@ -28,7 +28,8 @@ class RelacionGastoDocumento extends Model
         'idestado',
         'modifico_estado',
         'registro',
-        'uuid'
+        'uuid',
+        'descuento_cfdi'
     ];
 
     /**
@@ -125,6 +126,11 @@ class RelacionGastoDocumento extends Model
     public function getOtrosImpFormatAttribute()
     {
         return '$' . number_format($this->otros_impuestos,2);
+    }
+
+    public function getDescuentoFormatAttribute()
+    {
+        return  '$' . number_format($this->descuento_cfdi,2);
     }
 
     public function getEstatusDescripcionAttribute()

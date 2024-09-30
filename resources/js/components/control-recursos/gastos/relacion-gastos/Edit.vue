@@ -183,6 +183,7 @@
                                     <th class="c100 encabezado">IVA</th>
                                     <th class="c100 encabezado">Retenciones</th>
                                     <th class="c100 encabezado">Otros Imp.</th>
+                                    <th class="c100" v-if="descuentos != 0">Descuentos</th>
                                     <th class="c100 encabezado">Total</th>
                                     <th class="c100 encabezado">No. Personas</th>
                                     <th class="c100 encabezado">Observaciones</th>
@@ -293,6 +294,9 @@
                                     <td style="text-align: right"  v-else>
                                         $ 0.00
                                     </td>
+                                    <td style="text-align: right" v-if="descuentos != 0">
+                                                    $ {{ parseFloat(partida.descuento).formatMoney(2) }}
+                                                 </td>
                                     <td style="text-align: right">
                                         $ {{ parseFloat(partida.total).formatMoney(2) }}
                                     </td>
@@ -353,11 +357,15 @@
                                     </tr>
                                     <tr>
                                         <th style="text-align: left">Retenciones:</th>
-                                        <td style="text-align: right; font-size: 15px"><b>$ {{ parseFloat(sumaDescuentos).formatMoney(2) }}</b></td>
+                                        <td style="text-align: right; font-size: 15px"><b>$ {{ parseFloat(sumaRetenciones).formatMoney(2) }}</b></td>
                                     </tr>
                                     <tr>
                                         <th style="text-align: left">Otros Impuestos:</th>
                                         <td style="text-align: right; font-size: 15px"><b>$ {{ parseFloat(sumaOtros).formatMoney(2) }}</b></td>
+                                    </tr>
+                                    <tr style="text-align: right">
+                                        <th style="text-align: left">Descuentos:</th>
+                                        <td style="text-align: right; font-size: 15px"><b>$ {{ parseFloat(sumaDescuentos).formatMoney(2) }}</b></td>
                                     </tr>
                                     <tr style="text-align: right">
                                         <th style="text-align: left">Total:</th>
@@ -486,6 +494,7 @@ export default {
             uuid : [],
             p_holder:'',
             index : 0,
+            descuentos : 0
         }
     },
 
@@ -517,7 +526,7 @@ export default {
             this.iva = iva;
             return result
         },
-        sumaDescuentos()
+        sumaRetenciones()
         {
             let result = 0;
             this.relacion.documentos.data.forEach(function (doc, i) {
@@ -534,6 +543,15 @@ export default {
             })
             this.otros = otros;
             return otros
+        },
+        sumaDescuentos()
+        {
+            let result = 0;
+            this.relacion.documentos.data.forEach(function (doc, i) {
+                result += parseFloat(doc.descuento);
+            })
+            this.descuentos = result;
+            return result
         },
         sumaTotal() {
             let total = 0;

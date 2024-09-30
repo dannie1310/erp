@@ -190,6 +190,7 @@
                                                  <th class="c100">IVA</th>
                                                  <th class="c100">Retenciones</th>
                                                  <th class="c100">Otros Imp.</th>
+                                                 <th class="c100" v-if="descuentos != 0">Descuentos</th>
                                                  <th class="c100">Total</th>
                                                  <th class="c100">No. Personas</th>
                                                  <th class="c100">Observaciones</th>
@@ -297,6 +298,9 @@
                                                  <td style="text-align: right" v-else>
                                                      $ 0.00
                                                  </td>
+                                                 <td style="text-align: right" v-if="descuentos != 0">
+                                                    $ {{ parseFloat(partida.descuento-partida.descuento_IEPS).formatMoney(2) }}
+                                                 </td>
                                                  <td style="text-align: right">
                                                     $ {{ parseFloat(partida.total).formatMoney(2) }}
                                                  </td>
@@ -351,11 +355,7 @@
                                                          </tr>
                                                           <tr v-if="descuentos != 0">
                                                              <th style="text-align: left">Descuentos:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(descuentos).formatMoney(2) }}</b></td>
-                                                         </tr>
-                                                          <tr v-if="descuento_IEPS != 0">
-                                                             <th style="text-align: left">Descuentos IEPS:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(descuento_IEPS).formatMoney(2) }}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(descuentos-descuento_IEPS).formatMoney(2) }}</b></td>
                                                          </tr>
                                                          <tr>
                                                              <th style="text-align: left">Retenciones:</th>
