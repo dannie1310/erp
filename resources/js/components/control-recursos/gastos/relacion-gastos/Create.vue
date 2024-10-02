@@ -299,7 +299,7 @@
                                                      $ 0.00
                                                  </td>
                                                  <td style="text-align: right" v-if="descuentos != 0">
-                                                    $ {{ parseFloat(partida.descuento-partida.descuento_IEPS).formatMoney(2) }}
+                                                    $ {{ parseFloat(partida.descuento).formatMoney(2) }}
                                                  </td>
                                                  <td style="text-align: right">
                                                     $ {{ parseFloat(partida.total).formatMoney(2) }}
@@ -355,7 +355,7 @@
                                                          </tr>
                                                           <tr v-if="descuentos != 0">
                                                              <th style="text-align: left">Descuentos:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(descuentos-descuento_IEPS).formatMoney(2) }}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(descuentos).formatMoney(2) }}</b></td>
                                                          </tr>
                                                          <tr>
                                                              <th style="text-align: left">Retenciones:</th>
@@ -498,7 +498,6 @@ export default {
             series: [],
             idserie: '',
             descuentos: 0,
-            descuento_IEPS: 0
         }
     },
     computed: {
@@ -507,17 +506,14 @@ export default {
             let iva = 0;
             let result = 0;
             let descuentos = 0;
-            let descuento_IEPS = 0;
             this.partidas.forEach(function (doc, i) {
                 result += parseFloat(doc.importe);
                 iva += parseFloat(doc.IVA);
                 descuentos += parseFloat(doc.descuento)
-                descuento_IEPS += parseFloat(doc.descuento_IEPS)
             })
             this.subtotal = result;
             this.iva = iva;
             this.descuentos = descuentos
-            this.descuento_IEPS = descuento_IEPS
             return result
         },
         sumaRetenciones()
@@ -539,7 +535,7 @@ export default {
             return otros
         },
         sumaTotal() {
-            this.total = (((((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.retenciones)) + parseFloat(this.otros)) - parseFloat(this.descuentos)) + parseFloat(this.descuento_IEPS));
+            this.total = ((((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.retenciones)) + parseFloat(this.otros)) - parseFloat(this.descuentos));
             return this.total
         },
         no_cfdi()
@@ -669,8 +665,7 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
-                descuentos: 0,
-                descuento_IEPS: 0
+                descuentos: 0
             });
             this.no_cfdi();
         },
@@ -710,7 +705,6 @@ export default {
             datos ["retenciones"] = parseFloat(this.$data.retenciones) ;
             datos["iddepartamento"] = this.$data.empleado.usuario.departamento.id;
             datos["descuentos"]= this.$data.descuentos;
-            datos["descuento_IEPS"]= this.$data.descuento_IEPS;
             datos ["partidas"] = this.$data.partidas;
             return this.$store.dispatch('controlRecursos/relacion-gasto/store', datos)
                 .then((data) => {
@@ -783,8 +777,7 @@ export default {
                 uuid : concepto.uuid,
                 xml : concepto.xml,
                 contenido_xml : concepto.contenido_xml,
-                descuento : concepto.descuento,
-                descuento_IEPS: concepto.descuento_IEPS
+                descuento : concepto.descuento - concepto.descuento_IEPS
             });
             this.no_cfdi();
         },

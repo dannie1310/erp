@@ -126,6 +126,7 @@
                             <td class="encabezado" style="text-align:right;">{{ relacion.suma_iva_format }}</td>
                             <td class="encabezado" style="text-align:right;">{{ relacion.suma_retenciones_format }}</td>
                             <td class="encabezado" style="text-align:right;">{{ relacion.suma_otros_imp_format }}</td>
+                            <td class="encabezado" style="text-align:right;">{{ relacion.descuentos_format }}</td>
                             <td class="encabezado" style="text-align:right;">{{ relacion.total_format }}</td>
                             <td class="encabezado"></td>
                             <td class="encabezado"></td>

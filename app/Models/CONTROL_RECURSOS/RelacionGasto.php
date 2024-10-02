@@ -469,6 +469,16 @@ class RelacionGasto extends Model
         return number_format(($this->promedio_diario),2);
     }
 
+    public function getSumaDescuentosAttribute()
+    {
+        return $this->documentos()->sum('descuento_cfdi');
+    }
+
+    public function getSumaDescuentosFormatAttribute()
+    {
+        return '$'.number_format(($this->suma_descuentos),2);
+    }
+
     public function getResumenGastosAttribute()
     {
         $consulta = " SELECT
@@ -747,7 +757,7 @@ class RelacionGasto extends Model
                 'total' => (float)str_replace(',', '', $data['total']),
                 'observaciones' => $data['observaciones'],
                 'uuid' => $data['uuid'],
-                'descuento_cfdi' => $data["descuento"] - $data["descuento_IEPS"]
+                'descuento_cfdi' => $data["descuento"]
             ]);
 
             DB::connection('controlrec')->commit();

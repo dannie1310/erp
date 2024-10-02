@@ -209,7 +209,8 @@ class RelacionGastoDocumento extends Model
             'idestado' => $this->idestado,
             'registro' => $this->registro,
             'timestamp_registro' => $this->timestamp_registro,
-            'uuid' => $this->uuid
+            'uuid' => $this->uuid,
+            'descuento_cfdi' => $this->descuento_cfdi
         ]);
     }
 
