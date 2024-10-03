@@ -192,7 +192,7 @@ class RelacionGastoDocumento extends Model
 
     public function respaldar()
     {
-        $this->eliminadaErp()->create([
+        RelacionGastoDocumentoEliminadoErp::create([
             'idrelaciones_gastos_documentos' => $this->idrelaciones_gastos_documentos,
             'idrelaciones_gastos' => $this->idrelaciones_gastos,
             'fecha' => $this->fecha,

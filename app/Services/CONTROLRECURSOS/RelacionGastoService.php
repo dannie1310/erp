@@ -422,6 +422,11 @@ class RelacionGastoService
                     {
                         $this->desvinculaFacturaRepositorio($d->uuid);
                     }
+                    $d->respaldar();
+                    if($d->eliminadaErp == null)
+                    {
+                        abort(400, "Error al eliminar, respaldo incorrecto2.");
+                    }
                     $d->delete();
                 }
             }
