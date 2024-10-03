@@ -248,6 +248,20 @@ class CFD
             return 0;
         }
 
+        try {
+            $complemento = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//implocal:ImpuestosLocales//implocal:TrasladosLocales');
+            if($complemento != false) {
+                foreach ($complemento as $key => $c) {
+                    $this->arreglo_factura["trasladosLocales"][$key]['descripcion'] = (string)$c['ImpLocTrasladado'];
+                    $this->arreglo_factura["trasladosLocales"][$key]['total'] = (float)$c['Importe'];
+                    $this->arreglo_factura["trasladosLocales"][$key]['tasa'] = (float)$c['TasadeTraslado'];
+                }
+            }
+        } catch (\Exception $e)
+        {
+
+        }
+
         $complemento = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//implocal:RetencionesLocales');
         if($complemento != false) {
             foreach ($complemento as $key => $c) {
@@ -426,6 +440,20 @@ class CFD
                 $this->arreglo_factura["traslados"][$i]["tasa_o_cuota"] = (string)$traslado["tasa"];
                 $this->arreglo_factura["traslados"][$i]["importe"] = (string)$traslado["importe"];
                 $i++;
+            }
+
+            try {
+                $complemento = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//implocal:ImpuestosLocales//implocal:TrasladosLocales');
+                if($complemento != false) {
+                    foreach ($complemento as $key => $c) {
+                        $this->arreglo_factura["trasladosLocales"][$key]['descripcion'] = (string)$c['ImpLocTrasladado'];
+                        $this->arreglo_factura["trasladosLocales"][$key]['total'] = (float)$c['Importe'];
+                        $this->arreglo_factura["trasladosLocales"][$key]['tasa'] = (float)$c['TasadeTraslado'];
+                    }
+                }
+            } catch (\Exception $e)
+            {
+
             }
 
             $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[0]["totalImpuestosRetenidos"][0];

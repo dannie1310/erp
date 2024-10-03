@@ -2372,12 +2372,32 @@ class CFDSATService
             $contenido_xml = base64_decode($exp[1]);
             $arreglo_cfd["contenido_xml"] = $contenido_xml;
             $this->validaTipo($arreglo_cfd['tipo_comprobante']);
-            if(array_key_exists('retencionesLocales', $arreglo_cfd)) {
+            if(array_key_exists('retenciones', $arreglo_cfd)) {
+                $arreglo_cfd["retenciones"] = $this->sumarRetencionesEsp($arreglo_cfd['retenciones']);
+            }else if(array_key_exists('retencionesLocales', $arreglo_cfd)) {
                 $arreglo_cfd["retenciones"] = $this->sumarRetenciones($arreglo_cfd['retencionesLocales']);
             }else{
                 $arreglo_cfd["retenciones"] = 0;
             }
-            $arreglo_cfd["otros_imp"] = $arreglo_cfd['descuento'];
+
+            if(array_key_exists('trasladosLocales', $arreglo_cfd)) {
+                $arreglo_cfd["otros_imp"] = $this->sumarTraslados($arreglo_cfd['trasladosLocales']);
+            }else {
+                $arreglo_cfd["otros_imp"] = $arreglo_cfd['descuento'];
+            }
+            /**
+             * Validación para el caso de facturas TELMEX
+             */
+            $arreglo_cfd['descuento_IEPS'] = 0;
+            if($arreglo_cfd['otros_imp'] == $arreglo_cfd['descuento'])
+            {
+                foreach ($arreglo_cfd['traslados'] as  $x) {
+                    if ($x['impuesto'] == '003') {
+                        $arreglo_cfd['descuento_IEPS'] =  $x['importe'] ;
+                    }
+                }
+                $arreglo_cfd['otros_imp'] =  0;
+            }
             $conceptos[$i] =  $arreglo_cfd;
             $i++;
         }
@@ -2415,6 +2435,26 @@ class CFDSATService
         foreach ($retenciones as $retencion)
         {
             $suma = $suma + $retencion['total'];
+        }
+        return $suma;
+    }
+
+    private function sumarTraslados($trastados)
+    {
+        $suma = 0;
+        foreach ($trastados as $t)
+        {
+            $suma = $suma + $t['total'];
+        }
+        return $suma;
+    }
+
+    private function sumarRetencionesEsp($retenciones)
+    {
+        $suma = 0;
+        foreach ($retenciones as $retencion)
+        {
+            $suma = $suma + $retencion['importe'];
         }
         return $suma;
     }

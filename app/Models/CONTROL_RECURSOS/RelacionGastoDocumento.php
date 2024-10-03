@@ -28,7 +28,8 @@ class RelacionGastoDocumento extends Model
         'idestado',
         'modifico_estado',
         'registro',
-        'uuid'
+        'uuid',
+        'descuento_cfdi'
     ];
 
     /**
@@ -127,6 +128,11 @@ class RelacionGastoDocumento extends Model
         return '$' . number_format($this->otros_impuestos,2);
     }
 
+    public function getDescuentoFormatAttribute()
+    {
+        return  '$' . number_format($this->descuento_cfdi,2);
+    }
+
     public function getEstatusDescripcionAttribute()
     {
         try {
@@ -186,7 +192,7 @@ class RelacionGastoDocumento extends Model
 
     public function respaldar()
     {
-        $this->eliminadaErp()->create([
+        RelacionGastoDocumentoEliminadoErp::create([
             'idrelaciones_gastos_documentos' => $this->idrelaciones_gastos_documentos,
             'idrelaciones_gastos' => $this->idrelaciones_gastos,
             'fecha' => $this->fecha,
@@ -203,7 +209,8 @@ class RelacionGastoDocumento extends Model
             'idestado' => $this->idestado,
             'registro' => $this->registro,
             'timestamp_registro' => $this->timestamp_registro,
-            'uuid' => $this->uuid
+            'uuid' => $this->uuid,
+            'descuento_cfdi' => $this->descuento_cfdi
         ]);
     }
 

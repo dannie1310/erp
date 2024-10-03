@@ -28,6 +28,7 @@ class RelacionGastoDocumentoEliminadoErp extends Model
         'idestado',
         'registro',
         'timestamp_registro',
-        'uuid'
+        'uuid',
+        'descuento_cfdi'
     ];
 }

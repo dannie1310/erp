@@ -52,6 +52,8 @@ class RelacionGastoDocumentoTransformer extends TransformerAbstract
             'idtipogasto' => $model->idtipo_gasto_comprobacion,
             'concepto' => $model->concepto_xml,
             'fecha_editar' => $model->fecha_editar,
+            'descuento' => $model->descuento_cfdi,
+            'descuento_format' => $model->descuento_format
         ];
     }
 

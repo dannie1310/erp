@@ -88,6 +88,7 @@
                             <th class="c100 encabezado">IVA</th>
                             <th class="c100 encabezado">Retenciones</th>
                             <th class="c100 encabezado">Otros Imp.</th>
+                            <th class="c100 encabezado">Descuento</th>
                             <th class="c100 encabezado">Total</th>
                             <th class="c100 encabezado">No. Personas</th>
                             <th class="c100 encabezado">Observaciones</th>
@@ -106,6 +107,7 @@
                             <td style="text-align:right;">{{ d.iva_format }}</td>
                             <td style="text-align:right;">{{ d.retenciones_format }}</td>
                             <td style="text-align:right;">{{ d.otros_imp_format }}</td>
+                            <td style="text-align:right;">{{ d.descuento_format }}</td>
                             <td style="text-align:right;">{{ d.total_format }}</td>
                             <td>{{ d.no_personas }}</td>
                             <td>{{ d.observaciones }}</td>
@@ -124,6 +126,7 @@
                             <td class="encabezado" style="text-align:right;">{{ relacion.suma_iva_format }}</td>
                             <td class="encabezado" style="text-align:right;">{{ relacion.suma_retenciones_format }}</td>
                             <td class="encabezado" style="text-align:right;">{{ relacion.suma_otros_imp_format }}</td>
+                            <td class="encabezado" style="text-align:right;">{{ relacion.descuentos_format }}</td>
                             <td class="encabezado" style="text-align:right;">{{ relacion.total_format }}</td>
                             <td class="encabezado"></td>
                             <td class="encabezado"></td>

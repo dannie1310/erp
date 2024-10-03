@@ -190,6 +190,7 @@
                                                  <th class="c100">IVA</th>
                                                  <th class="c100">Retenciones</th>
                                                  <th class="c100">Otros Imp.</th>
+                                                 <th class="c100" v-if="descuentos != 0">Descuentos</th>
                                                  <th class="c100">Total</th>
                                                  <th class="c100">No. Personas</th>
                                                  <th class="c100">Observaciones</th>
@@ -292,10 +293,13 @@
                                                     $ 0.00
                                                  </td>
                                                  <td style="text-align: right" v-if="partida.uuid != null">
-                                                    $ {{ parseFloat(partida.otro_imp).formatMoney(2) }}
+                                                    $ {{ parseFloat(partida.otros_imp).formatMoney(2) }}
                                                  </td>
                                                  <td style="text-align: right" v-else>
                                                      $ 0.00
+                                                 </td>
+                                                 <td style="text-align: right" v-if="descuentos != 0">
+                                                    $ {{ parseFloat(partida.descuento).formatMoney(2) }}
                                                  </td>
                                                  <td style="text-align: right">
                                                     $ {{ parseFloat(partida.total).formatMoney(2) }}
@@ -349,9 +353,13 @@
                                                              <th style="text-align: left">IVA:</th>
                                                              <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(iva).formatMoney(2) }}</b></td>
                                                          </tr>
+                                                          <tr v-if="descuentos != 0">
+                                                             <th style="text-align: left">Descuentos:</th>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(descuentos).formatMoney(2) }}</b></td>
+                                                         </tr>
                                                          <tr>
                                                              <th style="text-align: left">Retenciones:</th>
-                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(sumaDescuentos).formatMoney(2) }}</b></td>
+                                                             <td style="text-align: right; font-size: 15px"><b>$ {{parseFloat(sumaRetenciones).formatMoney(2) }}</b></td>
                                                          </tr>
                                                          <tr>
                                                              <th style="text-align: left">Otros Impuestos:</th>
@@ -476,7 +484,7 @@ export default {
             subtotal : 0,
             iva : 0,
             total : 0,
-            descuento : 0,
+            retenciones : 0,
             otros : 0,
             archivo:null,
             archivo_name:null,
@@ -489,6 +497,7 @@ export default {
             observaciones: '',
             series: [],
             idserie: '',
+            descuentos: 0,
         }
     },
     computed: {
@@ -496,34 +505,37 @@ export default {
         {
             let iva = 0;
             let result = 0;
+            let descuentos = 0;
             this.partidas.forEach(function (doc, i) {
                 result += parseFloat(doc.importe);
                 iva += parseFloat(doc.IVA);
+                descuentos += parseFloat(doc.descuento)
             })
             this.subtotal = result;
             this.iva = iva;
+            this.descuentos = descuentos
             return result
         },
-        sumaDescuentos()
+        sumaRetenciones()
         {
             let result = 0;
             this.partidas.forEach(function (doc, i) {
                 result += parseFloat(doc.retenciones);
             })
-            this.descuento = result;
+            this.retenciones = result;
             return result
         },
         sumaOtros()
         {
             let otros = 0;
             this.partidas.forEach(function (doc, i) {
-                otros += parseFloat(doc.otro_imp);
+                otros += parseFloat(doc.otros_imp);
             })
             this.otros = otros;
             return otros
         },
         sumaTotal() {
-            this.total = (((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.descuento)) + parseFloat(this.otros));
+            this.total = ((((parseFloat(this.subtotal) + parseFloat(this.iva)) - parseFloat(this.retenciones)) + parseFloat(this.otros)) - parseFloat(this.descuentos));
             return this.total
         },
         no_cfdi()
@@ -653,6 +665,7 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
+                descuentos: 0
             });
             this.no_cfdi();
         },
@@ -689,8 +702,9 @@ export default {
             datos ["iva"] = parseFloat(this.$data.iva);
             datos ["total"] = parseFloat(this.$data.total);
             datos ["otros_imp"] = parseFloat(this.$data.otros);
-            datos ["retenciones"] = parseFloat(this.$data.descuento) ;
-            datos["iddepartamento"] = this.$data.empleado.usuario.departamento.id
+            datos ["retenciones"] = parseFloat(this.$data.retenciones) ;
+            datos["iddepartamento"] = this.$data.empleado.usuario.departamento.id;
+            datos["descuentos"]= this.$data.descuentos;
             datos ["partidas"] = this.$data.partidas;
             return this.$store.dispatch('controlRecursos/relacion-gasto/store', datos)
                 .then((data) => {
@@ -755,14 +769,15 @@ export default {
                 concepto : concepto.conceptos[0].descripcion,
                 importe : concepto.subtotal,
                 IVA : concepto.importe_iva,
-                retenciones : 0,
-                otro_imp : 0,
+                retenciones : concepto.retenciones,
+                otros_imp : concepto.otros_imp,
                 total: concepto.total,
                 no_personas: 1,
                 observaciones: '',
                 uuid : concepto.uuid,
                 xml : concepto.xml,
-                contenido_xml : concepto.contenido_xml
+                contenido_xml : concepto.contenido_xml,
+                descuento : concepto.descuento - concepto.descuento_IEPS
             });
             this.no_cfdi();
         },
