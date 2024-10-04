@@ -294,7 +294,7 @@ class SolCheque extends Model
      */
     public function getFolio($serie)
     {
-        $solicitud = self::where('Serie', $serie)->orderBy('Folio', 'desc')->first();
+        $solicitud = self::withoutGlobalScopes()->where('Serie', $serie)->orderBy('Folio', 'desc')->first();
         return $solicitud ? $solicitud->Folio + 1 : 1;
     }
 
