@@ -658,14 +658,14 @@ export default {
                 importe : 0,
                 IVA : 0,
                 retenciones : 0,
-                otro_imp : 0,
+                otros_imp : 0,
                 total: 0,
                 no_personas: 1,
                 observaciones: '',
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
-                descuentos: 0
+                descuento: 0
             });
             this.no_cfdi();
         },
@@ -836,8 +836,7 @@ export default {
         },
         calcularTotalPorPartida(partida,i) {
             var total = 0;
-            total = (parseFloat(partida.importe) + parseFloat(partida.IVA) + parseFloat(partida.otro_imp) - parseFloat(partida.retenciones));
-            console.log(parseFloat(partida.importe),parseFloat(partida.IVA),parseFloat(partida.otro_imp),parseFloat(partida.retenciones), total);
+            total = (parseFloat(partida.importe) + parseFloat(partida.IVA) + parseFloat(partida.otros_imp) - parseFloat(partida.retenciones));
             this.partidas[i]['total'] = total;
         },
     },
