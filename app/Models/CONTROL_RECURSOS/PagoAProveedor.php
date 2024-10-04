@@ -122,7 +122,7 @@ dd($sol_cheque);
         try {
             DB::connection('controlrec')->beginTransaction();
             $this->deleteFirmasSolicitantes();
-            $reembolso = ReembolsoGastoSol::where('IdDocto',$this->solChequeDocto->IdDocto)->first();
+            $reembolso = ReembolsoPagoAProveedor::where('IdDocto',$this->solChequeDocto->IdDocto)->first();
             $this->solChequeDocto()->delete();
             $reembolso->update([
                 'Estatus'  => 1
