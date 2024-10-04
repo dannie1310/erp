@@ -11,7 +11,7 @@ class PagoAProveedor extends SolCheque
         parent::boot();
 
         self::addGlobalScope(function ($query) {
-            return $query->where('IdTipoSolicitud', '13');
+            return $query->where('IdTipoSolicitud', '6');
         });
     }
 
@@ -49,7 +49,7 @@ class PagoAProveedor extends SolCheque
                 'Serie' => $reembolso->Alias_Depto,
                 'FechaFactura' =>  $reembolso->Fecha
             ]);
-
+dd($sol_cheque);
             /*
              * crear en documentos y solicitudes un id para saber q se creo desde el erp
              */

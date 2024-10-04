@@ -520,7 +520,6 @@ export default {
         {
             let result = 0;
             this.partidas.forEach(function (doc, i) {
-                console.log(doc)
                 result += parseFloat(doc.retenciones);
             })
             this.retenciones = result;
@@ -838,7 +837,6 @@ export default {
         calcularTotalPorPartida(partida,i) {
             var total = 0;
             total = (parseFloat(partida.importe) + parseFloat(partida.IVA) + parseFloat(partida.otros_imp) - parseFloat(partida.retenciones));
-            console.log(parseFloat(partida.importe),parseFloat(partida.IVA),parseFloat(partida.otros_imp),parseFloat(partida.retenciones), total);
             this.partidas[i]['total'] = total;
         },
     },
