@@ -149,7 +149,14 @@ export default {
                 params:{include: ['reembolsos.proveedor.cuentas']}
             }).then(data => {
                 this.relacion = data
-                this.getReembolso()
+                if(this.relacion.reembolsos.data[0].id_tipo == 13)
+                {
+                    this.getReembolsoSol();
+                }
+                if(this.relacion.reembolsos.data[0].id_tipo == 12)
+                {
+                    this.getReembolso()
+                }
                 this.cuentas =  this.relacion.reembolsos.data[0].proveedor.cuentas.data;
                 this.solicitante =  this.relacion.reembolsos.data[0].id_solicitante;
             })
@@ -164,13 +171,22 @@ export default {
                 this.cargando = false;
             })
         },
+        getReembolsoSol() {
+            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/find', {
+                id: this.relacion.reembolsos.data[0].id,
+                params:{include: []}
+            }).then(data => {
+                this.reembolso = data;
+            }).finally(()=> {
+                this.cargando = false;
+            })
+        },
         salir() {
             this.$router.push({name: 'relacion-gasto'});
         },
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    console.log(this.relacion.estado)
                     if(this.reembolso.id_tipo == 13)
                     {
                         this.storePagoReembolsoPorSolicitud();
