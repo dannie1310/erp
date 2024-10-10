@@ -121,6 +121,7 @@
                                 solicitud_pago_a_proveedor: self.$root.can('registrar_reembolso_pago_a_proveedor', true) && relacion.estado == 5 ? true : false,
                                 reembolso_pago_a_proveedor: self.$root.can('consultar_reembolso_pago_a_proveedor', true) && relacion.estado == 600 ? true : false,
                                 sol_cheque_pago_a_proveedor: self.$root.can('consultar_solicitud_pago_reembolso', true) && (relacion.estado == 700 || relacion.estado == 7) ? true : false,
+                                reembolso_caja_chica: self.$root.can('consultar_reembolso_pago_a_proveedor', true) && relacion.estado == 60 ? true : false,
                             })
                     }))
                 },

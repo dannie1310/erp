@@ -18,4 +18,9 @@ class ReembolsoCajaChicaRepository extends Repository implements RepositoryInter
     {
         return $this->model->registrar($datos);
     }
+
+    public function buscar($id)
+    {
+        return $this->model->withoutGlobalScopes()->find($id);
+    }
 }
