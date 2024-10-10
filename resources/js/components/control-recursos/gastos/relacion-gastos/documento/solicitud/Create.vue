@@ -21,7 +21,7 @@
                     </div>
                     <div class="col-md-12" v-if="relacion.estado == 600">
                         <encabezado-pago-a-proveedor  v-bind:reembolso="relacion" />
-                        <tabla-datos-pago-a-proveedor v-bind:reembolso="relacion" />
+                        <tabla-datos-pago-a-proveedor v-bind:reembolso="reembolso" />
                         <hr />
                     </div>
                 </div>
@@ -149,9 +149,36 @@ export default {
                 params:{include: ['reembolsos.proveedor.cuentas']}
             }).then(data => {
                 this.relacion = data
-                this.reembolso = data.reembolsos.data[0]
-                this.cuentas = this.reembolso.proveedor.cuentas.data;
-                this.solicitante = this.reembolso.id_solicitante;
+                if(this.relacion.reembolsos.data[0].id_tipo == 13)
+                {
+                    this.getReembolsoSol();
+                }
+                if(this.relacion.reembolsos.data[0].id_tipo == 12)
+                {
+                    this.getReembolso()
+                }
+                this.cuentas =  this.relacion.reembolsos.data[0].proveedor.cuentas.data;
+                this.solicitante =  this.relacion.reembolsos.data[0].id_solicitante;
+            })
+        },
+        getReembolso() {
+            return this.$store.dispatch('controlRecursos/reembolso-pago-a-proveedor/find', {
+                id: this.relacion.reembolsos.data[0].id,
+                params:{include: []}
+            }).then(data => {
+                this.reembolso = data;
+            }).finally(()=> {
+                this.cargando = false;
+            })
+        },
+        getReembolsoSol() {
+            return this.$store.dispatch('controlRecursos/reembolso-gasto-sol/find', {
+                id: this.relacion.reembolsos.data[0].id,
+                params:{include: []}
+            }).then(data => {
+                this.reembolso = data;
+            }).finally(()=> {
+                this.cargando = false;
             })
         },
         salir() {
@@ -160,7 +187,6 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    console.log(this.relacion.estado)
                     if(this.reembolso.id_tipo == 13)
                     {
                         this.storePagoReembolsoPorSolicitud();

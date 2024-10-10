@@ -49,7 +49,7 @@ class PagoAProveedor extends SolCheque
                 'Serie' => $reembolso->Alias_Depto,
                 'FechaFactura' =>  $reembolso->Fecha
             ]);
-dd($sol_cheque);
+
             /*
              * crear en documentos y solicitudes un id para saber q se creo desde el erp
              */
