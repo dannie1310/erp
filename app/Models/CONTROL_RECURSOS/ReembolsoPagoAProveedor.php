@@ -198,6 +198,7 @@ class ReembolsoPagoAProveedor extends Documento
     {
         try {
             DB::connection('controlrec')->beginTransaction();
+            $this->solChequeDocto()->delete();
             $this->eliminarDocumentos();
             $this->relacionXDocumento()->delete();
             $this->delete();
@@ -214,7 +215,9 @@ class ReembolsoPagoAProveedor extends Documento
     {
         foreach ($this->ccDoctos as $ccDocto)
         {
+            $ccDocto->ccSolCheque->delete();
             $ccDocto->delete();
+
         }
     }
 }

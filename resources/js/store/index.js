@@ -153,6 +153,7 @@ import extraordinario from './modules/controlPresupuesto/extraordinario';
 
 //CONTROL RECURSOS
 import cajaChica from "./modules/controlRecursos/caja-chica";
+import centroCosto from "./modules/controlRecursos/centro-costo";
 import documentoRecurso from "./modules/controlRecursos/documento";
 import empresaRecurso from "./modules/controlRecursos/empresa";
 import entrega from "./modules/controlRecursos/entrega";
@@ -171,6 +172,7 @@ import semanaAnio from "./modules/controlRecursos/semana-anio";
 import serie from "./modules/controlRecursos/serie";
 import solicitudCheque from "./modules/controlRecursos/solicitud-cheque";
 import tipoDocComp from "./modules/controlRecursos/tipo-doc-comp";
+import tipoGasto from "./modules/controlRecursos/tipo-gasto";
 import tipoGastoComp from "./modules/controlRecursos/tipo-gasto-comp";
 import ubicacionRelacion from "./modules/controlRecursos/ubicacion-relacion";
 
@@ -396,6 +398,7 @@ export default new Vuex.Store({
         'control-presupuesto/extraordinario': extraordinario,
 
         'controlRecursos/caja-chica' : cajaChica,
+        'controlRecursos/centro-costo' :  centroCosto,
         'controlRecursos/documento' : documentoRecurso,
         'controlRecursos/empresa' : empresaRecurso,
         'controlRecursos/entrega' : entrega,
@@ -414,6 +417,7 @@ export default new Vuex.Store({
         'controlRecursos/serie' : serie,
         'controlRecursos/solicitud-cheque' : solicitudCheque,
         'controlRecursos/tipo-doc-comp' : tipoDocComp,
+        'controlRecursos/tipo-gasto' : tipoGasto,
         'controlRecursos/tipo-gasto-comp' : tipoGastoComp,
         'controlRecursos/ubicacion-relacion' : ubicacionRelacion,
 

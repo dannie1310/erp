@@ -22,7 +22,7 @@ class CcDoctoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'tipoGasto'
+        'tipoGastoComp'
     ];
 
     public function transform(CcDocto $model)
@@ -44,10 +44,10 @@ class CcDoctoTransformer extends TransformerAbstract
      * @param CcDocto $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeTipoGasto(CcDocto $model)
+    public function includeTipoGastoComp(CcDocto $model)
     {
-        if ($tipo_g = $model->tipoGasto) {
-            return $this->item($tipo_g, new TipoGastoCompTransformer);
+        if ($tipo = $model->tipoGastoComp) {
+            return $this->item($tipo, new TipoGastoCompTransformer);
         }
         return null;
     }

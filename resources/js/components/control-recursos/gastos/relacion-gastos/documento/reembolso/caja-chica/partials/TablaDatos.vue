@@ -51,10 +51,10 @@
                     </tr>
                     <tr>
                         <td>
-                            {{reembolso.fecha_inicio_editar}}
+                            {{reembolso.fecha_inicio_format}}
                         </td>
                         <td>
-                            {{reembolso.fecha_final_editar}}
+                            {{reembolso.fecha_final_format}}
                         </td>
                         <td style="text-align: center">
                             <estado v-bind:value="getEstado(reembolso.relacion.data[0].estado_descripcion, reembolso.relacion.data[0].estado_color)" />
