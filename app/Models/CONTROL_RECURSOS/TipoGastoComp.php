@@ -11,6 +11,14 @@ class TipoGastoComp extends Model
     protected $primaryKey = 'IdTipoGastoComp';
 
     /**
+     * Relaciones
+     */
+    public function tipoGasto()
+    {
+        return $this->belongsTo(TipoGasto::class, 'IdTipoGasto', 'IdTipoGasto');
+    }
+
+    /**
      * Scopes
      */
     public function scopePorEstados($query, $estados)

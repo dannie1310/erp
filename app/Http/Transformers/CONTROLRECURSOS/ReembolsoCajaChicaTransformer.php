@@ -13,7 +13,8 @@ class ReembolsoCajaChicaTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'proveedor'
+        'proveedor',
+        'relacion'
     ];
 
     /**
@@ -94,6 +95,19 @@ class ReembolsoCajaChicaTransformer extends TransformerAbstract
         if($proveedor = $model->proveedor)
         {
             return $this->item($proveedor, new ProveedorTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param ReembolsoCajaChica $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeRelacion(ReembolsoCajaChica $model)
+    {
+        if($relacion = $model->relacion)
+        {
+            return $this->collection($relacion, new RelacionGastoTransformer);
         }
         return null;
     }

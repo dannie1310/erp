@@ -40,6 +40,11 @@ class ReembolsoCajaChica extends Documento
         return $this->belongsTo(CajaChicaReembolso::class, 'IdDocto', 'iddocto');
     }
 
+    public function relacion()
+    {
+        return $this->hasManyThrough(RelacionGasto::class, RelacionGastoXDocumento::class, 'iddocumento','idrelaciones_gastos','IdDocto','idrelaciones_gastos');
+    }
+
     /**
      * Atributos
      */

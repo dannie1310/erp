@@ -22,7 +22,7 @@ class TipoGastoCompTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'tipoGasto'
     ];
 
     public function transform(TipoGastoComp $model){
@@ -30,5 +30,19 @@ class TipoGastoCompTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'descripcion' => $model->Descripcion
         ];
+    }
+
+    /**
+     * @param TipoGastoComp $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTipoGasto(TipoGastoComp $model)
+    {
+        if($tipo = $model->tipoGasto)
+        {
+            return $this->item($tipo, new TipoGastoTransformer);
+        }
+        return null;
+
     }
 }

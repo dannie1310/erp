@@ -29,8 +29,6 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="solicitud" v-if="$root.can('registrar_solicitud_pago_reembolso', true)" ><i class="fa fa-save"></i> Registrar Solicitud</button>
-                    <button type="submit" class="btn btn-info" :disabled="errors.count() > 0" @click="editar" v-if="$root.can('editar_reembolso_pago_a_proveedor', true)" ><i class="fa fa-save" ></i> Actualizar</button>
                     <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0" @click="eliminar" v-if="$root.can('eliminar_reembolso_pago_a_proveedor', true)" ><i class="fa fa-trash"></i> Eliminar</button>
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
                 </div>
@@ -44,7 +42,7 @@ import Encabezado from "./partials/Encabezado";
 import TablaDatos from "./partials/TablaDatos";
 import Documentos from './partials/TablaDatosDocumentos';
 export default {
-    name: "ReembolsoAProveedor",
+    name: "ReembolsoPorCajaChica",
     components: { Encabezado, Documentos, TablaDatos },
     props: ['id'],
     data(){
@@ -59,9 +57,9 @@ export default {
     methods: {
         find() {
             this.cargando = true;
-            return this.$store.dispatch('controlRecursos/reembolso-pago-a-proveedor/find', {
+            return this.$store.dispatch('controlRecursos/reembolso-caja-chica/find', {
                 id: this.id,
-                params:{include: []}
+                params:{include: ['relacion']}
             }).then(data => {
                 this.reembolso = data;
             }).finally(()=> {
@@ -71,25 +69,8 @@ export default {
         salir() {
             this.$router.push({name: 'relacion-gasto'});
         },
-        solicitud() {
-            this.$router.push({name:'solicitud-reembolso-create', params: { id: this.reembolso.id_relacion }});
-        },
-        editar() {
-            if(moment(this.reembolso.fecha_final_editar).format('YYYY/MM/DD') < moment(this.reembolso.fecha_inicio_editar).format('YYYY/MM/DD'))
-            {
-                swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
-            }
-            else {
-                return this.$store.dispatch('controlRecursos/reembolso-pago-a-proveedor/update', {
-                    id: this.reembolso.id,
-                    data: this.reembolso
-                }).then((data) => {
-                    this.reembolso = data;
-                })
-            }
-        },
         eliminar() {
-            return this.$store.dispatch('controlRecursos/reembolso-pago-a-proveedor/delete', {
+            return this.$store.dispatch('controlRecursos/reembolso-caja-chica/delete', {
                 id: this.id,
                 params: {}
             }).then(() => {
