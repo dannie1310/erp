@@ -18,17 +18,17 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr v-for="(d, i) in documentos.data" v-on:click="abrirModal(d)">
-                            <td style="text-align:center; vertical-align:inherit;" >{{i+1}}</td>
-                            <td>{{ d.centro_costo }}</td>
-                            <td>{{ d.tipoGastoComp.tipoGasto.descripcion }}</td>
-                            <td style="text-align:right;">{{ d.importe_format }}</td>
-                            <td style="text-align:right;">{{ d.iva_format }}</td>
-                            <td style="text-align:right;">{{ d.retenciones_format }}</td>
-                            <td style="text-align:right;">{{ d.otros_imp_format }}</td>
-                            <td style="text-align:right;">{{ d.total_format }}</td>
-                            <td>{{d.facturable}}</td>
-                       </tr>
+                            <tr v-for="(d, i) in documentos.data" v-on:click="abrirModal(d)">
+                                <td style="text-align:center; vertical-align:inherit;" >{{i+1}}</td>
+                                <td>{{ d.centro_costo }}</td>
+                                <td>{{ d.tipoGastoComp.tipoGasto.descripcion }}</td>
+                                <td style="text-align:right;">{{ d.importe_format }}</td>
+                                <td style="text-align:right;">{{ d.iva_format }}</td>
+                                <td style="text-align:right;">{{ d.retenciones_format }}</td>
+                                <td style="text-align:right;">{{ d.otros_imp_format }}</td>
+                                <td style="text-align:right;">{{ d.total_format }}</td>
+                                <td>{{d.facturable}}</td>
+                           </tr>
                         </tbody>
                     </table>
                </div>
@@ -143,10 +143,10 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" @click="salir"><i class="fa fa-close"></i> Cerrar</button>
                                     <button type="button" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0" >
                                         <i class="fa fa-save"></i> Guardar
                                     </button>
+                                    <button type="button" class="btn btn-secondary" @click="salir"><i class="fa fa-close"></i> Cerrar</button>
                                 </div>
                             </div>
                         </div>
