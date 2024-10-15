@@ -10,4 +10,13 @@ class CentroCosto extends Model
     protected $table = 'centroscosto';
     public $timestamps = false;
     protected $primaryKey = 'IdCC';
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->where('Estatus', '1');
+        });
+    }
 }

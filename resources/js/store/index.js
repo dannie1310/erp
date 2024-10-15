@@ -153,6 +153,7 @@ import extraordinario from './modules/controlPresupuesto/extraordinario';
 
 //CONTROL RECURSOS
 import cajaChica from "./modules/controlRecursos/caja-chica";
+import ccDocto from "./modules/controlRecursos/cc-docto";
 import centroCosto from "./modules/controlRecursos/centro-costo";
 import documentoRecurso from "./modules/controlRecursos/documento";
 import empresaRecurso from "./modules/controlRecursos/empresa";
@@ -398,6 +399,7 @@ export default new Vuex.Store({
         'control-presupuesto/extraordinario': extraordinario,
 
         'controlRecursos/caja-chica' : cajaChica,
+        'controlRecursos/cc-docto' : ccDocto,
         'controlRecursos/centro-costo' :  centroCosto,
         'controlRecursos/documento' : documentoRecurso,
         'controlRecursos/empresa' : empresaRecurso,

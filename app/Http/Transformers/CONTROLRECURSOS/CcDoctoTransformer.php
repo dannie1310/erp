@@ -22,7 +22,8 @@ class CcDoctoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'tipoGastoComp'
+        'tipoGastoComp',
+        'centroCosto'
     ];
 
     public function transform(CcDocto $model)
@@ -36,7 +37,10 @@ class CcDoctoTransformer extends TransformerAbstract
             'otros_imp_format' => $model->otros_impuestos_format,
             'idtipogasto' => $model->IdTipoGasto,
             'centro_costo' => $model->centro_costo_descripcion,
-            'facturable' => $model->Facturable . 'O'
+            'facturable' => $model->facturable_format,
+            'id_centro' => $model->IdCC,
+            'idfacturable' => $model->Facturable,
+            'id_docto' => $model->IdDocto
         ];
     }
 
@@ -48,6 +52,19 @@ class CcDoctoTransformer extends TransformerAbstract
     {
         if ($tipo = $model->tipoGastoComp) {
             return $this->item($tipo, new TipoGastoCompTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param CcDocto $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeCentroCosto(CcDocto $model)
+    {
+        if($centro =$model->centroCosto)
+        {
+            return $this->item($centro, new CentroCostoTransformer);
         }
         return null;
     }

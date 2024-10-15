@@ -2058,6 +2058,10 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\CajaChicaController@index');
         });
 
+        $api->group(['prefix' => 'ccdocto'], function ($api) {
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\CcDoctoController@update')->where(['id' => '[0-9]+']);
+        });
+
         $api->group(['prefix' => 'centro-costo'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\CentroCostoController@index');
         });
