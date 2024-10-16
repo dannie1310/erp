@@ -21,7 +21,7 @@
                             <tr v-for="(d, i) in documentos.data" v-on:click="abrirModal(d)">
                                 <td style="text-align:center; vertical-align:inherit;" >{{i+1}}</td>
                                 <td>{{ d.centro_costo }}</td>
-                                <td>{{ d.tipoGastoComp.tipoGasto.descripcion }}</td>
+                                <td>{{ d.tipoGasto.descripcion }}</td>
                                 <td style="text-align:right;">{{ d.importe_format }}</td>
                                 <td style="text-align:right;">{{ d.iva_format }}</td>
                                 <td style="text-align:right;">{{ d.retenciones_format }}</td>
@@ -79,7 +79,7 @@
                                            <label for="fecha" class="col-form-label"><b>Tipo de Gasto:</b></label>
                                        </div>
                                         <div class="col-md-7">
-                                            <h6 style="text-align: center">{{ doc.tipoGastoComp ? (doc.tipoGastoComp.tipoGasto ? doc.tipoGastoComp.tipoGasto.descripcion : '' ) : ''}}</h6>
+                                            <h6 style="text-align: center">{{ doc.tipoGasto ? doc.tipoGasto.descripcion : '' }}</h6>
                                         </div>
                                     </div>
                                     <div class="row">

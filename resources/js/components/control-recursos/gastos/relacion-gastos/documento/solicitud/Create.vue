@@ -45,7 +45,8 @@
                     <div class="col-md-3">
                         <div class="form-group error-content">
                             <label for="forma_pago">Tipo de Pago:</label>
-                            <label class="form-control">Pago a Proveedor</label>
+                            <label class="form-control" v-if="relacion.estado == 6">Reembolso de Gastos</label>
+                             <label class="form-control" v-if="relacion.estado == 600">Pago a Proveedor</label>
                         </div>
                     </div>
                     <div class="col-md-3" v-if="forma_pago != '' && forma_pago != 1">

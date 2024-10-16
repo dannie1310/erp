@@ -161,7 +161,7 @@ class ReembolsoPagoAProveedor extends Documento
             CcDocto::create([
                 'IdDocto' => $id_docto,
                 'IdCC' => $centro_costo->getKey(),
-                'IdTipoGasto' => $documento->tipoGasto->getKey(),
+                'IdTipoGasto' => $documento->tipoGasto->tipoGasto->getKey(),
                 'Importe' => $documento->importe,
                 'IVA' => $documento->iva,
                 'OtrosImpuestos' => $documento->otros_impuestos,
@@ -215,7 +215,9 @@ class ReembolsoPagoAProveedor extends Documento
     {
         foreach ($this->ccDoctos as $ccDocto)
         {
-            $ccDocto->ccSolCheque->delete();
+            if($ccDocto->ccSolCheque) {
+                $ccDocto->ccSolCheque->delete();
+            }
             $ccDocto->delete();
 
         }

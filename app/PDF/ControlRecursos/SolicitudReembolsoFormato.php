@@ -81,7 +81,7 @@ class SolicitudReembolsoFormato extends Rotation
     public function tableHeader()
     {
 
-        $this->separacion = 1.7;
+        $this->separacion = 10.4;
         /* if ($v["IVA"] == 0) $this->separacion += 2;
          if ($v["Retenciones"] == 0) $this->separacion += 2;
          if ($v["OtrosImpuestos"] == 0) $this->separacion += 2;
@@ -107,7 +107,7 @@ class SolicitudReembolsoFormato extends Rotation
             $this->Cell($this->separacion, .3, ' ', 0, 0, 'C');
         }
 
-
+        /*
         if ($this->sol->Importe != '0.00') {
             $this->Cell(2.7, .3, 'IMPORTE', 1, 0, 'C', 1);
         }
@@ -123,7 +123,7 @@ class SolicitudReembolsoFormato extends Rotation
         if ($this->sol->OtrosImpuestos != '0.00') {
             $this->Cell(2, .3, 'OTROS IMP.', 1, 0, 'C', 1);
         }
-
+        */
         if ($this->sol->Total != '0.00') {
             $this->Cell(2.7, .3, 'TOTAL', 1, 0, 'C', 1);
         }
@@ -142,7 +142,7 @@ class SolicitudReembolsoFormato extends Rotation
             $this->Cell($this->separacion, .3, ' ', 0, 0, 'C');
         }
 
-
+        /*
         if ($this->sol->Importe != '0.00') {
             $this->Cell(2.7, .3, $this->sol->importe_format, 1, 0, 'C');
         }
@@ -158,6 +158,7 @@ class SolicitudReembolsoFormato extends Rotation
         if ($this->sol->OtrosImpuestos != '0.00') {
             $this->Cell(2, .3, $this->sol->otros_format, 1, 0, 'C');
         }
+        */
 
         if ($this->sol->Total != '0.00') {
             $this->Cell(2.7, .3, $this->sol->total_format, 1, 0, 'C');
@@ -193,7 +194,7 @@ class SolicitudReembolsoFormato extends Rotation
 
         $this->Cell(7, .4, $this->sol->tipoPago->Descripcion, 1, 0, 'C');
         $this->Cell(5.5, .4,  $this->sol->entrega->Descripcion, 1, 0, 'C');
-        $this->Cell(8, .4, $this->sol->Cuenta2 != null ? $this->sol->Cuenta2 : 'NO REGISTRADA', 1, 1, 'C');
+        $this->Cell(8, .4, $this->sol->cuentaProveedor != null ? $this->sol->cuentaProveedor->descripcion_banco : 'NO REGISTRADA', 1, 1, 'C');
 
 
         $this->SetFont('Arial', 'B', 10);
@@ -223,15 +224,16 @@ class SolicitudReembolsoFormato extends Rotation
 
         $this->SetFont('Arial', 'B', 7);
         $this->SetFillColor(204, 204, 204);
-        $w = 4.75;
-        if ($this->sol->IVA == 0.00) $w += 1;
+        $w = 8.8;
+        /*if ($this->sol->IVA == 0.00) $w += 1;
         if ($this->sol->Retenciones == 0.00) $w += 1;
         if ($this->sol->Importe == 0.00) $w += 1;
-        if ($this->sol->OtrosImpuestos == 0.00) $w += 1;
+        if ($this->sol->OtrosImpuestos == 0.00) $w += 1;*/
 
         $this->Cell($w + 0.7, .3, 'SEGMENTO DE NEGOCIO', 1, 0, 'C', 1);
         $this->Cell($w - 0.7, .3, 'TIPO DE GASTO', 1, 0, 'C', 1);
-        if ($this->sol->Importe != 0.00)
+
+        /*if ($this->sol->Importe != 0.00)
             $this->Cell(2.2, .3, 'IMPORTE', 1, 0, 'C', 1);
         if ($this->sol->IVA != 0.00)
             $this->Cell(2.2, .3, 'IVA', 1, 0, 'C', 1);
@@ -239,8 +241,8 @@ class SolicitudReembolsoFormato extends Rotation
             $this->Cell(2.2, .3, 'RETENCIONES', 1, 0, 'C', 1);
         if ($this->sol->OtrosImpuestos != 0.00)
             $this->Cell(2.2, .3, 'OTROS IMP.', 1, 0, 'C', 1);
-
-        $this->Cell(2.2, .3, 'TOTAL', 1, 1, 'C', 1);
+*/
+        $this->Cell(3, .3, 'TOTAL', 1, 1, 'C', 1);
 
         $this->SetFont('Arial', '', 7);
         $conter = 1;
@@ -255,6 +257,7 @@ class SolicitudReembolsoFormato extends Rotation
             }
 
             $this->CellFitScale($w - 0.7, .3, $partida->TG, 1, 0, 'L');
+            /*
             if ($this->sol->Importe != 0.00)
                 $this->Cell(2.2, .3, $partida->ImporteSN, 1, 0, 'R');
             if ($this->sol->IVA != 0.00)
@@ -263,8 +266,9 @@ class SolicitudReembolsoFormato extends Rotation
                 $this->Cell(2.2, .3, $partida->RetencionesSN, 1, 0, 'R');
             if ($this->sol->OtrosImpuestos != 0.00)
                 $this->Cell(2.2, .3, $partida->OtrosImpuestos, 1, 0, 'R');
+            */
 
-            $this->Cell(2.2, .3, $partida->TotalSN, 1, 1, 'R');
+            $this->Cell(3, .3, $partida->TotalSN, 1, 1, 'R');
             $conter = $conter + 1;
         }
 
@@ -275,6 +279,7 @@ class SolicitudReembolsoFormato extends Rotation
             $this->Cell(0.7, .3, ' ', 1, 0, 'C');
             $this->Cell($w - 0.7, .3, ' ', 1, 0, 'L');
             $this->Cell($w - 0.7, .3, ' ', 1, 0, 'L');
+           /*
             if ($this->sol->Importe != 0.00)
                 $this->Cell(2.2, .3, ' ', 1, 0, 'R');
             if ($this->sol->IVA != 0.00)
@@ -283,13 +288,14 @@ class SolicitudReembolsoFormato extends Rotation
                 $this->Cell(2.2, .3, ' ', 1, 0, 'R');
             if ($this->sol->OtrosImpuestos != 0.00)
                 $this->Cell(2.2, .3, ' ', 1, 0, 'R');
-
-            $this->Cell(2.2, .3, ' ', 1, 1, 'R');
+            */
+            $this->Cell(3, .3, ' ', 1, 1, 'R');
         }
 
         $this->SetFont('Arial', 'B', 8);
         $this->Cell($w, .3, '', 0, 0, 'L');
         $this->Cell($w, .3, "SUMAS:", 0, 0, 'R');
+        /*
         if ($this->sol->Importe != 0.00)
             $this->Cell(2.2, .3, number_format($this->sol->Importe,3), 1, 0, 'R', 1);
         if ($this->sol->IVA != 0.00)
@@ -298,8 +304,8 @@ class SolicitudReembolsoFormato extends Rotation
             $this->Cell(2.2, .3, number_format($this->sol->Retenciones,3), 1, 0, 'R', 1);
         if ($this->sol->OtrosImpuestos != 0.00)
             $this->Cell(2.2, .3, number_format($this->sol->OtrosImpuestos,3), 1, 0, 'R', 1);
-
-        $this->Cell(2.2, .3, number_format($this->sol->Total,3), 1, 1, 'R', 1);
+        */
+        $this->Cell(3, .3, number_format($this->sol->Total,3), 1, 1, 'R', 1);
 
 
         $this->SetFont('Arial', 'B', 7);
