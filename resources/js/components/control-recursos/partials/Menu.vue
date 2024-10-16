@@ -20,6 +20,23 @@
                     <p>Layout Bancario</p>
                 </router-link>
             </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link" v-if="$root.can('consultar_relacion_gastos_recursos', true)" @click="mostrarMenu($event)">
+                    <i class="nav-icon fa fa-money-check"></i>
+                    <p>
+                        Gastos del Personal
+                        <i class="right fa fa-angle-left"></i>
+                    </p>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_relacion_gastos_recursos',true)">
+                        <router-link :to="{name: 'relacion-gasto'}" class="nav-link" :class="{active: this.$route.name == 'relacion-gasto'}">
+                            &nbsp;<i class="fa fa-money-check nav-icon"></i>
+                            <p>Relaciones de Gastos</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
         </ul>
     </nav>
 </template>

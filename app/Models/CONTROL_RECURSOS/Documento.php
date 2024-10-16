@@ -44,7 +44,8 @@ class Documento extends Model
         'uuid',
         'registro_portal',
         'Descuento',
-        'Descuento_CFDI'
+        'Descuento_CFDI',
+        'IdGenero'
     ];
 
     protected static function boot()
@@ -119,6 +120,10 @@ class Documento extends Model
         return $this->belongsTo(Usuario::class,  'Creo','idusuario');
     }
 
+    public function relacionXDocumento()
+    {
+        return $this->belongsTo(RelacionGastoXDocumento::class, 'IdDocto', 'iddocumento');
+    }
 
     /**
      * Scopes
@@ -306,6 +311,25 @@ class Documento extends Model
         }
     }
 
+    public function getFirmaSolicitanteAttribute()
+    {
+        try {
+            return $this->relacionXDocumento->relacion->firmas[0]->idfirmas_firmantes;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getFolioSolicitudAttribute()
+    {
+        try {
+            return $this->solChequeDocto->solCheque->Serie.'-'.$this->solChequeDocto->solCheque->Folio;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */
@@ -424,10 +448,10 @@ class Documento extends Model
         }
     }
 
-    private function respaldo()
+    public function respaldo()
     {
         $this->eliminado->update([
-            'Elimino' => auth()->id()."*". date("d-m-Y") ."/". date("H:i:s"),
+            'Elimino' => auth()->id()."*ERP/". date("d-m-Y") ."/". date("H:i:s"),
         ]);
     }
 
@@ -456,7 +480,8 @@ class Documento extends Model
                         ,ccdoctos.IVA AS iva_segmento
                         ,ccdoctos.Total AS total_segmento
                         ,cuentascontables.ClaveCuenta as cuenta,
-                        cuentascontables.DescripcionCuenta as descripcion_cuenta
+                        cuentascontables.DescripcionCuenta as descripcion_cuenta,
+                        ccdoctos.IdTipoGasto as id_tipo_gasto
                     FROM controlrec.documentos
                     INNER JOIN controlrec.solchequesdoctos
                         ON documentos.IdDocto = solchequesdoctos.IdDocto

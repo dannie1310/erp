@@ -24,4 +24,58 @@ class CcDocto extends Model
         'ImporteFacturar',
         'Facturable'
     ];
+
+    /**
+     * Relaciones
+     */
+    public function centroCosto()
+    {
+        return $this->belongsTo(CentroCosto::class, 'IdCC', 'IdCC');
+    }
+
+    public function tipoGasto()
+    {
+        return $this->belongsTo(TipoGastoComp::class, 'IdTipoGasto','IdTipoGastoComp');
+    }
+
+    /**
+     * Scopes
+     */
+
+    /**
+     * Atributos
+     */
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format(($this->Total),2);
+    }
+
+    public function getImporteFormatAttribute()
+    {
+        return '$' . number_format(($this->Importe),2);
+    }
+
+    public function getIvaFormatAttribute()
+    {
+        return '$' . number_format(($this->IVA),2);
+    }
+
+    public function getRetencionesFormatAttribute()
+    {
+        return '$' . number_format(($this->Retenciones),2);
+    }
+
+    public function getOtrosImpuestosFormatAttribute()
+    {
+        return '$' . number_format(($this->OtrosImpuestos),2);
+    }
+
+    public function getCentroCostoDescripcionAttribute()
+    {
+        try {
+            return $this->centroCosto->Descripcion;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
 }

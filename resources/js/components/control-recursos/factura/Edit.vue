@@ -206,7 +206,7 @@ export default {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/factura/find', {
                 id: this.id,
-                params:{include: []}
+                params: { }
             }).then(data => {
                 this.factura = data
             }).finally(()=> {
