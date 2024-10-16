@@ -34,9 +34,9 @@ class CcDocto extends Model
         return $this->belongsTo(CentroCosto::class, 'IdCC', 'IdCC');
     }
 
-    public function tipoGastoComp()
+    public function tipoGasto()
     {
-        return $this->belongsTo(TipoGastoComp::class, 'IdTipoGasto','IdTipoGastoComp');
+        return $this->belongsTo(TipoGasto::class, 'IdTipoGasto', 'IdTipoGasto');
     }
 
     public function ccSolCheque()
