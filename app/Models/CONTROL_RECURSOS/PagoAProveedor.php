@@ -83,7 +83,7 @@ class PagoAProveedor extends SolCheque
             ]);
 
             $reembolso->relacion[0]->update([
-                'idestado' => 7
+                'idestado' => 700
             ]);
 
             DB::connection('controlrec')->commit();
