@@ -15,7 +15,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
-                        <h4>Documento para Relación</h4>
+                        <h4>Documento para Reembolso por Caja Chica</h4>
                     </div>
                 </div>
                 <div class="row">
