@@ -13,6 +13,10 @@ class TipoGastoComp extends Model
     /**
      * Relaciones
      */
+    public function tipoGasto()
+    {
+        return $this->belongsTo(TipoGasto::class, 'IdTipoGasto', 'IdTipoGasto');
+    }
 
     /**
      * Scopes
