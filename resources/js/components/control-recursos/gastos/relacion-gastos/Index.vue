@@ -112,7 +112,8 @@
                                 edit : self.$root.can('editar_relacion_gastos_recursos', true) && (relacion.estado == 1 ||  relacion.estado == 2)? true : false,
                                 cerrar: (self.$root.can('cerrar_relacion_gastos_recursos', true) && relacion.estado == 2) ? true : false,
                                 abrir: (self.$root.can('abrir_relacion_gastos_recursos', true) && relacion.estado == 5) ? true : false,
-                                pdf: relacion.estado == 5 ? true : false,
+                                pdf:  (relacion.estado == 2 || relacion.estado == 1) ? false : true,
+                                pdf_sol: (self.$root.can('consultar_solicitud_pago_reembolso', true) && relacion.id_solicitud != null ) ? true : false,
                                 delete: self.$root.can('eliminar_relacion_gastos_recursos', true) && (relacion.estado == 1 || relacion.estado == 2) ? true : false,
                                 reembolso_x_solicitud: self.$root.can('consultar_solicitud_pago_reembolso', true) && relacion.estado == 6 ? true : false,
                                 solicitar_reembolso: self.$root.can('registrar_reembolso_por_solicitud', true) && relacion.estado == 5 ? true : false,
@@ -120,6 +121,7 @@
                                 solicitud_pago_a_proveedor: self.$root.can('registrar_reembolso_pago_a_proveedor', true) && relacion.estado == 5 ? true : false,
                                 reembolso_pago_a_proveedor: self.$root.can('consultar_reembolso_pago_a_proveedor', true) && relacion.estado == 600 ? true : false,
                                 sol_cheque_pago_a_proveedor: self.$root.can('consultar_solicitud_pago_reembolso', true) && (relacion.estado == 700 || relacion.estado == 7) ? true : false,
+                                reembolso_caja_chica: self.$root.can('consultar_reembolso_pago_a_proveedor', true) && relacion.estado == 60 ? true : false,
                             })
                     }))
                 },

@@ -2058,6 +2058,14 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\CajaChicaController@index');
         });
 
+        $api->group(['prefix' => 'ccdocto'], function ($api) {
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\CcDoctoController@update')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'centro-costo'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\CentroCostoController@index');
+        });
+
         $api->group(['prefix' => 'documento'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@show')->where(['id' => '[0-9]+']);
@@ -2166,6 +2174,10 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'tipo-doc-comp'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\TipoDocCompController@index');
+        });
+
+        $api->group(['prefix' => 'tipo-gasto'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\TipoGastoController@index');
         });
 
         $api->group(['prefix' => 'tipo-gasto-comp'], function ($api) {

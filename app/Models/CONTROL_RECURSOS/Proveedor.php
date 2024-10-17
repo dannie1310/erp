@@ -61,7 +61,8 @@ class Proveedor extends Model
 
     public function scopeEmpleados($query)
     {
-        return $query->where('IdUsuario', '>', 0);
+        $usuarios = \App\Models\IGH92\Usuario::where('usuario_estado', '=', 2)->pluck('idusuario');
+        return $query->where('IdUsuario', '>', 0)->whereIn('IdUsuario', $usuarios);
     }
 
     public function scopeParaReembolso($query)

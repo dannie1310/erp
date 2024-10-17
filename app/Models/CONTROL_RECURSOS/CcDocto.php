@@ -3,6 +3,7 @@
 namespace App\Models\CONTROL_RECURSOS;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class CcDocto extends Model
 {
@@ -35,7 +36,12 @@ class CcDocto extends Model
 
     public function tipoGasto()
     {
-        return $this->belongsTo(TipoGastoComp::class, 'IdTipoGasto','IdTipoGastoComp');
+        return $this->belongsTo(TipoGasto::class, 'IdTipoGasto', 'IdTipoGasto');
+    }
+
+    public function ccSolCheque()
+    {
+        return $this->belongsTo(CcSolCheque::class, 'IdCCDoctos', 'IdCCDoctos');
     }
 
     /**
@@ -77,5 +83,32 @@ class CcDocto extends Model
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    public function getFacturableFormatAttribute()
+    {
+        return $this->Facturable == 'Y' ? 'SI' : 'NO' ;
+    }
+
+    /**
+     * Métodos
+     */
+    public function editar($data)
+    {
+        if($this->IdCC !=  $data['id_centro'] || $this->Facturable !=  $data['idfacturable']) {
+            try {
+                DB::connection('controlrec')->beginTransaction();
+                $this->update([
+                    'IdCC' => $data['id_centro'],
+                    'Facturable' => $data['idfacturable']
+                ]);
+                DB::connection('controlrec')->commit();
+                return $this;
+            } catch (\Exception $e) {
+                DB::connection('controlrec')->rollBack();
+                abort(400, $e->getMessage());
+            }
+        }
+        return $this;
     }
 }

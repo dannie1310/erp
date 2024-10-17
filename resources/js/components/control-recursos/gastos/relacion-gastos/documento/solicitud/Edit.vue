@@ -222,6 +222,8 @@ export default {
                 params:{include: []}
             }).then(data => {
                     this.reembolso = data
+                console.log(this.reembolso)
+                console.log(this.reembolso.reembolsos.data[0].id_tipo)
                 if(this.reembolso.reembolsos.data[0].id_tipo == 13)
                 {
                     this.findPorSolicitud();
@@ -260,6 +262,13 @@ export default {
                     this.solicitante = data.id_solicitante;
                     this.instruccion = data.id_entrega;
                     this.cuenta = data.cuenta;
+                    console.log(this.solicitud)
+                console.log(this.forma_pago)
+                console.log(this.cuentas)
+                console.log(this.solicitante)
+                console.log(this.instruccion)
+                console.log(this.cuenta)
+
             }).finally(() => {
                 this.cargando = false;
             })
