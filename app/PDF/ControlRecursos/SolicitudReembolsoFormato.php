@@ -172,7 +172,7 @@ class SolicitudReembolsoFormato extends Rotation
         $this->Cell(20.5, .4, 'A FAVOR DE', 1, 1, 'C', 1);
 
         $this->SetFont('Arial', 'B', 9);
-        $this->MultiCell(20.5, .4, $this->sol->proveedor->RazonSocial, 1, 'C', 0);
+        $this->MultiCell(20.5, .4, utf8_decode($this->sol->proveedor->RazonSocial), 1, 'C', 0);
 
         $this->SetFont('Arial', '', 7);
 
@@ -181,7 +181,7 @@ class SolicitudReembolsoFormato extends Rotation
 
         $this->SetFont('Arial', 'B', 8);
 
-        $this->MultiCell(20.5, .4, $this->sol->Concepto, 1, 'J');
+        $this->MultiCell(20.5, .4, utf8_decode($this->sol->Concepto), 1, 'J');
 
         $this->SetFont('Arial', 'B', 8);
 
@@ -192,8 +192,8 @@ class SolicitudReembolsoFormato extends Rotation
 
         $this->SetFont('Arial', '', 8);
 
-        $this->Cell(7, .4, $this->sol->tipoPago->Descripcion, 1, 0, 'C');
-        $this->Cell(5.5, .4,  $this->sol->entrega->Descripcion, 1, 0, 'C');
+        $this->Cell(7, .4, utf8_decode($this->sol->tipoPago->Descripcion), 1, 0, 'C');
+        $this->Cell(5.5, .4,  utf8_decode($this->sol->entrega->Descripcion), 1, 0, 'C');
         $this->Cell(8, .4, $this->sol->cuentaProveedor != null ? $this->sol->cuentaProveedor->descripcion_banco : 'NO REGISTRADA', 1, 1, 'C');
 
 
@@ -445,10 +445,10 @@ class SolicitudReembolsoFormato extends Rotation
                 $this->setY($y);
                 $this->setX($x);
                 $this->SetFont('Arial', '', 6);
-                $this->CellFitScale($ancho, .3, $solicitante->encabezado->descripcion, 1, 2, 'C', 1);
+                $this->CellFitScale($ancho, .3, utf8_decode($solicitante->encabezado->descripcion), 1, 2, 'C', 1);
                 $this->Cell($ancho, 1, '', 1, 2, 'C');
                 $this->SetFont('Arial', '', 5);
-                $this->CellFitScale($ancho, .3, $solicitante->firmante->descripcion, 1, 2, 'C', 1);
+                $this->CellFitScale($ancho, .3, utf8_decode($solicitante->firmante->descripcion), 1, 2, 'C', 1);
                 $x += $ancho;
            }
         }
