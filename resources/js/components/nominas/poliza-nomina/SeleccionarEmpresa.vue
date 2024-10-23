@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="col-md-2">
-                <button @click="conectar" class="btn btn-primary float-left">
+                <button @click="conectar" class="btn btn-primary float-left" :disabled="id_empresa == '' ? true : false">
                     <i class="fa fa-plug"></i> Conectar
                 </button>
             </div>
