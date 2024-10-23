@@ -2413,8 +2413,6 @@ class CFDSATService
                 if ($arreglo_cfd["receptor"]["rfc"] != $empresa['rfc']) {
                     abort(500, "El RFC de la empresa (" . $empresa['rfc'] . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
                 }
-            }else{
-                abort(500, "El RFC del empresa del comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ") no esta dado de alta en el catálogo de empresas.");
             }
         }else{
             abort(500, "Error de lectura del archivo: ".$nombre);
