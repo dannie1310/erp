@@ -30,7 +30,7 @@ class Nom10000 extends Model
 
     public function scopeConProyectoIfs($query)
     {
-        $empresas = ProyectoIFS::whereNotNull('secuencia_ifs')->pluck('nombre_base_contpaq');
+        $empresas = ProyectoIFS::whereNotNull('secuencia_ifs')->where('estatus', 1)->pluck('nombre_base_contpaq');
         return $query->whereIn('RutaEmpresa', $empresas);
     }
 
