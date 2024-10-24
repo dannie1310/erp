@@ -650,7 +650,7 @@ export default {
         getEmpleados() {
             return this.$store.dispatch('controlRecursos/proveedor/index', {
                 params: {
-                    sort: 'RazonSocial', order: 'asc', scope: ['porTipos:2','porEstados:1', 'empleados']
+                    sort: 'RazonSocial', order: 'asc', scope: ['porEstados:1', 'empleados']
                 }
             }).then(data => {
                 this.empleados = data.data;

@@ -179,9 +179,11 @@ class RelacionGastoService
         $arreglo["id_empresa"] = $arreglo['empresa_bd'] != null ? $arreglo["empresa_bd"]['id'] : '';
 
         $this->validaEFO($arreglo);
+       /**
         if (!$arreglo["empresa_bd"]) {
             abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de empresas de control recursos; la factura no puede ser registrada.");
         }
+       **/
         $arreglo["moneda_bd"]["id_moneda"] = $this->repository->getMoneda($arreglo["moneda"]);
         $arreglo["id_moneda"] = $this->repository->getMoneda($arreglo["moneda"]);
         $arreglo['tipo_cambio'] = $arreglo_cfd['tipo_cambio'];
