@@ -4521,6 +4521,19 @@ export const routes = [
                                     },
                                     {
                                         path: ':id',
+                                        name: 'reembolso-caja-chica',
+                                        props: true,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/caja-chica/Show').default,
+                                        meta: {
+                                            title: 'Reembolso por Caja Chica',
+                                            breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO POR CAJA CHICA'},
+                                            middleware: [auth, permission],
+                                            permission: 'consultar_reembolso_por_solicitud',
+                                            general: true
+                                        }
+                                    },
+                                    {
+                                        path: ':id',
                                         name: 'reembolso-x-solicitud',
                                         props: true,
                                         component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/por-solicitud/Show').default,

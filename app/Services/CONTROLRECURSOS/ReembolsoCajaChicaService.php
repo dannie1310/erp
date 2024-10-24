@@ -31,11 +31,11 @@ class ReembolsoCajaChicaService
 
     public function show($id)
     {
-        return $this->repository->show($id);
+        return $this->repository->buscar($id);
     }
 
     public function delete($data, $id)
     {
-        return $this->repository->show($id)->eliminar();
+        return $this->repository->buscar($id)->eliminar();
     }
 }

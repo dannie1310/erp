@@ -161,7 +161,7 @@ class ReembolsoPagoAProveedor extends Documento
             CcDocto::create([
                 'IdDocto' => $id_docto,
                 'IdCC' => $centro_costo->getKey(),
-                'IdTipoGasto' => $documento->tipoGasto->getKey(),
+                'IdTipoGasto' => $documento->tipoGasto->tipoGasto->getKey(),
                 'Importe' => $documento->importe,
                 'IVA' => $documento->iva,
                 'OtrosImpuestos' => $documento->otros_impuestos,
@@ -198,6 +198,7 @@ class ReembolsoPagoAProveedor extends Documento
     {
         try {
             DB::connection('controlrec')->beginTransaction();
+            $this->solChequeDocto()->delete();
             $this->eliminarDocumentos();
             $this->relacionXDocumento()->delete();
             $this->delete();
@@ -214,7 +215,11 @@ class ReembolsoPagoAProveedor extends Documento
     {
         foreach ($this->ccDoctos as $ccDocto)
         {
+            if($ccDocto->ccSolCheque) {
+                $ccDocto->ccSolCheque->delete();
+            }
             $ccDocto->delete();
+
         }
     }
 }

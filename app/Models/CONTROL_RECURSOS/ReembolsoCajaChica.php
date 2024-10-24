@@ -40,6 +40,11 @@ class ReembolsoCajaChica extends Documento
         return $this->belongsTo(CajaChicaReembolso::class, 'IdDocto', 'iddocto');
     }
 
+    public function relacion()
+    {
+        return $this->hasManyThrough(RelacionGasto::class, RelacionGastoXDocumento::class, 'iddocumento','idrelaciones_gastos','IdDocto','idrelaciones_gastos');
+    }
+
     /**
      * Atributos
      */
@@ -139,7 +144,7 @@ class ReembolsoCajaChica extends Documento
             CcDocto::create([
                 'IdDocto' => $id_docto,
                 'IdCC' => $centro_costo->getKey(),
-                'IdTipoGasto' => $documento->tipoGasto->getKey(),
+                'IdTipoGasto' => $documento->tipoGasto->tipoGasto->getKey(),
                 'Importe' => $documento->importe,
                 'IVA' => $documento->iva,
                 'OtrosImpuestos' => $documento->otros_impuestos,

@@ -72,7 +72,7 @@ class CuentaProveedor extends Model
     public function getDescripcionBancoAttribute()
     {
         try{
-            return $this->banco->CVEBanco . '-' . $this->banco->Cuenta . '-' . $this->banco->Sucursal;
+            return $this->banco->CVEBanco . '-' . $this->Cuenta . ($this->Sucursal != "" ? '-' . $this->Sucursal : '');
         }catch (\Exception $e)
         {
             return null;

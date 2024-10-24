@@ -49,7 +49,7 @@ class PagoAProveedor extends SolCheque
                 'Serie' => $reembolso->Alias_Depto,
                 'FechaFactura' =>  $reembolso->Fecha
             ]);
-dd($sol_cheque);
+
             /*
              * crear en documentos y solicitudes un id para saber q se creo desde el erp
              */
@@ -83,7 +83,7 @@ dd($sol_cheque);
             ]);
 
             $reembolso->relacion[0]->update([
-                'idestado' => 7
+                'idestado' => 700
             ]);
 
             DB::connection('controlrec')->commit();
@@ -106,7 +106,7 @@ dd($sol_cheque);
                 'Cuenta2' => array_key_exists('cuenta', $datos) ? $datos['cuenta'] : null,
             ]);
 
-            $this->updateFirmasSolicitantes($datos['id_solicitante']);
+            //$this->updateFirmasSolicitantes($datos['id_solicitante']);
 
             DB::connection('controlrec')->commit();
             return $this;

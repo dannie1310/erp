@@ -28,10 +28,10 @@
                                 <td style="text-align:right;">{{ d.otros_imp_format }}</td>
                                 <td style="text-align:right;">{{ d.total_format }}</td>
                                 <td>{{d.facturable}}</td>
-                           </tr>
+                            </tr>
                         </tbody>
                     </table>
-               </div>
+                </div>
             </div>
         </div>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -62,12 +62,12 @@
                                         </div>
                                         <div class="col-md-7">
                                             <select class="form-control"
-                                                        data-vv-as="Segmento de negocio"
-                                                        id="id_centro"
-                                                        name="id_centro"
-                                                        :class="{'is-invalid': errors.has('id_centro')}"
-                                                        v-validate="{required: true}"
-                                                        v-model="doc.id_centro">
+                                                    data-vv-as="Segmento de negocio"
+                                                    id="id_centro"
+                                                    name="id_centro"
+                                                    :class="{'is-invalid': errors.has('id_centro')}"
+                                                    v-validate="{required: true}"
+                                                    v-model="doc.id_centro">
                                                     <option value>-- Selecionar --</option>
                                                     <option v-for="(c) in centros" :value="c.id">{{ c.descripcion }}</option>
                                                 </select>
@@ -128,12 +128,12 @@
                                         </div>
                                         <div class="col-md-7" style="text-align: right">
                                             <select class="form-control"
-                                                data-vv-as="Facturable"
-                                                id="idfacturable"
-                                                name="idfacturable"
-                                                :class="{'is-invalid': errors.has('idfacturable')}"
-                                                v-validate="{required: true}"
-                                                v-model="doc.idfacturable">
+                                                    data-vv-as="Facturable"
+                                                    id="idfacturable"
+                                                    name="idfacturable"
+                                                    :class="{'is-invalid': errors.has('idfacturable')}"
+                                                    v-validate="{required: true}"
+                                                    v-model="doc.idfacturable">
                                                 <option value>-- Selecionar --</option>
                                                 <option value="Y"> SI </option>
                                                 <option value="N"> NO </option>
@@ -201,7 +201,7 @@ export default {
                 id: this.doc.id,
                 data: this.doc
             }).then((data) => {
-                return this.$store.dispatch('controlRecursos/reembolso-pago-a-proveedor/find', {
+                return this.$store.dispatch('controlRecursos/reembolso-caja-chica/find', {
                     id: data.id_docto,
                     params:{include: []}
                 }).then(data => {

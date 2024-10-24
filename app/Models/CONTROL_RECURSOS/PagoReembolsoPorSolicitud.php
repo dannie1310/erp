@@ -103,7 +103,7 @@ class PagoReembolsoPorSolicitud extends SolCheque
                 'Cuenta2' => array_key_exists('cuenta', $datos) ? $datos['cuenta'] : null,
             ]);
 
-            $this->updateFirmasSolicitantes($datos['id_solicitante']);
+            //$this->updateFirmasSolicitantes($datos['id_solicitante']);
 
             DB::connection('controlrec')->commit();
             return $this;

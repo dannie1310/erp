@@ -39,6 +39,11 @@ class RelacionGastoXDocumento extends Model
         return $this->belongsTo(SolChequeDocto::class, 'iddocumento', 'IdDocto');
     }
 
+    public function documento()
+    {
+        return $this->belongsTo(Documento::class, 'iddocumento', 'IdDocto');
+    }
+
     /**
      * Atributos
      */
