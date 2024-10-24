@@ -36,6 +36,11 @@ class FinFacIngresoFacturaDetalle extends Model
         return '$' . number_format($this->total,2);
     }
 
+    public function getTotalSinSignoFormatAttribute()
+    {
+        return number_format($this->total,2);
+    }
+
     /**
      * Scopes
      */

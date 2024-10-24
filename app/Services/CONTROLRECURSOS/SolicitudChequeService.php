@@ -5,7 +5,8 @@ namespace App\Services\CONTROLRECURSOS;
 use App\LAYOUT\LayoutBancario;
 use App\Models\CONTROL_RECURSOS\DescargaLayoutBanco;
 use App\Models\CONTROL_RECURSOS\SolCheque;
-use App\Repositories\Repository;
+use App\PDF\ControlRecursos\SolicitudReembolsoFormato;
+use App\Repositories\CONTROLRECURSOS\SolicitudChequeRepository as Repository;
 use Illuminate\Support\Facades\Storage;
 
 class SolicitudChequeService
@@ -41,5 +42,11 @@ class SolicitudChequeService
         }
         $descarga = DescargaLayoutBanco::where('id', $id)->first();
         return Storage::disk('bancario_recurso_descarga_zip')->download($descarga->nombre_archivo);
+    }
+
+    public function pdfReembolso($id)
+    {
+        $pdf = new SolicitudReembolsoFormato($this->repository->show($id));
+        return $pdf->create();
     }
 }

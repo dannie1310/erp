@@ -2,6 +2,7 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class Proveedor extends Model
@@ -21,6 +22,16 @@ class Proveedor extends Model
     public function proveedorXSerie()
     {
         return $this->hasMany(ProveedorXSerie::class, 'IDproveedor', 'IdProveedor');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class, 'IdUsuario', 'idusuario');
+    }
+
+    public function proveedoresParaReembolso()
+    {
+        return $this->hasMany(ProveedorReembolso::class, 'idproveedor', 'IdProveedor');
     }
 
     /**
@@ -46,6 +57,17 @@ class Proveedor extends Model
     public function scopePorEstados($query, $estados)
     {
         return $query->whereIn('Estatus', explode(",",$estados));
+    }
+
+    public function scopeEmpleados($query)
+    {
+        $usuarios = \App\Models\IGH92\Usuario::where('usuario_estado', '=', 2)->pluck('idusuario');
+        return $query->where('IdUsuario', '>', 0)->whereIn('IdUsuario', $usuarios);
+    }
+
+    public function scopeParaReembolso($query)
+    {
+        return $query->whereHas('proveedoresParaReembolso');
     }
 
     /**

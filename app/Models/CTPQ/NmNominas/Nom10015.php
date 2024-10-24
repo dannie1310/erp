@@ -4,6 +4,7 @@ namespace App\Models\CTPQ\NmNominas;
 
 use App\Models\CTPQ\NomGenerales\Nom10000;
 use App\Models\MODULOSSAO\InterfazNominas\LogXmlPolizaNominaIFS;
+use App\Models\MODULOSSAO\InterfazNominas\Parametro;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -26,9 +27,15 @@ class Nom10015 extends Model
     /**
      * Scopes
      */
-    public function scopeConGuid($query )
+    public function scopeConGuid($query)
     {
         return $query->whereRaw("GUIDPoliza <> '0'");
+    }
+
+    public function scopeLimiteTiempo($query)
+    {
+        $meses = Parametro::first();
+        return $query->whereRaw("fechapoliza >= DATEADD(MONTH,-".$meses->lim_inferior_meses.",GETDATE())");
     }
 
     /**

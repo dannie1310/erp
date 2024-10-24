@@ -63,7 +63,7 @@
                                             <td>{{item.unidad}}</td>
                                             <td>{{item.cantidad_solicitada}}</td>
                                             <td>{{item.cantidad_disponible}}</td>
-                                            <td style="text-align: right" :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].precio_unitario}}</td><td v-else></td>
+                                            <td c :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].precio_unitario}}</td><td v-else></td>
                                             <td style="text-align: right" :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].precio_total_antes_desc}}</td><td v-else></td>
                                             <td :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].descuento}}</td><td v-else></td>
                                             <td style="text-align: right" :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].precio_unitario_con_desc}}</td><td v-else></td>

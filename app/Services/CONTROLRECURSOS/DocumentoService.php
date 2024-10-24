@@ -4,6 +4,7 @@ namespace App\Services\CONTROLRECURSOS;
 
 use App\Events\IFS\EnvioXMLDocumentoRecursos;
 use App\Models\CONTROL_RECURSOS\CtgMoneda;
+use App\Models\CONTROL_RECURSOS\CuentaContableIFS;
 use App\Models\CONTROL_RECURSOS\Documento;
 use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\CONTROL_RECURSOS\Serie;
@@ -123,13 +124,14 @@ class DocumentoService
 
         foreach ($segmentos_negocio as $key => $item)
         {
+            $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
             $array_segmento [$key] = [
                 'NAME' => 'INVOICE_ITEM_POSTING',
                 'N00' => 1,
                 'N01' => $item->importe_segmento,
                 'C00' => utf8_decode($item->segmento_negocio),
                 'C01' => '',
-                'C02' => $item->cuenta,
+                'C02' => $cuenta ? $cuenta->cuenta_ifs : '',
                 'C03' => '',
                 'C04' => '',
                 'C05' => '',
@@ -167,10 +169,11 @@ class DocumentoService
                         'N03' => $documento->Retenciones,
                         'C11' => 'FALSE',
                         'D01' => $documento->Fecha.'-00.00.00',
-                        'C12' => $documento->uuid,
+                        'C12' => $documento->uuid ? $documento->uuid : '',
                         'C13' => utf8_decode($documento->Concepto),
-                        'C14' => $documento->uuid .'.xml',
-                        'C15' => auth()->user()->usuario
+                        'C14' => $documento->uuid ? $documento->uuid .'.xml' : $documento->FolioDocto,
+                        'C15' => auth()->user()->usuario,
+                        'C16' => str_replace('-', '', $documento->folio_solicitud),
                     ],
                     [
                         'NAME' => 'INVOICE_ITEM',
@@ -206,14 +209,16 @@ class DocumentoService
         $a = new ArrayToXml($array, "IN_MESSAGE");
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
-        Storage::disk('ifs_solicitud_recurso')->put(  'archivo_ifs'.$documento->uuid.'.xml', $result);
-        return Storage::disk('ifs_solicitud_recurso')->download(  'archivo_ifs'.$documento->uuid.'.xml');
+        $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
+        Storage::disk('ifs_solicitud_recurso')->put(  'archivo_ifs_'.$name.'.xml', $result);
+        return Storage::disk('ifs_solicitud_recurso')->download(  'archivo_ifs_'.$name.'.xml');
     }
 
     public function correo($id)
     {
         $documento = $this->show($id);
-        $archivo = $this->getBase64XML($documento->uuid);
+        $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
+        $archivo = $this->getBase64XML($name);
         if($archivo != null) {
             event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
         }else{
@@ -223,11 +228,11 @@ class DocumentoService
         }
     }
 
-    private function getBase64XML($uuid)
+    private function getBase64XML($name)
     {
-        if (Storage::disk('ifs_solicitud_recurso')->exists('archivo_ifs'.$uuid.'.xml'))
+        if (Storage::disk('ifs_solicitud_recurso')->exists('archivo_ifs_'.$name.'.xml'))
         {
-            $archivo = Storage::disk("ifs_solicitud_recurso")->get('archivo_ifs'.$uuid.'.xml');
+            $archivo = Storage::disk("ifs_solicitud_recurso")->get('archivo_ifs_'.$name.'.xml');
             return "data:text/xml;base64,".base64_encode($archivo);
         }
         return null;

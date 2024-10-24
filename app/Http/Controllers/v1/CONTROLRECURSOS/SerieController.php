@@ -36,7 +36,6 @@ class SerieController extends Controller
     {
         $this->middleware('auth:api');
 
-
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;

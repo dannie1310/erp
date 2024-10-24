@@ -4406,6 +4406,234 @@ export const routes = [
                     }
                 ]
             },
+            {
+                path: 'gasto-personal',
+                component: require('./components/control-recursos/gastos/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'gasto-personal',
+                        component: require('./components/control-recursos/gastos/Index').default,
+                        meta: {
+                            title: 'Gastos de Personal',
+                            breadcrumb: {parent: 'control-recursos', name: 'GASTOS DEL PERSONAL'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_relacion_gastos_recursos'],
+                            general: true,
+
+                        }
+                    },
+                    {
+                        path: 'relacion-gasto',
+                        component: require('./components/control-recursos/gastos/relacion-gastos/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'relacion-gasto',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Index').default,
+                                meta: {
+                                    title: 'Relaciones de Gastos',
+                                    breadcrumb: {parent: 'gasto-personal', name: 'RELACIONES DE GASTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_relacion_gastos_recursos',
+                                    general: true,
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'relacion-gasto-create',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Create.vue').default,
+                                meta: {
+                                    title: 'Registrar Relación de Gastos',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'relacion-gasto'},
+                                    middleware: [auth, permission],
+                                    permission: ['registrar_relacion_gastos_recursos'],
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'relacion-gasto-show',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Relación de Gastos',
+                                    breadcrumb: { parent: 'relacion-gasto', name: 'VER'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_relacion_gastos_recursos',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id/edit',
+                                name: 'relacion-gasto-edit',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Edit').default,
+                                meta: {
+                                    title: 'Editar Relación de Gastos',
+                                    breadcrumb: {parent: 'relacion-gasto', name: 'EDITAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_relacion_gastos_recursos',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id/delete',
+                                name: 'relacion-gasto-delete',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/Delete').default,
+                                props: true,
+                                meta: {
+                                    title: 'Eliminar Relación de Gastos',
+                                    breadcrumb: { parent: 'relacion-gasto', name: 'ELIMINAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'eliminar_relacion_gastos_recursos',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id/reembolso-x-solicitud',
+                                name: 'relacion-gasto-reembolso-x-solicitud',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/relacion-gastos/SolicitarReembolso').default,
+                                meta: {
+                                    title: 'Solicitar Reembolso por Solicitud',
+                                    breadcrumb: {parent: 'relacion-gasto', name: 'SOLICITAR REEMBOLSO POR SOLICITUD'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_relacion_gastos_recursos',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: 'reembolso',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/documento/Layout').default,
+                                children: [
+                                    {
+                                        path: '/',
+                                        name: 'reembolso',
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/Index').default,
+                                        meta: {
+                                            title: 'Reembolso de Gastos',
+                                            breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO'},
+                                            middleware: [auth, permission],
+                                            permission: 'consultar_relacion_gastos_recursos',
+                                            general: true,
+                                        }
+                                    },
+                                    {
+                                        path: ':id',
+                                        name: 'reembolso-caja-chica',
+                                        props: true,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/caja-chica/Show').default,
+                                        meta: {
+                                            title: 'Reembolso por Caja Chica',
+                                            breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO POR CAJA CHICA'},
+                                            middleware: [auth, permission],
+                                            permission: 'consultar_reembolso_por_solicitud',
+                                            general: true
+                                        }
+                                    },
+                                    {
+                                        path: ':id',
+                                        name: 'reembolso-x-solicitud',
+                                        props: true,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/por-solicitud/Show').default,
+                                        meta: {
+                                            title: 'Reembolso por Solicitud',
+                                            breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO POR SOLICITUD'},
+                                            middleware: [auth, permission],
+                                            permission: 'consultar_reembolso_por_solicitud',
+                                            general: true
+                                        }
+                                    },
+                                    {
+                                        path: ':id/pago-a-proveedor',
+                                        name: 'reembolso-pago-a-proveedor',
+                                        props: true,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/reembolso/pago-a-proveedor/Show').default,
+                                        meta: {
+                                            title: 'Reembolso Pago a Proveedor',
+                                            breadcrumb: {parent: 'relacion-gasto', name: 'REEMBOLSO PAGO A PROVEEDOR'},
+                                            middleware: [auth, permission],
+                                            permission: 'consultar_reembolso_pago_a_proveedor',
+                                            general: true
+                                        }
+                                    },
+                                ]
+                            },
+                            {
+                                path: 'solicitud-reembolso',
+                                component: require('./components/control-recursos/gastos/relacion-gastos/documento/Layout').default,
+                                children: [
+                                    {
+                                        path: '/',
+                                        name: 'solicitud-reembolso',
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Index').default,
+                                        meta: {
+                                            title: 'Solicitud de Gastos',
+                                            breadcrumb: {parent: 'reembolso', name: 'SOLICITUD'},
+                                            middleware: [auth, permission],
+                                            permission: 'consultar_solicitud_pago_reembolso',
+                                            general: true,
+                                        }
+                                    },
+                                    {
+                                        path: ':id/create',
+                                        name: 'solicitud-reembolso-create',
+                                        props: true,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Create').default,
+                                        meta: {
+                                            title: 'Registrar Solicitud',
+                                            breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'reembolso'},
+                                            middleware: [auth, permission],
+                                            permission: ['registrar_solicitud_pago_reembolso'],
+                                            general: true
+                                        }
+                                    },
+                                    {
+                                        path: ':id/edit',
+                                        name: 'solicitud-reembolso-edit',
+                                        props: true,
+                                        component: require('./components/control-recursos/gastos/relacion-gastos/documento/solicitud/Edit').default,
+                                        meta: {
+                                            title: 'Editar Solicitud',
+                                            breadcrumb: {parent: 'reembolso', name: 'EDITAR'},
+                                            middleware: [auth, permission],
+                                            permission: ['editar_solicitud_pago_reembolso','eliminar_solicitud_pago_reembolso'],
+                                            general: true
+                                        }
+                                    },
+                                ]
+                            },
+                            {
+                                path: ':id/reembolso-x-caja',
+                                name: 'relacion-gasto-reembolso-x-caja',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/relacion-gastos/SolicitarReembolsoCaja').default,
+                                meta: {
+                                    title: 'Solicitar Reembolso por Caja Chica',
+                                    breadcrumb: {parent: 'relacion-gasto', name: 'SOLICITAR REEMBOLSO POR CAJA CHICA'},
+                                    middleware: [auth, permission],
+                                    permission: 'registrar_reembolso_por_caja_chica',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id/pago-a-proveedor',
+                                name: 'relacion-gasto-pago-a-proveedor',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/relacion-gastos/SolicitudPagoAProveedor').default,
+                                meta: {
+                                    title: 'Solicitud Pago a Proveedor',
+                                    breadcrumb: {parent: 'relacion-gasto', name: 'SOLICITUD PAGO A PROVEEDOR'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_reembolso_pago_a_proveedor',
+                                    general: true
+                                }
+                            },
+                        ]
+                    },
+                ]
+            },
         ]
     },
     {
@@ -5574,6 +5802,24 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'ingreso',
+                component: require('./components/seguimiento/ingreso/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'ingreso',
+                        component: require('./components/seguimiento/ingreso/Index').default,
+                        meta: {
+                            title: 'Lista de Ingresos',
+                            breadcrumb: {parent: 'seguimiento', name: 'INGRESOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_ingreso_seguimiento',
+                            general: true
+                        }
+                    },
+                ]
+            }
         ]
     },
     {

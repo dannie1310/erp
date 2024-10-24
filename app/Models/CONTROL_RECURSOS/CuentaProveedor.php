@@ -30,6 +30,11 @@ class CuentaProveedor extends Model
     /**
      * Scopes
      */
+    public function scopeCuentaBancaria($query, $id)
+    {
+        return $query->where('IdProveedor', $id)->wheree('Estatus', 1);
+    }
+
 
     /**
      * Atributos
@@ -58,6 +63,16 @@ class CuentaProveedor extends Model
     {
         try {
             return $this->banco->CVEBanco;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getDescripcionBancoAttribute()
+    {
+        try{
+            return $this->banco->CVEBanco . '-' . $this->Cuenta . ($this->Sucursal != "" ? '-' . $this->Sucursal : '');
         }catch (\Exception $e)
         {
             return null;

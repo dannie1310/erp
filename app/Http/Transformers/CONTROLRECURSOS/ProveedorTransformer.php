@@ -2,6 +2,7 @@
 
 namespace App\Http\Transformers\CONTROLRECURSOS;
 
+use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CONTROL_RECURSOS\Proveedor;
 use League\Fractal\TransformerAbstract;
 
@@ -13,7 +14,8 @@ class ProveedorTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'cuentas'
+        'cuentas',
+        'usuario'
     ];
 
     /**
@@ -42,6 +44,19 @@ class ProveedorTransformer extends TransformerAbstract
         if($cuentas = $model->cuentasProveedores)
         {
             return $this->collection($cuentas, new CuentaProveedorTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Proveedor $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeUsuario(Proveedor $model)
+    {
+        if($usuario = $model->usuario)
+        {
+            return $this->item($usuario, new UsuarioTransformer);
         }
         return null;
     }

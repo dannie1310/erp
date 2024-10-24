@@ -1,0 +1,172 @@
+const URI = '/api/control-recursos/reembolso-pago-a-proveedor/';
+
+export default {
+    namespaced: true,
+    state: {
+        reembolsos: [],
+        currentReembolso: null,
+        meta: {}
+    },
+
+    mutations: {
+        SET_REEMBOLSOS(state, data) {
+            state.reembolsos = data
+        },
+        SET_REEMBOLSO(state, data)
+        {
+            state.currentReembolso = data;
+        },
+        SET_META(state, data) {
+            state.meta = data;
+        },
+        DELETE_REEMBOLSO(state, id) {
+            state.reembolsos = state.reembolsos.filter(d => {
+                return d.id != id
+            });
+        }
+    },
+
+    actions: {
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Reembolso pago a proveedor",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Solicitar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Reembolso pago a proveedor registrado correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        update(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Actualizar el Reembolso Pago a Proveedor",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id, payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Reembolso actualizado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        delete(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Reembolso Pago a Proveedor",
+                    text: "¿Está seguro de que desea eliminar el reembolso?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Reembolso pago a proveedor eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+    },
+
+    getters: {
+        reembolsos(state) {
+            return state.reembolsos
+        },
+        meta(state) {
+            return state.meta
+        },
+        currentReembolso(state) {
+            return state.currentReembolso;
+        }
+    }
+}

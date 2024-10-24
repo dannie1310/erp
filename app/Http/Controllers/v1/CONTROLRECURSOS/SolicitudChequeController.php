@@ -54,4 +54,10 @@ class SolicitudChequeController extends Controller
     {
         return $this->service->descarga_layout($id);
     }
+
+    public function pdfReembolso($id)
+    {
+        return $this->service->pdfReembolso($id);
+    }
+
 }
