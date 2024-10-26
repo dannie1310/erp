@@ -67,7 +67,7 @@ class SolicitudReembolsoFormato extends Rotation
         $this->Cell(20.5, .7, ' ', 0, 1, 'C');
 
         $this->tableHeader();
-        /* if($this->encola == "documentos")
+         if($this->encola == "documentos")
          {
              $this->tableHeader();
          }
@@ -75,7 +75,7 @@ class SolicitudReembolsoFormato extends Rotation
          $currentPage = $this->PageNo();
          if($currentPage>1){
              $this->Ln();
-         }*/
+         }
     }
 
     public function tableHeader()
@@ -370,11 +370,10 @@ class SolicitudReembolsoFormato extends Rotation
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '255,255,255', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0',));
         }
 
-        $uids_txt = implode(" ", $this->sol->uuids);
         $this->SetDrawColor(117, 117, 117);
         $this->SetHeights(array(0.4));
         $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
-        $this->Row(array("", "", "", "", "", "", "", "", "", "", "", "", $uids_txt, "", "", "", "", ""));
+        $this->Row(array("", "", "", "", "", "", "", "", "", "", "", "", "  ", "", "", "", "", ""));
         $this->SetFont('Arial', '', 5);
 
 

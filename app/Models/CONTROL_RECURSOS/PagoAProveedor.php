@@ -46,7 +46,7 @@ class PagoAProveedor extends SolCheque
                 'IdEntrega' => $datos['instruccion'],
                 'Cuenta2' => $datos['cuenta'],
                 'IdSerie' => $reembolso->IdSerie,
-                'Serie' => $reembolso->Alias_Depto,
+                'Serie' => $reembolso->serie->Descripcion,
                 'FechaFactura' =>  $reembolso->Fecha
             ]);
 
