@@ -193,7 +193,7 @@ class ReembolsoGastoSol extends Documento
         $centro_costo = $relacion->departamentoSn->centroCosto;
         if($centro_costo == null)
         {
-            $centro_costo = CentroCosto::where('Estatus', 1)->orderBy('IdCC')->pluck('IdCC')->first();
+            $centro_costo = CentroCosto::orderBy('IdCC')->withoutGlobalScopes()->pluck('IdCC')->first();
         }
 
         foreach ($relacion->documentos as $documento)
