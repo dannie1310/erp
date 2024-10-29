@@ -145,13 +145,20 @@ class ReembolsoCajaChica extends Documento
                 'IdDocto' => $id_docto,
                 'IdCC' => $centro_costo->getKey(),
                 'IdTipoGasto' => $documento->tipoGasto->tipoGasto->getKey(),
-                'Importe' => $documento->importe,
+                'Importe' => $documento->descuento_cfdi > 0 ? $documento->importe - $documento->descuento_cfdi : $documento->importe,
                 'IVA' => $documento->iva,
                 'OtrosImpuestos' => $documento->otros_impuestos,
                 'Retenciones' => $documento->retenciones,
                 'Total' => $documento->total,
                 'Facturable' => 'N'
             ]);
+            if($documento->descuento_cfdi > 0)
+            {
+                $documento->update([
+                    'Importe' => $documento->importe - $documento->descuento_cfdi
+                ]);
+
+            }
         }
     }
 
