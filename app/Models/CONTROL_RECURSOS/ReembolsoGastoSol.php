@@ -169,7 +169,7 @@ class ReembolsoGastoSol extends Documento
                 'IdSerie' => $relacion->idserie,
                 'IdGenero' => auth()->id(),
                 'registro_portal' => 1,
-                'Departamento' => $relacion->departamento->departamento
+                'Departamento' =>  $relacion->departamentoSn == null ? '' : $relacion->departamento->departamento
             ]);
 
             $this->relacionXDocumento()->create([
@@ -190,10 +190,14 @@ class ReembolsoGastoSol extends Documento
 
     private function crearCcDoctos($id_docto, $relacion)
     {
-        $centro_costo = $relacion->departamentoSn->centroCosto;
-        if($centro_costo == null)
+        if($relacion->departamentoSn == null)
         {
-            $centro_costo = CentroCosto::orderBy('IdCC')->withoutGlobalScopes()->pluck('IdCC')->first();
+            $centro_costo = CentroCosto::orderBy('IdCC')->first();
+        }else {
+            $centro_costo = $relacion->departamentoSn->centroCosto;
+            if ($centro_costo == null) {
+                $centro_costo = CentroCosto::orderBy('IdCC')->first();
+            }
         }
 
         foreach ($relacion->documentos as $documento)

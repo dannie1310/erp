@@ -104,7 +104,7 @@ class ReembolsoCajaChica extends Documento
                 'Estatus' => 15,
                 'IdGenero' => auth()->id(),
                 'registro_portal' => 1,
-                'Departamento' => $relacion->departamento->departamento,
+                'Departamento' =>  $relacion->departamentoSn == null ? '' : $relacion->departamento->departamento,
                 'IdSerie' => $caja->idserie,
                 'Alias_Depto' => $caja->serie->Descripcion,
                 'IdProveedor' => $caja->idempleado,
@@ -133,10 +133,14 @@ class ReembolsoCajaChica extends Documento
 
     private function crearCcDoctos($id_docto, $relacion)
     {
-        $centro_costo = $relacion->departamentoSn->centroCosto;
-        if($centro_costo == null)
+        if($relacion->departamentoSn == null)
         {
-            $centro_costo = CentroCosto::where('Estatus', 1)->orderBy('IdCC')->pluck('IdCC')->first();
+            $centro_costo = CentroCosto::orderBy('IdCC')->first();
+        }else {
+            $centro_costo = $relacion->departamentoSn->centroCosto;
+            if ($centro_costo == null) {
+                $centro_costo = CentroCosto::orderBy('IdCC')->first();
+            }
         }
 
         foreach ($relacion->documentos as $documento)
