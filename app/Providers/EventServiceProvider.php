@@ -135,6 +135,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\IFS\EnvioXMLDocumentoRecursos' => [
             'App\Listeners\IFS\SendXMLDocumentoRecursosNotification',
         ],
+        'App\Events\IFS\EnvioXMLPolizaNominas' => [
+            'App\Listeners\IFS\SendXMLPolizaNominasNotification',
+        ],
 
             Registered::class => [
             SendEmailVerificationNotification::class,

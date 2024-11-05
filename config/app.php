@@ -24,6 +24,7 @@ return [
         'ACARREOS_COMPROBAR_IMEI' => env('ACARREOS_COMPROBAR_IMEI'),
         'URL_EFOS' => env('URL_EFOS'),
         'URL_NO_LOCALIZADOS' => env('URL_NO_LOCALIZADOS'),
+        'EMAIL_IFS' => env('EMAIL_IFS'),
         'TWILIO_SID' => env('TWILIO_SID'),
         'TWILIO_AUTH_TOKEN' => env('TWILIO_AUTH_TOKEN'),
         'TWILIO_WHATSAPP_NUMBER' => env('TWILIO_WHATSAPP_NUMBER'),
