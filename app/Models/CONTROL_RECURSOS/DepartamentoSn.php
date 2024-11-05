@@ -16,6 +16,6 @@ class DepartamentoSn extends Model
      */
     public function centroCosto()
     {
-        return $this->belongsTo(CentroCosto::class, 'idsn','IdCC');
+        return $this->belongsTo(CentroCosto::class, 'idsn','IdCC')->withoutGlobalScopes();
     }
 }

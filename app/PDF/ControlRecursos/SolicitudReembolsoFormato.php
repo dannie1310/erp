@@ -58,8 +58,11 @@ class SolicitudReembolsoFormato extends Rotation
         if ($this->sol->Estatus == 10 && $this->sol->IdTipoPago == 73)
             $this->Cell(10.5, .5, ' SOLICITUD DE PAGO A PROVEEDOR ', 0, 0, 'C');
 
-        if (($this->sol->Estatus == 30) && $this->sol->IdTipoPago == 6)
+        else if (($this->sol->Estatus == 30) && $this->sol->IdTipoPago == 6)
            $this->Cell(10.5, .5, ' SOLICITUD DE REEMBOLSO DE GASTOS', 0, 0, 'C');
+
+        else
+            $this->Cell(10.5, .5, utf8_decode(' SOLICITUD DE REPOSICIÓN CAJA CHICA'), 0, 0, 'C');
 
         $this->SetFont('Arial', 'B', 12);
         $this->Cell(3.5, .6, $this->sol->Serie, 1, 0, 'C');
@@ -67,7 +70,7 @@ class SolicitudReembolsoFormato extends Rotation
         $this->Cell(20.5, .7, ' ', 0, 1, 'C');
 
         $this->tableHeader();
-        /* if($this->encola == "documentos")
+         if($this->encola == "documentos")
          {
              $this->tableHeader();
          }
@@ -75,7 +78,7 @@ class SolicitudReembolsoFormato extends Rotation
          $currentPage = $this->PageNo();
          if($currentPage>1){
              $this->Ln();
-         }*/
+         }
     }
 
     public function tableHeader()
@@ -370,11 +373,10 @@ class SolicitudReembolsoFormato extends Rotation
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '255,255,255', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0',));
         }
 
-        $uids_txt = implode(" ", $this->sol->uuids);
         $this->SetDrawColor(117, 117, 117);
         $this->SetHeights(array(0.4));
         $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
-        $this->Row(array("", "", "", "", "", "", "", "", "", "", "", "", $uids_txt, "", "", "", "", ""));
+        $this->Row(array("", "", "", "", "", "", "", "", "", "", "", "", "  ", "", "", "", "", ""));
         $this->SetFont('Arial', '', 5);
 
 
