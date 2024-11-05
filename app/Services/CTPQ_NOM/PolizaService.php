@@ -77,6 +77,18 @@ class PolizaService
                 abort(500, "La cuenta (".$item->cuenta.") de CONTPAQ-NOM de la empresa (".$empresa->NombreEmpresa .") no existe en IFS.\n \n Favor de contactar a soporte a aplicaciones.");
             }
             $fecha = DateTime::createFromFormat('d/m/Y', $item->fecha);
+            $debe = $item->debe;
+            $haber = $item->haber;
+            if($debe < 0)
+            {
+                $haber = -1 * $debe;
+                $debe = 0;
+            }
+            if($haber < 0)
+            {
+                $debe = -1 * $haber;
+                $haber = 0;
+            }
             $array_poliza [$key] = [
                 'NAME' => 'VOUCHER_LINE',
                 'C00' => $item->company,
@@ -95,8 +107,8 @@ class PolizaService
                 'C11' => $item->LIBRE,
                 'C12' => $item->codigo_divisa,
                 'N01' => $proyecto_ifs->secuencia_ifs,
-                'N02' => $item->debe > 0 ? $item->debe : abs($item->haber),
-                'N03' => $item->haber > 0 ? $item->haber: abs($item->debe),
+                'N02' => $debe,
+                'N03' => $haber,
                 'C13' => $item->Referencia,
                 'C14' => $item->texto
             ];
