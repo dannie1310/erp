@@ -95,8 +95,8 @@ class PolizaService
                 'C11' => $item->LIBRE,
                 'C12' => $item->codigo_divisa,
                 'N01' => $proyecto_ifs->secuencia_ifs,
-                'N02' => $item->debe,
-                'N03' => $item->haber,
+                'N02' => $item->debe > 0 ? $item->debe : abs($item->haber),
+                'N03' => $item->haber > 0 ? $item->haber: abs($item->debe),
                 'C13' => $item->Referencia,
                 'C14' => $item->texto
             ];
