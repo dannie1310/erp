@@ -35,7 +35,12 @@ class Nom10015 extends Model
     public function scopeLimiteTiempo($query)
     {
         $meses = Parametro::first();
-        return $query->whereRaw("fechapoliza >= DATEADD(MONTH,-".$meses->lim_inferior_meses.",GETDATE())");
+        return $query->whereRaw("fechapoliza >= DATEADD(MONTH,-" . $meses->lim_inferior_meses . ",GETDATE())");
+    }
+
+    public function scopeEstado($query, $estado)
+    {
+        return $query->whereRaw("estadocontab <> '".$estado."'");
     }
 
     /**
