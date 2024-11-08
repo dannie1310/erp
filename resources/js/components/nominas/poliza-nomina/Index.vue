@@ -60,7 +60,7 @@ export default {
             ],
             data: [],
             total: 0,
-            query: {sort:'fechapoliza',order:'desc', scope: ['conGuid','limiteTiempo']},
+            query: {sort:'fechapoliza',order:'desc', scope: ['conGuid','limiteTiempo', 'estado: P']},
             search: '',
         }
     },
