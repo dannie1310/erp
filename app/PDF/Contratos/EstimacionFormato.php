@@ -1149,7 +1149,7 @@ class EstimacionFormato extends Rotation
             $this->Cell(0.4);
             $this->Cell(($this->GetPageWidth() - 6) / 7, 0.3, utf8_decode("Ing. Anayeli Marcial Basurto"), 'RLB', 0, 'C', 0);
             $this->Cell(0.2);
-            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.3, utf8_decode('Ing. Moisés Martínez'), 'RLB', 0, 'C', 0);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.3, utf8_decode('Ing. Jose María Cota'), 'RLB', 0, 'C', 0);
             $this->Cell(0.2);
             $this->Cell(($this->GetPageWidth() - 6) / 7, 0.3, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(0.2);
