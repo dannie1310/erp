@@ -4424,6 +4424,24 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'comprobacion-gasto',
+                        component: require('./components/control-recursos/gastos/comprobacion-gastos/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'comprobacion-gasto',
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/Index').default,
+                                meta: {
+                                    title: 'Comprobación de Gastos',
+                                    breadcrumb: {parent: 'gasto-personal', name: 'COMPROBACIONES DE GASTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_relacion_gastos_recursos',
+                                    general: true,
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'relacion-gasto',
                         component: require('./components/control-recursos/gastos/relacion-gastos/Layout').default,
                         children: [
