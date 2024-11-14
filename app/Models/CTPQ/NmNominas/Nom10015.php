@@ -123,6 +123,7 @@ class Nom10015 extends Model
         from	[".$bd."].[dbo].[nom10015] LP,
                 [".$bd."].[dbo].[nom10016] MP
         where	LP.idpoliza = ".$id."
+        and 	isnull(abono,0) - isnull(cargo,0) <> 0
         and		MP.idpoliza = LP.idpoliza"));
     }
 
