@@ -29,19 +29,20 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index_corto', sortable: false },
                     { title: 'Serie', field: 'idserie', thClass: 'th_c60', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Empleado', field: 'idempleado', thClass: 'th_c250', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Empleado', field: 'idproveedor', thClass: 'th_c250', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Empresa', field: 'idempresa', thClass: 'th_c250', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Fecha Inicio', thClass: 'th_c80', field: 'fecha_inicio', sortable: true,thComp: require('../../../globals/th-Date').default},
+                    { title: 'Fecha', thClass: 'th_c80', field: 'fecha', sortable: true,thComp: require('../../../globals/th-Date').default},
                     { title: 'Folio', field: 'folio',sortable: true,thClass: 'th_c80',  thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Proyecto', field: 'idproyecto',sortable: true,thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Total', field: 'total', thClass :'th_c200', tdClass: 'right', sortable: true},
+                    { title: 'Importe', field: 'importe', thClass :'th_c100', tdClass: 'right', sortable: true},
+                    { title: 'Comprobado', field: 'comprobado', thClass :'th_c100', tdClass: 'right', sortable: false},
+                    { title: 'Saldo', field: 'saldo', thClass :'th_c100', tdClass: 'right', sortable: false},
                     { title: 'Moneda', field: 'idmoneda',thClass: 'th_c100',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     //{ title: 'Estatus', field: 'idestado', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
-                    //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {include: [], sort: 'timestamp_registro', order: 'desc'},
+                query: {include: [], sort: 'timestampRegistro', order: 'desc', scope: ['importeDisponible', 'validarEstado:24,25,34,35', 'tipoPago:4']},
                 cargando: false
             }
         },
@@ -57,10 +58,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('controlRecursos/comprobacion-gasto/paginate', { params: this.query})
+                return this.$store.dispatch('controlRecursos/solicitud-comprobacion/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('controlRecursos/comprobacion-gasto/SET_COMPROBACIONES', data.data);
-                        this.$store.commit('controlRecursos/comprobacion-gasto/SET_META', data.meta);
+                        this.$store.commit('controlRecursos/solicitud-comprobacion/SET_COMPROBACIONES', data.data);
+                        this.$store.commit('controlRecursos/solicitud-comprobacion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -78,10 +79,10 @@
         },
         computed: {
             comprobaciones(){
-                return this.$store.getters['controlRecursos/comprobacion-gasto/comprobaciones'];
+                return this.$store.getters['controlRecursos/solicitud-comprobacion/comprobaciones'];
             },
             meta(){
-                return this.$store.getters['controlRecursos/comprobacion-gasto/meta'];
+                return this.$store.getters['controlRecursos/solicitud-comprobacion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -94,11 +95,13 @@
                     self.$data.data = []
                     self.$data.data = comprobaciones.map((comprobacion, i) => ({
                             index: (i + 1) + self.query.offset,
-                            fecha_inicio: comprobacion.fecha_inicio_format,
-                            idempleado: comprobacion.empleado_descripcion,
-                            idproyecto: comprobacion.proyecto_descripcion,
+                            fecha: comprobacion.fecha_format,
+                            idproveedor: comprobacion.empleado_descripcion,
                             idempresa: comprobacion.empresa_descripcion,
-                            folio: comprobacion.folio,
+                            importe: comprobacion.importe_format,
+                            saldo: comprobacion.saldo_format,
+                            comprobado: comprobacion.comprobado_format,
+                            folio: comprobacion.folio_format,
                             total: comprobacion.total_format,
                             idmoneda: comprobacion.moneda,
                             idserie: comprobacion.serie,
@@ -106,6 +109,7 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 id: comprobacion.id,
+                                edit: true
                             })
                     }))
                 },

@@ -1,4 +1,4 @@
-const URI = '/api/control-recursos/comprobacion-gasto/';
+const URI = '/api/control-recursos/solicitud-comprobacion/';
 
 export default {
     namespaced: true,

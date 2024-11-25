@@ -104,6 +104,11 @@ class SolCheque extends Model
         return $this->belongsTo(EstatusSolicitud::class, 'Estatus', 'IDestatus');
     }
 
+    public function serie()
+    {
+        return $this->belongsTo(Serie::class, 'idserie', 'idseries');
+    }
+
     /**
      * Scopes
      */

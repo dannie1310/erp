@@ -155,7 +155,7 @@ import extraordinario from './modules/controlPresupuesto/extraordinario';
 import cajaChica from "./modules/controlRecursos/caja-chica";
 import ccDocto from "./modules/controlRecursos/cc-docto";
 import centroCosto from "./modules/controlRecursos/centro-costo";
-import comprobacion from "./modules/controlRecursos/comprobacion-gasto";
+import comprobacion from "./modules/controlRecursos/comprobacion";
 import documentoRecurso from "./modules/controlRecursos/documento";
 import empresaRecurso from "./modules/controlRecursos/empresa";
 import entrega from "./modules/controlRecursos/entrega";
@@ -173,6 +173,7 @@ import relacionGasto from "./modules/controlRecursos/relacion-gasto";
 import semanaAnio from "./modules/controlRecursos/semana-anio";
 import serie from "./modules/controlRecursos/serie";
 import solicitudCheque from "./modules/controlRecursos/solicitud-cheque";
+import solicitudComprobacion from "./modules/controlRecursos/solicitud-comprobacion";
 import tipoDocComp from "./modules/controlRecursos/tipo-doc-comp";
 import tipoGasto from "./modules/controlRecursos/tipo-gasto";
 import tipoGastoComp from "./modules/controlRecursos/tipo-gasto-comp";
@@ -402,7 +403,7 @@ export default new Vuex.Store({
         'controlRecursos/caja-chica' : cajaChica,
         'controlRecursos/cc-docto' : ccDocto,
         'controlRecursos/centro-costo' :  centroCosto,
-        'controlRecursos/comprobacion-gasto' : comprobacion,
+        'controlRecursos/comprobacion' : comprobacion,
         'controlRecursos/documento' : documentoRecurso,
         'controlRecursos/empresa' : empresaRecurso,
         'controlRecursos/entrega' : entrega,
@@ -420,6 +421,7 @@ export default new Vuex.Store({
         'controlRecursos/semana-anio' : semanaAnio,
         'controlRecursos/serie' : serie,
         'controlRecursos/solicitud-cheque' : solicitudCheque,
+        'controlRecursos/solicitud-comprobacion' : solicitudComprobacion,
         'controlRecursos/tipo-doc-comp' : tipoDocComp,
         'controlRecursos/tipo-gasto' : tipoGasto,
         'controlRecursos/tipo-gasto-comp' : tipoGastoComp,

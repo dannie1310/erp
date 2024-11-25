@@ -4439,6 +4439,19 @@ export const routes = [
                                     general: true,
                                 }
                             },
+                            {
+                                path: ':id/relacion',
+                                name: 'comprobacion-gastos-relacion',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/CreateRelacion').default,
+                                meta: {
+                                    title: 'Generar Relación de Gastos',
+                                    breadcrumb: {parent: 'comprobacion-gasto', name: 'REGISTRAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_relacion_gastos_recursos',
+                                    general: true
+                                }
+                            },
                         ]
                     },
                     {

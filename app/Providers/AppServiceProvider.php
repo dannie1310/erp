@@ -168,6 +168,7 @@ use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Venta;
 use App\Models\CADECO\Ventas\VentaCancelacion;
 use App\Models\CADECO\VentaPartida;
+use App\Models\CONTROL_RECURSOS\Comprobacion;
 use App\Models\CONTROL_RECURSOS\PagoAProveedor;
 use App\Models\CONTROL_RECURSOS\PagoReembolsoPorSolicitud;
 use App\Models\CONTROL_RECURSOS\RelacionGastoDocumento;
@@ -375,6 +376,7 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
+use App\Observers\CONTROL_RECURSOS\ComprobacionObserver;
 use App\Observers\CONTROL_RECURSOS\PagoAProveedorObserver;
 use App\Observers\CONTROL_RECURSOS\PagoReembolsoPorSolicitudObserver;
 use App\Observers\CONTROL_RECURSOS\RelacionGastoDocumentoObserver;
@@ -475,6 +477,7 @@ class AppServiceProvider extends ServiceProvider
         /**
          * CONTROL DE RECURSOS
          */
+        Comprobacion::observe(ComprobacionObserver::class);
         PagoAProveedor::observe(PagoAProveedorObserver::class);
         PagoReembolsoPorSolicitud::observe(PagoReembolsoPorSolicitudObserver::class);
         RelacionGastoDocumento::observe(RelacionGastoDocumentoObserver::class);

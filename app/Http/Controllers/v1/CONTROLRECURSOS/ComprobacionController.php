@@ -18,27 +18,28 @@ class ComprobacionController extends Controller
     protected $fractal;
 
     /**
-     * @var ComprobacionService
-     */
-    protected $service;
-
-    /**
      * @var ComprobacionTransformer
      */
     protected $transformer;
 
     /**
-     * @param Manager $fractal
-     * @param ComprobacionService $service
-     * @param ComprobacionTransformer $transformer
+     * @var ComprobacionService
      */
-    public function __construct(Manager $fractal, ComprobacionService $service, ComprobacionTransformer $transformer)
+    protected $service;
+
+    /**
+     * @param Manager $fractal
+     * @param ComprobacionTransformer $transformer
+     * @param ComprobacionService $service
+     */
+    public function __construct(Manager $fractal, ComprobacionTransformer $transformer, ComprobacionService $service)
     {
         $this->middleware('auth:api');
-        $this->middleware('permisoGlobal:registrar_reembolso_por_caja_chica')->only(['store']);
 
-        $this->fractal = $fractal;
+        $this->middleware('permisoGlobal:registrar_documento_recursos')->only(['store']);
+
         $this->service = $service;
         $this->transformer = $transformer;
+        $this->fractal = $fractal;
     }
 }

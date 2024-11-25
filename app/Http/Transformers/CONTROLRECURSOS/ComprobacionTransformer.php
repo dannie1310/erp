@@ -28,20 +28,6 @@ class ComprobacionTransformer extends TransformerAbstract
     public function transform(Comprobacion $model){
         return [
             'id' => $model->getKey(),
-            'concepto' => $model->Concepto,
-            'fecha' => $model->Fecha,
-            'fecha_format' => $model->fecha_format,
-            'importe' => $model->Importe,
-            'importe_format' => $model->importe_format,
-            'iva' => $model->IVA,
-            'total' => $model->Total,
-            'serie' => $model->Serie,
-            'folio' => $model->Folio,
-            'moneda' => $model->moneda_descripcion,
-            'idempresa' => $model->IdEmpresa,
-            'idproveedor' => $model->IdProveedor,
-            'idcuentaempresa' => '',
-            'total_format' => $model->total_format
         ];
     }
 }
