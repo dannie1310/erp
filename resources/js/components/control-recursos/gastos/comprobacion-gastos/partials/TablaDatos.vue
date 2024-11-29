@@ -24,6 +24,7 @@
                         <th v-if="solicitud.comprobacion">
                             {{solicitud.comprobacion.folio_format}}
                         </th>
+                        <td v-else></td>
                     </tr>
                     <tr>
                         <th class="encabezado" colspan="2">
@@ -49,7 +50,7 @@
                             Fecha Del:
                         </th>
                         <th class="encabezado  c130">
-                            Fecha Del:
+                            Fecha Al:
                         </th>
                     </tr>
                     <tr>
@@ -59,9 +60,11 @@
                         <td v-if="solicitud.comprobacion">
                             {{ solicitud.comprobacion.del_format }}
                         </td>
-                        <td>
+                        <td v-else></td>
+                        <td v-if="solicitud.comprobacion">
                             {{ solicitud.comprobacion.al_format }}
                         </td>
+                        <td v-else></td>
                     </tr>
                     <tr>
                         <th class="encabezado">Importe</th>
