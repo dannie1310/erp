@@ -135,11 +135,6 @@ class ComprobacionService
                     {
                         $this->desvinculaFacturaRepositorio($d->uuid);
                     }
-                    $d->respaldar();
-                    if($d->eliminadaErp == null)
-                    {
-                        abort(400, "Error al eliminar, respaldo incorrecto2.");
-                    }
                     $d->delete();
                 }
             }
@@ -360,5 +355,15 @@ class ComprobacionService
         $xml_split = explode('base64,', $datos['xml']);
         $xml = base64_decode($xml_split[1]);
         Storage::disk('xml_control_recursos_comprobacion_gastos')->put($datos["uuid"] . ".xml", $xml);
+    }
+
+    public function desvinculaFacturaRepositorio($uuid)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$uuid)->first();
+        if($factura_repositorio)
+        {
+            $factura_repositorio->id_doc_comprobacion_gastos_cr = NULL;
+            $factura_repositorio->save();
+        }
     }
 }

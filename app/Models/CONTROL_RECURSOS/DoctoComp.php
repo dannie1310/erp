@@ -24,7 +24,9 @@ class DoctoComp extends Model
         'Clasificacion',
         'SerieVD',
         'FolioVD',
-        'Registro'
+        'Registro',
+        'uuid',
+        'descuento_cfdi'
     ];
 
     /**

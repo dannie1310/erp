@@ -288,7 +288,9 @@ class Comprobacion extends Model
                 'Clasificacion' => $clasificacion,
                 'SerieVD' => $serieVD,
                 'FolioVD' => $folioVD,
-                'Registro' => auth()->id()
+                'Registro' => auth()->id(),
+                'uuid' => array_key_exists('uuid', $data) ? $data['uuid'] : null,
+                'descuento_cfdi' =>  array_key_exists('descuento_cfdi', $data) ? $data['descuento_cfdi'] : '0.00'
             ]);
 
             DB::connection('controlrec')->commit();

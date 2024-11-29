@@ -42,7 +42,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['comprobacion'], sort: 'timestampRegistro', order: 'desc', scope: ['importeDisponible', 'validarEstado:24,25,34,35', 'tipoPago:4']},
+                query: {include: ['comprobacion'], sort: 'timestampRegistro', order: 'desc', scope: ['validarEstado:24,25,34,35', 'tipoPago:4']},
                 cargando: false
             }
         },
