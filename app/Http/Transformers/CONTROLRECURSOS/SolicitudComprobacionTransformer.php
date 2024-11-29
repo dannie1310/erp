@@ -13,7 +13,7 @@ class SolicitudComprobacionTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-        'comprobacion'
+
     ];
 
     /**
@@ -22,7 +22,7 @@ class SolicitudComprobacionTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-
+        'comprobacion'
     ];
 
     public function transform(SolChequeComprobacion $model){

@@ -1,5 +1,8 @@
 <template>
     <div class="btn-group">
+        <router-link  :to="{ name: 'comprobacion-gasto-show', params: {id: value.id}}" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar">
+            <i class="fa fa-eye"></i>
+        </router-link>
         <router-link v-if="value.registrar" :to="{ name: 'comprobacion-gastos-relacion', params: {id: value.id}}" type="button" class="btn btn-sm btn-outline-info" title="Generar">
             <i class="fa fa-plus"></i>
         </router-link>

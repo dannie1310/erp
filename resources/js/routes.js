@@ -4465,6 +4465,19 @@ export const routes = [
                                     general: true
                                 }
                             },
+                            {
+                                path: ':id',
+                                name: 'comprobacion-gasto-show',
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Comprobación de Gastos',
+                                    breadcrumb: { parent: 'comprobacion-gasto', name: 'VER'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_relacion_gastos_recursos',
+                                    general: true
+                                }
+                            },
                         ]
                     },
                     {

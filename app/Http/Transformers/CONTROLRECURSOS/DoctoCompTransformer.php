@@ -30,6 +30,7 @@ class DoctoCompTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'fecha_docto' => $model->FechaDocto,
+            'fecha_format' => $model->fecha_format,
             'tipo_docto_comp' => $model->TipoDoctoComp,
             'folio_docto' => $model->FolioDocto,
             'tipo_gasto' => $model->Concepto,
@@ -42,7 +43,10 @@ class DoctoCompTransformer extends TransformerAbstract
             'serie_vd' => $model->SerieVD,
             'folio_vd' => $model->FolioVD,
             'fecha_editar' => $model->fecha_editar,
-            'uuid' => $model->uuid
+            'uuid' => $model->uuid,
+            'tipo_docto_descripcion' => $model->tipo_docto_descripcion,
+            'tipo_gasto_descripcion' => $model->tipo_gasto_descripcion,
+            'concepto_xml' => $model->concepto_xml
         ];
     }
 }

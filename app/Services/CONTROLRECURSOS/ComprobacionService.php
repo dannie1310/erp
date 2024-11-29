@@ -75,7 +75,6 @@ class ComprobacionService
                     $documento = DoctoComp::find($partida['id']);
 
                     if($partida['uuid'] != null){
-                        dd("1");
                         $documento->update([
                             'FechaDocto' => $partida['fecha'],
                             'TipoDoctoComp' => $partida['tipo_docto_comp'],
