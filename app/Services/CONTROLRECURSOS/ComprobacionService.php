@@ -3,9 +3,16 @@
 namespace App\Services\CONTROLRECURSOS;
 
 use App\Models\CONTROL_RECURSOS\Comprobacion;
+use App\Models\CONTROL_RECURSOS\DoctoComp;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\CONTROLRECURSOS\ComprobacionRepository as Repository;
+use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
+use App\Utils\CFD;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ComprobacionService
 {
@@ -39,5 +46,319 @@ class ComprobacionService
         $data['fecha_final'] = $fecha_final->format("Y-m-d H:i:s");
 
         return $this->repository->registrar($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        $fecha_inicial = new DateTime($data['del_editar']);
+        $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $fecha_final = new DateTime($data['al_editar']);
+        $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            $comprobacion = $this->repository->show($id);
+            $documentos = $comprobacion->documentos->pluck('IdDoctoComp')->toArray();
+
+            foreach ($data['documentos'] as $partida) {
+                if(array_key_exists('fecha_editar', $partida)) {
+                    $fecha = new DateTime($partida['fecha_editar']);
+                }else{
+                    $fecha = new DateTime($partida['fecha']);
+                }
+                $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+                $partida['fecha'] = $fecha->format("Y-m-d");
+
+                if(array_key_exists('id', $partida))
+                {
+                    $documento = DoctoComp::find($partida['id']);
+
+                    if($partida['uuid'] != null){
+                        dd("1");
+                        $documento->update([
+                            'FechaDocto' => $partida['fecha'],
+                            'TipoDoctoComp' => $partida['tipo_docto_comp'],
+                            'FolioDocto' => $partida['folio_docto'],
+                            'Concepto' => $partida['tipo_gasto'],
+                            'Importe' => $partida['importe'],
+                            'IVA' => $partida['iva'],
+                            // 'ImpHosp',
+                            'Total' => $partida['total'],
+                            'Observaciones' => $partida['observaciones'],
+                        ]);
+                    }
+                    else {
+                        $documento->update([
+                            'FechaDocto' => $partida['fecha'],
+                            'TipoDoctoComp' => $partida['tipo_docto_comp'],
+                            'FolioDocto' => $partida['folio_docto'],
+                            'Concepto' => $partida['tipo_gasto'],
+                            'Importe' => $partida['importe'],
+                            'IVA' => $partida['iva'],
+                            // 'ImpHosp',
+                            'Total' => $partida['total'],
+                            'Observaciones' => $partida['observaciones'],
+                        ]);
+                    }
+
+                    $key = array_search($partida['id'],$documentos, true);
+                    if($key !== false)
+                    {
+                        unset($documentos[$key]);
+                    }
+                }else {
+                    /**
+                     * $partida['IVA'] = $partida['iva'];
+                    $partida['otro_imp'] = $partida['otros_imp'];
+                     * */
+
+                    if ($partida['uuid'] != null) {
+                        $arreglo_cfd = $this->getArregloCFD($partida['xml']);
+                        $this->validaCFDI($partida['uuid']);
+                        $this->validaReceptor($this->repository->getBuscarEmpresa($comprobacion->EmpresaFacturar), $arreglo_cfd);
+                        $documento = $comprobacion->registrarDocumento($partida);
+                        $factura_repositorio = $this->registrarCFDRepositorio($documento, $arreglo_cfd, $partida['xml']);
+                        $this->registrarCFDSAT($factura_repositorio, $arreglo_cfd);
+                        $this->guardarXML($partida);
+                    }else {
+                        $comprobacion->registrarDocumento($partida);
+                    }
+                }
+            }
+
+            if(count($documentos) > 0)
+            {
+                foreach ($documentos as $documento) {
+                    $d = DoctoComp::find($documento);
+                    if($d->uuid != null)
+                    {
+                        $this->desvinculaFacturaRepositorio($d->uuid);
+                    }
+                    $d->respaldar();
+                    if($d->eliminadaErp == null)
+                    {
+                        abort(400, "Error al eliminar, respaldo incorrecto2.");
+                    }
+                    $d->delete();
+                }
+            }
+
+            $comprobacion->actualizaSaldoPendienteSolicitud();
+
+            $comprobacion->update([
+               // 'IdDepartamento' => $data['id_departamento'],
+                'Del' => $fecha_inicial->format("Y-m-d H:i:s"),
+                'Al' => $fecha_final->format("Y-m-d H:i:s"),
+                'Motivo' => $data['motivo'],
+               // 'iddepartamento' => $data['id_departamento'],
+                //'idproyecto' => $data['id_proyecto'],
+                'motivo' => $data['motivo']
+                //'ImpSol',
+             //  'SaldoComp',
+              // 'Version'
+            ]);
+            DB::connection('controlrec')->commit();
+            return $comprobacion;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function getArregloCFD($archivo_xml)
+    {
+        $arreglo = [];
+        $cfd = new CFD($archivo_xml);
+        $arreglo_cfd = $cfd->getArregloFactura();
+        $this->validaUUIDDocumento($arreglo_cfd["uuid"], $arreglo_cfd["tipo_comprobante"]);
+        $arreglo["total"] = $arreglo_cfd["total"];
+        $arreglo["impuesto"] = $arreglo_cfd["total_impuestos_trasladados"];
+        $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
+        $arreglo["retencion"]  = $arreglo_cfd["descuento"];
+        $arreglo["serie"] = $arreglo_cfd["serie"];
+        $arreglo["otros"] = $arreglo_cfd["total_impuestos_retenidos"];
+        $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("m/d/Y");
+        $arreglo["vencimiento"] = $arreglo_cfd["fecha"]->format("m/d/Y");
+        $arreglo["fecha_hora"] = $arreglo_cfd["fecha_hora"];
+        $arreglo["version"] = $arreglo_cfd["version"];
+        $arreglo["moneda"] = $arreglo_cfd["moneda"];
+        $arreglo["no_certificado"] = $arreglo_cfd["no_certificado"];
+        $arreglo["certificado"] = $arreglo_cfd["certificado"];
+        $arreglo["sello"] = $arreglo_cfd["sello"];
+        $arreglo["concepto"] = $arreglo_cfd['conceptos'][0]['descripcion'];
+
+        $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
+        $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
+
+        $arreglo["receptor"]["rfc"] = $arreglo_cfd["receptor"]["rfc"];
+        $arreglo["receptor"]["nombre"] = $arreglo_cfd["receptor"]["nombre"];
+
+        $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
+        $arreglo["folio"] = $arreglo_cfd["folio"];
+
+        $arreglo["proveedor_bd"] = $this->repository->getProveedor([
+            "rfc" => $arreglo["emisor"]["rfc"],
+            "razon_social" => $arreglo["emisor"]["nombre"]
+        ]);
+
+        $arreglo["id_proveedor"] = $arreglo['proveedor_bd'] != null ? $arreglo["proveedor_bd"]['id'] : '';
+
+        $arreglo["empresa_bd"] = $this->repository->getEmpresa([
+            "rfc" => $arreglo["receptor"]["rfc"],
+            "razon_social" => $arreglo["receptor"]["nombre"]
+        ]);
+
+        $arreglo["id_empresa"] = $arreglo['empresa_bd'] != null ? $arreglo["empresa_bd"]['id'] : '';
+
+        $this->validaEFO($arreglo);
+        /**
+        if (!$arreglo["empresa_bd"]) {
+        abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no esta dado de alta en el catálogo de empresas de control recursos; la factura no puede ser registrada.");
+        }
+         **/
+
+        $arreglo["moneda_bd"]["id_moneda"] = $this->repository->getMoneda($arreglo["moneda"]);
+        $arreglo["id_moneda"] = $this->repository->getMoneda($arreglo["moneda"]);
+        $arreglo['tipo_cambio'] = $arreglo_cfd['tipo_cambio'];
+        $arreglo["subtotal"] = $arreglo_cfd["subtotal"];
+        $arreglo["descuento"] = $arreglo_cfd["descuento"];
+        $arreglo["tasa_iva"] = $arreglo_cfd["tasa_iva"] * 100;
+        $arreglo["uuid"] = $arreglo_cfd["uuid"];
+        return $arreglo;
+    }
+
+    private function validaUUIDDocumento($uuid, $tipo)
+    {
+        $repositorio_factura = $this->repository->buscarRepositorioFactura($uuid);
+        if ($repositorio_factura) {
+            $comprobacion = $this->repository->buscarDocumentoUuid($uuid);
+            $factura = $this->repository->buscarPagoDocumentoUuid($uuid);
+            $relacion = $this->repository->buscarRelacionDocumentoUuid($uuid);
+            if ($comprobacion && $repositorio_factura->id_doc_comprobacion_gastos_cr != null) {
+                abort(500, "CFDI utilizado previamente:
+                                Registró: " . $repositorio_factura->usuario->nombre_completo . "
+                                Folio: " . $comprobacion->comprobacion->folio_format . "
+                                Fecha Registro: " . $comprobacion->fecha_format . "
+                                UUID: " . $uuid . "
+                                Emisor: " . $comprobacion->comprobacion->proveedor_descripcion . "
+                                RFC Emisor: " .  $comprobacion->comprobacion->rfc_proveedor);
+            }
+            if ($relacion && $repositorio_factura->id_doc_relacion_gastos_cr != null) {
+                abort(500, "CFDI utilizado previamente:
+                                Registró: " . $repositorio_factura->usuario->nombre_completo . "
+                                Serie: " . $relacion->relacion->serie_descripcion . "
+                                Folio: " . $relacion->folio . "
+                                Fecha Registro: " . $relacion->fecha_format . "
+                                UUID: " . $uuid . "
+                                Emisor: " . $relacion->relacion->proveedor_descripcion . "
+                                RFC Emisor: " . $relacion->relacion->rfc_proveedor);
+            }
+
+            if ($factura && $repositorio_factura->id_documento_cr != null) {
+                abort(500, "CFDI utilizado previamente:
+                                Registró: " . $repositorio_factura->usuario->nombre_completo . "
+                                Serie: " . $factura->serie_descripcion . "
+                                Folio: " . $factura->FolioDocto . "
+                                Fecha Registro: " . $factura->fecha_format . "
+                                UUID: " . $uuid . "
+                                Emisor: " . $factura->proveedor_descripcion . "
+                                RFC Emisor: " . $factura->rfc_proveedor);
+            }
+            if ($repositorio_factura && $repositorio_factura->id_transaccion != null) {
+                abort(500, "CFDI utilizado previamente:
+                                Registró: " . $repositorio_factura->usuario->nombre_completo . "
+                                DB: " . $repositorio_factura->proyecto->base_datos . "
+                                Proyecto: " . $repositorio_factura->obra . "
+                                Tipo Transacción: " . ($repositorio_factura->transaccion != null ? $repositorio_factura->transaccion->tipo_transaccion_str : "No se encontro..."). "
+                                Folio Transacción: " . ($repositorio_factura->transaccion != null ? $repositorio_factura->transaccion->numero_folio : "No se encontro...") . "
+                                Fecha Registro: " . $repositorio_factura->fecha_hora_registro_format . "
+                                UUID: " . $uuid . "
+                                Emisor: " . $repositorio_factura->proveedor->razon_social . "
+                                RFC Emisor: " . $repositorio_factura->proveedor->rfc);
+            }
+        }
+        if ($tipo != 'I') {
+            abort(500, 'El CFDI ingresado no es de un tipo válido, favor de subir CFDI’s tipo I (Ingreso) únicamente.');
+        }
+    }
+
+    private function validaEFO($arreglo_cfd)
+    {
+        $efo = $this->repository->getEFO($arreglo_cfd["emisor"]["rfc"]);
+        if ($efo) {
+            if ($efo->estado == 0) {
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            } else if ($efo->estado == 2) {
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            }
+
+        }
+    }
+
+    public function validaCFDI($uuid)
+    {
+        $cfdi = CFDSAT::where('uuid', $uuid)->first();
+        $factura = FacturaRepositorio::where('uuid', $uuid)->first();
+        if ($factura && $cfdi) {
+            if ($factura->id_transaccion != null || $factura->id_documento_cr != null || $factura->id_doc_relacion_gastos_cr != null || $factura->id_doc_comprobacion_gastos_cr != null) {
+                abort(500, "El CFDI " . $uuid . " fue utilizado anteriormente.");
+            }
+        }
+    }
+
+    private function registrarCFDRepositorio($comprobacion, $data, $xml)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
+        if($factura_repositorio){
+            if($factura_repositorio->id_transaccion == null && $factura_repositorio->id_documento_cr == null && $factura_repositorio->id_doc_relacion_gastos_cr == null && $factura_repositorio->id_doc_comprobacion_gastos_cr == null)
+            {
+                $factura_repositorio->id_doc_comprobacion_gastos_cr = $comprobacion->getKey();
+                $factura_repositorio->save();
+            }else{
+                abort(500, "El CFDI fue utilizado anteriormente.");
+            }
+        }
+        else{
+            if($data){
+                $factura_repositorio = FacturaRepositorio::create([
+                    'xml_file' => $this->repository->getArchivoSQL($xml),
+                    'hash_file' => hash_file('md5',$xml),
+                    'uuid' => $data['uuid'],
+                    'rfc_emisor' => $data['emisor']['rfc'],
+                    'rfc_receptor' => $data['receptor']['rfc'],
+                    'tipo_comprobante' => $data['tipo_comprobante'],
+                    'id_doc_comprobacion_gastos_cr' => $comprobacion->getKey(),
+
+                ]);
+                if (!$factura_repositorio) {
+                    abort(400, "Hubo un error al registrar el CFDI en el repositorio");
+                }
+            }
+        }
+        return $factura_repositorio;
+    }
+
+    private function validaReceptor($empresa, $arreglo)
+    {
+        if($empresa->RFC != $arreglo['receptor']['rfc'])
+        {
+            abort(500, "El receptor (".$arreglo["receptor"]["rfc"].") del comprobante no es la misma empresa (".$empresa->RFC.") seleccionada para esta comprobación de gastos; la factura no puede ser registrada.");
+        }
+    }
+
+    private function registrarCFDSAT($facturaRepositorio, $data)
+    {
+        $servicio_cfdi = new CFDSATService(new CFDSAT());
+        $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
+    }
+
+    private function guardarXML($datos)
+    {
+        $xml_split = explode('base64,', $datos['xml']);
+        $xml = base64_decode($xml_split[1]);
+        Storage::disk('xml_control_recursos_comprobacion_gastos')->put($datos["uuid"] . ".xml", $xml);
     }
 }

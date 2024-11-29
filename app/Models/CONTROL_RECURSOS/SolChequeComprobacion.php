@@ -21,6 +21,16 @@ class SolChequeComprobacion extends SolCheque
         return $this->belongsTo(Proveedor::class,  'IdProveedor', 'idproveedor')->empleados();
     }
 
+    public function comprobacion()
+    {
+        return $this->belongsTo(Comprobacion::class, 'IdSolCheques','DoctoOrigen');
+    }
+
+    public function devolucion()
+    {
+        return $this->belongsTo(DevolucionAbonadoSolicitud::class, 'IdSolCheques', 'IdSolicitud');
+    }
+
     /**
      * Scopes
      */
@@ -86,22 +96,22 @@ class SolChequeComprobacion extends SolCheque
         return $this->Serie."-".$this->Folio;
     }
 
-     public function getEstadoAttribute()
+     public function getEstadoFormatAttribute()
     {
         try {
-            return 'POR COMPROBAR';
+            return $this->comprobacion != null ? 'COMPROBANDO' : 'POR COMPROBAR';
         } catch (\Exception $e) {
             return null;
         }
+    }
 
-        /**
-         *   if($valido!=0)
-        {
-        ?>
-        &nbsp; COMPROBANDO<?PHP }else{?>POR COMPROBAR<?PHP }?>
-        </td>
-
-         */
+    public function getEstadoColorAttribute()
+    {
+        try {
+            return $this->comprobacion != null ? '#e8e22d' : '#29be22';
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     public function getDepartamentoAttribute()

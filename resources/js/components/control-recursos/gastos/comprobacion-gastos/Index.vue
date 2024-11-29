@@ -37,12 +37,12 @@
                     { title: 'Comprobado', field: 'comprobado', thClass :'th_c100', tdClass: 'right', sortable: false},
                     { title: 'Saldo', field: 'saldo', thClass :'th_c100', tdClass: 'right', sortable: false},
                     { title: 'Moneda', field: 'idmoneda',thClass: 'th_c100',sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    //{ title: 'Estatus', field: 'idestado', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estatus', field: 'idestado', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {include: [], sort: 'timestampRegistro', order: 'desc', scope: ['importeDisponible', 'validarEstado:24,25,34,35', 'tipoPago:4']},
+                query: {include: ['comprobacion'], sort: 'timestampRegistro', order: 'desc', scope: ['importeDisponible', 'validarEstado:24,25,34,35', 'tipoPago:4']},
                 cargando: false
             }
         },
@@ -105,11 +105,13 @@
                             total: comprobacion.total_format,
                             idmoneda: comprobacion.moneda,
                             idserie: comprobacion.serie,
-                           // idestado: this.getEstado(relacion.estado_descripcion, relacion.estado_color),
+                            idestado: this.getEstado(comprobacion.estado_format, comprobacion.estado_color),
                             buttons: $.extend({}, {
                                 show: true,
                                 id: comprobacion.id,
-                                edit: true
+                                registrar: comprobacion.comprobacion == undefined ? true : false,
+                                edit: comprobacion.comprobacion != undefined ? true : false,
+                                id_comprobacion: comprobacion.comprobacion ? comprobacion.comprobacion.id : null
                             })
                     }))
                 },

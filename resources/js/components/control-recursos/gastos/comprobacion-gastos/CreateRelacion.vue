@@ -161,8 +161,6 @@ export default {
                 params:{include: ['']}
             }).then(data => {
                 this.solicitud = data
-               // this.cuentas =  this.relacion.reembolsos.data[0].proveedor.cuentas.data;
-                //this.solicitante =  this.relacion.reembolsos.data[0].id_solicitante;
             })
         },
         salir() {

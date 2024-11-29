@@ -2069,6 +2069,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'comprobacion'], function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@update')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'documento'], function ($api) {

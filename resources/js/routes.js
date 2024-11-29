@@ -4452,6 +4452,19 @@ export const routes = [
                                     general: true
                                 }
                             },
+                            {
+                                path: ':id/edit',
+                                name: 'comprobacion-gasto-edit',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/Edit').default,
+                                meta: {
+                                    title: 'Editar Comprobación de Gastos',
+                                    breadcrumb: {parent: 'comprobacion-gasto', name: 'EDITAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_relacion_gastos_recursos',
+                                    general: true
+                                }
+                            },
                         ]
                     },
                     {

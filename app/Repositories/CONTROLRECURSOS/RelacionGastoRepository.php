@@ -3,6 +3,7 @@
 namespace App\Repositories\CONTROLRECURSOS;
 
 use App\Models\CONTROL_RECURSOS\CtgMoneda;
+use App\Models\CONTROL_RECURSOS\DoctoComp;
 use App\Models\CONTROL_RECURSOS\Empresa;
 use App\Models\CONTROL_RECURSOS\Factura;
 use App\Models\CONTROL_RECURSOS\Proveedor;
@@ -42,6 +43,10 @@ class RelacionGastoRepository extends Repository implements RepositoryInterface
         return Factura::where('uuid', $uuid)->first();
     }
 
+    public function buscarComprobacionUuid($uuid)
+    {
+        return DoctoComp::where('uuid', $uuid)->first();
+    }
     public function buscarRepositorioFactura($uuid)
     {
         $factura_repositorio = FacturaRepositorio::where("uuid","=", $uuid)->first();

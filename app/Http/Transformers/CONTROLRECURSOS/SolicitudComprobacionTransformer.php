@@ -13,7 +13,7 @@ class SolicitudComprobacionTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'comprobacion'
     ];
 
     /**
@@ -51,7 +51,23 @@ class SolicitudComprobacionTransformer extends TransformerAbstract
             'ubicacion' => $model->Ubicacion,
             'iddepartamento' => (int)$model->id_departamento,
             'id_proveedor' => $model->IdProveedor,
-            'id_moneda' => $model->IdMoneda
+            'id_moneda' => $model->IdMoneda,
+            'estado_format' => $model->estado_format,
+            'estatus' => $model->Estatus,
+            'estado_color' => $model->estado_color
         ];
+    }
+
+    /***
+     * @param SolChequeComprobacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeComprobacion(SolChequeComprobacion $model)
+    {
+        if($comprobacion = $model->comprobacion)
+        {
+            return $this->item($comprobacion, new ComprobacionTransformer);
+        }
+        return null;
     }
 }
