@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="!relacion">
+        <div class="card" v-if="!solicitud">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
@@ -16,8 +16,9 @@
                 <div class="card-body">
                     <div class="row" >
                         <div class="col-md-12">
-                            <encabezado v-bind:relacion="relacion" />
-                            <tabla-datos v-bind:relacion="relacion" />
+                            <encabezado v-bind:solicitud="solicitud" />
+                            <tabla-datos v-bind:solicitud="solicitud" />
+                            <tabla-documentos v-bind:documentos="solicitud.comprobacion.documentos" />
                         </div>
                     </div>
                      <hr />
@@ -55,14 +56,15 @@
 <script>
 import Encabezado from './partials/Encabezado';
 import TablaDatos from "./partials/TablaDatos";
+import TablaDocumentos from "./partials/TablaDocumentos";
 export default {
-    components: { Encabezado, TablaDatos },
+    components: { Encabezado, TablaDatos, TablaDocumentos },
     name: "Delete",
     props: ['id'],
     data() {
         return {
             cargando: false,
-            relacion : null,
+            solicitud : null,
             motivo: null
         }
     },
@@ -72,18 +74,18 @@ export default {
     methods: {
         find() {
             this.cargando = true;
-            return this.$store.dispatch('controlRecursos/relacion-gasto/find', {
+            return this.$store.dispatch('controlRecursos/solicitud-comprobacion/find', {
                 id: this.id,
                 params:{include: []}
             }).then(data => {
-                this.relacion = data
+                this.solicitud = data
             })
                 .finally(()=> {
                     this.cargando = false;
                 })
         },
         salir() {
-            this.$router.push({name: 'relacion-gasto'});
+            this.$router.push({name: 'comprobacion-gasto'});
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -93,11 +95,10 @@ export default {
             });
         },
         destroy() {
-            return this.$store.dispatch('controlRecursos/relacion-gasto/delete', {
-                id: this.id,
+            return this.$store.dispatch('controlRecursos/comprobacion/delete', {
+                id: this.solicitud.comprobacion.id,
                 params: {data: this.$data.motivo}
             }).then(() => {
-                this.$store.commit('controlRecursos/relacion-gasto/DELETE_RELACION', {id: this.id})
                 this.salir();
             })
         },

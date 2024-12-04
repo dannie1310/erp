@@ -365,4 +365,19 @@ class ComprobacionService
             $factura_repositorio->save();
         }
     }
+
+    public function delete($data, $id)
+    {
+        return $this->repository->show($id)->eliminar($data["data"]);
+    }
+
+    public function close($id)
+    {
+        return $this->repository->show($id)->cerrar();
+    }
+
+    public function open($id)
+    {dd($id);
+        return $this->repository->show($id)->abrir();
+    }
 }

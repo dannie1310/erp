@@ -1,5 +1,5 @@
 <template>
-    <div class="row" v-if="documentos">
+    <div class="row" v-if="documentos.data.length != 0">
         <hr />
         <div  class="col-md-12 table-responsive-xl">
             <div class="table-responsive">

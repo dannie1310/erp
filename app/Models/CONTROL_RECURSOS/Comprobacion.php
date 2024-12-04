@@ -71,6 +71,26 @@ class Comprobacion extends Model
         return $this->hasMany(DoctoComp::class, 'IdComprobacion','IdComprobacion');
     }
 
+    public function solicitudesComprobadas()
+    {
+        return $this->hasMany(SolicitudComprobada::class, 'IdComprobacion', 'IdComprobacion');
+    }
+
+    public function reembolsos()
+    {
+        return $this->hasMany(ComprobacionReembolsada::class, 'idcomprobacion', 'IdComprobacion');
+    }
+
+    public function firmas()
+    {
+        return $this->hasMany(FirmaComprobaciones::class, 'idcomprobacion', 'IdComprobacion');
+    }
+
+    public function respaldo()
+    {
+        return $this->belongsTo(ComprobacionBorrada::class, 'IdComprobacion', 'IdComprobacion');
+    }
+
     /**
      * Scopes
      */
@@ -174,6 +194,24 @@ class Comprobacion extends Model
     }
 
 
+    public function getDelEspecialAttribute()
+    {
+        try {
+            return DoctoComp::selectRaw('MIN(FechaDocto) as fecha')->where('IdComprobacion', $this->IdComprobacion)->first()->fecha;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getAlEspecialAttribute()
+    {
+        try {
+            return DoctoComp::selectRaw('MAX(FechaDocto) as fecha')->where('IdComprobacion', $this->IdComprobacion)->first()->fecha;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */
@@ -245,10 +283,6 @@ class Comprobacion extends Model
             $firma= FirmaComprobacion::where('IdUsuario', auth()->id())->first();
         }
         return $firma;
-    }
-
-    public function setFirmas(){
-
     }
 
     public function registrarDocumento($data)
@@ -348,6 +382,237 @@ class Comprobacion extends Model
                     $this->save();
                     break;
             }
+        }
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            $this->validaEliminacion();
+        $esrelacion = 0;
+        $escomprobacion = 0;
+        $estareembolsadadocumento= 0;
+        $estareembolsadoSolicitud = 0;
+        $hayreembolsadadocumento= 0;
+        $estaGenerada = 0;
+        $estaAbierta = 0;
+        $estaCerrada = 0;
+        $nuevoEstatusRelacion = 0;
+
+        if($this->solicitudesComprobadas->count() > 0)
+        {
+            $esrelacion = 0;
+            $escomprobacion = 1;
+        }else{
+            $esrelacion = 1;
+            $escomprobacion = 0;
+        }
+        if($escomprobacion == 1)
+        {
+            $this->solicitudesComprobadas()->delete();
+        }
+
+        if($this->reembolsos->count() > 0)
+        {
+            $estareembolsadadocumento= 1;
+            if($this->reembolsos->solDoctos->count() > 0)
+            {
+                $estareembolsadoSolicitud = 1;
+            }else{
+                $estareembolsadoSolicitud = 0;
+            }
+        }else{
+            $estareembolsadadocumento = 0;
+            $hayreembolsadadocumento= 0;
+        }
+
+
+        if ($this->Estatus == 0 || $this->Estatus == 5) {
+            $estaGenerada = 1;
+        } else {
+            if ($this->Estatus == 1 || $this->Estatus == 6) {
+                $estaAbierta = 1;
+            } else {
+                if ($this->Estatus == 2 || $this->Estatus == 7) {
+                    $estaCerrada = 1;
+                }
+            }
+        }
+
+        if ($estaCerrada == 1) {
+            if ($this->Estatus == 2) {
+                $nuevoEstatusRelacion = 1;
+            }
+            if ($this->Estatus == 7) {
+                $nuevoEstatusRelacion = 6;
+            }
+            $this->update([
+                'Estatus' => $nuevoEstatusRelacion
+            ]);
+        }
+        $id= $this->getKey();
+        if($hayreembolsadadocumento == 0)
+        {
+            $this->documentos()->delete();
+            $this->firmas()->delete();
+            $this->delete();
+            $this->refresh();
+            $comprobacion_eliminada = ComprobacionBorrada::where('IdComprobacion', $id)->first();
+            $comprobacion_eliminada->usuario_elimina = auth()->id();
+            $comprobacion_eliminada->motivo_eliminacion = $motivo;
+            $comprobacion_eliminada->fecha_eliminacion = date('Y-m-d H:i:s');
+            $comprobacion_eliminada->save();
+        }else{
+            if($estareembolsadadocumento == 1 && $estareembolsadoSolicitud == 0)
+            {
+                /**
+                 * DELETE FROM cajas_chicas_reembolsos WHERE iddocto=IdDocumento1;
+
+                DELETE FROM comprobaciones_reembolsadas WHERE idcomprobacion=idRelacion;
+
+                DELETE FROM documentos where IdDocto=IdDocumento1;
+                 */
+
+                abort(500, "La comprobación no puede ser eliminada .");
+
+                /**
+                 *
+                DELETE FROM doctoscomp where IdComprobacion=idRelacion;
+
+                DELETE FROM firmas_comprobaciones where idcomprobacion=idRelacion;
+
+                DELETE FROM comprobaciones where IdComprobacion=idRelacion;
+
+                UPDATE comprobacionesborradas set Elimino=ejecuta, Fecha_Hora_Elimino=CURRENT_TIMESTAMP WHERE IdComprobacion=idRelacion;
+
+                 */
+
+            }else{
+                if($estareembolsadadocumento == 1 && $estareembolsadoSolicitud == 1) {
+
+                    /**
+                    DELETE FROM cajas_chicas_reembolsos WHERE iddocto = IdDocumento1;
+
+        DELETE FROM comprobaciones_reembolsadas WHERE idcomprobacion = idRelacion;
+
+        CALL scr_sp_elimina_solicitud(IdSolicitud1, 1, CONCAT(ejecuta, 'Al eliminar Relacion: ', idRelacion));
+
+        DELETE FROM documentos where IdDocto = IdDocumento1;
+                     * */
+                    abort(500, "La comprobación no puede ser eliminada .");
+
+/*
+                    DELETE FROM doctoscomp where IdComprobacion=idRelacion;
+
+		DELETE FROM firmas_comprobaciones where idcomprobacion=idRelacion;
+
+        DELETE FROM comprobaciones where IdComprobacion=idRelacion;
+
+		UPDATE comprobacionesborradas set Elimino=ejecuta, Fecha_Hora_Elimino=CURRENT_TIMESTAMP WHERE IdComprobacion=idRelacion;
+*/
+                 }
+
+            }
+        }
+
+
+
+            DB::connection('controlrec')->commit();
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function validaEliminacion()
+    {
+        // PENDIENTE
+        /*if ($this->idestado != 1 && $this->idestado != 2)
+        {
+            abort(500, "La relación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede eliminarse.");
+        }*/
+    }
+
+    public function cerrar()
+    {
+        $this->validaCierre();
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            if($this->Estatus == 1)
+            {
+                $estatus_nvo = 2;
+                $id_estatus_nvo = 3;
+            }
+            if($this->Estatus == 6)
+            {
+                $estatus_nvo = 7;
+                $id_estatus_nvo = 3;
+            }
+
+            $this->update([
+                'Del' => $this->del_especial,
+                'Al' => $this->al_especial,
+                'Estatus' =>  $estatus_nvo,
+                'IdEstatus' => $id_estatus_nvo,
+                'Cerro' => auth()->id(),
+                'Fecha_Hora_Cerro' => date('Y-m-d H:i:s')
+            ]);
+
+            DB::connection('controlrec')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function validaCierre()
+    {
+        if($this->documentos->count() < 1)
+        {
+            abort(500, "La comprobación de gastos (" . $this->folio . ") no cuenta con documentos, por lo tanto, no puede cerrarse.");
+        }
+        dd($this->idestado);
+        if ($this->Estatus != 2)
+        {
+            abort(500, "La comprobación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede cerrarse.");
+        }
+    }
+
+    public function abrir()
+    {
+        $this->validaApertura();
+        try {
+            DB::connection('controlrec')->beginTransaction();
+
+            $this->update([
+                'idestado' => 2
+            ]);
+
+            foreach ($this->documentos as $documento)
+            {
+                $documento->update([
+                    'idestado' => 1
+                ]);
+            }
+
+            DB::connection('controlrec')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('controlrec')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function validaApertura()
+    {
+        if ($this->idestado != 5)
+        {
+            abort(500, "La relación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede abrirse.");
         }
     }
 }

@@ -142,6 +142,127 @@ export default {
                 });
             });
         },
+        delete(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Comprobación de Gastos",
+                    text: "¿Está seguro de que desea eliminar el comprobación?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Comprobación de gastos eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        close(context, payload) {
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Cerrar la Comprobación de Gastos",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cerrar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id + '/close', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Comprobación cerrada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        open(context, payload) {
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Abrir la Comprobación de Gastos",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Abrir',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id + '/open', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Comprobación abierta correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

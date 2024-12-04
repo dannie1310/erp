@@ -4440,19 +4440,6 @@ export const routes = [
                                 }
                             },
                             {
-                                path: ':id/relacion',
-                                name: 'comprobacion-gastos-relacion',
-                                props: true,
-                                component: require('./components/control-recursos/gastos/comprobacion-gastos/CreateRelacion').default,
-                                meta: {
-                                    title: 'Generar Relación de Gastos',
-                                    breadcrumb: {parent: 'comprobacion-gasto', name: 'REGISTRAR'},
-                                    middleware: [auth, permission],
-                                    permission: 'editar_relacion_gastos_recursos',
-                                    general: true
-                                }
-                            },
-                            {
                                 path: ':id/edit',
                                 name: 'comprobacion-gasto-edit',
                                 props: true,
@@ -4475,6 +4462,19 @@ export const routes = [
                                     breadcrumb: { parent: 'comprobacion-gasto', name: 'VER'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_relacion_gastos_recursos',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id/delete',
+                                name: 'comprobacion-gasto-delete',
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/Delete').default,
+                                props: true,
+                                meta: {
+                                    title: 'Eliminar Comprobación de Gastos',
+                                    breadcrumb: { parent: 'comprobacion-gasto', name: 'ELIMINAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'eliminar_relacion_gastos_recursos',
                                     general: true
                                 }
                             },
@@ -4684,6 +4684,37 @@ export const routes = [
                                     breadcrumb: {parent: 'relacion-gasto', name: 'SOLICITUD PAGO A PROVEEDOR'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_reembolso_pago_a_proveedor',
+                                    general: true
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'solicitud-comprobacion-gasto',
+                        component: require('./components/control-recursos/gastos/solicitud-comprobacion-gastos/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'solicitud-comprobacion-gasto',
+                                component: require('./components/control-recursos/gastos/solicitud-comprobacion-gastos/Index').default,
+                                meta: {
+                                    title: 'Comprobación de Gastos',
+                                    breadcrumb: {parent: 'gasto-personal', name: 'SOLICITUDES DE COMPROBACIÓN DE GASTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_relacion_gastos_recursos',
+                                    general: true,
+                                }
+                            },
+                            {
+                                path: ':id/create',
+                                name: 'solicitud-comprobacion-gasto-create',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/solicitud-comprobacion-gastos/Create').default,
+                                meta: {
+                                    title: 'Registrar Comprobación de Gastos',
+                                    breadcrumb: {parent: 'solicitud-comprobacion-gasto', name: 'REGISTRAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_relacion_gastos_recursos',
                                     general: true
                                 }
                             },

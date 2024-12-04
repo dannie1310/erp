@@ -54,7 +54,8 @@ class ComprobacionTransformer extends TransformerAbstract
             'imp_doctos' => $model->ImpDoctos,
             'imp_doctos_format' => $model->imp_doctos_format,
             'saldo_comp' => $model->saldo_comp,
-            'saldo_comp_format' => $model->saldo_comp_format
+            'saldo_comp_format' => $model->saldo_comp_format,
+            'estado' => $model->Estatus
         ];
     }
 

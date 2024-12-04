@@ -2070,6 +2070,9 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@store');
             $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/close', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@close')->where(['id' => '[0-9]+']);
+            $api->get('{id}/open', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@open')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'documento'], function ($api) {

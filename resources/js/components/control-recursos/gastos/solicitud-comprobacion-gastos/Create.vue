@@ -164,7 +164,7 @@ export default {
             })
         },
         salir() {
-            this.$router.push({name: 'comprobacion-gasto'});
+            this.$router.push({name: 'solicitud-comprobacion-gasto'});
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -195,7 +195,7 @@ export default {
             return this.$store.dispatch('controlRecursos/comprobacion/store', datos)
                 .then((data) => {
                     this.$emit('created', data)
-                    this.salir();
+                    this.$router.push({name: 'comprobacion-gasto'});
                 });
         },
     },

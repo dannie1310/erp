@@ -1,11 +1,6 @@
 <template>
     <div class="row">
         <div class="col-12">
-           <!-- <button @click="create" v-if="$root.can('registrar_relacion_gastos_recursos', true)" class="btn btn-app pull-right">
-                <i class="fa fa-plus"></i> Registrar
-            </button> -->
-        </div>
-        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -58,17 +53,14 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('controlRecursos/solicitud-comprobacion/paginate', { params: this.query})
+                return this.$store.dispatch('controlRecursos/comprobacion/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('controlRecursos/solicitud-comprobacion/SET_COMPROBACIONES', data.data);
-                        this.$store.commit('controlRecursos/solicitud-comprobacion/SET_META', data.meta);
+                        this.$store.commit('controlRecursos/comprobacion/SET_COMPROBACIONES', data.data);
+                        this.$store.commit('controlRecursos/comprobacion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
-            },
-            create() {
-                this.$router.push({name: 'relacion-gasto-create'});
             },
             getEstado(estado, color) {
                 return {
@@ -79,10 +71,10 @@
         },
         computed: {
             comprobaciones(){
-                return this.$store.getters['controlRecursos/solicitud-comprobacion/comprobaciones'];
+                return this.$store.getters['controlRecursos/comprobacion/comprobaciones'];
             },
             meta(){
-                return this.$store.getters['controlRecursos/solicitud-comprobacion/meta'];
+                return this.$store.getters['controlRecursos/comprobacion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
@@ -111,7 +103,10 @@
                                 id: comprobacion.id,
                                 registrar: comprobacion.comprobacion == undefined ? true : false,
                                 edit: comprobacion.comprobacion != undefined ? true : false,
-                                id_comprobacion: comprobacion.comprobacion ? comprobacion.comprobacion.id : null
+                                id_comprobacion: comprobacion.comprobacion ? comprobacion.comprobacion.id : null,
+                                delete: comprobacion.comprobacion != undefined ? true : false,
+                                cerrar: (self.$root.can('cerrar_relacion_gastos_recursos', true) &&  comprobacion.comprobacion && comprobacion.comprobacion.estado == 2) ? true : false,
+                                abrir: (self.$root.can('abrir_relacion_gastos_recursos', true) &&  comprobacion.comprobacion && comprobacion.comprobacion.estado == 5) ? true : false,
                             })
                     }))
                 },
