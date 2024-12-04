@@ -2,11 +2,11 @@
 
 namespace App\Listeners\IFS;
 
-use App\Events\IFS\EnvioXMLDocumentoRecursos;
-use App\Mail\NotificacionXMLDocumentoRecursosEnviada;
+use App\Events\IFS\EnvioXMLPolizaNominas;
+use App\Mail\NotificacionXMLPolizaNominas;
 use Illuminate\Support\Facades\Mail;
 
-class SendXMLDocumentoRecursosNotification
+class SendXMLPolizaNominasNotification
 {
     /**
      * Create the event listener.
@@ -19,15 +19,15 @@ class SendXMLDocumentoRecursosNotification
     }
 
     /**
-     * @param EnvioXMLDocumentoRecursos $event
+     * @param EnvioXMLPolizaNominas $event
      * @return void
      */
-    public function handle(EnvioXMLDocumentoRecursos $event)
+    public function handle(EnvioXMLPolizaNominas $event)
     {
         $destinatarios = $event->destinatarios;
         $bcc = [
             'dbenitezc@grupohi.mx','ebriones@grupohi.mx', 'jegarcia@grupohi.mx', 'melievana@grupohi.mx'
         ];
-        Mail::to($destinatarios)->bcc($bcc)->sendNow(new NotificacionXMLDocumentoRecursosEnviada($event->documento, $event->xml, $event->archivo));
+        Mail::to($destinatarios)->bcc($bcc)->sendNow(new NotificacionXMLPolizaNominas($event->poliza, $event->xml, $event->archivo));
     }
 }

@@ -5896,6 +5896,56 @@ export const routes = [
         ]
     },
     {
+        path: '/nominas',
+        components: {
+            default: require('./components/nominas/partials/Layout.vue').default,
+            menu: require('./components/nominas/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'nominas',
+                meta: {
+                    title: 'NÓMINAS',
+                    middleware: [auth],
+                    permission: ['consultar_poliza_nominas_ctpq'],
+                    general: true
+                }
+            },
+            {
+                path: 'seleccionar-empresa-nom',
+                name: 'seleccionar-empresa-nom',
+                component: require('./components/nominas/poliza-nomina/SeleccionarEmpresa').default,
+                meta: {
+                    title: 'Conectar Empresa Nómina',
+                    breadcrumb: {parent: 'nominas', name: 'SELECCIONAR EMPRESA'},
+                    middleware: [auth, permission],
+                    permission: 'consultar_poliza_nominas_ctpq',
+                    general: true
+                }
+            },
+            {
+                path:":id_empresa/poliza-nomina",
+                component: require('./components/nominas/poliza-nomina/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name:"poliza-nomina",
+                        props: true,
+                        component: require('./components/nominas/poliza-nomina/Index').default,
+                        meta: {
+                            title: 'Lista de Polizas Nómina',
+                            breadcrumb: {parent: 'seleccionar-empresa-nom', name: 'PÓLIZAS NÓMINAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza_nominas_ctpq'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/auth',
         name: 'login',
         component: require('./components/pages/Login.vue').default,
