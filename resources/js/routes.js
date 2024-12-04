@@ -5754,7 +5754,7 @@ export const routes = [
                     title: 'Seguimiento',
                     middleware: [auth, permission],
                     breadcrumb: {name: 'SEGUIMIENTO'},
-                    permission: ['consultar_factura_cuenta_x_cobrar'],
+                    permission: ['consultar_factura_cuenta_x_cobrar','consultar_ingreso_seguimiento'],
                     general: true
                 }
             },
