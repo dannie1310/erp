@@ -160,6 +160,34 @@ return [
             ],*/
         ],
 
+        'cntpq_nom' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_CNTPQ_NOM', 'localhost'),
+            'database' => env('DB_DATABASE_CNTPQ_NOM', 'forge'),
+            'username' => env('DB_USERNAME_CNTPQ_NOM', 'forge'),
+            'password' => env('DB_PASSWORD_CNTPQ_NOM', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            /*'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],*/
+        ],
+
+        'cntpq_nom_gen' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_CNTPQ_NOM_GEN', 'localhost'),
+            'database' => env('DB_DATABASE_CNTPQ_NOM_GEN', 'forge'),
+            'username' => env('DB_USERNAME_CNTPQ_NOM_GEN', 'forge'),
+            'password' => env('DB_PASSWORD_CNTPQ_NOM_GEN', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            /*'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],*/
+        ],
+
         'igh' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_IGH', '127.0.0.1'),
@@ -361,6 +389,21 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+        ],
+
+        'interfaz_nominas' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_INTERFAZ_NOMINAS', 'localhost'),
+            //'port' => env('DB_PORT_MODULOSAO', '1433'),
+            'database' => env('DB_DATABASE_INTERFAZ_NOMINAS', 'forge'),
+            'username' => env('DB_USERNAME_INTERFAZ_NOMINAS', 'forge'),
+            'password' => env('DB_PASSWORD_INTERFAZ_NOMINAS', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            /*'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],*/
         ],
     ],
 

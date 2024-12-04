@@ -5842,7 +5842,7 @@ export const routes = [
                     title: 'Seguimiento',
                     middleware: [auth, permission],
                     breadcrumb: {name: 'SEGUIMIENTO'},
-                    permission: ['consultar_factura_cuenta_x_cobrar'],
+                    permission: ['consultar_factura_cuenta_x_cobrar','consultar_ingreso_seguimiento'],
                     general: true
                 }
             },
@@ -5980,6 +5980,56 @@ export const routes = [
                     permission: ['editar_concurso'],
                     general: true
                 }
+            },
+        ]
+    },
+    {
+        path: '/nominas',
+        components: {
+            default: require('./components/nominas/partials/Layout.vue').default,
+            menu: require('./components/nominas/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'nominas',
+                meta: {
+                    title: 'NÓMINAS',
+                    middleware: [auth],
+                    permission: ['consultar_poliza_nominas_ctpq'],
+                    general: true
+                }
+            },
+            {
+                path: 'seleccionar-empresa-nom',
+                name: 'seleccionar-empresa-nom',
+                component: require('./components/nominas/poliza-nomina/SeleccionarEmpresa').default,
+                meta: {
+                    title: 'Conectar Empresa Nómina',
+                    breadcrumb: {parent: 'nominas', name: 'SELECCIONAR EMPRESA'},
+                    middleware: [auth, permission],
+                    permission: 'consultar_poliza_nominas_ctpq',
+                    general: true
+                }
+            },
+            {
+                path:":id_empresa/poliza-nomina",
+                component: require('./components/nominas/poliza-nomina/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name:"poliza-nomina",
+                        props: true,
+                        component: require('./components/nominas/poliza-nomina/Index').default,
+                        meta: {
+                            title: 'Lista de Polizas Nómina',
+                            breadcrumb: {parent: 'seleccionar-empresa-nom', name: 'PÓLIZAS NÓMINAS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza_nominas_ctpq'],
+                            general: true
+                        }
+                    },
+                ]
             },
         ]
     },
