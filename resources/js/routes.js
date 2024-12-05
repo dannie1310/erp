@@ -4698,7 +4698,7 @@ export const routes = [
                                 name: 'solicitud-comprobacion-gasto',
                                 component: require('./components/control-recursos/gastos/solicitud-comprobacion-gastos/Index').default,
                                 meta: {
-                                    title: 'Comprobación de Gastos',
+                                    title: 'Solicitud de Comprobación de Gastos',
                                     breadcrumb: {parent: 'gasto-personal', name: 'SOLICITUDES DE COMPROBACIÓN DE GASTOS'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_relacion_gastos_recursos',

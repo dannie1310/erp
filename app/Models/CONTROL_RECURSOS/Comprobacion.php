@@ -212,6 +212,52 @@ class Comprobacion extends Model
         }
     }
 
+    public function getEstadoFormatAttribute()
+    {
+        try {
+            if($this->Estatus == 0)
+            {
+                return  'ABIERTO SIN DOCUMENTOS';
+            }
+            if($this->Estatus == 1)
+            {
+                return  'ABIERTO CON DOCUMENTOS CARGADOS';
+            }
+            if($this->Estatus == 2)
+            {
+                return  'CERRADA';
+            }
+            if($this->Estatus == 3)
+            {
+                return  'COMPROBADO';
+            }
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getEstadoColorAttribute()
+    {
+        try {
+            if($this->Estatus == 0)
+            {
+                return  '#2d7ce8';
+            }
+            if($this->Estatus == 2)
+            {
+                return  '#e8e22d';
+            }
+            if($this->Estatus == 3)
+            {
+                return  '#29be22';
+            }
+
+            return $this->Estatus == 2 ? '#e8e22d' : '#29be22';
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */

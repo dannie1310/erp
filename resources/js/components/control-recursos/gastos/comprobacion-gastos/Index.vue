@@ -25,23 +25,18 @@
                     { title: '#', field: 'index', thClass: 'th_index_corto', sortable: false },
                     { title: 'Serie', field: 'idserie', thClass: 'th_c60', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Empleado', field: 'idproveedor', thClass: 'th_c250', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Empresa', field: 'idempresa', thClass: 'th_c250', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Fecha', thClass: 'th_c80', field: 'fecha', sortable: true,thComp: require('../../../globals/th-Date').default},
                     { title: 'Folio', field: 'folio',sortable: true,thClass: 'th_c80',  thComp: require('../../../globals/th-Filter').default},
                     { title: 'Importe', field: 'importe', thClass :'th_c100', tdClass: 'right', sortable: true},
-                    { title: 'Comprobado', field: 'comprobado', thClass :'th_c100', tdClass: 'right', sortable: false},
-                    { title: 'Saldo', field: 'saldo', thClass :'th_c100', tdClass: 'right', sortable: false},
-                    { title: 'Moneda', field: 'idmoneda',thClass: 'th_c100',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Estatus', field: 'idestado', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['comprobacion'], sort: 'timestampRegistro', order: 'desc', scope: ['validarEstado:24,25,34,35', 'tipoPago:4']},
+                query: { sort: 'FechaHoraGenero', order: 'desc', scope: []},
                 cargando: false
             }
         },
-
         mounted() {
             this.$Progress.start();
             this.paginate()
@@ -49,7 +44,6 @@
                     this.$Progress.finish();
                 })
         },
-
         methods: {
             paginate() {
                 this.cargando = true;
@@ -89,24 +83,17 @@
                             index: (i + 1) + self.query.offset,
                             fecha: comprobacion.fecha_format,
                             idproveedor: comprobacion.empleado_descripcion,
-                            idempresa: comprobacion.empresa_descripcion,
                             importe: comprobacion.importe_format,
-                            saldo: comprobacion.saldo_format,
-                            comprobado: comprobacion.comprobado_format,
                             folio: comprobacion.folio_format,
-                            total: comprobacion.total_format,
-                            idmoneda: comprobacion.moneda,
                             idserie: comprobacion.serie,
                             idestado: this.getEstado(comprobacion.estado_format, comprobacion.estado_color),
                             buttons: $.extend({}, {
                                 show: true,
                                 id: comprobacion.id,
-                                registrar: comprobacion.comprobacion == undefined ? true : false,
-                                edit: comprobacion.comprobacion != undefined ? true : false,
-                                id_comprobacion: comprobacion.comprobacion ? comprobacion.comprobacion.id : null,
-                                delete: comprobacion.comprobacion != undefined ? true : false,
-                                cerrar: (self.$root.can('cerrar_relacion_gastos_recursos', true) &&  comprobacion.comprobacion && comprobacion.comprobacion.estado == 2) ? true : false,
-                                abrir: (self.$root.can('abrir_relacion_gastos_recursos', true) &&  comprobacion.comprobacion && comprobacion.comprobacion.estado == 5) ? true : false,
+                                edit: comprobacion.estado == 2  ? true : false,
+                                delete: comprobacion != undefined ? true : false,
+                                cerrar: (self.$root.can('cerrar_relacion_gastos_recursos', true) && comprobacion.estado == 2) ? true : false,
+                                abrir: (self.$root.can('abrir_relacion_gastos_recursos', true) && comprobacion.estado == 5) ? true : false,
                             })
                     }))
                 },
