@@ -13,7 +13,10 @@ class UsuarioSerie extends Model
     /**
      * Relaciones
      */
-
+    public function serie()
+    {
+        return $this->belongsTo(Serie::class, 'idseries', 'idseries');
+    }
     /**
      * Scopes
      */

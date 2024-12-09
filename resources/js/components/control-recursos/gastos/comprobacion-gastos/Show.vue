@@ -18,7 +18,7 @@
                     <div class="col-md-12">
                         <encabezado v-bind:solicitud="solicitud" />
                         <tabla-datos v-bind:solicitud="solicitud" />
-                        <tabla-documentos v-bind:documentos="solicitud.comprobacion.documentos" v-if="solicitud.comprobacion" />
+                        <tabla-documentos v-bind:documentos="solicitud.documentos" v-if="solicitud.documentos" />
                     </div>
                 </div>
             </div>
@@ -54,9 +54,9 @@ export default {
     methods: {
         find() {
             this.cargando = true;
-            return this.$store.dispatch('controlRecursos/solicitud-comprobacion/find', {
+            return this.$store.dispatch('controlRecursos/comprobacion/find', {
                 id: this.id,
-                params:{include: []}
+                params:{include: ['solicitud']}
             }).then(data => {
                 this.solicitud = data
             })

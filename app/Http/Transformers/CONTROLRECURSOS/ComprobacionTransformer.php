@@ -13,7 +13,7 @@ class ComprobacionTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'solicitud'
     ];
 
     /**
@@ -22,7 +22,7 @@ class ComprobacionTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'documentos'
+        'documentos',
     ];
 
     public function transform(Comprobacion $model){
@@ -71,6 +71,19 @@ class ComprobacionTransformer extends TransformerAbstract
         if($documentos = $model->documentos)
         {
             return $this->collection($documentos, new DoctoCompTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Comprobacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeSolicitud(Comprobacion $model)
+    {
+        if($solicitud = $model->solicitud)
+        {
+            return $this->item($solicitud, new SolicitudComprobacionTransformer);
         }
         return null;
     }

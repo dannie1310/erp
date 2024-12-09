@@ -1,6 +1,11 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <button @click="create" v-if="$root.can('registrar_comprobacion_gastos', true)" class="btn btn-app pull-right">
+                <i class="fa fa-plus"></i> Registrar
+            </button>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -62,6 +67,9 @@
                     descripcion: estado
                 }
             },
+            create() {
+                this.$router.push({name: 'comprobacion-gasto-create'});
+            },
         },
         computed: {
             comprobaciones(){
@@ -90,10 +98,10 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 id: comprobacion.id,
-                                edit: comprobacion.estado == 2  ? true : false,
-                                delete: comprobacion != undefined ? true : false,
-                                cerrar: (self.$root.can('cerrar_relacion_gastos_recursos', true) && comprobacion.estado == 2) ? true : false,
-                                abrir: (self.$root.can('abrir_relacion_gastos_recursos', true) && comprobacion.estado == 5) ? true : false,
+                                edit: (self.$root.can('editar_comprobacion_gastos', true) && comprobacion.estado == 1)  ? true : false,
+                                delete: (self.$root.can('eliminar_comprobacion_gastos', true) && (comprobacion.estado == 0 || comprobacion.estado == 1)) ? true : false,
+                                cerrar: (self.$root.can('cerrar_comprobacion_gastos', true) && comprobacion.estado == 1) ? true : false,
+                                abrir: (self.$root.can('abrir_comprobacion_gastos', true) && comprobacion.estado == 2) ? true : false,
                             })
                     }))
                 },

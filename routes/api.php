@@ -2181,6 +2181,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'solicitud-comprobacion'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudComprobacionController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudComprobacionController@show')->where(['id' => '[0-9]+']);
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudComprobacionController@index');
         });
 
         $api->group(['prefix' => 'semana-anio'], function ($api) {

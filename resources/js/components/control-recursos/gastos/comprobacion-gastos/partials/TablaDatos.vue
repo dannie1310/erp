@@ -16,15 +16,14 @@
                     </tr>
                     <tr>
                         <th>
-                            {{solicitud.empresa_descripcion}}
+                            {{solicitud.solicitud.empresa_descripcion}}
                         </th>
                         <th>
-                            {{solicitud.departamento}}
+                            {{solicitud.solicitud.departamento}}
                         </th>
-                        <th v-if="solicitud.comprobacion">
-                            {{solicitud.comprobacion.folio_format}}
+                        <th>
+                            {{solicitud.solicitud.folio_format}}
                         </th>
-                        <td v-else></td>
                     </tr>
                     <tr>
                         <th class="encabezado" colspan="2">
@@ -36,10 +35,10 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            {{ solicitud.empleado_descripcion }}
+                            {{ solicitud.solicitud.empleado_descripcion }}
                         </td>
                         <td>
-                           {{ solicitud.ubicacion }}
+                           {{ solicitud.solicitud.ubicacion }}
                         </td>
                     </tr>
                     <tr>
@@ -57,14 +56,12 @@
                         <td>
                             {{ solicitud.fecha_format }}
                         </td>
-                        <td v-if="solicitud.comprobacion">
-                            {{ solicitud.comprobacion.del_format }}
+                        <td>
+                            {{ solicitud.del_format }}
                         </td>
-                        <td v-else></td>
-                        <td v-if="solicitud.comprobacion">
-                            {{ solicitud.comprobacion.al_format }}
+                        <td>
+                            {{ solicitud.al_format }}
                         </td>
-                        <td v-else></td>
                     </tr>
                     <tr>
                         <th class="encabezado">Importe</th>
@@ -72,9 +69,9 @@
                         <th class="encabezado">Saldo</th>
                     </tr>
                     <tr>
-                        <td style="text-align: right; font-size: 15px">{{ solicitud.importe_format }}</td>
-                        <td style="text-align: right; font-size: 15px"><b>{{ solicitud.comprobado_format }}</b></td>
-                        <td style="text-align: right; font-size: 15px"><b>{{ solicitud.saldo_format }}</b></td>
+                        <td style="text-align: right; font-size: 15px">{{ solicitud.solicitud.importe_format }}</td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ solicitud.solicitud.comprobado_format }}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ solicitud.solicitud.saldo_format }}</b></td>
                     </tr>
                 </table>
             </div>

@@ -37,7 +37,12 @@ class ComprobacionController extends Controller
     {
         $this->middleware('auth:api');
 
-        $this->middleware('permisoGlobal:registrar_documento_recursos')->only(['store']);
+        $this->middleware('permisoGlobal:consultar_comprobacion_gastos')->only(['show','paginate','index','pdfRelacion']);
+        $this->middleware('permisoGlobal:registrar_comprobacion_gastos')->only('store');
+        $this->middleware('permisoGlobal:editar_comprobacion_gastos')->only('update');
+        $this->middleware('permisoGlobal:abrir_comprobacion_gastos')->only('open');
+        $this->middleware('permisoGlobal:cerrar_comprobacion_gastos')->only('close');
+        $this->middleware('permisoGlobal:eliminar_comprobacion_gastos')->only('destroy');
 
         $this->service = $service;
         $this->transformer = $transformer;

@@ -54,7 +54,8 @@ class SolicitudComprobacionTransformer extends TransformerAbstract
             'id_moneda' => $model->IdMoneda,
             'estado_format' => $model->estado_format,
             'estatus' => $model->Estatus,
-            'estado_color' => $model->estado_color
+            'estado_color' => $model->estado_color,
+            'valido' => $model->valido
         ];
     }
 

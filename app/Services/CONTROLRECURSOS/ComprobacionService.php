@@ -432,7 +432,7 @@ class ComprobacionService
     }
 
     public function open($id)
-    {dd($id);
+    {
         return $this->repository->show($id)->abrir();
     }
 }

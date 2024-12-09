@@ -17,4 +17,12 @@ class SolicitudComprobada extends Model
         'ImporteComprobadoAnterior',
         'ImportePorComprobar'
     ];
+
+    /**
+     * Relaciones
+     */
+    public function comprobacion()
+    {
+        return $this->belongsTo(Comprobacion::class, 'IdComprobacion', 'IdComprobacion');
+    }
 }

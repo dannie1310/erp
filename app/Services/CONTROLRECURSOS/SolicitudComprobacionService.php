@@ -79,4 +79,9 @@ class SolicitudComprobacionService
     {
         return $this->repository->show($id);
     }
+
+    public function index($data)
+    {
+        return $this->repository->all($data);
+    }
 }

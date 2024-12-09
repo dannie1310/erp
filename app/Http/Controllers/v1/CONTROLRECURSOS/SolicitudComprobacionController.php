@@ -35,7 +35,6 @@ class SolicitudComprobacionController extends Controller
     public function __construct(Manager $fractal, SolicitudComprobacionService $service, SolicitudComprobacionTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('permisoGlobal:registrar_reembolso_por_caja_chica')->only(['store']);
 
         $this->fractal = $fractal;
         $this->service = $service;

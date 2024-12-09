@@ -40,8 +40,21 @@ class Comprobacion extends Model
         'Fecha_RcbCCH',
         'Recibio_CCH',
         'Fecha_RcbCTb',
-        'registro_portal'
+        'registro_portal',
+        'Estatus',
+        'IdEstatus',
+        'Cerro',
+        'Fecha_Hora_Cerro'
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->whereIn('Alias_Depto', Serie::pluck('Descripcion'));
+        });
+    }
 
     /**
      * Relaciones
@@ -89,6 +102,11 @@ class Comprobacion extends Model
     public function respaldo()
     {
         return $this->belongsTo(ComprobacionBorrada::class, 'IdComprobacion', 'IdComprobacion');
+    }
+
+    public function estado()
+    {
+        return $this->belongsTo(CtgEstadoComprobacion::class, 'IdEstatus', 'idctg_estados_comprobaciones');
     }
 
     /**
@@ -215,22 +233,7 @@ class Comprobacion extends Model
     public function getEstadoFormatAttribute()
     {
         try {
-            if($this->Estatus == 0)
-            {
-                return  'ABIERTO SIN DOCUMENTOS';
-            }
-            if($this->Estatus == 1)
-            {
-                return  'ABIERTO CON DOCUMENTOS CARGADOS';
-            }
-            if($this->Estatus == 2)
-            {
-                return  'CERRADA';
-            }
-            if($this->Estatus == 3)
-            {
-                return  'COMPROBADO';
-            }
+            return  $this->estado->descripcion;
         } catch (\Exception $e) {
             return null;
         }
@@ -243,13 +246,16 @@ class Comprobacion extends Model
             {
                 return  '#2d7ce8';
             }
-            if($this->Estatus == 2)
+            else if($this->Estatus == 2)
             {
                 return  '#e8e22d';
             }
-            if($this->Estatus == 3)
+            else if($this->Estatus == 3)
             {
                 return  '#29be22';
+            }
+            else{
+                return '#51de48';
             }
 
             return $this->Estatus == 2 ? '#e8e22d' : '#29be22';
@@ -575,11 +581,10 @@ class Comprobacion extends Model
 
     private function validaEliminacion()
     {
-        // PENDIENTE
-        /*if ($this->idestado != 1 && $this->idestado != 2)
+        if ($this->Estatus != 1 || $this->Estatus != 2 || $this->Estatus != 3)
         {
-            abort(500, "La relación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede eliminarse.");
-        }*/
+            abort(500, "La comprobación de gastos (" . $this->folio_format . ") su estado es: '". $this->estado_format ."' no puede eliminarse.");
+        }
     }
 
     public function cerrar()
@@ -588,6 +593,8 @@ class Comprobacion extends Model
         try {
             DB::connection('controlrec')->beginTransaction();
 
+            $estatus_nvo = $this->Estatus;
+            $id_estatus_nvo = $this->IdEstatus;
             if($this->Estatus == 1)
             {
                 $estatus_nvo = 2;
@@ -622,16 +629,24 @@ class Comprobacion extends Model
         {
             abort(500, "La comprobación de gastos (" . $this->folio . ") no cuenta con documentos, por lo tanto, no puede cerrarse.");
         }
-        dd($this->idestado);
-        if ($this->Estatus != 2)
+
+        if ($this->Estatus != 1)
         {
-            abort(500, "La comprobación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede cerrarse.");
+            abort(500, "La comprobación de gastos (" . $this->folio . ") su estado es: '". $this->estado_format ."' no puede cerrarse.");
+        }
+
+        $comprobacion = self::where('DoctoOrigen', $this->DoctoOrigen)->orderBy('IdComprobacion', 'desc')->first();
+
+        if ($comprobacion->getKey() != $this->getKey())
+        {
+            abort(500, "La comprobación de gastos (" . $this->folio_format . ") no puede ser abierta porque se afectarian los saldos de las comprobaciones posteriores a esta aplicadas a la solicitud: ".$this->solicitud->folio_formato.".");
         }
     }
 
     public function abrir()
     {
         $this->validaApertura();
+        dd("PASO");
         try {
             DB::connection('controlrec')->beginTransaction();
 
@@ -656,9 +671,16 @@ class Comprobacion extends Model
 
     private function validaApertura()
     {
-        if ($this->idestado != 5)
+        $comprobacion = self::where('DoctoOrigen', $this->DoctoOrigen)->orderBy('IdComprobacion', 'desc')->first();
+
+        if ($comprobacion->getKey() != $this->getKey())
         {
-            abort(500, "La relación de gastos (" . $this->folio . ") su estado es: '". $this->estatus_descripcion ."' no puede abrirse.");
+            abort(500, "La comprobación de gastos (" . $this->folio_format . ") no puede ser abierta porque se afectarian los saldos de las comprobaciones posteriores a esta aplicadas a la solicitud: ".$this->solicitud->folio_formato.".");
+        }
+
+        if ($this->Estatus != 2)
+        {
+            abort(500, "La comprobación de gastos (" . $this->folio_format . ") su estado es: '". $this->estado_format ."' no puede abrirse.");
         }
     }
 }

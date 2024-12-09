@@ -2,6 +2,8 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use Illuminate\Support\Facades\DB;
+
 class SolChequeComprobacion extends SolCheque
 {
     protected static function boot()
@@ -31,6 +33,12 @@ class SolChequeComprobacion extends SolCheque
         return $this->belongsTo(DevolucionAbonadoSolicitud::class, 'IdSolCheques', 'IdSolicitud');
     }
 
+    public function solicitudesComprobadas()
+    {
+        return $this->hasManyThrough(Comprobacion::class, SolicitudComprobada::class, 'IdComprobacion','IdSolCheques','IdComprobacion', 'IdSolCheques')
+            ->whereIn(  'comprobaciones.estatus', [0,1]);
+    }
+
     /**
      * Scopes
      */
@@ -46,7 +54,33 @@ class SolChequeComprobacion extends SolCheque
 
     public function scopeTipoPago($query, $tipo)
     {
+
+      dd($this->whereHas('solicitudesComprobadas', function ($q){
+           return $q->whereIn('Estatus', [0,1]);
+        })->get()>$this->toArray());
        return $query->whereRaw("IdTipoPago in (".$tipo.")");
+    }
+
+    public function scopeValidarDocumentos($query)
+    {
+        return $query->where();
+
+
+        return DB::connection('controlrec')->select(DB::raw("
+            SELECT
+                c.folio as folio,
+                sch.Serie as seriesol,
+                sch.Folio as foliosol
+            FROM
+                comprobaciones as c,
+                solicitudescomprobadas as scm,
+                solcheques as sch
+            WHERE
+                scm.idsolcheque= ".$this->getKey()." AND
+                scm.idsolcheque=sch.idsolcheques AND
+                c.estatus in (0,1) AND
+                scm.idcomprobacion=c.idcomprobacion
+        "));
     }
 
     /**
@@ -132,8 +166,35 @@ class SolChequeComprobacion extends SolCheque
         }
     }
 
+    public function getValidoAttribute()
+    {
+        try {
+            return count($this->disponibleComprobacion());
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
 
     /**
      * Métodos
      */
+    public function disponibleComprobacion()
+    {
+        return DB::connection('controlrec')->select(DB::raw("
+            SELECT
+                c.folio as folio,
+                sch.Serie as seriesol,
+                sch.Folio as foliosol
+            FROM
+                comprobaciones as c,
+                solicitudescomprobadas as scm,
+                solcheques as sch
+            WHERE
+                scm.idsolcheque= ".$this->getKey()." AND
+                scm.idsolcheque=sch.idsolcheques AND
+                c.estatus in (0,1) AND
+                scm.idcomprobacion=c.idcomprobacion
+        "));
+    }
 }

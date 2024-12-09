@@ -6,7 +6,7 @@
         <router-link v-if="value.registrar" :to="{ name: 'comprobacion-gastos-relacion', params: {id: value.id}}" type="button" class="btn btn-sm btn-outline-info" title="Generar">
             <i class="fa fa-plus"></i>
         </router-link>
-        <router-link v-if="value.edit" :to="{ name: 'comprobacion-gasto-edit', params: {id: value.id_comprobacion}}" type="button" class="btn btn-sm btn-outline-info" title="Editar">
+        <router-link v-if="value.edit" :to="{ name: 'comprobacion-gasto-edit', params: {id: value.id}}" type="button" class="btn btn-sm btn-outline-info" title="Editar">
             <i class="fa fa-pencil"></i>
         </router-link>
         <button v-if="value.cerrar" @click="cerrar" type="button" class="btn btn-sm btn-outline-warning" title="Cerrar">
@@ -28,7 +28,7 @@
         methods: {
             cerrar() {
                 return this.$store.dispatch('controlRecursos/comprobacion/close', {
-                    id: this.value.id_comprobacion
+                    id: this.value.id
                 })
                     .then(data => {
                         this.$store.commit('controlRecursos/comprobacion/UPDATE_COMPROBACION', data);
@@ -36,7 +36,7 @@
             },
             abrir() {
                 return this.$store.dispatch('controlRecursos/comprobacion/open', {
-                    id: this.value.id_comprobacion
+                    id: this.value.id
                 })
                     .then(data => {
                         this.find();
