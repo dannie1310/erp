@@ -5,7 +5,7 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">NÓMINAS</li>
-            <li class="nav-item"  v-if="$root.can('consultar_factura_cuenta_x_cobrar',true)">
+            <li class="nav-item"  v-if="$root.can('consultar_poliza_nominas_ctpq',true)">
                 <router-link :to="{name: 'seleccionar-empresa-nom'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-empresa-nom'}">
                     <i class="fa fa-file-invoice-dollar nav-icon"></i>
                     <p>Polizas de Nómina</p>
