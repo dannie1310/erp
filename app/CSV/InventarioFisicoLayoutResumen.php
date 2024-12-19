@@ -24,12 +24,12 @@ class InventarioFisicoLayoutResumen implements FromCollection, WithHeadings
     public function collection()
     {
         $user = array();
-        foreach ($this->inventario->marbetes as $marbete){
+        foreach ($this->inventario->marbetes as $key => $marbete){
             $conteos = array();
             foreach ($marbete->conteos as $conteo){
                 $conteos[$conteo->tipo_conteo] = $conteo;
             }
-            $folio_marbete= str_pad($marbete->folio,6,0,0);
+            $folio_marbete= str_pad($marbete->folio,6,0,0); if($key == 1) { dd($marbete->precioUnitarioPromedio());  }//  "1372.8695652173913"
             $user[]=array(
                 "folio"=>$this->inventario->getNumeroFolioFormatAttribute(). ' '.chunk_split($folio_marbete, 3, ' '),
                 "almacen"=>$marbete->almacen->descripcion,

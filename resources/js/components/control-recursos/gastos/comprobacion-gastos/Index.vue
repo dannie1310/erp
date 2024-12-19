@@ -98,10 +98,10 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 id: comprobacion.id,
-                                edit: (self.$root.can('editar_comprobacion_gastos', true) && comprobacion.estado == 1)  ? true : false,
-                                delete: (self.$root.can('eliminar_comprobacion_gastos', true) && (comprobacion.estado == 0 || comprobacion.estado == 1)) ? true : false,
-                                cerrar: (self.$root.can('cerrar_comprobacion_gastos', true) && comprobacion.estado == 1) ? true : false,
-                                abrir: (self.$root.can('abrir_comprobacion_gastos', true) && comprobacion.estado == 2) ? true : false,
+                                edit: (self.$root.can('editar_comprobacion_gastos', true) && comprobacion.estatus == 1)  ? true : false,
+                                delete: (self.$root.can('eliminar_comprobacion_gastos', true) && (comprobacion.estatus == 0 || comprobacion.estatus == 1)) ? true : false,
+                                cerrar: (self.$root.can('cerrar_comprobacion_gastos', true) && comprobacion.estatus == 1) ? true : false,
+                                abrir: (self.$root.can('abrir_comprobacion_gastos', true) && comprobacion.estatus == 2) ? true : false,
                             })
                     }))
                 },

@@ -35,8 +35,7 @@ class SolChequeComprobacion extends SolCheque
 
     public function solicitudesComprobadas()
     {
-        return $this->hasManyThrough(Comprobacion::class, SolicitudComprobada::class, 'IdComprobacion','IdSolCheques','IdComprobacion', 'IdSolCheques')
-            ->whereIn(  'comprobaciones.estatus', [0,1]);
+        return $this->hasManyThrough(Comprobacion::class, SolicitudComprobada::class, 'IdSolChequeA','IdComprobacionB','IdSolChequesC', 'IdComprobacionD');
     }
 
     /**
@@ -56,7 +55,7 @@ class SolChequeComprobacion extends SolCheque
     {
 
       dd($this->whereHas('solicitudesComprobadas', function ($q){
-           return $q->whereIn('Estatus', [0,1]);
+           return $q->whereIn('comprobaciones.Estatus', [0,1]);
         })->get()>$this->toArray());
        return $query->whereRaw("IdTipoPago in (".$tipo.")");
     }
