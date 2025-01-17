@@ -242,15 +242,15 @@ class Comprobacion extends Model
     public function getEstadoColorAttribute()
     {
         try {
-            if($this->Estatus == 0)
+            if($this->IdEstatus == 1)
             {
                 return  '#2d7ce8';
             }
-            else if($this->Estatus == 2)
+            else if($this->IdEstatus == 2)
             {
                 return  '#e8e22d';
             }
-            else if($this->Estatus == 3)
+            else if($this->IdEstatus == 3)
             {
                 return  '#29be22';
             }
@@ -258,7 +258,7 @@ class Comprobacion extends Model
                 return '#51de48';
             }
 
-            return $this->Estatus == 2 ? '#e8e22d' : '#29be22';
+           // return $this->Estatus == 2 ? '#e8e22d' : '#29be22';
         } catch (\Exception $e) {
             return null;
         }
