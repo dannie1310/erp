@@ -7,8 +7,10 @@ namespace App\PDF\Contratos;
 // use Ghidev\Fpdf\Rotation;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Utils\PDF\FPDI\FPDI;
 use App\Models\CADECO\Subcontrato;
+use App\Models\IGH\TipoCambio;
+use App\Utils\PDF\FPDI\FPDI;
+use DateTime;
 
 class SubcontratoFormato extends FPDI
 {
@@ -377,43 +379,63 @@ class SubcontratoFormato extends FPDI
         $this->totales();
     }
 
-    function totales(){
-        $desc_monetario = (($this->subcontrato->monto- $this->subcontrato->impuesto +$this->subcontrato->impuesto_retenido) * 100) / (100 - $this->subcontrato->PorcentajeDescuento) -
-                                ($this->subcontrato->monto - $this->subcontrato->impuesto + $this->subcontrato->impuesto_retenido);
-        $fg_monto = ($this->subcontrato->monto- $this->subcontrato->impuesto +$this->subcontrato->impuesto_retenido) * ($this->subcontrato->retencion /100) ;
+    function totales()
+    {
+        $desc_monetario = (($this->subcontrato->monto - $this->subcontrato->impuesto + $this->subcontrato->impuesto_retenido) * 100) / (100 - $this->subcontrato->PorcentajeDescuento) -
+            ($this->subcontrato->monto - $this->subcontrato->impuesto + $this->subcontrato->impuesto_retenido);
+        $fg_monto = ($this->subcontrato->monto - $this->subcontrato->impuesto + $this->subcontrato->impuesto_retenido) * ($this->subcontrato->retencion / 100);
 
-        $this->encola="";
+        $this->encola = "";
         $y_subtotal = $this->GetY();
-        $this->SetTextColor(0,0,0);
+        $this->SetTextColor(0, 0, 0);
         $this->SetFont('Arial', '', 7);
-        $this->Cell(17.5, .5, 'Subtotal Antes Descuento:', 0, 0,'R');
-        $this->Cell(2, .5, number_format($this->subcontrato->subtotal_antes_descuento,2, '.', ','), 1, 0,'R');
+        $this->Cell(17.5, .5, 'Subtotal Antes Descuento:', 0, 0, 'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->subtotal_antes_descuento, 2, '.', ','), 1, 0, 'R');
         $this->Ln(.5);
-        $this->Cell(17.5, .5, 'Descuento Global ('.$this->subcontrato->PorcentajeDescuento.'%):', 0, 0,'R');
-        $this->Cell(2, .5, number_format($desc_monetario,2, '.', ','), 1, 0,'R');
-        $this->Ln(.5);
-
-        $this->Cell(17.5, .5, 'Subtotal:', 0, 0,'R');
-        $this->Cell(2, .5, number_format($this->subcontrato->subtotal,2, '.', ','), 1, 0,'R');
-        $this->Ln(.5);
-        $this->Cell(17.5, .5, 'IVA ('.$this->subcontrato->tasa_iva.'%):', 0, 0,'R');
-        $this->Cell(2, .5, number_format($this->subcontrato->impuesto,2, '.', ','), 1, 0,'R');
-        $this->Ln(.5);
-        $this->Cell(17.5, .5, 'Total:', 0, 0,'R');
-        $this->Cell(2, .5, number_format($this->subcontrato->monto,2, '.', ','), 1, 0,'R');
-        $this->Ln(.5);
-        $this->Cell(17.5, .5, 'Moneda:', 0, 0,'R');
-        $this->Cell(2, .5, $this->subcontrato->moneda->nombre, 1, 0,'R');
+        $this->Cell(17.5, .5, 'Descuento Global (' . $this->subcontrato->PorcentajeDescuento . '%):', 0, 0, 'R');
+        $this->Cell(2, .5, number_format($desc_monetario, 2, '.', ','), 1, 0, 'R');
         $this->Ln(.5);
 
-        $this->SetTextColor(0,0,0);
-        $this->Cell(17.5, .5, 'Anticipo ('.$this->subcontrato->anticipo.'%): ', 0, 0,'R');
-        $this->Cell(2, .5, number_format($this->subcontrato->anticipo_monto,2, '.', ','), 1, 0,'R');
+        $this->Cell(17.5, .5, 'Subtotal:', 0, 0, 'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->subtotal, 2, '.', ','), 1, 0, 'R');
+        $this->Ln(.5);
+        $this->Cell(17.5, .5, 'IVA (' . $this->subcontrato->tasa_iva . '%):', 0, 0, 'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->impuesto, 2, '.', ','), 1, 0, 'R');
+        $this->Ln(.5);
+        $this->Cell(17.5, .5, 'Total:', 0, 0, 'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->monto, 2, '.', ','), 1, 0, 'R');
+        $this->Ln(.5);
+        $this->Cell(17.5, .5, 'Moneda:', 0, 0, 'R');
+        $this->Cell(2, .5, $this->subcontrato->moneda->nombre, 1, 0, 'R');
         $this->Ln(.5);
 
-        $this->SetTextColor(0,0,0);
-        $this->Cell(17.5, .5,  utf8_decode('Fondo de garantía ('.$this->subcontrato->retencion).'%): ', 0, 0,'R');
-        $this->Cell(2, .5, number_format($fg_monto,2, '.', ','), 1, 0,'R');
+        $this->SetTextColor(0, 0, 0);
+        $this->Cell(17.5, .5, 'Anticipo (' . $this->subcontrato->anticipo . '%): ', 0, 0, 'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->anticipo_monto, 2, '.', ','), 1, 0, 'R');
+        $this->Ln(.5);
+
+        $this->SetTextColor(0, 0, 0);
+        $this->Cell(17.5, .5, utf8_decode('Fondo de garantía (' . $this->subcontrato->retencion) . '%): ', 0, 0, 'R');
+        $this->Cell(2, .5, number_format($fg_monto, 2, '.', ','), 1, 0, 'R');
+
+        $fecha =New DateTime($this->subcontrato->fecha);
+        if ($this->subcontrato->id_moneda != 1)
+        {
+            $tipo = $this->subcontrato->tipo_cambio;
+            if($tipo == null)
+            {
+                $moneda = $this->subcontrato->id_moneda == 2 ? 1 : 2;
+                $tipo_cambio = TipoCambio::where('fecha', $fecha->format("Y-m-d"))->where('moneda', $moneda)->first();
+                if($tipo_cambio == null){
+                    $tipo_cambio = TipoCambio::where('moneda', $moneda)->orderBy('fecha', 'desc')->first();
+                }
+                $tipo = $tipo_cambio->tipo_cambio;
+            }
+            $this->Ln(.5);
+            $this->SetTextColor(0, 0, 0);
+            $this->Cell(17.5, .5, utf8_decode('Tipo Cambio MN') . ': ', 0, 0, 'R');
+            $this->Cell(2, .5, number_format($tipo, 4, '.', ','), 1, 0, 'R');
+        }
         $this->Ln(.7);
 
         $this->SetTextColor(0,0,0);
