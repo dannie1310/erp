@@ -7,8 +7,10 @@ namespace App\PDF\Contratos;
 // use Ghidev\Fpdf\Rotation;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Utils\PDF\FPDI\FPDI;
 use App\Models\CADECO\Subcontrato;
+use App\Models\IGH\TipoCambio;
+use App\Utils\PDF\FPDI\FPDI;
+use DateTime;
 
 class SubcontratoFormato extends FPDI
 {
@@ -416,12 +418,23 @@ class SubcontratoFormato extends FPDI
         $this->Cell(17.5, .5, utf8_decode('Fondo de garantía (' . $this->subcontrato->retencion) . '%): ', 0, 0, 'R');
         $this->Cell(2, .5, number_format($fg_monto, 2, '.', ','), 1, 0, 'R');
 
+        $fecha =New DateTime($this->subcontrato->fecha);
         if ($this->subcontrato->id_moneda != 1)
         {
+            $tipo = $this->subcontrato->tipo_cambio;
+            if($tipo == null)
+            {
+                $moneda = $this->subcontrato->id_moneda == 2 ? 1 : 2;
+                $tipo_cambio = TipoCambio::where('fecha', $fecha->format("Y-m-d"))->where('moneda', $moneda)->first();
+                if($tipo_cambio == null){
+                    $tipo_cambio = TipoCambio::where('moneda', $moneda)->orderBy('fecha', 'desc')->first();
+                }
+                $tipo = $tipo_cambio->tipo_cambio;
+            }
             $this->Ln(.5);
             $this->SetTextColor(0, 0, 0);
             $this->Cell(17.5, .5, utf8_decode('Tipo Cambio MN') . ': ', 0, 0, 'R');
-            $this->Cell(2, .5, number_format($this->subcontrato->tasa_iva, 4, '.', ','), 1, 0, 'R');
+            $this->Cell(2, .5, number_format($tipo, 4, '.', ','), 1, 0, 'R');
         }
         $this->Ln(.7);
 
