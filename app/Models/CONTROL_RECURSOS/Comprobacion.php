@@ -298,7 +298,7 @@ class Comprobacion extends Model
                 'Recibio_CCH' => 0,
                 'registro_portal' => 1
             ]);
-            $this->setFirmas();
+           // $this->setFirmas();
 
             SolicitudComprobada::create([
                 'IdSolcheque' => $data['solicitud']['id'],
