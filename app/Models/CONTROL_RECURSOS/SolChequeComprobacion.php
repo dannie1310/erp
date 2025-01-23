@@ -23,6 +23,11 @@ class SolChequeComprobacion extends SolCheque
         return $this->belongsTo(Proveedor::class,  'IdProveedor', 'idproveedor')->empleados();
     }
 
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class,  'IdProveedor', 'idproveedor');
+    }
+
     public function comprobacion()
     {
         return $this->belongsTo(Comprobacion::class, 'IdSolCheques','DoctoOrigen');
@@ -35,7 +40,7 @@ class SolChequeComprobacion extends SolCheque
 
     public function solicitudesComprobadas()
     {
-        return $this->hasManyThrough(Comprobacion::class, SolicitudComprobada::class, 'IdSolChequeA','IdComprobacionB','IdSolChequesC', 'IdComprobacionD');
+        return $this->hasManyThrough(Comprobacion::class, SolicitudComprobada::class, 'IdSolCheque','IdComprobacion','IdSolCheques', 'IdComprobacion');
     }
 
     /**
@@ -54,18 +59,26 @@ class SolChequeComprobacion extends SolCheque
     public function scopeTipoPago($query, $tipo)
     {
 
-      dd($this->whereHas('solicitudesComprobadas', function ($q){
+        return $query->whereRaw("Importe>SaldoComprobado AND
+                estatus in(24,25,34,35) AND
+                IdTipoPago=4 AND
+	            serie='RH'");
+       // return $query->whereRaw("estatus in (24,25,26,34,35)");
+     /* return $this->whereHas('solicitudesComprobadas', function ($q){
            return $q->whereIn('comprobaciones.Estatus', [0,1]);
-        })->get()>$this->toArray());
-       return $query->whereRaw("IdTipoPago in (".$tipo.")");
+        })->whereRaw("estatus in (24,25,26,34,35)");*/
+      // return $query->whereRaw("IdTipoPago in (".$tipo.")");
     }
 
     public function scopeValidarDocumentos($query)
     {
-        return $query->where();
+        return $query->whereRaw("Importe>SaldoComprobado AND
+                estatus in(24,25,34,35) AND
+                IdTipoPago=4 AND
+	            serie='RH'");
 
 
-        return DB::connection('controlrec')->select(DB::raw("
+       /* return DB::connection('controlrec')->select(DB::raw("
             SELECT
                 c.folio as folio,
                 sch.Serie as seriesol,
@@ -79,7 +92,7 @@ class SolChequeComprobacion extends SolCheque
                 scm.idsolcheque=sch.idsolcheques AND
                 c.estatus in (0,1) AND
                 scm.idcomprobacion=c.idcomprobacion
-        "));
+        "));*/
     }
 
     /**
@@ -112,7 +125,7 @@ class SolChequeComprobacion extends SolCheque
     public function getEmpleadoDescripcionAttribute()
     {
         try {
-            return $this->empleado->RazonSocial;
+            return $this->proveedor->RazonSocial;
         } catch (\Exception $e) {
             return null;
         }
