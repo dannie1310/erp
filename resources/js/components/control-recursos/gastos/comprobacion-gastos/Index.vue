@@ -34,7 +34,7 @@
                     { title: 'Folio', field: 'folio',sortable: true,thClass: 'th_c80',  thComp: require('../../../globals/th-Filter').default},
                     { title: 'Importe', field: 'importe', thClass :'th_c100', tdClass: 'right', sortable: true},
                     { title: 'Estatus', field: 'idestado', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c80', tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,

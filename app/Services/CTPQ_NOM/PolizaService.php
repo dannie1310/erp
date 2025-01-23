@@ -71,7 +71,8 @@ class PolizaService
 
         foreach ($polizas as $key => $item)
         {
-            $cuenta = CuentaContableIFS::where('cuenta_contpaq', $item->cuenta)->first();
+            $cuenta = CuentaContableIFS::where('cuenta_contpaq', $item->cuenta)->where('empresa', $proyecto_ifs->empresa)->first();
+
             if ($cuenta == null)
             {
                 abort(500, "La cuenta (".$item->cuenta.") de CONTPAQ-NOM de la empresa (".$empresa->NombreEmpresa .") no existe en IFS.\n \n Favor de contactar a soporte a aplicaciones.");
@@ -106,7 +107,7 @@ class PolizaService
                 'C10' => $item->DEUDORES,
                 'C11' => $item->LIBRE,
                 'C12' => $item->codigo_divisa,
-                'N01' => $proyecto_ifs->secuencia_ifs,
+                'N01' => $cuenta->secuencia_ifs,
                 'N02' => $debe,
                 'N03' => $haber,
                 'C13' => $item->Referencia,

@@ -123,7 +123,7 @@
                         <div class="col-md-4">
                             <div class="form-group error-content">
                                 <label class="col-form-label">Importe:</label>
-                                <h6>{{solicitud.importe_format}} </h6>
+                                <h6>{{solicitud.saldo_format}} </h6>
                             </div>
                         </div>
                     </div>
