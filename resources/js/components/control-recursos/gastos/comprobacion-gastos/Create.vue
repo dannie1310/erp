@@ -175,7 +175,7 @@ export default {
         {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/solicitud-comprobacion/index', {
-                params: { sort: 'timestampRegistro', order: 'desc', include: ['comprobacion'], scope: ['validarEstado:24,25,34,35', 'tipoPago:4']},
+                params: { sort: 'timestampRegistro', order: 'desc', include: ['comprobacion'], scope: ['documentosParaRegistrar']},
             }).then(data => {
                 this.solicitudes = data.data;
             }).finally(()=>{

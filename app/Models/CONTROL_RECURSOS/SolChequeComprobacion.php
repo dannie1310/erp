@@ -58,41 +58,14 @@ class SolChequeComprobacion extends SolCheque
 
     public function scopeTipoPago($query, $tipo)
     {
-
-        return $query->whereRaw("Importe>SaldoComprobado AND
-                estatus in(24,25,34,35) AND
-                IdTipoPago=4 AND
-	            serie='RH'");
-       // return $query->whereRaw("estatus in (24,25,26,34,35)");
-     /* return $this->whereHas('solicitudesComprobadas', function ($q){
-           return $q->whereIn('comprobaciones.Estatus', [0,1]);
-        })->whereRaw("estatus in (24,25,26,34,35)");*/
-      // return $query->whereRaw("IdTipoPago in (".$tipo.")");
+        return $query->whereRaw("IdTipoPago in (" . $tipo . ")");
     }
 
-    public function scopeValidarDocumentos($query)
+    public function scopeDocumentosParaRegistrar($query)
     {
         return $query->whereRaw("Importe>SaldoComprobado AND
                 estatus in(24,25,34,35) AND
-                IdTipoPago=4 AND
-	            serie='RH'");
-
-
-       /* return DB::connection('controlrec')->select(DB::raw("
-            SELECT
-                c.folio as folio,
-                sch.Serie as seriesol,
-                sch.Folio as foliosol
-            FROM
-                comprobaciones as c,
-                solicitudescomprobadas as scm,
-                solcheques as sch
-            WHERE
-                scm.idsolcheque= ".$this->getKey()." AND
-                scm.idsolcheque=sch.idsolcheques AND
-                c.estatus in (0,1) AND
-                scm.idcomprobacion=c.idcomprobacion
-        "));*/
+                IdTipoPago=4");
     }
 
     /**
