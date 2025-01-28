@@ -10,6 +10,7 @@ use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\PDF\ControlRecursos\ComprobacionGastosFormato;
 use App\Repositories\CONTROLRECURSOS\ComprobacionRepository as Repository;
 use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use App\Utils\CFD;
@@ -434,5 +435,11 @@ class ComprobacionService
     public function open($id)
     {
         return $this->repository->show($id)->abrir();
+    }
+
+    public function pdf($id)
+    {
+        $pdf = new ComprobacionGastosFormato($this->repository->show($id));
+        return $pdf->create();
     }
 }

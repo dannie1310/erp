@@ -18,13 +18,16 @@
         <router-link :to="{ name: 'comprobacion-gasto-delete', params: {id: value.id}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
             <i class="fa fa-trash"></i>
         </router-link>
+        <PDF v-bind:id="value.id" />
     </div>
 </template>
 
 <script>
+    import PDF from "../FormatoComprobacionGasto";
     export default {
         name: "solicitud-comprobacion-gastos-action-buttons",
         props: ['value'],
+        components: { PDF },
         methods: {
             cerrar() {
                 return this.$store.dispatch('controlRecursos/comprobacion/close', {

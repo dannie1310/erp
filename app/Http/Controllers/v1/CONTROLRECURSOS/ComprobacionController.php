@@ -37,7 +37,7 @@ class ComprobacionController extends Controller
     {
         $this->middleware('auth:api');
 
-        $this->middleware('permisoGlobal:consultar_comprobacion_gastos')->only(['show','paginate','index','pdfRelacion']);
+        $this->middleware('permisoGlobal:consultar_comprobacion_gastos')->only(['show','paginate','index','pdf']);
         $this->middleware('permisoGlobal:registrar_comprobacion_gastos')->only('store');
         $this->middleware('permisoGlobal:editar_comprobacion_gastos')->only('update');
         $this->middleware('permisoGlobal:abrir_comprobacion_gastos')->only('open');
@@ -57,5 +57,10 @@ class ComprobacionController extends Controller
     public function open(Request $request, $id)
     {
         return $this->respondWithItem($this->service->open($id));
+    }
+
+    public function pdf($id)
+    {
+        return $this->service->pdf($id);
     }
 }

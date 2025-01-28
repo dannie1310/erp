@@ -242,7 +242,11 @@ class Comprobacion extends Model
     public function getEstadoColorAttribute()
     {
         try {
-            if($this->IdEstatus == 1)
+            if($this->IdEstatus == 0)
+            {
+                return  '#2d7ce8';
+            }
+            else if($this->IdEstatus == 1)
             {
                 return  '#2d7ce8';
             }
