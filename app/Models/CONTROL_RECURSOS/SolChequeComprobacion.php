@@ -61,11 +61,13 @@ class SolChequeComprobacion extends SolCheque
         return $query->whereRaw("IdTipoPago in (" . $tipo . ")");
     }
 
-    public function scopeDocumentosParaRegistrar($query)
+    public function scopeDocumentosParaRegistrar($query, $idSerie)
     {
-        return $query->whereRaw("Importe>SaldoComprobado AND
+        $serie = Serie::where('idseries', $idSerie)->first();
+        return $query->withoutGlobalScopes()->whereRaw("Importe>SaldoComprobado AND
                 estatus in(24,25,34,35) AND
-                IdTipoPago=4");
+                IdTipoPago=4 AND
+                Serie ='" . $serie->Descripcion . "'");
     }
 
     /**
