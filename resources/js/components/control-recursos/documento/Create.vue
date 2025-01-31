@@ -181,10 +181,10 @@
                                         v-on:keyup="calcularImpuesto"
                                         :error="errors.has('iva')"
                                         v-validate="{required: true}"
-                                        v-model="idtasa_iva">
+                                        v-model="iva">
                                      <option value>-- Selecionar --</option>
-                                     <option v-for="(m) in tasas" :value="m.id">{{m.tasa_iva}}</option>
-                                     <div style="display:block" class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div> %
+                                     <option v-for="(m) in tasas" :value="m.tasa_iva">{{m.tasa_iva}} %</option>
+                                     <div style="display:block" class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div>
                                 </select>
                             </label>
                         </div>
@@ -314,8 +314,7 @@ export default {
             retencion: 0,
             otros: 0,
             total: 0,
-            tasas: [],
-            idtasa_iva: ''
+            tasas: []
         }
     },
     mounted() {
@@ -443,14 +442,6 @@ export default {
             retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
 
             this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toFixed(2).toString().formatearkeyUp();
-        },
-        getTasasIva() {
-            return this.$store.dispatch('controlRecursos/tasa-iva/index', {
-                params: {sort: 'tasa_iva', order: 'desc', scope:'activo'}
-            })
-                .then(data => {
-                    this.tasas = data.data;
-                })
         },
     },
     watch: {
