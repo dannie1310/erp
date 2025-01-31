@@ -174,19 +174,18 @@
                     <div class="col-md-10">
                         <div class="form-group error-content float-right">
                             <label for="iva">IVA:
-                                <select data-vv-as="IVA"
+                                <select
+                                        data-vv-as="IVA"
                                         id="iva"
                                         name="iva"
                                         v-on:keyup="calcularImpuesto"
                                         :error="errors.has('iva')"
                                         v-validate="{required: true}"
-                                        v-model="iva">
-                                    <option value="16">16</option>
-                                    <option value="11">11</option>
-                                    <option value="1">1</option>
-                                    <option value="0">0</option>
+                                        v-model="idtasa_iva">
+                                     <option value>-- Selecionar --</option>
+                                     <option v-for="(m) in tasas" :value="m.id">{{m.tasa_iva}}</option>
+                                     <div style="display:block" class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div> %
                                 </select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div> %
                             </label>
                         </div>
                     </div>
@@ -314,7 +313,9 @@ export default {
             impuesto: 0,
             retencion: 0,
             otros: 0,
-            total: 0
+            total: 0,
+            tasas: [],
+            idtasa_iva: ''
         }
     },
     mounted() {
@@ -322,6 +323,7 @@ export default {
         this.getEmpresas();
         this.getMonedas();
         this.getSeries();
+        this.getTasasIva();
         this.fechasDeshabilitadas.from = new Date();
         this.fecha = new Date();
         this.vencimiento = new Date();
@@ -441,6 +443,14 @@ export default {
             retencion_sin_comas = this.retencion.toString().replace(/,/g, '');
 
             this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toFixed(2).toString().formatearkeyUp();
+        },
+        getTasasIva() {
+            return this.$store.dispatch('controlRecursos/tasa-iva/index', {
+                params: {sort: 'tasa_iva', order: 'desc', scope:'activo'}
+            })
+                .then(data => {
+                    this.tasas = data.data;
+                })
         },
     },
     watch: {
