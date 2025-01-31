@@ -443,6 +443,14 @@ export default {
 
             this.total = (parseFloat(subtotal_sin_comas) + parseFloat(impuesto_sin_comas) + parseFloat(otros_sin_comas) - parseFloat(retencion_sin_comas)).toFixed(2).toString().formatearkeyUp();
         },
+        getTasasIva() {
+            return this.$store.dispatch('controlRecursos/tasa-iva/index', {
+                params: {sort: 'tasa_iva', order: 'desc', scope:'activo'}
+            })
+                .then(data => {
+                    this.tasas = data.data;
+                })
+        },
     },
     watch: {
         idserie(value)
