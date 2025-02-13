@@ -154,10 +154,11 @@ export default {
                 });
         },
         getConfiguraciones() {
-            return this.$store.dispatch('finanzas/estimacion/index', { params: this.query1 } )
-                .then(data => {
-                    this.configuracion = data.data[0]
-                });
+            return this.$store.dispatch('finanzas/estimacion/index', {
+                params: {scope: ['porObra']}
+            }).then(data => {
+                this.configuracion = data.data[0]
+            });
         },
     }
 }
