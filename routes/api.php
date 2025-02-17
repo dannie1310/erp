@@ -2189,6 +2189,10 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolRecSemanaAnioController@index');
         });
 
+        $api->group(['prefix' => 'tasa-iva'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\TasaIvaController@index');
+        });
+
         $api->group(['prefix' => 'tipo-doc-comp'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\TipoDocCompController@index');
         });
