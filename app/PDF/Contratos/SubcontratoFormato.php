@@ -17,6 +17,7 @@ class SubcontratoFormato extends FPDI
     private $subcontrato;
     private $encabezado_pdf = '';
     private $encola = '';
+    private $paginaClausulado = 0;
 
     const DPI = 96;
     const MM_IN_INCH = 25.4;
@@ -57,11 +58,12 @@ class SubcontratoFormato extends FPDI
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS_CCSL.pdf'));
                     $ln = 11.23;
                 }else{
-                    if(strtotime($this->subcontrato->fecha) >= strtotime('2025-02-05'))
-                    {
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2023-01-01'))
+                    {dd("a");
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS2025.pdf'));
                         $ln = 20.55;
                         $nuevo = 1;
+                        $this->paginaClausulado = 1;
                     }
                     else if(strtotime($this->subcontrato->fecha) >= strtotime('2024-02-29'))
                     {
@@ -79,11 +81,12 @@ class SubcontratoFormato extends FPDI
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT_CCSL.pdf'));
                     $ln = 14.6;
                 }else{
-                    if(strtotime($this->subcontrato->fecha) >= strtotime('2025-02-05'))
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2023-01-01'))
                     {
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT2025.pdf'));
                         $ln = 19;
                         $nuevo = 1;
+                        $this->paginaClausulado = 1;
                     }
                     else if(strtotime($this->subcontrato->fecha) >= strtotime('2024-02-29'))
                     {
@@ -99,7 +102,13 @@ class SubcontratoFormato extends FPDI
             else{
                 $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_oc.pdf'));
             }
+
             $this->clausulado = $this->importPage(1);
+            if($this->paginaClausulado == 1)
+            {
+                $this->clausulado2 = $this->importPage(2);
+            }
+
             $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
             $this->sin_texto =  $this->importPage(1);
 
@@ -694,6 +703,11 @@ class SubcontratoFormato extends FPDI
         if($this->subcontrato->clasificacionSubcontrato && ($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4)){
             $this->AddPage();
             $this->useTemplate($this->clausulado,0, -0.5, 22);
+
+            if($this->paginaClausulado == 1) {
+                $this->AddPage();
+                $this->useTemplate($this->clausulado2, 0, -0.5, 22);
+            }
         }
 
 
