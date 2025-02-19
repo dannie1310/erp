@@ -33,6 +33,7 @@
                     { title: 'Fecha', thClass: 'th_c80', field: 'fecha', sortable: true,thComp: require('../../../globals/th-Date').default},
                     { title: 'Folio', field: 'folio',sortable: true,thClass: 'th_c80',  thComp: require('../../../globals/th-Filter').default},
                     { title: 'Importe', field: 'importe', thClass :'th_c100', tdClass: 'right', sortable: true},
+                    { title: 'Departamento', field: 'alias_depto', thClass: 'th_c100', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Estatus', field: 'idestado', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_c80', tdComp: require('./partials/ActionButtons').default}
                 ],
@@ -94,6 +95,7 @@
                             importe: comprobacion.importe_format,
                             folio: comprobacion.folio_format,
                             idserie: comprobacion.serie,
+                            alias_depto: comprobacion.alias_depto,
                             idestado: this.getEstado(comprobacion.estado_format, comprobacion.estado_color),
                             buttons: $.extend({}, {
                                 show: true,
