@@ -40,8 +40,8 @@ class ComprobacionGastosFormato extends Rotation
         $this->SetTextColor(255,255,255);
         $this->Cell(12.5,.5,' ',0,0,'C');
         $this->SetFillColor(0,0,0);
-        $this->Cell(3.5,.5,'SERIE',1,0,'C',1);
-        $this->Cell(3.5,.5,'FOLIO',1,1,'C',1);
+        $this->Cell(4,.5,'SERIE',1,0,'C',1);
+        $this->Cell(4,.5,'FOLIO',1,1,'C',1);
         $this->SetFillColor(204,204,204);
         $this->SetTextColor(0,0,0);
 
@@ -54,11 +54,11 @@ class ComprobacionGastosFormato extends Rotation
         //REDEFINICION DEL TAMAÑO
         $this->SetFont('Arial','B',12);
         $this->SetTextColor(0,0,0);
-        $this->Cell(3.5,.5,$this->comprobacion->Serie,1,0,'C',1);
-        $this->Cell(3.5,.5,$this->comprobacion->Folio,1,1,'C',1);
+        $this->Cell(4,.5,$this->comprobacion->Serie,1,0,'C',1);
+        $this->Cell(4,.5,$this->comprobacion->Folio,1,1,'C',1);
         $this->Cell(19.5,1,'',0,1,'C');
 
-
+        $this->tablaFechas();
 
 
 /*
@@ -96,6 +96,58 @@ class ComprobacionGastosFormato extends Rotation
 */
     }
 
+    public function tablaFechas()
+    {
+        $this->SetFont('Arial','',9);
+        $this->SetFillColor(0,0,0);
+        $this->SetTextColor(255,255,255);
+        $this->Cell(8.5,.4,' ',0,0,'C');
+        $this->Cell(3.5,.4,'FECHA',1,0,'C',1);
+        $this->Cell(8.5,.4,'VALE DEFINITIVO RELACIONADO',1,1,'C',1);
+        $this->SetFillColor(204,204,204);
+        $this->SetTextColor(0,0,0);
+
+        $this->SetFont('Arial','B',9);
+
+        $VD = '';
+		/*VERIFICAMOS LA EXISTENCIA DE UN VALE DEFINITIVO*/
+		if(($this->comprobacion->SerieVD=="") ||($this->comprobacion->FolioVD==0))
+        {
+            $VD=" - SIN VALE RELACIONADO - ";
+        }
+        else
+        {
+            $VD=$this->comprobacion->SerieVD." - ".$this->comprobacion->FolioVD;
+        }
+
+        $this->Cell(8.5,.4,' ',0,0,'C');
+        $this->Cell(3.5,.4,$this->comprobacion->fecha_format,1,0,'C',1);
+        $this->Cell(8.5,.4,$VD,1,1,'C',1);
+
+        $this->SetFont('Arial','B',12);
+
+        $this->Cell(20.5,.3,' ',0,1,'C');
+
+        $this->SetFillColor(0,0,0);
+        $this->SetTextColor(255,255,255);
+        $this->Cell(20.5,.5,$this->comprobacion->empresa_descripcion,1,1,'C',1);
+        $this->SetFillColor(204,204,204);
+        $this->SetTextColor(0,0,0);
+
+        $this->SetFont('Arial','B',11);
+
+        $this->Cell(20.5,.5,' ',0,1,'C');
+
+        $this->SetFillColor(0,0,0);
+        $this->SetTextColor(255,255,255);
+        $this->Cell(9,.5,utf8_decode('TOTAL DE LA COMPROBACIÓN:'),1,0,'L',1);
+        $this->SetFillColor(204,204,204);
+        $this->SetTextColor(0,0,0);
+        $this->Cell(11.5,.5,$this->comprobacion->total_comprobante." ".$this->comprobacion->moneda_descripcion,1,1,'C',1);
+
+
+    }
+
     public function tableHeader()
     {
         $this->Ln();
@@ -125,7 +177,7 @@ class ComprobacionGastosFormato extends Rotation
         $this->SetMargins(0.4, 0.5, 0.4);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true,3.75);
+        $this->SetAutoPageBreak(true,3);
 
       //  $this->partidas();
         try {

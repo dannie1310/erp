@@ -76,10 +76,9 @@ class ComprobacionService
             $this->repository->where([['Importe', 'LIKE', '%'.$data['total'].'%']]);
         }
 
-        if (isset($data['idmoneda']))
+        if (isset($data['alias_depto']))
         {
-            $tipo = CtgMoneda::where([['moneda', 'LIKE', '%' . $data['idmoneda'] . '%']])->pluck('id');
-            $this->repository->whereIn(['IdMoneda', $tipo]);
+            $this->repository->where([['Alias_Depto', 'LIKE', '%'.$data['alias_depto'].'%']]);
         }
 
         return $this->repository->paginate($data);

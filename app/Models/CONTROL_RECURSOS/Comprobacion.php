@@ -109,6 +109,10 @@ class Comprobacion extends Model
         return $this->belongsTo(CtgEstadoComprobacion::class, 'IdEstatus', 'idctg_estados_comprobaciones');
     }
 
+    public function moneda()
+    {
+        return $this->belongsTo(CtgMoneda::class,  'IdMoneda', 'id');
+    }
     /**
      * Scopes
      */
@@ -263,6 +267,24 @@ class Comprobacion extends Model
             }
 
            // return $this->Estatus == 2 ? '#e8e22d' : '#29be22';
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getTotalComprobanteAttribute()
+    {
+        try {
+            return  $this->documentos()->sum('Total');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getMonedaDescripcionAttribute()
+    {
+        try {
+            return $this->moneda->moneda;
         } catch (\Exception $e) {
             return null;
         }
