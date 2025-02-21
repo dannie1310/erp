@@ -177,6 +177,19 @@ class Comprobacion extends Model
         return date_format($date, "m/d/Y");
     }
 
+    public function getFechaDelFormatosAttribute()
+    {
+        $date = date_create($this->Del);
+        return date_format($date,"d-m-Y");
+    }
+
+    public function getFechaAlFormatosAttribute()
+    {
+        $date = date_create($this->Al);
+        return date_format($date,"d-m-Y");
+    }
+
+
     public function getFolioFormatAttribute()
     {
         return $this->Serie."-".$this->Folio;
@@ -285,6 +298,15 @@ class Comprobacion extends Model
     {
         try {
             return $this->moneda->moneda;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getTotalDoctosAttribute()
+    {
+        try {
+            return  $this->documentos()->count('IdDoctoComp');
         } catch (\Exception $e) {
             return null;
         }
