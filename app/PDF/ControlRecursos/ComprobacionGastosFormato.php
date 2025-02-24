@@ -189,14 +189,14 @@ class ComprobacionGastosFormato extends Rotation
         $this->Cell(20.5,.5,' ',0,1,'C');
         $EncabezadoSubtotalDeduciblesTotal=0;
 
-        for($i=1;$i<=$this->comprobacion->total_doctos;$i++)
+     /*   for($i=1;$i<=$this->comprobacion->total_doctos;$i++)
         {
             if($clasificaciondoc[$i]==1)
             {
                 $encabezadofiscal=$encabezadofiscal+1;
                 $EncabezadoSubtotalDeduciblesTotal=$EncabezadoSubtotalDeduciblesTotal+$totaldoc[$i];
             }
-        }
+        }*/
 
 
         $this->Ln();

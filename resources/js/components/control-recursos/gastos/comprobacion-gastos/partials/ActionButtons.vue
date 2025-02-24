@@ -42,7 +42,7 @@
                     id: this.value.id
                 })
                     .then(data => {
-                        this.find();
+                        this.$store.commit('controlRecursos/comprobacion/UPDATE_COMPROBACION', data);
                     })
             },
             find() {

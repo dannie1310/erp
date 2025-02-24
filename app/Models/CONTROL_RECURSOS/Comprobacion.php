@@ -694,20 +694,13 @@ class Comprobacion extends Model
     public function abrir()
     {
         $this->validaApertura();
-        dd("PASO");
         try {
             DB::connection('controlrec')->beginTransaction();
 
             $this->update([
-                'idestado' => 2
+                'IdEstatus' => 2,
+                'Estatus' => 1
             ]);
-
-            foreach ($this->documentos as $documento)
-            {
-                $documento->update([
-                    'idestado' => 1
-                ]);
-            }
 
             DB::connection('controlrec')->commit();
             return $this;
