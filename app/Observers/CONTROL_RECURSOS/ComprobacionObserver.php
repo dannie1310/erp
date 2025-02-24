@@ -18,5 +18,6 @@ class ComprobacionObserver
         $usuario = Usuario::where('idusuario',auth()->id())->first();
         $creo = $usuario->nombre_completo. "|" . date("d-m-Y") . "|" . date("H:i:s", time());
         $comprobacion->Creo = $creo;
+        $comprobacion->IdEstatus =  1;
     }
 }

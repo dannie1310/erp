@@ -10,6 +10,7 @@ use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\PDF\ControlRecursos\ComprobacionGastosFormato;
 use App\Repositories\CONTROLRECURSOS\ComprobacionRepository as Repository;
 use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use App\Utils\CFD;
@@ -75,10 +76,9 @@ class ComprobacionService
             $this->repository->where([['Importe', 'LIKE', '%'.$data['total'].'%']]);
         }
 
-        if (isset($data['idmoneda']))
+        if (isset($data['alias_depto']))
         {
-            $tipo = CtgMoneda::where([['moneda', 'LIKE', '%' . $data['idmoneda'] . '%']])->pluck('id');
-            $this->repository->whereIn(['IdMoneda', $tipo]);
+            $this->repository->where([['Alias_Depto', 'LIKE', '%'.$data['alias_depto'].'%']]);
         }
 
         return $this->repository->paginate($data);
@@ -434,5 +434,11 @@ class ComprobacionService
     public function open($id)
     {
         return $this->repository->show($id)->abrir();
+    }
+
+    public function pdf($id)
+    {
+        $pdf = new ComprobacionGastosFormato($this->repository->show($id));
+        return $pdf->create();
     }
 }

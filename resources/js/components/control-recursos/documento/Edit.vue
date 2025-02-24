@@ -168,24 +168,23 @@
                     </div>
                 </div>
                 <div class="col-md-10">
-                    <div class="form-group error-content float-right">
-                        <label for="iva">IVA:
-                            <select data-vv-as="IVA"
+                        <div class="form-group error-content float-right">
+                            <label for="iva">IVA:
+                                <select
+                                    data-vv-as="IVA"
                                     id="iva"
                                     name="iva"
                                     v-on:keyup="calcularImpuesto"
                                     :error="errors.has('iva')"
                                     v-validate="{required: true}"
                                     v-model="iva">
-                                <option value="16">16</option>
-                                <option value="11">11</option>
-                                <option value="1">1</option>
-                                <option value="0">0</option>
-                            </select>
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div> %
-                        </label>
+                                     <option value>-- Selecionar --</option>
+                                     <option v-for="(m) in tasas" :value="m.tasa_iva">{{m.tasa_iva}} %</option>
+                                     <div style="display:block" class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div>
+                                </select>
+                            </label>
+                        </div>
                     </div>
-                </div>
                 <div class="col-md-2">
                     <div class="form-group error-content float-right">
                         <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
@@ -307,12 +306,14 @@ export default {
             total: 0,
             idtipodocto: '',
             idserie: '',
+            tasas: []
         }
     },
     mounted() {
         this.getSeries();
         this.getEmpresas();
         this.getMonedas();
+        this.getTasasIva();
         this.find();
     },
     methods: {
@@ -427,6 +428,14 @@ export default {
             }).then(data => {
                 this.monedas = data.data;
             })
+        },
+        getTasasIva() {
+            return this.$store.dispatch('controlRecursos/tasa-iva/index', {
+                params: {sort: 'tasa_iva', order: 'desc', scope:'activo'}
+            })
+                .then(data => {
+                    this.tasas = data.data;
+                })
         },
         calcularImpuesto()
         {

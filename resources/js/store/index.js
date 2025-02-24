@@ -173,6 +173,7 @@ import semanaAnio from "./modules/controlRecursos/semana-anio";
 import serie from "./modules/controlRecursos/serie";
 import solicitudCheque from "./modules/controlRecursos/solicitud-cheque";
 import solicitudComprobacion from "./modules/controlRecursos/solicitud-comprobacion";
+import tasaIva from "./modules/controlRecursos/tasa-iva";
 import tipoDocComp from "./modules/controlRecursos/tipo-doc-comp";
 import tipoGasto from "./modules/controlRecursos/tipo-gasto";
 import tipoGastoComp from "./modules/controlRecursos/tipo-gasto-comp";
@@ -425,6 +426,7 @@ export default new Vuex.Store({
         'controlRecursos/serie' : serie,
         'controlRecursos/solicitud-cheque' : solicitudCheque,
         'controlRecursos/solicitud-comprobacion' : solicitudComprobacion,
+        'controlRecursos/tasa-iva' : tasaIva,
         'controlRecursos/tipo-doc-comp' : tipoDocComp,
         'controlRecursos/tipo-gasto' : tipoGasto,
         'controlRecursos/tipo-gasto-comp' : tipoGastoComp,

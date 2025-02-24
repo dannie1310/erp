@@ -699,9 +699,10 @@ class Estimacion extends Transaccion
     {
         if ($this->configuracion->ret_fon_gar_antes_iva == 0) {
             if ($this->configuracion->ret_fon_gar_con_iva == 1) {
-                return $this->suma_importes * ($this->retencion / 100) * 1.16;
+                return $this->suma_importes * ($this->retencion / 100) * (1 + $this->tasa_iva);
+
             } else {
-                return $this->total_orden_pago * ($this->retencion / 100);
+                return $this->suma_importes * ($this->retencion / 100);
             }
         } else {
             return $this->suma_importes * ($this->retencion / 100);

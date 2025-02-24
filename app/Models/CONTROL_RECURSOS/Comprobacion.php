@@ -109,6 +109,10 @@ class Comprobacion extends Model
         return $this->belongsTo(CtgEstadoComprobacion::class, 'IdEstatus', 'idctg_estados_comprobaciones');
     }
 
+    public function moneda()
+    {
+        return $this->belongsTo(CtgMoneda::class,  'IdMoneda', 'id');
+    }
     /**
      * Scopes
      */
@@ -172,6 +176,19 @@ class Comprobacion extends Model
         $date = date_create($this->Al);
         return date_format($date, "m/d/Y");
     }
+
+    public function getFechaDelFormatosAttribute()
+    {
+        $date = date_create($this->Del);
+        return date_format($date,"d-m-Y");
+    }
+
+    public function getFechaAlFormatosAttribute()
+    {
+        $date = date_create($this->Al);
+        return date_format($date,"d-m-Y");
+    }
+
 
     public function getFolioFormatAttribute()
     {
@@ -242,7 +259,11 @@ class Comprobacion extends Model
     public function getEstadoColorAttribute()
     {
         try {
-            if($this->IdEstatus == 1)
+            if($this->IdEstatus == 0)
+            {
+                return  '#2d7ce8';
+            }
+            else if($this->IdEstatus == 1)
             {
                 return  '#2d7ce8';
             }
@@ -259,6 +280,33 @@ class Comprobacion extends Model
             }
 
            // return $this->Estatus == 2 ? '#e8e22d' : '#29be22';
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getTotalComprobanteAttribute()
+    {
+        try {
+            return  $this->documentos()->sum('Total');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getMonedaDescripcionAttribute()
+    {
+        try {
+            return $this->moneda->moneda;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getTotalDoctosAttribute()
+    {
+        try {
+            return  $this->documentos()->count('IdDoctoComp');
         } catch (\Exception $e) {
             return null;
         }
@@ -646,20 +694,13 @@ class Comprobacion extends Model
     public function abrir()
     {
         $this->validaApertura();
-        dd("PASO");
         try {
             DB::connection('controlrec')->beginTransaction();
 
             $this->update([
-                'idestado' => 2
+                'IdEstatus' => 2,
+                'Estatus' => 1
             ]);
-
-            foreach ($this->documentos as $documento)
-            {
-                $documento->update([
-                    'idestado' => 1
-                ]);
-            }
 
             DB::connection('controlrec')->commit();
             return $this;

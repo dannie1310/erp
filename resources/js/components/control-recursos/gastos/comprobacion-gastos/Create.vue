@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="solicitudes == [] && solicitud == null">
+        <div class="card" v-if="(solicitudes == [] && solicitud == null && series == [])">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
@@ -14,22 +14,34 @@
         <div class="card" v-else-if="solicitudes != [] && solicitud == null">
             <form role="form" @submit.prevent="validate">
                 <div class="card-body">
-                    <div class="row justify-content-between">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="id_solicitud">Buscar Solicitud:</label>
-                                <select class="form-control"
-                                        data-vv-as="Solicitud"
-                                        id="id_solicitud"
-                                        name="id_solicitud"
-                                        :class="{'is-invalid': errors.has('id_solicitud')}"
-                                        v-validate="{required: true}"
-                                        v-model="id_solicitud">
-                                    <option value>-- Selecionar --</option>
-                                    <option v-for="(p) in solicitudes" :value="p.id" v-if="p.valido < 1">{{ p.folio_format }}-({{p.empleado_descripcion}})</option>
-                                </select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
-                            </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="idserie" class="col-form-label">Serie:</label>
+                            <select class="form-control"
+                                    data-vv-as="Serie"
+                                    id="idserie"
+                                    name="idserie"
+                                    :error="errors.has('idserie')"
+                                    v-validate="{required: true}"
+                                    v-model="idserie">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(serie) in series" :value="serie.id">{{ serie.descripcion }}</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
+                        </div>
+                        <div class="col-md-6" v-if="idserie">
+                            <label for="id_solicitud">Buscar Solicitud:</label>
+                            <select class="form-control"
+                                    data-vv-as="Solicitud"
+                                    id="id_solicitud"
+                                    name="id_solicitud"
+                                    :class="{'is-invalid': errors.has('id_solicitud')}"
+                                    v-validate="{required: true}"
+                                    v-model="id_solicitud">
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(p) in solicitudes" :value="p.id" v-if="p.valido < 1">{{ p.folio_format }}-({{p.empleado_descripcion}})</option>
+                            </select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
                         </div>
                     </div>
                 </div>
@@ -157,13 +169,14 @@ export default {
             fecha_inicial: '',
             fecha_final: '',
             id_proyecto: '',
-            proyectos: []
+            proyectos: [],
+            series: [],
+            idserie: '',
         }
     },
     mounted() {
-        this.getSolicitudes();
         this.getProyectos();
-       // this.find();
+        this.getSeries();
         this.$validator.reset()
         this.fecha_hoy = new Date();
         this.fecha_inicial = new Date();
@@ -171,11 +184,27 @@ export default {
         this.fechasDeshabilitadas.from = new Date();
     },
     methods: {
+        getSeries() {
+            this.cargando = true;
+            return this.$store.dispatch('controlRecursos/serie/index', {
+                params: {sort: 'descripcion', order: 'asc'}
+            })
+                .then(data => {
+                    this.series = data.data;
+                    if(this.series.length == 1)
+                    {
+                        this.idserie = this.series[0].id;
+                    }
+                })
+                .finally(() => {
+                    this.cargando = false;
+                })
+        },
         getSolicitudes()
         {
             this.cargando = true;
             return this.$store.dispatch('controlRecursos/solicitud-comprobacion/index', {
-                params: { sort: 'timestampRegistro', order: 'desc', include: ['comprobacion'], scope: ['documentosParaRegistrar']},
+                params: { sort: 'timestampRegistro', order: 'desc', include: ['comprobacion'], scope: ['documentosParaRegistrar:' + this.idserie]},
             }).then(data => {
                 this.solicitudes = data.data;
             }).finally(()=>{
@@ -244,6 +273,13 @@ export default {
                 this.find();
             }
         },
+        idserie(value)
+        {
+            if(value !== '' && value !== null && value !== undefined)
+            {
+                this.getSolicitudes();
+            }
+        }
     }
 }
 </script>

@@ -2074,6 +2074,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/close', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@close')->where(['id' => '[0-9]+']);
             $api->get('{id}/open', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@open')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@paginate');
+            $api->get('{id}/formato', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@pdf')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'documento'], function ($api) {
@@ -2186,6 +2187,10 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'semana-anio'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolRecSemanaAnioController@index');
+        });
+
+        $api->group(['prefix' => 'tasa-iva'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\TasaIvaController@index');
         });
 
         $api->group(['prefix' => 'tipo-doc-comp'], function ($api) {
