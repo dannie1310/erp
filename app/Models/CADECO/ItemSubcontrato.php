@@ -404,7 +404,7 @@ class ItemSubcontrato extends Item
             'clave' => $this->contrato->clave,
             'descripcion_concepto' => $this->contrato->descripcion,
             'cantidad_subcontrato' => (float) number_format(($this->cantidad), 3, '.', ''),
-            'precio_unitario_subcontrato' => (float) number_format(($this->precio_unitario), 3, '.', ''),,
+            'precio_unitario_subcontrato' => (float) number_format(($this->precio_unitario), 3, '.', ''),
             'importe_subcontrato' => $this->cantidad * $this->precio_unitario,
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_avance' =>  $avance ? $avance->id_item : 0,
