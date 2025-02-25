@@ -165,19 +165,19 @@ class ItemSubcontrato extends Item
             'unidad' => $contrato->unidad,
             'clave' => $contrato->clave,
             'descripcion_concepto' => $contrato->descripcion,
-            'cantidad_subcontrato' => (float) number_format(($this->cantidad), 3, '.', ''),
-            'precio_unitario_subcontrato' => (float) number_format(($this->precio_unitario), 3, '.', ''),
-            'importe_subcontrato' => (float) number_format(($this->cantidad * $this->precio_unitario), 3, '.', ''),
+            'cantidad_subcontrato' => $this->cantidad,
+            'precio_unitario_subcontrato' => $this->precio_unitario,
+            'importe_subcontrato' => $this->cantidad * $this->precio_unitario,
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_estimacion' => $estimacion ? $estimacion->id_item : 0,
             'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 3, '.', '') : 0,
             'porcentaje_avance' => number_format((($porcentaje_avance) * 100), 3, '.', ''),
-            'cantidad_estimada_total' =>  (float) number_format(($cantidad_estimada_total ? $cantidad_estimada_total : 0), 3, '.', ''),
-            'cantidad_estimada_anterior' =>  (float) number_format(($cantidad_estimado_anterior), 3, '.', ''),
-            'importe_estimado_anterior' =>  (float) number_format((($cantidad_estimado_anterior * $precio_unitario)), 3, '.', ''),
-            'importe_acumulado' =>  (float) number_format((($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario), 3, '.', ''),
-            'cantidad_por_estimar' =>  (float) number_format(($this->cantidad - $cantidad_estimado_anterior), 3, '.', ''),
-            'importe_por_estimar' =>  (float) number_format(((($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario)), 3, '.', ''),
+            'cantidad_estimada_total' => $cantidad_estimada_total ? $cantidad_estimada_total : 0,
+            'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
+            'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
+            'importe_acumulado' => ($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario,
+            'cantidad_por_estimar' => $this->cantidad - $cantidad_estimado_anterior,
+            'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
             'porcentaje_estimado' => number_format((($porcentaje_estimado) * 100), 3, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 3, '.', '') : 0,
             'destino_path' => $path_corta,
@@ -194,9 +194,9 @@ class ItemSubcontrato extends Item
      */
     public function proveedorPartidasEstimadas($id_estimacion, $id_contrato, $contrato, $id_obra)
     {
-       $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
-           ->where('id_antecedente', $this->id_transaccion)
-           ->where('item_antecedente', $this->id_concepto)->first();
+        $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
+            ->where('id_antecedente', $this->id_transaccion)
+            ->where('item_antecedente', $this->id_concepto)->first();
 
         $precio_unitario = $estimacion ? $estimacion->precio_unitario : $this->precio_unitario;
         $cantidad_estimada_total = $this->cantidad_total_estimada ? $this->cantidad_total_estimada : 0;
@@ -212,19 +212,19 @@ class ItemSubcontrato extends Item
             'unidad' => $contrato->unidad,
             'clave' => $contrato->clave,
             'descripcion_concepto' => $contrato->descripcion,
-            'cantidad_subcontrato' => (float) number_format(($this->cantidad), 3, '.', ''),
-            'precio_unitario_subcontrato' => (float) number_format(($this->precio_unitario), 3, '.', ''),
-            'importe_subcontrato' => (float) number_format(($this->cantidad * $this->precio_unitario), 3, '.', ''),
+            'cantidad_subcontrato' => $this->cantidad,
+            'precio_unitario_subcontrato' => $this->precio_unitario,
+            'importe_subcontrato' => $this->cantidad * $this->precio_unitario,
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_estimacion' =>  $estimacion ? $estimacion->id_item : 0,
             'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 3, '.', '') : 0,
             'porcentaje_avance' => (float) number_format((($porcentaje_avance) * 100), 3, '.', ''),
-            'cantidad_estimada_total' => (float) number_format(($cantidad_estimada_total ? $cantidad_estimada_total : 0), 3, '.', ''),
-            'cantidad_estimada_anterior' => (float) number_format(($cantidad_estimado_anterior), 3, '.', ''),
-            'importe_estimado_anterior' => (float) number_format((($cantidad_estimado_anterior * $precio_unitario)), 3, '.', ''),
-            'importe_acumulado' => (float) number_format((($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario), 3, '.', ''),
-            'cantidad_por_estimar' => (float) number_format(($this->cantidad - $cantidad_estimado_anterior), 3, '.', ''),
-            'importe_por_estimar' => (float) number_format(((($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario)), 3, '.', ''),
+            'cantidad_estimada_total' => $cantidad_estimada_total ? $cantidad_estimada_total : 0,
+            'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
+            'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
+            'importe_acumulado' => ($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario,
+            'cantidad_por_estimar' => $this->cantidad - $cantidad_estimado_anterior,
+            'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
             'porcentaje_estimado' => (float) number_format((($porcentaje_estimado) * 100), 3, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 3, '.', '') : 0,
             'destino_path' => $destino->concepto_sgv->path_corta_proveedor,
@@ -242,7 +242,7 @@ class ItemSubcontrato extends Item
             ->where('item_antecedente', $this->id_concepto)->first();
 
         $acumulado_anterior = $this->acumulado_anterior->where('id_transaccion', '<', $id_estimacion);
-       // $contrato = $this->contrato()->where('id_transaccion', '=', $this->subcontrato->id_antecedente)->first();
+        // $contrato = $this->contrato()->where('id_transaccion', '=', $this->subcontrato->id_antecedente)->first();
 
         $cantidad_estimacion = $estimacion ? $estimacion->cantidad : 0;
         $importe_estimacion =  $estimacion ? $estimacion->importe : 0;
@@ -253,8 +253,8 @@ class ItemSubcontrato extends Item
             'unidad' => $contrato ? $contrato->unidad : '',
             'clave' => $contrato ? $contrato->clave : '',
             'descripcion_concepto' => $contrato ? $contrato->descripcion : '',
-            'cantidad_subcontrato' => (float) number_format(($this->cantidad), 3, '.', ''),
-            'precio_unitario_subcontrato' => (float) number_format(($this->precio_unitario), 3, '.', ''),
+            'cantidad_subcontrato' => $this->cantidad,
+            'precio_unitario_subcontrato' => $this->precio_unitario,
             'importe_subcontrato' => ($this->cantidad * $this->precio_unitario),
             'cantidad_acumulado_anterior' => $acumulado_anterior->sum('cantidad'),
             'importe_acumulado_anterior' => $acumulado_anterior->sum('importe'),
@@ -363,19 +363,19 @@ class ItemSubcontrato extends Item
             'unidad' => $contrato->unidad,
             'clave' => $contrato->clave,
             'descripcion_concepto' => $contrato->descripcion,
-            'cantidad_subcontrato' => (float) number_format(($this->cantidad), 3, '.', ''),
-            'precio_unitario_subcontrato' => (float) number_format(($this->precio_unitario), 3, '.', ''),
+            'cantidad_subcontrato' => $this->cantidad,
+            'precio_unitario_subcontrato' => $this->precio_unitario,
             'importe_subcontrato' => $this->cantidad * $this->precio_unitario,
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_estimacion' =>  $estimacion ? $estimacion->id_item : 0,
             'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 2, '.', '') : 0,
             'porcentaje_avance' => (float) number_format((($porcentaje_avance) * 100), 2, '.', ''),
-            'cantidad_estimada_total' => (float) number_format($cantidad_estimada_total ? $cantidad_estimada_total : 0,2,'.', ''),
-            'cantidad_estimada_anterior' => (float) number_format($cantidad_estimado_anterior,2,'.', ''),
-            'importe_estimado_anterior' => (float) number_format(($cantidad_estimado_anterior * $precio_unitario),2,'.', ''),
-            'importe_acumulado' => (float) number_format((($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario),2,'.', ''),
-            'cantidad_por_estimar' => (float) number_format($this->cantidad -$cantidad_estimado_anterior,2,'.', ''),
-            'importe_por_estimar' => (float) number_format((($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),2,'.', ''),
+            'cantidad_estimada_total' => $cantidad_estimada_total ? $cantidad_estimada_total : 0,
+            'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
+            'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
+            'importe_acumulado' => ($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario,
+            'cantidad_por_estimar' => $this->cantidad -$cantidad_estimado_anterior,
+            'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
             'porcentaje_estimado' => (float) number_format((($porcentaje_estimado) * 100), 2, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
             'importe_estimacion_format' => $estimacion ? number_format($estimacion->importe, 2, '.', ',') : 0,
@@ -403,8 +403,8 @@ class ItemSubcontrato extends Item
             'unidad' => $this->contrato->unidad,
             'clave' => $this->contrato->clave,
             'descripcion_concepto' => $this->contrato->descripcion,
-            'cantidad_subcontrato' => (float) number_format(($this->cantidad), 3, '.', ''),
-            'precio_unitario_subcontrato' => (float) number_format(($this->precio_unitario), 3, '.', ''),
+            'cantidad_subcontrato' => $this->cantidad,
+            'precio_unitario_subcontrato' => $this->precio_unitario,
             'importe_subcontrato' => $this->cantidad * $this->precio_unitario,
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_avance' =>  $avance ? $avance->id_item : 0,
