@@ -56,6 +56,15 @@ class DoctoComp extends Model
     /**
      * Scopes
      */
+    public function scopeDeducibles($query)
+    {
+        return $query->where('Clasificacion', '=', 1);
+    }
+
+    public function scopeNoDeducibles($query)
+    {
+        return $query->where('Clasificacion', '=', 2);
+    }
 
     /**
      * Atributos

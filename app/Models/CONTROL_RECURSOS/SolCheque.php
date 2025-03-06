@@ -109,6 +109,11 @@ class SolCheque extends Model
         return $this->belongsTo(Serie::class, 'idserie', 'idseries');
     }
 
+    public function partidaPago()
+    {
+        return $this->belongsTo(PartidaPago::class, 'IdSolCheque', 'IdSolCheques');
+    }
+
     /**
      * Scopes
      */
