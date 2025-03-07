@@ -100,7 +100,7 @@ class PolizaService
                 'C01' => $item->Tipo_asiento,
                 'C02' => $cuenta->cuenta_ifs,
                 'C03' => $proyecto_ifs->id_proyecto_ifs,
-                'C04' => $item->$cuenta->c_frente_trabajo, /*tramfrenra*/
+                'C04' => $cuenta->c_frente_trabajo, /*tramfrenra*/
                 'C05' => $item->divisa,
                 'C06' => (int) $item->depcate == 0 ? '' : $item->depcate,
                 'C07' => $item->EMPLEADO,
