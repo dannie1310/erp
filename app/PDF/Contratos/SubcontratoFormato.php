@@ -84,7 +84,7 @@ class SubcontratoFormato extends FPDI
                     if(strtotime($this->subcontrato->fecha) >= strtotime('2023-01-01'))
                     {
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT2025.pdf'));
-                        $ln = 20.08;
+                        $ln = 20.3;
                         $nuevo = 3;
                         $this->paginaClausulado = 1;
                     }
@@ -164,17 +164,16 @@ class SubcontratoFormato extends FPDI
                 }
                 else if ($nuevo == 3) {
                     if($this->PageNo() == 3) {
-                        $this->Cell(19.7);
+                        $this->Cell(14.05);
                         $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
-
-                        $this->Ln(.20);
-                        $this->Cell(11.5);
+                        $this->Ln(.0165);
+                        $this->Cell(16);
                         $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
-
-                        $this->Ln(.175);
-                        $this->Cell(13.1);
+                        $this->Ln(.44);
+                        $this->Cell(11.16);
                         $this->SetFillColor('255,255,255');
-                        $this->Cell(.7,.15,substr($fecha_exp[2], -2),'',0,'L', 1);
+                        $this->SetFont('Arial', 'B', 6);
+                        $this->Cell(.5,.15,substr($fecha_exp[2], -2),'',0,'L', 1);
                     }
                 }
                 else{
