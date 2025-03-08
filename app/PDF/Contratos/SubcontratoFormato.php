@@ -58,11 +58,11 @@ class SubcontratoFormato extends FPDI
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS_CCSL.pdf'));
                     $ln = 11.23;
                 }else{
-                    if(strtotime($this->subcontrato->fecha) >= strtotime('2023-01-01'))
-                    {dd("a");
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2025-03-08'))
+                    {
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS2025.pdf'));
-                        $ln = 20.55;
-                        $nuevo = 1;
+                        $ln = 16.3;
+                        $nuevo = 4;
                         $this->paginaClausulado = 1;
                     }
                     else if(strtotime($this->subcontrato->fecha) >= strtotime('2024-02-29'))
@@ -81,7 +81,7 @@ class SubcontratoFormato extends FPDI
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT_CCSL.pdf'));
                     $ln = 14.6;
                 }else{
-                    if(strtotime($this->subcontrato->fecha) >= strtotime('2023-01-01'))
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2025-03-08'))
                     {
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT2025.pdf'));
                         $ln = 20.3;
@@ -93,7 +93,8 @@ class SubcontratoFormato extends FPDI
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT2024.pdf'));
                         $ln = 19;
                         $nuevo = 1;
-                    }else{
+                    }
+                   else{
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
                         $ln = 14.6;
                     }
@@ -174,6 +175,22 @@ class SubcontratoFormato extends FPDI
                         $this->SetFillColor('255,255,255');
                         $this->SetFont('Arial', 'B', 6);
                         $this->Cell(.5,.15,substr($fecha_exp[2], -2),'',0,'L', 1);
+                    }
+                }
+                else if ($nuevo == 4) {
+                    if($this->PageNo() == 3) {
+                        $this->Cell(14);
+                        $this->Cell(2.5,.5,$fecha_exp[0],'',0,'L');
+
+                        $this->Ln(.001);
+                        $this->Cell(16);
+                        $this->Cell(1.5,.5,$meses[$fecha_exp[1]-1],'',0,'L');
+
+                        $this->Ln(.45);
+                        $this->Cell(11.15);
+                        $this->SetFillColor('255,255,255');
+                        $this->SetFont('Arial', 'B', 6);
+                        $this->Cell(.7,.15,substr($fecha_exp[2], -2),'',0,'L', 1);
                     }
                 }
                 else{
