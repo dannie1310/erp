@@ -37,11 +37,14 @@ class ArchivoRepository extends Repository implements RepositoryInterface
     {
         $id_transacciones = [];
         $transaccion = Transaccion::find($id_transaccion);
-        $relaciones = $transaccion->relaciones;
-        foreach ($relaciones as $relacion){
-            $id_transacciones[] = $relacion["id"];
+         if($transaccion) {
+            $relaciones = $transaccion->relaciones;
+            foreach ($relaciones as $relacion) {
+                $id_transacciones[] = $relacion["id"];
+            }
+            return Archivo::whereIn("id_transaccion", $id_transacciones)->orderBy("id_transaccion")->get();
         }
-        return Archivo::whereIn("id_transaccion",$id_transacciones)->orderBy("id_transaccion")->get();
+        return [];
     }
 
     public function getArchivosRelacionadosPoliza($id_poliza)

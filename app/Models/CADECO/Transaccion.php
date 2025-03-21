@@ -345,10 +345,17 @@ class Transaccion extends Model
             case  52: return Estimacion::find($this->id_transaccion)->relaciones;
             case  65: return Factura::find($this->id_transaccion)->relaciones;
             case  82: return Pago::find($this->id_transaccion)->relaciones;
-            case  72: return SolicitudPagoAnticipado::find($this->id_transaccion)->relaciones;
-            case  72:
-                if($sol_p_a = SolicitudPagoAnticipado::find($this->id_transaccion)){
-                    return $sol_p_a->relaciones;
+            case  72:  
+                if($this->opciones == 327681){
+                    return SolicitudPagoAnticipado::find($this->id_transaccion)->relaciones;
+                }
+                else if($this->opciones == 131073){
+                    return SolicitudAnticipoDestajo::find($this->id_transaccion)->relaciones;
+                }
+                else {
+                    if ($sol_p_a = SolicitudPagoAnticipado::find($this->id_transaccion)) {
+                        return $sol_p_a->relaciones;
+                    }
                 }
                 return [];
             default:  return [];
