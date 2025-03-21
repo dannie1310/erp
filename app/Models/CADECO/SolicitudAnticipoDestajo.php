@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\DB;
 class SolicitudAnticipoDestajo extends Solicitud
 {
     public const TIPO_ANTECEDENTE = null;
+      public const TIPO = 72;
+        public const NOMBRE = "Solicitud de Anticipado Destajo";
+    public const ICONO = "fa fa-file-powerpoint";
 
     protected $fillable = [
         'id_antecedente',
@@ -132,5 +135,76 @@ class SolicitudAnticipoDestajo extends Solicitud
         $this->saldo = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
         $this->save();
         DB::connection('cadeco')->commit();
+    }
+
+        public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #SOLICITUD
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        try {
+            foreach ($this->orden_compra->relaciones as $relacion) {
+                if ($relacion["tipo_numero"] != 72) {
+                    $relaciones[$i] = $relacion;
+                    $relaciones[$i]["consulta"] = 0;
+                    $i++;
+                }
+            }
+        }catch (\Exception $e){
+            try {
+                foreach ($this->subcontratoSinGlobalScope->relaciones as $relacion) {
+                    if ($relacion["tipo_numero"] != 72) {
+                        $relaciones[$i] = $relacion;
+                        $relaciones[$i]["consulta"] = 0;
+                        $i++;
+                    }
+                }
+            }catch (\Exception $e){
+
+            }
+        }
+
+        try { 
+            #PAGO DE SOLICITUD
+            $relaciones[$i] = $this->pago->datos_para_relacion;
+            $i++;
+            #POLIZA DE PAGO DE SOLICITUD
+            try{
+                $relaciones[$i] = $this->pago->poliza->datos_para_relacion;
+                $i++;
+            }catch (\Exception $e){
+
+            }
+        }catch (\Exception $e){
+
+        }
+
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = SolicitudAnticipoDestajo::NOMBRE;
+        $datos["tipo_numero"] = SolicitudAnticipoDestajo::TIPO;
+        $datos["icono"] = SolicitudAnticipoDestajo::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
     }
 }
