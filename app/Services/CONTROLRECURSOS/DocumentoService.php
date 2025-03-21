@@ -10,6 +10,7 @@ use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\TipoDocto;
 use App\Repositories\CONTROLRECURSOS\DocumentoRepository as Repository;
+use App\Utils\CFD;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\Storage;
@@ -119,9 +120,13 @@ class DocumentoService
     {
         $documento = $this->show($id);
         $segmentos_negocio = $documento->consultaXML();
-
         $array_segmento = [];
 
+        $array_xml = null;
+        if($documento->uuid) {
+            $array_xml = $this->abrirXMLFactura($documento->uuid);
+        }
+dd($array_xml, $documento);
         foreach ($segmentos_negocio as $key => $item)
         {
             $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
@@ -144,6 +149,15 @@ class DocumentoService
             ];
         }
 
+        $condiciones = '';
+        if($array_xml != null) {
+            $condiciones = (int) preg_replace("/[^0-9]/", "", $array_xml['condicion_de_pago']);
+            if($condiciones == 0 && $array_xml['condicion_de_pago'] == 'CONTADO')
+            {
+                $condiciones = 0;
+            }
+        }
+
         $array = [
             'CLASS_ID' => 'INVHI',
             'RECEIVER' => 'IFS_APPLICATIONS',
@@ -157,23 +171,24 @@ class DocumentoService
                         'C02' => $documento->proveedor->rfc_sin_guiones,
                         'C03' => '',
                         'C04' => '',
+                        'C05' => '',
                         'C06' => '',
-                        'C07' => $documento->Alias_Depto,
+                        'C07' => $documento->CFDI ?  $documento->CFDI->serie : '',
                         'C08' => $documento->FolioDocto,
-                        'C09' => $documento->moneda->corto,
+                        'C09' => $documento->CFDI ?  $documento->CFDI->moneda : '',
+                        'C10' => $condiciones,
                         'N00' => $documento->TC,
                         'D00' => $documento->Fecha.'-00.00.00',
-                        'C10' => '0',
-                        'N01' => $documento->Total,
-                        'N02' => $documento->OtrosImpuestos,
-                        'N03' => $documento->Retenciones,
+                        'N01' => $documento->Importe,
+                        'N02' => $array_xml ?  $array_xml['total_impuestos_trasladados'] : $documento->OtrosImpuestos,
+                        'N03' => $array_xml ?  $array_xml['total_impuestos_retenidos'] : $documento->Retenciones,
                         'C11' => 'FALSE',
                         'D01' => $documento->Fecha.'-00.00.00',
                         'C12' => $documento->uuid ? $documento->uuid : '',
-                        'C13' => utf8_decode($documento->Concepto),
+                        'C13' => utf8_decode(substr($documento->Concepto,0,120)),
                         'C14' => $documento->uuid ? $documento->uuid .'.xml' : $documento->FolioDocto,
                         'C15' => auth()->user()->usuario,
-                        'C16' => str_replace('-', '', $documento->folio_solicitud),
+                        'C16' => str_replace('-', ' ', $documento->folio_solicitud),
                     ],
                     [
                         'NAME' => 'INVOICE_ITEM',
@@ -205,6 +220,7 @@ class DocumentoService
                 ],
             ]
         ];
+        dd($array);
 
         $a = new ArrayToXml($array, "IN_MESSAGE");
         $a->setDomProperties(['formatOutput' => true]);
@@ -214,6 +230,15 @@ class DocumentoService
         return Storage::disk('ifs_solicitud_recurso')->download(  'archivo_ifs_'.$name.'.xml');
     }
 
+    public function abrirXMLFactura($nombre_archivo)
+    {
+        if(Storage::disk('xml_control_recursos')->exists($nombre_archivo.'.xml')) {
+            $archivo = Storage::disk('xml_control_recursos')->get($nombre_archivo . '.xml');
+            $cfd = new CFD($archivo);
+            return $cfd->getArregloFactura();
+        }
+        return null;
+    }
     public function correo($id)
     {
         $documento = $this->show($id);
