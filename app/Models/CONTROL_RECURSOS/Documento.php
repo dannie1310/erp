@@ -501,4 +501,37 @@ class Documento extends Model
 						ON cuentascontables.IdCuentaContable = tiposgasto.IdCuentaContable
                     WHERE documentos.IdDocto = " . $this->getKey() . " order by centroscosto.Descripcion"));
     }
+
+    public function sumaConsultaXML()
+    {
+        return DB::connection('controlrec')->select(DB::raw("
+                   SELECT
+                        sum(solcheques.Importe) AS suma_subtotal,
+                        sum(solcheques.IVA) as iva_total,
+                        sum(solcheques.Total) as total
+                        ,ccdoctos.Importe AS importe_segmento
+                        ,ccdoctos.IVA AS iva_segmento
+                        ,ccdoctos.Total AS total_segmento
+                        ,cuentascontables.ClaveCuenta as cuenta,
+                        cuentascontables.DescripcionCuenta as descripcion_cuenta,
+                        ccdoctos.IdTipoGasto as id_tipo_gasto
+                    FROM controlrec.documentos
+                    INNER JOIN controlrec.solchequesdoctos
+                        ON documentos.IdDocto = solchequesdoctos.IdDocto
+                    INNER JOIN controlrec.solcheques
+                        ON solchequesdoctos.IdSolCheque = solcheques.IdSolCheques
+                    INNER JOIN controlrec.empresas
+                        ON solcheques.IdEmpresa = empresas.IdEmpresa
+                    INNER JOIN controlrec.ccdoctos
+                        ON documentos.IdDocto = ccdoctos.IdDocto
+                    INNER JOIN controlrec.centroscosto
+                        ON centroscosto.IdCC = ccdoctos.IdCC
+                    INNER JOIN controlrec.proveedores
+                        ON solcheques.IdProveedor = proveedores.IdProveedor
+                    INNER JOIN controlrec.tiposgasto
+                        ON ccdoctos.IdTipoGasto = tiposgasto.IdTipoGasto
+                    INNER JOIN controlrec.cuentascontables
+						ON cuentascontables.IdCuentaContable = tiposgasto.IdCuentaContable
+                    WHERE documentos.IdDocto = " . $this->getKey() . " order by centroscosto.Descripcion"));
+    }
 }
