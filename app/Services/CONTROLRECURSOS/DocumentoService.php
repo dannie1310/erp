@@ -120,8 +120,10 @@ class DocumentoService
     {
         $documento = $this->show($id);
         $segmentos_negocio = $documento->consultaXML();
+        $sumatorias = $documento->sumaConsultaXML()[0];
         $array_segmento = [];
         $array_items = [];
+        $arrays = [];
 
         $array_xml = null;
         if ($documento->uuid) {
@@ -166,6 +168,7 @@ class DocumentoService
         if ($array_xml != null) {
             $total_traslados = 0;
             $total_retenido = 0;
+            $k = 0;
             foreach ($array_xml['conceptos'] as $key => $concepto) {
                 $i = 0;
                 foreach ($array_xml['traslados'] as $traslado) {
@@ -209,14 +212,16 @@ class DocumentoService
                     'N07' => '',
                     'C07' => ''
                 ];
-dd($segmentos_negocio);
-                foreach ($segmentos_negocio as $item) {
 
+                foreach ($segmentos_negocio as $item)
+                {
+                    $porcentaje = $item->importe_segmento / $sumatorias->importe_segmento;
+                    $importe = $porcentaje * $concepto['importe'];
                     $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
                     $array_segmento [$key] = [
                         'NAME' => 'INVOICE_ITEM_POSTING',
                         'N00' => $key,
-                        'N01' => $item->importe_segmento,
+                        'N01' => $importe,
                         'C00' => utf8_decode($item->segmento_negocio),
                         'C01' => '',
                         'C02' => $cuenta ? $cuenta->cuenta_ifs : '',
@@ -231,10 +236,17 @@ dd($segmentos_negocio);
                         'N02' => '',
                     ];
                 }
+                dd(array_push($array_1, $array_traslados));
+                    $array = [
+                        $array_1,
+                        $array_traslados,
+                        $array_segmento
+                    ];
+                dd($array);
             }
         }
 
-        dd($array_items);
+        dd($array_items, $array_segmento);
         $array = [
             'CLASS_ID' => 'INVHI',
             'RECEIVER' => 'IFS_APPLICATIONS',

@@ -506,15 +506,9 @@ class Documento extends Model
     {
         return DB::connection('controlrec')->select(DB::raw("
                    SELECT
-                        sum(solcheques.Importe) AS suma_subtotal,
-                        sum(solcheques.IVA) as iva_total,
-                        sum(solcheques.Total) as total
-                        ,ccdoctos.Importe AS importe_segmento
-                        ,ccdoctos.IVA AS iva_segmento
-                        ,ccdoctos.Total AS total_segmento
-                        ,cuentascontables.ClaveCuenta as cuenta,
-                        cuentascontables.DescripcionCuenta as descripcion_cuenta,
-                        ccdoctos.IdTipoGasto as id_tipo_gasto
+                        sum(ccdoctos.Importe) AS importe_segmento
+                        ,sum(ccdoctos.IVA) AS iva_segmento
+                        ,sum(ccdoctos.Total) AS total_segmento
                     FROM controlrec.documentos
                     INNER JOIN controlrec.solchequesdoctos
                         ON documentos.IdDocto = solchequesdoctos.IdDocto
@@ -532,6 +526,6 @@ class Documento extends Model
                         ON ccdoctos.IdTipoGasto = tiposgasto.IdTipoGasto
                     INNER JOIN controlrec.cuentascontables
 						ON cuentascontables.IdCuentaContable = tiposgasto.IdCuentaContable
-                    WHERE documentos.IdDocto = " . $this->getKey() . " order by centroscosto.Descripcion"));
+                    WHERE documentos.IdDocto = " . $this->getKey() ));
     }
 }
