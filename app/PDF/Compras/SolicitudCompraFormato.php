@@ -303,7 +303,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
 
             $this->Row([
                 $i + 1,
-                $item->cantidad_original1 > 0 ? $item->cantidad_original1 : $item->cantidad,
+                $item->cantidad_original1 > 0 ? $item->cantidad_original1 : $item->cantidad_decimal,
                 $autorizada,
                 $item->unidad,
                 utf8_decode($item->material->numero_parte),
