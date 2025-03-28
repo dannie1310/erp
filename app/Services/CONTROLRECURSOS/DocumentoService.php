@@ -123,154 +123,152 @@ class DocumentoService
         $documento = $this->show($id);
         $segmentos_negocio = $documento->consultaXML();
         $sumatorias = $documento->sumaConsultaXML()[0];
-        $array_segmento = [];
-        $array_items = [];
-        $arrays = [];
-
-        $array_xml = null;
-        if ($documento->uuid) {
-            $array_xml = $this->abrirXMLFactura($documento->uuid);
-        }
-
-        $condiciones = '';
-        if ($array_xml != null) {
-            $condiciones = (int)preg_replace("/[^0-9]/", "", $array_xml['condicion_de_pago']);
-            if ($condiciones == 0 && $array_xml['condicion_de_pago'] == 'CONTADO') {
-                $condiciones = 0;
+        if($documento->uuid) {
+            $array_xml = null;
+            if ($documento->uuid) {
+                $array_xml = $this->abrirXMLFactura($documento->uuid);
             }
-        }
 
-        $header = [
-            'NAME' => 'INVOICE_HEADER',
-            'C00' => 'I',
-            'C01' => $documento->empresa->rfc_sin_guiones,
-            'C02' => $documento->proveedor->rfc_sin_guiones,
-            'C03' => '',
-            'C04' => '',
-            'C05' => '',
-            'C06' => '',
-            'C07' => $documento->CFDI ? $documento->CFDI->serie : '',
-            'C08' => $documento->FolioDocto,
-            'C09' => $documento->CFDI ? $documento->CFDI->moneda : '',
-            'C10' => $condiciones,
-            'N00' => $documento->TC,
-            'D00' => $documento->Fecha . '-00.00.00',
-            'N01' => $documento->Importe,
-            'N02' => $array_xml ? $array_xml['total_impuestos_trasladados'] : $documento->OtrosImpuestos,
-            'N03' => $array_xml ? $array_xml['total_impuestos_retenidos'] : $documento->Retenciones,
-            'C11' => 'FALSE',
-            'D01' => $documento->Fecha . '-00.00.00',
-            'C12' => $documento->uuid ? $documento->uuid : '',
-            'C13' => utf8_decode(substr($documento->solChequeDocto->solCheque->Concepto, 0, 120)),
-            'C14' => $documento->uuid ? $documento->uuid . '.xml' : $documento->FolioDocto,
-            'C15' => auth()->user()->usuario,
-            'C16' => str_replace('-', ' ', $documento->folio_solicitud),
-        ];
-
-        if ($array_xml != null) {
-            $total_traslados = 0;
-            $total_retenido = 0;
-            $k = 0;
-            $i = 0;
-            foreach ($array_xml['conceptos'] as $key => $concepto) {
-                $k=$i;
-                $array[$i] = [
-                    'NAME' => 'INVOICE_ITEM',
-                    'N00' => $key+1,
-                    'N01' => $concepto['importe'],
-                    'N02' => $total_traslados,
-                    'N03' => $total_retenido,
-                    'C00' => '',
-                    'C01' => '',
-                    'C02' => $concepto['unidad'],
-                    'N04' => $concepto['cantidad'],
-                    'C03' => $concepto['clave_prod_serv'],
-                    'C04' => $concepto['descripcion'],
-                    'N05' => $concepto['valor_unitario'],
-                    'C05' => 'FALSE',
-                    'C06' => '',
-                    'N06' => '',
-                    'N07' => '',
-                    'C07' => ''
-                ];
-                $i++;
-
-                if(array_key_exists('traslados',$concepto))
-                {
-                    foreach ($concepto['traslados'] as $traslado) {
-                        $total_traslados += $traslado['importe'];
-                        $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->first();
-                        $array[$i] = [
-                            'NAME' => 'INVOICE_ITEM_TAX',
-                            'N00' => $key+1,
-                            'C00' => $codigo ?  $codigo->codigo_ifs : $traslado['impuesto'],
-                            'N01' => (int)($traslado['tasa_o_cuota'] * 100),
-                            'N02' => $traslado['importe']
-                        ];
-                        $i++;
-                    }
+            $condiciones = '';
+            if ($array_xml != null) {
+                $condiciones = (int)preg_replace("/[^0-9]/", "", $array_xml['condicion_de_pago']);
+                if ($condiciones == 0 && $array_xml['condicion_de_pago'] == 'CONTADO') {
+                    $condiciones = 0;
                 }
-                if(array_key_exists('retenciones',$concepto)) {
-                    foreach ($concepto['retenciones'] as $retencion) {
-                        $total_retenido += $retencion['importe'];
-                        $array[$i] = [
-                            'NAME' => 'INVOICE_ITEM_TAX',
-                            'N00' => $key+1,
-                            'C00' => 'pendiente catalogo',
-                            'N01' => (int)($retencion['tasa_o_cuota'] * 100),
-                            'N02' => $retencion['importe']
-                        ];
-                        $i++;
-                    }
-                }
+            }
 
-                foreach ($segmentos_negocio as $item)
-                {
-                    $porcentaje = $item->importe_segmento / $sumatorias->importe_segmento;
-                    $importe = $porcentaje * $concepto['importe'];
-                    $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
-                    $array[$i]= [
-                        'NAME' => 'INVOICE_ITEM_POSTING',
-                        'N00' => $key+1,
-                        'N01' => $importe,
-                        'C00' => Util::eliminaAcentos($item->segmento_negocio),
+            $header = [
+                'NAME' => 'INVOICE_HEADER',
+                'C00' => 'I',
+                'C01' => $documento->empresa->rfc_sin_guiones,
+                'C02' => $documento->proveedor->rfc_sin_guiones,
+                'C03' => '',
+                'C04' => '',
+                'C05' => '',
+                'C06' => '',
+                'C07' => $documento->CFDI ? $documento->CFDI->serie : '',
+                'C08' => $documento->FolioDocto,
+                'C09' => $documento->CFDI ? $documento->CFDI->moneda : '',
+                'C10' => $condiciones,
+                'N00' => $documento->TC,
+                'D00' => $documento->Fecha . '-00.00.00',
+                'N01' => $documento->Importe,
+                'N02' => $array_xml ? $array_xml['total_impuestos_trasladados'] : $documento->OtrosImpuestos,
+                'N03' => $array_xml ? $array_xml['total_impuestos_retenidos'] : $documento->Retenciones,
+                'C11' => 'FALSE',
+                'D01' => $documento->Fecha . '-00.00.00',
+                'C12' => $documento->uuid ? $documento->uuid : '',
+                'C13' => utf8_decode(substr($documento->solChequeDocto->solCheque->Concepto, 0, 120)),
+                'C14' => $documento->uuid ? $documento->uuid . '.xml' : $documento->FolioDocto,
+                'C15' => auth()->user()->usuario,
+                'C16' => str_replace('-', ' ', $documento->folio_solicitud),
+            ];
+
+            if ($array_xml != null) {
+                $total_traslados = 0;
+                $total_retenido = 0;
+                $k = 0;
+                $i = 0;
+                foreach ($array_xml['conceptos'] as $key => $concepto) {
+                    $k = $i;
+                    $array[$i] = [
+                        'NAME' => 'INVOICE_ITEM',
+                        'N00' => $key + 1,
+                        'N01' => $concepto['importe'],
+                        'N02' => $total_traslados,
+                        'N03' => $total_retenido,
+                        'C00' => '',
                         'C01' => '',
-                        'C02' => $cuenta ? $cuenta->cuenta_ifs : '',
-                        'C03' => '',
-                        'C04' => '',
-                        'C05' => '',
-                        'C06' => $item->NoSN,
-                        'C07' => '',
-                        'C08' => '',
-                        'C09' => '',
-                        'C10' => '',
-                        'N02' => '',
+                        'C02' => $concepto['unidad'],
+                        'N04' => $concepto['cantidad'],
+                        'C03' => $concepto['clave_prod_serv'],
+                        'C04' => $concepto['descripcion'],
+                        'N05' => $concepto['valor_unitario'],
+                        'C05' => 'FALSE',
+                        'C06' => '',
+                        'N06' => '',
+                        'N07' => '',
+                        'C07' => ''
                     ];
                     $i++;
+
+                    if (array_key_exists('traslados', $concepto)) {
+                        foreach ($concepto['traslados'] as $traslado) {
+                            $total_traslados += $traslado['importe'];
+                            $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->first();
+                            $array[$i] = [
+                                'NAME' => 'INVOICE_ITEM_TAX',
+                                'N00' => $key + 1,
+                                'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
+                                'N01' => (int)($traslado['tasa_o_cuota'] * 100),
+                                'N02' => $traslado['importe']
+                            ];
+                            $i++;
+                        }
+                    }
+                    if (array_key_exists('retenciones', $concepto)) {
+                        foreach ($concepto['retenciones'] as $retencion) {
+                            $total_retenido += $retencion['importe'];
+                            $array[$i] = [
+                                'NAME' => 'INVOICE_ITEM_TAX',
+                                'N00' => $key + 1,
+                                'C00' => 'pendiente catalogo',
+                                'N01' => (int)($retencion['tasa_o_cuota'] * 100),
+                                'N02' => $retencion['importe']
+                            ];
+                            $i++;
+                        }
+                    }
+
+                    foreach ($segmentos_negocio as $item) {
+                        $porcentaje = $item->importe_segmento / $sumatorias->importe_segmento;
+                        $importe = $porcentaje * $concepto['importe'];
+                        $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
+                        $array[$i] = [
+                            'NAME' => 'INVOICE_ITEM_POSTING',
+                            'N00' => $key + 1,
+                            'N01' => $importe,
+                            'C00' => Util::eliminaAcentos($item->segmento_negocio),
+                            'C01' => '',
+                            'C02' => $cuenta ? $cuenta->cuenta_ifs : '',
+                            'C03' => '',
+                            'C04' => '',
+                            'C05' => '',
+                            'C06' => $item->NoSN,
+                            'C07' => '',
+                            'C08' => '',
+                            'C09' => '',
+                            'C10' => '',
+                            'N02' => '',
+                        ];
+                        $i++;
+                    }
+                    $array[$k]['N02'] = $total_traslados;
+                    $array[$k]['N03'] = $total_retenido;
                 }
-                $array[$k]['N02'] = $total_traslados;
-                $array[$k]['N03'] = $total_retenido;
             }
+
+            $array = [
+                'CLASS_ID' => 'INVHI',
+                'RECEIVER' => 'IFS_APPLICATIONS',
+                'SENDER' => 'SISTEMA_CONTROL_RECURSOS',
+                'LINES' => [
+                    'IN_MESSAGE_LINE' => [
+                        $header,
+                        $array
+                    ],
+                ]
+            ];
+
+            $a = new ArrayToXml($array, "IN_MESSAGE");
+            $a->setDomProperties(['formatOutput' => true]);
+            $result = $a->toXml();
+            $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
+            Storage::disk('ifs_solicitud_recurso')->put('archivo_ifs_' . $name . '.xml', $result);
+            return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
+        }else{
+            abort(500, "Documento sin CFDI.");
         }
-
-        $array = [
-            'CLASS_ID' => 'INVHI',
-            'RECEIVER' => 'IFS_APPLICATIONS',
-            'SENDER' => 'SISTEMA_CONTROL_RECURSOS',
-            'LINES' => [
-                'IN_MESSAGE_LINE' => [
-                    $header,
-                    $array
-                ],
-            ]
-        ];
-
-        $a = new ArrayToXml($array, "IN_MESSAGE");
-        $a->setDomProperties(['formatOutput' => true]);
-        $result = $a->toXml();
-        $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
-        Storage::disk('ifs_solicitud_recurso')->put('archivo_ifs_' . $name . '.xml', $result);
-        return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
 
     public function abrirXMLFactura($nombre_archivo)
