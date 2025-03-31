@@ -125,6 +125,8 @@ class DocumentoService
         $sumatorias = $documento->sumaConsultaXML()[0];
         if($documento->uuid) {
             $array_xml = null;
+            $array_fin = [];
+            $array = [];
             if ($documento->uuid) {
                 $array_xml = $this->abrirXMLFactura($documento->uuid);
             }
@@ -248,7 +250,7 @@ class DocumentoService
                 }
             }
 
-            $array = [
+            $array_fin = [
                 'CLASS_ID' => 'INVHI',
                 'RECEIVER' => 'IFS_APPLICATIONS',
                 'SENDER' => 'SISTEMA_CONTROL_RECURSOS',
@@ -260,7 +262,7 @@ class DocumentoService
                 ]
             ];
 
-            $a = new ArrayToXml($array, "IN_MESSAGE");
+            $a = new ArrayToXml($array_fin, "IN_MESSAGE");
             $a->setDomProperties(['formatOutput' => true]);
             $result = $a->toXml();
             $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
