@@ -58,7 +58,7 @@ class SubcontratoFormato extends FPDI
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS_CCSL.pdf'));
                     $ln = 11.23;
                 }else{
-                    if(strtotime($this->subcontrato->fecha) >= strtotime('2025-03-08'))
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-12-31'))
                     {
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS2025.pdf'));
                         $ln = 16.3;
@@ -81,7 +81,7 @@ class SubcontratoFormato extends FPDI
                     $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT_CCSL.pdf'));
                     $ln = 14.6;
                 }else{
-                    if(strtotime($this->subcontrato->fecha) >= strtotime('2025-03-08'))
+                    if(strtotime($this->subcontrato->fecha) >= strtotime('2024-12-31'))
                     {
                         $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT2025.pdf'));
                         $ln = 20.3;

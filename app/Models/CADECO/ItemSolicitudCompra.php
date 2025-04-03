@@ -118,6 +118,12 @@ class ItemSolicitudCompra extends Item
         return number_format($this->cantidad, 1, '.', ',');
     }
 
+    public function getCantidadDecimalAttribute()
+    {
+        return number_format($this->cantidad,2,'.', '');
+
+    }
+
     /**
      * Métodos
      */

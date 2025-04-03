@@ -135,8 +135,9 @@ class ArchivoService
         return $salida;
     }
 
-    public function getArchivosRelacionadosTransaccion($tipo, $id)
+    public function getArchivosRelacionadosTransaccion($bases_info,$tipo, $id)
     {
+        $this->setDB($bases_info['db']);
         if($tipo!=666){
             return $this->repository->getArchivosRelacionadosTransaccion($id);
         } else {

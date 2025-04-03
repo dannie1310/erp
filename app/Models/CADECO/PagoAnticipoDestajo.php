@@ -129,4 +129,22 @@ class PagoAnticipoDestajo extends Pago
             }
         }
     }
+
+        public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Pago::NOMBRE;
+        $datos["tipo_numero"] = Pago::TIPO;
+        $datos["icono"] = Pago::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
 }
