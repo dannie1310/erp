@@ -266,6 +266,7 @@ class DocumentoService
             $a->setDomProperties(['formatOutput' => true]);
             $result = $a->toXml();
             $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
+            $this->buscarXML($name . '.xml');
             Storage::disk('ifs_solicitud_recurso')->put('archivo_ifs_' . $name . '.xml', $result);
             return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
         }else{
@@ -286,14 +287,9 @@ class DocumentoService
     {
         $documento = $this->show($id);
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
-        $archivo = $this->getBase64XML($name);
-        if($archivo != null) {
-            event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
-        }else{
-            $this->xml($id);
-            $archivo = $this->getBase64XML($documento->uuid);
-            event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
-        }
+        $this->xml($id);
+        $archivo = $this->getBase64XML($documento->uuid);
+        event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
     }
 
     private function getBase64XML($name)
@@ -304,5 +300,12 @@ class DocumentoService
             return "data:text/xml;base64,".base64_encode($archivo);
         }
         return null;
+    }
+
+    private function buscarXML($nombre)
+    {
+        if(Storage::disk('ifs_solicitud_recurso')->exists($nombre)) {
+            Storage::disk('ifs_solicitud_recurso')->delete($nombre);
+        }
     }
 }
