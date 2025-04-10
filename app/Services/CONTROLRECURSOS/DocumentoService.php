@@ -195,7 +195,7 @@ class DocumentoService
                     $i++;
 
                     if (array_key_exists('traslados', $concepto)) {
-                        foreach ($concepto['traslados'] as $traslado) {
+                        foreach ($concepto['traslados'] as $key => $traslado) {
                             $total_traslados += $traslado['importe'];
                             $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->first();
                             $array[$i] = [
@@ -211,10 +211,11 @@ class DocumentoService
                     if (array_key_exists('retenciones', $concepto)) {
                         foreach ($concepto['retenciones'] as $retencion) {
                             $total_retenido += $retencion['importe'];
+                            $codigo = CodigoImpuesto::where('codigo_sat', $retencion['impuesto'])->first();
                             $array[$i] = [
                                 'NAME' => 'INVOICE_ITEM_TAX',
                                 'N00' => $key + 1,
-                                'C00' => 'pendiente catalogo',
+                                'C00' => $codigo ? $codigo->codigo_ifs : $retencion['impuesto'],
                                 'N01' => (int)($retencion['tasa_o_cuota'] * 100),
                                 'N02' => $retencion['importe']
                             ];
@@ -283,6 +284,7 @@ class DocumentoService
         }
         return null;
     }
+
     public function correo($id)
     {
         $documento = $this->show($id);
