@@ -27,7 +27,7 @@
                             {{ partida.tipo_docto_descripcion }}
                         </td>
                         <td>
-                            {{ partida.fecha }}
+                            {{ partida.fecha_format }}
                         </td>
                         <td>
                             {{ partida.folio_docto }}

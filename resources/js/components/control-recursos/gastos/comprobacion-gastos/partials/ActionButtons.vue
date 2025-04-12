@@ -15,7 +15,7 @@
         <button v-if="value.abrir" @click="abrir" type="button" class="btn btn-sm btn-outline-info" title="Abrir">
             <i class="fa fa-unlock"></i>
         </button>
-        <router-link :to="{ name: 'comprobacion-gasto-delete', params: {id: value.id}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+        <router-link :to="{ name: 'comprobacion-gasto-delete', params: {id: value.id_solicitud}}" v-if="value.delete && value.id_solicitud != 0" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
             <i class="fa fa-trash"></i>
         </router-link>
         <PDF v-bind:id="value.id" />

@@ -38,7 +38,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: { sort: 'FechaHoraGenero', order: 'desc', scope: []},
+                query: { sort: 'FechaHoraGenero', order: 'desc', scope: [], include: ['solicitud'] },
                 cargando: false
             }
         },
@@ -98,8 +98,9 @@
                             buttons: $.extend({}, {
                                 show: true,
                                 id: comprobacion.id,
+                                id_solicitud: comprobacion.solicitud ? comprobacion.solicitud.id : 0,
                                 edit: (self.$root.can('editar_comprobacion_gastos', true) && (comprobacion.estatus == 0 || comprobacion.estatus == 1))  ? true : false,
-                                delete: (self.$root.can('eliminar_comprobacion_gastos', true) && (comprobacion.estatus == 0 || comprobacion.estatus == 1)) ? true : false,
+                                delete: (self.$root.can('eliminar_comprobacion_gastos', true) && (comprobacion.estatus != 2)) ? true : false,
                                 cerrar: (self.$root.can('cerrar_comprobacion_gastos', true) && comprobacion.estatus == 1) ? true : false,
                                 abrir: (self.$root.can('abrir_comprobacion_gastos', true) && comprobacion.estatus == 2) ? true : false,
                             })
