@@ -150,7 +150,7 @@ class DocumentoService
                 'C06' => '',
                 'C07' => $array_xml ? $array_xml['serie'] : $documento->CFDI->serie,
                 'C08' => $documento->FolioDocto,
-                'C09' => $documento->CFDI ? $documento->CFDI->moneda : '',
+                'C09' => $array_xml ? $array_xml['moneda'] : '',
                 'C10' => $condiciones,
                 'N00' => $documento->TC,
                 'D00' => $documento->Fecha . '-00.00.00',
