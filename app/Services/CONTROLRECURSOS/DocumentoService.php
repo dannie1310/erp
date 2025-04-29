@@ -228,6 +228,7 @@ class DocumentoService
                             $porcentaje = $item->importe_segmento / $sumatorias->importe_segmento;
                             $importe = $porcentaje * $concepto['importe'];
                             $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
+                            dd($cuenta, $item);
                             $array[$i] = [
                                 'NAME' => 'INVOICE_ITEM_POSTING',
                                 'N00' => $key + 1,
