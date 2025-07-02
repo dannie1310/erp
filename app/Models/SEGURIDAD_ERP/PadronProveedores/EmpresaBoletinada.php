@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 class EmpresaBoletinada extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.PadronProvjjeedores.empresas_boletinadas';
+    protected $table = 'SEGURIDAD_ERP.PadronProveedores.empresas_boletinadas';
     public $timestamps = false;
    // protected $primaryKey = "rfc";
 
