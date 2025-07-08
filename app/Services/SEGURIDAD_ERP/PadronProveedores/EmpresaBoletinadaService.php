@@ -114,6 +114,13 @@ class EmpresaBoletinadaService
             }
         }
 
+        if(isset($data['boletinado']))
+        {
+            if($data['boletinado'] === "true"){
+                $in[] = "Boletinados";
+            }
+        }
+
         $this->repository->whereIn(["motivo",$in]);
 
         return $this->repository->paginate($data);
