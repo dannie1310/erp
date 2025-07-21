@@ -833,7 +833,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Ln();
                 $this->Cell(3.92, .4, utf8_decode('Proveedor'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
-                $this->Cell(3.92, .4, 'Gerente Compras', 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, 'Subdirector de compras y Subcontratos', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, utf8_decode('Control de Costos'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'Director de proyecto', 'TRLB', 0, 'C', 1);
@@ -893,7 +893,7 @@ class OrdenCompraFormato extends FPDI
                 $this->SetFillColor(180, 180, 180);
 
                 $this->CellFitScale(4, .4, utf8_decode('Proveedor'), 'TRLB', 0, 'C', 1);
-                $this->CellFitScale(4, .4, utf8_decode('Gerente de Compras'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, utf8_decode('Subdirector de compras y Subcontratos'), 'TRLB', 0, 'C', 1);
                 $this->CellFitScale(4, .4, utf8_decode('Gerente de Procuración'), 'TRLB', 0, 'C', 1);
                 $this->CellFitScale(8, .4, utf8_decode('Facturar a:'), 'TRLB', 0, 'C', 1);
                 $this->Ln();
@@ -954,7 +954,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(4.5);
                 $this->SetFont('Arial', '', 6);
                 $this->CellFitScale(4.5, .5, utf8_decode('Jefe de Compras'), 1, 0, 'C');
-                $this->CellFitScale(4.5, .5, utf8_decode('Gerente Compras'), 1, 0, 'C');
+                $this->CellFitScale(4.5, .5, utf8_decode('Subdirector de compras y Subcontratos'), 1, 0, 'C');
                 $this->CellFitScale(4.5, .5, utf8_decode('Gerente Administrativo'), 1, 0, 'C');
                 $this->CellFitScale(4.5, .5, utf8_decode('Gerente de Proyecto'), 1, 0, 'C');
                 $this->Ln(.5);
@@ -972,7 +972,7 @@ class OrdenCompraFormato extends FPDI
                 $this->SetFillColor(255, 255, 255);
                 $this->Ln();
                 $this->Cell(4, .4, utf8_decode('Jefe de compras'), 'TRLB', 0, 'C', 0);
-                $this->Cell(4.1, .4, utf8_decode('Gerente de compras'), 'TRLB', 0, 'C', 0);
+                $this->Cell(4.1, .4, utf8_decode('Subdirector de compras y Subcontratos'), 'TRLB', 0, 'C', 0);
                 $this->Cell(4.4, .4, utf8_decode('VoBo Administración'), 'TRLB', 0, 'C', 0);
                 $this->Cell(3.9, .4, utf8_decode('VoBo Gerente de Construcción'), 'TRLB', 0, 'C', 0);
                 $this->Cell(3.6, .4, utf8_decode('Aprobó  Director de Proyectos'), 'TRLB', 0, 'C', 0);
@@ -1007,7 +1007,7 @@ class OrdenCompraFormato extends FPDI
 
                 $this->Cell(3, .4, utf8_decode('Jefe Compras'), 'RLB', 0, 'C', 1);
                 $this->Cell(3,.4, 'VoBo', 'RLB', 0, 'C', 1);
-                $this->Cell(3.3, .4, 'Gerente de Compras', 'RLB', 0, 'C', 1);
+                $this->Cell(3.3, .4, 'Subdirector de compras y Subcontratos', 'RLB', 0, 'C', 1);
                 $this->Cell(3.5, .4, 'CALTIA CONCESIONES SA DE CV', 'RLB', 0, 'C', 1);
                 $this->Cell(3.5, .4, 'CALTIA CONCESIONES SA DE CV', 'RLB', 0, 'C', 1);
                 $this->CellFitScaleForce(3.3, .4,utf8_decode('LA PENINSULAR COMPAÑIA CONSTRUCTORA SA DE CV'),'RLB', 0, 'C', 1);
@@ -1037,7 +1037,7 @@ class OrdenCompraFormato extends FPDI
                     $y_idaf = $this->GetY();
                     $this->CellFitScale(4, .5, ('Proveedor'), 1, 0, 'C');
                     $this->CellFitScale(4, .5, ('Jefe Compras'), 1, 0, 'C');
-                    $this->CellFitScale(4, .5, ('Gerente Compras'), 1, 0, 'C');
+                    $this->CellFitScale(4, .5, ('Subdirector de compras y Subcontratos'), 1, 0, 'C');
                     $this->CellFitScale(4, .5, utf8_decode('Dirección de Administración y Finanzas'), 1, 0, 'C');
                     $this->Ln(.5);
                     $this->CellFitScale(4, 0.8, ' ', 'RL', 0, 'R');
@@ -1061,7 +1061,7 @@ class OrdenCompraFormato extends FPDI
                     $this->Cell(4);
                     $this->CellFitScale(4, .5, utf8_decode('Proveedor'), 1, 0, 'C');
                     $this->CellFitScale(4, .5, utf8_decode('Jefe Compras'), 1, 0, 'C');
-                    $this->CellFitScale(4, .5, utf8_decode('Gerente Compras'), 1, 0, 'C');
+                    $this->CellFitScale(4, .5, utf8_decode('Subdirector de compras y Subcontratos'), 1, 0, 'C');
                     $this->CellFitScale(4, .5, utf8_decode('Aprobó'), 1, 0, 'C');
                     $this->Ln(.5);
                     $this->Cell(4);
