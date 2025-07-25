@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="(solicitudes == [] && solicitud == null && series == [])">
+        <div class="card" v-if="(series == [] || solicitudes == [])">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
@@ -11,7 +11,7 @@
                 </div>
             </div>
         </div>
-        <div class="card" v-else-if="solicitudes != [] && solicitud == null">
+        <div class="card" v-else>
             <form role="form" @submit.prevent="validate">
                 <div class="card-body">
                     <div class="row">
@@ -30,7 +30,7 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
                         </div>
                         <div class="col-md-6" v-if="idserie">
-                            <label for="id_solicitud">Buscar Solicitud:</label>
+                            <label for="id_solicitud" class="col-form-label">Buscar Solicitud:</label>
                             <select class="form-control"
                                     data-vv-as="Solicitud"
                                     id="id_solicitud"
@@ -44,18 +44,13 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
                         </div>
                     </div>
-                </div>
-            </form>
-        </div>
-        <div class="card" v-else>
-            <form role="form" @submit.prevent="validate">
-                <div class="card-body">
-                    <div class="row">
+                    <hr />
+                    <div class="row" v-if="solicitudes != [] && solicitud != null">
                         <div class="col-md-12">
                             <encabezado  v-bind:solicitud="solicitud" />
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" v-if="solicitudes != [] && solicitud != null">
                         <div class="col-md-6">
                             <div class="form-group error-content">
                                 <label>Empresa a Facturar:</label>
@@ -75,7 +70,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" v-if="solicitudes != [] && solicitud != null">
                         <div class="col-md-7">
                             <div class="form-group error-content">
                                 <label class="col-form-label">Nombre:</label>
@@ -99,7 +94,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" v-if="solicitudes != [] && solicitud != null">
                         <div class="col-md-4">
                             <div class="form-group error-content">
                                 <label for="fecha_inicial">Del:</label>
@@ -140,7 +135,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer" v-if="solicitudes != [] && solicitud != null">
                     <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
                     <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
                 </div>

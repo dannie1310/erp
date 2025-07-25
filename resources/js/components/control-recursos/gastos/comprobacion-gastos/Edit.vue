@@ -530,6 +530,7 @@ export default {
                 contenido_xml: '',
                 descuento: ''
             });
+            this.total_documentos = this.total_documentos + 1;
         },
         destroy(index){
             let _self = this;
@@ -542,6 +543,8 @@ export default {
                     _self.files.splice(indice, 1);
                 });
                 this.no_cfd = this.no_cfd - 1;
+            }else{
+                this.total_documentos = this.total_documentos - 1;
             }
             this.documentos.splice(index, 1);
         },
@@ -613,6 +616,7 @@ export default {
                 contenido_xml : concepto.contenido_xml,
                 descuento : concepto.descuento - concepto.descuento_IEPS
             });
+            this.no_cfd = this.no_cfd + 1;
         },
         cargarXML(){
             this.cargando = true;

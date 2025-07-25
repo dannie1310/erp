@@ -697,7 +697,7 @@ class Comprobacion extends Model
 
     private function validaEliminacion()
     {
-        if ($this->Estatus != 1 || $this->Estatus != 2 || $this->Estatus != 3)
+        if ($this->Estatus == 4 || $this->Estatus == 5 || $this->Estatus == 6 || $this->Estatus == 7)
         {
             abort(500, "La comprobación de gastos (" . $this->folio_format . ") su estado es: '". $this->estado_format ."' no puede eliminarse.");
         }
