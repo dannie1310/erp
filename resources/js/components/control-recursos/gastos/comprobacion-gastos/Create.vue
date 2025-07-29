@@ -79,7 +79,7 @@
                         </div>
                         <div class="col-md-5">
                             <div class="form-group error-content">
-                                <label for="id_proyecto">Proyecto:</label>
+                                <label for="id_proyecto">Obra / Proyecto:</label>
                                 <select class="form-control"
                                         data-vv-as="Proyecto"
                                         id="id_proyecto"

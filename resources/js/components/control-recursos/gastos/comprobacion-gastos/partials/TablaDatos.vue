@@ -42,6 +42,19 @@
                         </td>
                     </tr>
                     <tr>
+                        <th class="encabezado" colspan="3">
+                            Motivo
+                        </th>
+                    </tr>
+                    <tr>
+                        <td colspan="3" v-if="solicitud.motivo">
+                            {{ solicitud.motivo }}
+                        </td>
+                        <td colspan="3" v-else>
+                            {{solicitud.comprobacion.motivo}}
+                        </td>
+                    </tr>
+                    <tr>
                         <th class="encabezado  c130">
                             Fecha
                         </th>
