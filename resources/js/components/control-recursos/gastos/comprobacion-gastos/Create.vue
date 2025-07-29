@@ -177,6 +177,9 @@ export default {
         this.fecha_inicial = new Date();
         this.fecha_final = new Date();
         this.fechasDeshabilitadas.from = new Date();
+        this.solicitudes = [];
+        this.id_solicitud = '';
+        this.solicitud = null;
     },
     methods: {
         getSeries() {
@@ -211,6 +214,8 @@ export default {
             this.fecha_final = new Date();
             this.cargando = true;
             this.solicitudes = [];
+            this.id_solicitud = '';
+            this.solicitud = null;
         },
         formatoFecha(date) {
             return moment(date).format('DD/MM/YYYY');
@@ -265,6 +270,7 @@ export default {
         {
             if(value !== '' && value !== null && value !== undefined)
             {
+                this.solicitud = null;
                 this.find();
             }
         },
@@ -272,6 +278,10 @@ export default {
         {
             if(value !== '' && value !== null && value !== undefined)
             {
+                this.$validator.reset()
+                this.solicitudes = [];
+                this.id_solicitud = '';
+                this.solicitud = null;
                 this.getSolicitudes();
             }
         }
