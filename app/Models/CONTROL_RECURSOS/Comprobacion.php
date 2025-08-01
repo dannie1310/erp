@@ -2,6 +2,7 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\IGH\Departamento;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -134,6 +135,11 @@ class Comprobacion extends Model
         return $this->hasMany(DoctoComp::class, 'IdComprobacion','IdComprobacion')->noDeducibles();
     }
 
+    public function departamentoIgh()
+    {
+        return $this->belongsTo(Departamento::class, 'IdDepartamento', 'iddepartamento');
+    }
+
     /**
      * Scopes
      */
@@ -220,6 +226,15 @@ class Comprobacion extends Model
     {
         try {
             return $this->empleado->usuario->departamento->departamento;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getDepartamentoIntranetAttribute()
+    {
+        try {
+            return $this->departamentoIgh->departamento;
         } catch (\Exception $e) {
             return null;
         }
@@ -374,7 +389,7 @@ class Comprobacion extends Model
     public function getDuracionViajeAttribute()
     {
         try {
-            return  $this->documentos()->count('FechaDocto');
+            return  $this->documentos()->distinct("FechaDocto")->count('FechaDocto');
         } catch (\Exception $e) {
             return null;
         }

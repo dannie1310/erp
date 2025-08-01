@@ -111,7 +111,7 @@ class SolCheque extends Model
 
     public function partidaPago()
     {
-        return $this->belongsTo(PartidaPago::class, 'IdSolCheque', 'IdSolCheques');
+        return $this->belongsTo(PartidaPago::class, 'IdSolCheques', 'IdSolCheque');
     }
 
     /**

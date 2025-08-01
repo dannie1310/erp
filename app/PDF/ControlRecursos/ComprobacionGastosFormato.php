@@ -121,8 +121,7 @@ class ComprobacionGastosFormato extends Rotation
         $this->Cell(9,.5,utf8_decode('TOTAL DE LA COMPROBACIÓN:'),1,0,'L',1);
         $this->SetFillColor(204,204,204);
         $this->SetTextColor(0,0,0);
-        $this->Cell(11.5,.5,$this->comprobacion->total_comprobante." ".$this->comprobacion->moneda_descripcion,1,1,'C',1);
-
+        $this->Cell(11.5,.5,number_format($this->comprobacion->total_comprobante,2,'.',',')." ".$this->comprobacion->moneda_descripcion,1,1,'C',1);
         $this->SetFont('Arial','',8);
         $this->Cell(20.5,.3,' ',0,1,'C');
         $this->Cell(4,.4,'SOLICITA: ',0,0,'L');
@@ -131,7 +130,7 @@ class ComprobacionGastosFormato extends Rotation
         $this->SetFont('Arial','',8);
         $this->Cell(4,.4,'DEPARTAMENTO: ',0,0,'L');
         $this->SetFont('Arial','B',8);
-        $this->Cell(16.5,.4,$this->comprobacion->departamento,0,1,'L');
+        $this->Cell(16.5,.4,$this->comprobacion->departamento_intranet,0,1,'L');
         $this->SetFont('Arial','',8);
         $this->Cell(4,.4,'DEL: ',0,0,'L');
         $this->SetFont('Arial','B',8);
@@ -147,7 +146,7 @@ class ComprobacionGastosFormato extends Rotation
         $this->SetFont('Arial','',8);
         $this->Cell(4,.4,'MOTIVO: ',0,0,'L');
         $this->SetFont('Arial','B',8);
-        $this->MultiCell(16.5,.4, $this->comprobacion->Motivo ,0,'J');
+        $this->MultiCell(16.5,.4, utf8_decode($this->comprobacion->Motivo) ,0,'J');
     }
 
     public function encabezadosDoctos()
@@ -189,18 +188,19 @@ class ComprobacionGastosFormato extends Rotation
             $importe = 0;
             $iva = 0;
             $hos = 0;
+            $this->SetFont('Arial','',7);
             /*DETALLES DE LOS DOCTOS*/
             foreach ($this->comprobacion->documentosDeducibles as $documento)
             {
-                $this->Cell(1.5,.3,$documento->fecha_format,1,0,'L');
-                $this->Cell(1.7,.3,$documento->tipo_docto_descripcion,1,0,'L');
-                $this->Cell(2.5,.3,$documento->FolioDocto,1,0,'L');
-                $this->Cell(3,.3,$documento->tipo_gasto_descripcion,1,0,'L');
-                $this->Cell(1.5,.3,$documento->Importe,1,0,'R');
-                $this->Cell(1.5,.3,$documento->IVA,1,0,'R');
-                $this->Cell(1.3,.3,$documento->ImpHosp,1,0,'R');
-                $this->Cell(1.5,.3,$documento->Total,1,0,'R');
-                $this->Cell(6,.3,$documento->Observaciones,1,1,'L');
+                $this->Cell(1.5,.4,$documento->fecha_formato,1,0,'L');
+                $this->Cell(1.7,.4,$documento->tipo_docto_descripcion,1,0,'L');
+                $this->Cell(2.5,.4,$documento->FolioDocto,1,0,'L');
+                $this->Cell(3,.4,$documento->tipo_gasto_descripcion,1,0,'L');
+                $this->Cell(1.5,.4,number_format($documento->Importe,2,'.',','),1,0,'R');
+                $this->Cell(1.5,.4,number_format($documento->IVA,2,'.',','),1,0,'R');
+                $this->Cell(1.3,.4,number_format($documento->ImpHosp,2,'.',','),1,0,'R');
+                $this->Cell(1.5,.4,number_format($documento->Total,2,'.',','),1,0,'R');
+                $this->Cell(6,.4,$documento->Observaciones,1,1,'L');
                 $importe = $importe + $documento->Importe;
                 $iva = $iva + $documento->IVA;
                 $hos = $hos + $documento->ImpHosp;
@@ -283,14 +283,21 @@ class ComprobacionGastosFormato extends Rotation
             $iva = 0;
             $hos = 0;
             /*DETALLES DE LOS DOCTOS*/
+            $this->SetFont('Arial','',7);
             foreach ($this->comprobacion->documentosNoDeducibles as $documento)
             {
-                $this->Cell(2,.3,$documento->fecha_format,1,0,'L');
-                $this->Cell(2,.3,substr($documento->tipo_docto_descripcion,0,8).'. ',1,0,'L');
-                $this->Cell(2.5,.3,$documento->FolioDocto,1,0,'L');
-                $this->Cell(4,.3,$documento->tipo_gasto_descripcion,1,0,'L');
-                $this->Cell(2.5,.3,$documento->Importe,1,0,'R');
-                $this->Cell(7.5,.3,$documento->Observaciones,1,1,'L');
+                $this->Cell(2,.4,$documento->fecha_formato,1,0,'L');
+                $this->Cell(2,.4,substr($documento->tipo_docto_descripcion,0,8).'. ',1,0,'L');
+                $this->Cell(2.5,.4,$documento->FolioDocto,1,0,'L');
+                $this->Cell(4,.4,$documento->tipo_gasto_descripcion,1,0,'L');
+                $this->Cell(2.5,.4,number_format($documento->Importe,2,'.',','),1,0,'R');
+                if(strlen($documento->Observaciones) > 45){
+                    $this->Cell(7.5,.4,substr(utf8_decode($documento->Observaciones), 0 ,45) . "...",1,1,'L');
+                }
+                else{
+                    $this->Cell(7.5,.4,utf8_decode($documento->Observaciones),1,1,'L');
+                }
+
                 $importe = $importe + $documento->Importe;
             }
 
@@ -362,12 +369,12 @@ class ComprobacionGastosFormato extends Rotation
             $g =  GrupoTipoGastoComp::find($grupo->Grupo);
             $deducibles = $this->comprobacion->sumaPorGrupo($grupo->Grupo,1);
             $no_deducibles = $this->comprobacion->sumaPorGrupo($grupo->Grupo,2);
-            $total = ($deducibles->importe != null ? $deducibles->importe : 0) + ($no_deducibles->importe != null ? $no_deducibles->importe : 0);
+            $total = ($deducibles->total != null ? $deducibles->total : 0) + ($no_deducibles->total != null ? $no_deducibles->total : 0);
 
             $this->Cell(4.5,.4,$g->Descripcion,1,0,'L');
             $this->Cell(2.5,.4,$deducibles->importe != null ? number_format($deducibles->importe,2,'.',',') : 0.00,1,0,'R');
             $this->Cell(2.5,.4,$deducibles->iva != null   ? number_format($deducibles->iva,2,'.',',') : 0.00,1,0,'R');
-            $this->Cell(2.5,.4,$deducibles->imp != null  ? number_format(($deducibles->importe + $deducibles->iva),2,'.',',') : 0.00,1,0,'R');
+            $this->Cell(2.5,.4,$deducibles->total != null  ? number_format($deducibles->total,2,'.',',') : 0.00,1,0,'R');
             $this->Cell(3,.4,$no_deducibles->importe != null  ? number_format($no_deducibles->importe,2,'.',',') : 0.00,1,0,'R');
             $this->Cell(3,.4,number_format($total,2,'.',','),1,0,'R');
             $this->Cell(2.5,.4,number_format(($total / $this->duracion) ,2,'.',','),1,1,'R');
@@ -554,13 +561,13 @@ class ComprobacionGastosFormato extends Rotation
                   if($cantidad_firmas>=4)
                   {
                       $blancos=false;
-                      $ancho=19.5/$cantidad_firmas;
+                      $ancho=17.5/$cantidad_firmas;
                   }
                   else
                   {
                       $blancos=true;
                       $ancho=4.5;
-                      $ancho_blancos=(19.5-($ancho * $cantidad_firmas))/2;
+                      $ancho_blancos=(17.5-($ancho * $cantidad_firmas))/2;
                   }
                   if($blancos)
                   {
