@@ -167,12 +167,12 @@ class DocumentoService
             ];
 
             if ($array_xml != null) {
-                $total_traslados = 0;
-                $total_retenido = 0;
                 $k = 0;
                 $i = 0;
                 foreach ($array_xml['conceptos'] as $key => $concepto) {
                     $k = $i;
+                    $total_traslados = 0;
+                    $total_retenido = 0;
                     $array[$i] = [
                         'NAME' => 'INVOICE_ITEM',
                         'N00' => $key + 1,
@@ -235,7 +235,7 @@ class DocumentoService
                             $array[$i] = [
                                 'NAME' => 'INVOICE_ITEM_POSTING',
                                 'N00' => $key + 1,
-                                'N01' => number_format($importe,3),
+                                'N01' => round($importe,4),
                                 'C00' => Util::eliminaAcentos($item->segmento_negocio),
                                 'C01' => '',
                                 'C02' => $cuenta ? $cuenta->cuenta_ifs : '',
