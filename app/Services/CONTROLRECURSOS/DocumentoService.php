@@ -223,6 +223,20 @@ class DocumentoService
                         }
                     }
 
+                    if (array_key_exists('retencionesLocales', $array_xml)) {
+                        foreach ($array_xml['retencionesLocales'] as $retencion) {
+                            $codigo = CodigoImpuesto::where('codigo_sat', $retencion['descripcion'])->where('tipo_codigo','R')->first();
+                            $array[$i] = [
+                                'NAME' => 'INVOICE_ITEM_TAX',
+                                'N00' => $key + 1,
+                                'C00' => $codigo ? $codigo->codigo_ifs : $retencion['descripcion'],
+                                'N01' => $retencion['tasaRetencion']*100,
+                                'N02' => $retencion['total']
+                            ];
+                            $i++;
+                        }
+                    }
+
                     if(count($segmentos_negocio) > 0) {
                         foreach ($segmentos_negocio as $item) {
                             $porcentaje = $item->importe_segmento / $sumatorias->importe_segmento;
