@@ -139,6 +139,12 @@ class DocumentoService
                 }
             }
 
+            $concepto_text = $documento->solChequeDocto->solCheque->Concepto;
+            if(strlen($concepto_text) > 120)
+            {
+                $concepto_text = substr($documento->solChequeDocto->solCheque->Concepto, 0, 120);
+            }
+
             $header = [
                 'NAME' => 'INVOICE_HEADER',
                 'C00' => 'I',
@@ -160,7 +166,7 @@ class DocumentoService
                 'C11' => 'FALSE',
                 'D01' => $documento->Fecha . '-00.00.00',
                 'C12' => $documento->uuid ? $documento->uuid : '',
-                'C13' => utf8_decode(substr($documento->solChequeDocto->solCheque->Concepto, 0, 120)),
+                'C13' => $concepto_text,
                 'C14' => $documento->uuid ? $documento->uuid . '.xml' : $documento->FolioDocto,
                 'C15' => auth()->user()->usuario,
                 'C16' => str_replace('-', ' ', $documento->folio_solicitud),
