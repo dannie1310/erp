@@ -236,7 +236,7 @@ class DocumentoService
                                 'NAME' => 'INVOICE_ITEM_TAX',
                                 'N00' => $key + 1,
                                 'C00' => $codigo ? $codigo->codigo_ifs : $retencion['descripcion'],
-                                'N01' => $retencion['tasaRetencion']*100,
+                                'N01' => $retencion['tasaRetencion'],
                                 'N02' => $retencion['total']
                             ];
                             $i++;
