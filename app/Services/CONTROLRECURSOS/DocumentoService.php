@@ -248,7 +248,7 @@ class DocumentoService
                         foreach ($segmentos_negocio as $item) {
                             $porcentaje = $item->importe_segmento / $sumatorias->importe_segmento;
                             $importe = $porcentaje * $concepto['importe'];
-                            $total= round($importe,4) + $total;
+                            $total= round($importe,2) + $total;
                             $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
                             if ($cuenta == null)
                             {
@@ -257,7 +257,7 @@ class DocumentoService
                             $array[$i] = [
                                 'NAME' => 'INVOICE_ITEM_POSTING',
                                 'N00' => $key + 1,
-                                'N01' => round($importe,4),
+                                'N01' => round($importe,2),
                                 'C00' => Util::eliminaAcentos($item->segmento_negocio),
                                 'C01' => '',
                                 'C02' => $cuenta ? $cuenta->cuenta_ifs : '',
@@ -281,7 +281,7 @@ class DocumentoService
                     {
                         $diferencia = $concepto['importe'] - $total;
                         $agregando_diferencia =  $array[$index]['N01'] + $diferencia;
-                        $array[$index]['N01']  = round($agregando_diferencia, 4);
+                        $array[$index]['N01']  = round($agregando_diferencia, 2);
                     }
                 }
             }
