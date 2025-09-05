@@ -311,7 +311,7 @@ class DocumentoService
                     ],
                 ]
             ];
-            dd($array_fin);
+
             $a = new ArrayToXml($array_fin, "IN_MESSAGE");
             $a->setDomProperties(['formatOutput' => true]);
             $result = $a->toXml();
