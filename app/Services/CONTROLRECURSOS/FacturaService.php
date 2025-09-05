@@ -121,6 +121,17 @@ class FacturaService
                 $arreglo['retencion'] = $arreglo['retencion'] + $retencion['importe'];
             }
         }
+        $ieps = 0;
+        foreach ($arreglo_cfd['conceptos'] as $key => $concepto) {
+            if (array_key_exists('traslados', $concepto)) {
+                foreach ($concepto['traslados'] as $traslado) {
+                    if ($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe']) {
+                        $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
+                    }
+                }
+            }
+        }
+        $arreglo["IEPS"] = $ieps;
        // REVISAR CUANDO MUESTREN LO QUE AGREGAN A OTROS IMPUESTOS
          $bandera = 0;
         if(array_key_exists('traslados', $arreglo_cfd) && $arreglo_cfd['traslados'] != []) {

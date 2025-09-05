@@ -45,7 +45,8 @@ class Documento extends Model
         'registro_portal',
         'Descuento',
         'Descuento_CFDI',
-        'IdGenero'
+        'IdGenero',
+        'IEPS'
     ];
 
     protected static function boot()
@@ -362,7 +363,8 @@ class Documento extends Model
                 'Creo' => auth()->id(),
                 'Estatus' => $data['estado'],
                 'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
-                "registro_portal" => 1
+                "registro_portal" => 1,
+                'IEPS' => 0
             ]);
             DB::connection('controlrec')->commit();
             $documento->update([

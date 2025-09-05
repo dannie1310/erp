@@ -22,6 +22,7 @@ class CFDI extends Rotation
     const MM_IN_INCH = 25.4;
 
     private $en_cola = '';
+    private $IEPS = 0;
 
     public function __construct($factura)
     {
@@ -84,18 +85,18 @@ class CFDI extends Rotation
         $this->setXY(1, 3.5);
 
         $this->SetFillColor(180,180,180);
-        $this->SetWidths([0.5,1.5,8.2,2,1.5,2,2,2]);
-        $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF']);
-        $this->SetRounds(['','','','','','','','']);
-        $this->SetRadius([0.2,0,0,0,0,0,0,0.2]);
+        $this->SetWidths([0.5,1.5,8.2,1,1,2,1.5,2,2]);
+        $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF','DF']);
+        $this->SetRounds(['','','','','','','','','']);
+        $this->SetRadius([0.2,0,0,0,0,0,0,0,0.2]);
 
-        $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
-        $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+        $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
+        $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
         $this->SetDrawColor(100,100,100);
         $this->SetHeights([0.4]);
-        $this->SetAligns(['C','C','C','C','C','C','C','C']);
+        $this->SetAligns(['C','C','C','C','C','C','C','C','C']);
 
-        $this->Row(["#", "Clave SAT", utf8_decode("Descripción"),"Unidad","Cantidad", "Precio Unitario", "Total", "Descuento"]);
+        $this->Row(["#", "Clave SAT", utf8_decode("Descripción"),"Unidad","Cantidad", "Precio Unitario", "Base con Descuentos", "Total", "Descuento"]);
 
     }
 
@@ -103,12 +104,22 @@ class CFDI extends Rotation
     {
         $i = 1;
         foreach($this->factura["conceptos"] as $partida){
-            $this->SetWidths([0.5,1.5,8.2,2,1.5,2,2,2]);
+            $this->SetWidths([0.5,1.5,8.2,1,1,2,1.5,2,2]);
             $this->SetDrawColor(100,100,100);
             $this->SetFont('Arial', '', 7);
-            $this->SetAligns(['C','L','L','C','R','R','R','R']);
-            $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
-            $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+            $this->SetAligns(['C','L','L','C','R','R','R','R','R']);
+            $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+            $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+            $ieps=0;
+            if(key_exists("traslados",$partida)) {
+                foreach ($partida["traslados"] as $traslado)
+                {
+                    if($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $partida["importe"] != $traslado['base'])
+                    {
+                        $ieps = $traslado['base'];
+                    }
+                }
+            }
             $this->Row([
                 $i,
                 utf8_decode($partida["clave_prod_serv"]),
@@ -116,11 +127,12 @@ class CFDI extends Rotation
                 $partida["unidad"],
                 $partida["cantidad"],
                 "$".number_format($partida["valor_unitario"],2),
+                "$".number_format($ieps,2),
                 "$".number_format($partida["importe"],2),
-                "$".number_format($partida["descuento"],2),
+                "$".number_format($partida["descuento"],2)
             ]);
             if(key_exists("traslados",$partida)){
-                $this->trasladosConcepto($partida["traslados"]);
+                $this->trasladosConcepto($partida["traslados"],$partida["importe"]);
             }
             if(key_exists("retenciones",$partida)){
                 $this->retencionesConcepto($partida["retenciones"]);
@@ -131,7 +143,7 @@ class CFDI extends Rotation
 
     }
 
-    public function trasladosConcepto($traslados)
+    public function trasladosConcepto($traslados, $importe)
     {
         $i = 1;
         foreach($traslados as $traslado){
@@ -152,8 +164,11 @@ class CFDI extends Rotation
                 "   Tasa o Cuota: ".
                 $traslado["tasa_o_cuota"].
                 "   Importe: ".
-                number_format($traslado["importe"],2),
+                number_format($traslado["importe"],2).
+                "   IEPS: ".
+                number_format($importe - $traslado['base'],2),
             ]);
+            $this->IEPS = ($importe - $traslado['base']) + $this->IEPS;
             $i++;
         }
 
@@ -202,6 +217,13 @@ class CFDI extends Rotation
             $this->Cell(2.2,0.4,"$".number_format($this->factura["descuento"],2),0,1,"R");
         }
 
+        if($this->IEPS != 0)
+        {
+            $this->Cell(15.5,0.4,"");
+            $this->Cell(2,0.4,"Subtotal c/Descuentos: ", 0,0,"R");
+            $this->Cell(2.2,0.4,"$".number_format(($this->factura["subtotal"]-$this->IEPS),2),0,1,"R");
+        }
+
         if(key_exists("traslados",$this->factura)) {
             foreach($this->factura["traslados"] as $traslado){
                 $impuesto = ($traslado["impuesto"]=="002")?"IVA":(($traslado["impuesto"]=="001")?"ISR":($traslado["impuesto"]=="003")?"IEPS":"");
@@ -220,7 +242,12 @@ class CFDI extends Rotation
             }
         }
 
-
+        if($this->IEPS != 0)
+        {
+            $this->Cell(15.5,0.4,"");
+            $this->Cell(2,0.4,"IEPS: ", 0,0,"R");
+            $this->Cell(2.2,0.4,"$".number_format($this->IEPS,2),0,1,"R");
+        }
 
         $this->Cell(15.5,0.4,"");
         $this->Cell(2,0.4,"Total: ", 0,0,"R");
