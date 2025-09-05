@@ -175,6 +175,7 @@ class DocumentoService
             if ($array_xml != null) {
                 $k = 0;
                 $i = 0;
+                $ieps = 0;
                 foreach ($array_xml['conceptos'] as $key => $concepto) {
                     $k = $i;
                     $total_traslados = 0;
@@ -203,14 +204,27 @@ class DocumentoService
                     if (array_key_exists('traslados', $concepto)) {
                         foreach ($concepto['traslados'] as $traslado) {
                             $total_traslados += $traslado['importe'];
-                            $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo','I')->first();
-                            $array[$i] = [
-                                'NAME' => 'INVOICE_ITEM_TAX',
-                                'N00' => $key + 1,
-                                'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
-                                'N01' => $traslado['tasa_o_cuota'] * 100,
-                                'N02' => $traslado['importe']
-                            ];
+                            if($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe'])
+                            {
+                                $array[$k]['N01'] = $traslado['base'];
+                                $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
+                                $array[$i] = [
+                                    'NAME' => 'INVOICE_ITEM_TAX',
+                                    'N00' => $key + 1,
+                                    'C00' => 'N',
+                                    'N01' => $traslado['tasa_o_cuota'] * 100,
+                                    'N02' => $traslado['importe']
+                                ];
+                            }else {
+                                $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
+                                $array[$i] = [
+                                    'NAME' => 'INVOICE_ITEM_TAX',
+                                    'N00' => $key + 1,
+                                    'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
+                                    'N01' => $traslado['tasa_o_cuota'] * 100,
+                                    'N02' => $traslado['importe']
+                                ];
+                            }
                             $i++;
                         }
                     }
@@ -297,6 +311,7 @@ class DocumentoService
                     ],
                 ]
             ];
+            dd($array_fin);
             $a = new ArrayToXml($array_fin, "IN_MESSAGE");
             $a->setDomProperties(['formatOutput' => true]);
             $result = $a->toXml();

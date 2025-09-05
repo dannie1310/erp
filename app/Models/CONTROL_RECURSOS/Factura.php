@@ -108,7 +108,8 @@ class Factura extends Documento
             'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
             'registro_portal' => 1,
             'Descuento' => $data['proveedor_bd']['importe_especial'] == 1 ? 0 : $data['descuento'],
-            'Descuento_CFDI' => $data['descuento']
+            'Descuento_CFDI' => $data['descuento'],
+            'IEPS' => $data['IEPS']
         ]);
     }
 
