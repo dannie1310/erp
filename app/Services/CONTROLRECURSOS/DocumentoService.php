@@ -137,6 +137,10 @@ class DocumentoService
                 if ($condiciones == 0 && $array_xml['condicion_de_pago'] == 'CONTADO') {
                     $condiciones = 0;
                 }
+                if(is_numeric($condiciones) ==  false)
+                {
+                    $condiciones = 0;
+                }
             }
 
             $concepto_text = $documento->solChequeDocto->solCheque->Concepto;
