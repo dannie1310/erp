@@ -85,7 +85,7 @@ class CFDI extends Rotation
         $this->setXY(1, 3.5);
 
         $this->SetFillColor(180,180,180);
-        $this->SetWidths([0.5,1.5,8.2,1,1,2,1.5,2,2]);
+        $this->SetWidths([0.5,1.5,8,1.1,1.1,2,1.5,2,2]);
         $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF','DF']);
         $this->SetRounds(['','','','','','','','','']);
         $this->SetRadius([0.2,0,0,0,0,0,0,0,0.2]);
@@ -104,7 +104,7 @@ class CFDI extends Rotation
     {
         $i = 1;
         foreach($this->factura["conceptos"] as $partida){
-            $this->SetWidths([0.5,1.5,8.2,1,1,2,1.5,2,2]);
+            $this->SetWidths([0.5,1.5,8,1.1,1.1,2,1.5,2,2]);
             $this->SetDrawColor(100,100,100);
             $this->SetFont('Arial', '', 7);
             $this->SetAligns(['C','L','L','C','R','R','R','R','R']);
@@ -154,6 +154,11 @@ class CFDI extends Rotation
             $this->SetTextColors(['0,0,0']);
             $this->SetFills(['255,255,255']);
             $impuesto = ($traslado["impuesto"]=="002")?"IVA":(($traslado["impuesto"]=="001")?"ISR":($traslado["impuesto"]=="003")?"IEPS":"");
+            $ieps = 0;
+            if($importe == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $importe)
+            {
+                $ieps = $importe - $traslado['base'];
+            }
             $this->Row([
                 "-Impuesto Trasladado-    Base: ".
                 number_format($traslado["base"],2).
@@ -166,9 +171,9 @@ class CFDI extends Rotation
                 "   Importe: ".
                 number_format($traslado["importe"],2).
                 "   IEPS: ".
-                number_format($importe - $traslado['base'],2),
+                number_format($ieps,2),
             ]);
-            $this->IEPS = ($importe - $traslado['base']) + $this->IEPS;
+            $this->IEPS = ($ieps) + $this->IEPS;
             $i++;
         }
 

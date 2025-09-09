@@ -122,7 +122,7 @@ class FacturaService
             }
         }
         $ieps = 0;
-        foreach ($arreglo_cfd['conceptos'] as $key => $concepto) {
+        foreach ($arreglo_cfd['conceptos'] as $concepto) {
             if (array_key_exists('traslados', $concepto)) {
                 foreach ($concepto['traslados'] as $traslado) {
                     if ($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe']) {

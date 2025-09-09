@@ -90,7 +90,7 @@ class Factura extends Documento
             "Fecha" => $fecha->format('Y-m-d'),
             "Vencimiento" => $vencimiento->format('Y-m-d'),
             'Concepto' => $data["concepto"],
-            "Importe" => $data['proveedor_bd']['importe_especial'] == 1 ? ($data['subtotal'] - $data['descuento']) : $data["subtotal"],
+            "Importe" => $data['proveedor_bd']['importe_especial'] == 1 ? (($data['subtotal'] + (array_key_exists('otros',$data) ? $data["otros"] : 0)) - $data['descuento']) : $data["subtotal"],
             "IVA" => $data["impuesto"],
             "Total" => $data["total"],
             "Retenciones" => $data["retencion"],
