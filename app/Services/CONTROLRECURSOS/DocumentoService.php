@@ -168,7 +168,7 @@ class DocumentoService
                 'N00' => $documento->TC,
                 'D00' => $documento->Fecha . '-00.00.00',
                 'N01' => $documento->Importe,
-                'N02' => $array_xml ? $array_xml['total_impuestos_trasladados'] : $documento->OtrosImpuestos,
+                'N02' => $array_xml && $documento->proveedor->importe_especial == 0 ? $array_xml['total_impuestos_trasladados'] : $documento->OtrosImpuestos,
                 'N03' => $array_xml ? $array_xml['total_impuestos_retenidos'] : $documento->Retenciones,
                 'C11' => 'FALSE',
                 'D01' => $documento->Fecha . '-00.00.00',
@@ -210,29 +210,33 @@ class DocumentoService
 
                     if (array_key_exists('traslados', $concepto)) {
                         foreach ($concepto['traslados'] as $traslado) {
-                            $total_traslados += $traslado['importe'];
-                            if($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe'])
-                            {
-                                $array[$k]['N01'] = $traslado['base'];
-                                $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
-                                $array[$i] = [
-                                    'NAME' => 'INVOICE_ITEM_TAX',
-                                    'N00' => $key + 1,
-                                    'C00' => 'N',
-                                    'N01' => $traslado['tasa_o_cuota'] * 100,
-                                    'N02' => $traslado['importe']
-                                ];
-                            }else {
-                                $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
-                                $array[$i] = [
-                                    'NAME' => 'INVOICE_ITEM_TAX',
-                                    'N00' => $key + 1,
-                                    'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
-                                    'N01' => $traslado['tasa_o_cuota'] * 100,
-                                    'N02' => $traslado['importe']
-                                ];
+                            if(($documento->proveedor->importe_especial == 1 && $traslado['impuesto'] != '003') || $documento->proveedor->importe_especial == 0) {
+                                $total_traslados += $traslado['importe'];
+                                if ($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe']) {
+                                    $array[$k]['N01'] = $traslado['base'];
+                                    $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
+                                    $array[$i] = [
+                                        'NAME' => 'INVOICE_ITEM_TAX',
+                                        'N00' => $key + 1,
+                                        'C00' => 'N',
+                                        'N01' => $traslado['tasa_o_cuota'] * 100,
+                                        'N02' => $traslado['importe']
+                                    ];
+                                } else {
+                                    $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
+                                    $array[$i] = [
+                                        'NAME' => 'INVOICE_ITEM_TAX',
+                                        'N00' => $key + 1,
+                                        'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
+                                        'N01' => $traslado['tasa_o_cuota'] * 100,
+                                        'N02' => $traslado['importe']
+                                    ];
+                                }
+                                $i++;
+                            }else{
+                                $array[$k]['N01'] =  ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
+                                $array[$k]['N05'] =  ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
                             }
-                            $i++;
                         }
                     }
                     if (array_key_exists('retenciones', $concepto)) {
@@ -268,7 +272,13 @@ class DocumentoService
                     if(count($segmentos_negocio) > 0) {
                         foreach ($segmentos_negocio as $item) {
                             $porcentaje = $item->importe_segmento / $sumatorias->importe_segmento;
-                            $importe = $porcentaje * $concepto['importe'];
+                            if($documento->proveedor->importe_especial != 1)
+                            {
+                                $importe = $porcentaje * $concepto['importe'];
+                            }else{
+                                $importe = $porcentaje * ($array[$k]['N01']);
+                            }
+
                             $total= round($importe,2) + $total;
                             $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
                             if ($cuenta == null)
@@ -298,9 +308,15 @@ class DocumentoService
                     $array[$k]['N02'] = $total_traslados;
                     $array[$k]['N03'] = $total_retenido;
 
-                    if($total != $concepto['importe'])
+                    if($documento->proveedor->importe_especial != 1)
                     {
-                        $diferencia = $concepto['importe'] - $total;
+                        $importe_total = $concepto['importe'];
+                    }else{
+                        $importe_total = $array[$k]['N01'];
+                    }
+                    if($total != $importe_total)
+                    {
+                        $diferencia = $importe_total - $total;
                         $agregando_diferencia =  $array[$index]['N01'] + $diferencia;
                         $array[$index]['N01']  = round($agregando_diferencia, 2);
                     }
