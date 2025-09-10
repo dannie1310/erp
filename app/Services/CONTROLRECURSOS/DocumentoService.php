@@ -133,12 +133,15 @@ class DocumentoService
 
             $condiciones = '';
             if ($array_xml != null) {
+                if (str_contains($array_xml['condicion_de_pago'], 'NETO')) {
+                    $pos = strpos($array_xml['condicion_de_pago'], 'NETO');
+                    $array_xml['condicion_de_pago'] = substr($array_xml['condicion_de_pago'], $pos, strlen($array_xml['condicion_de_pago']) - ($pos - 1));
+                }
                 $condiciones = (int)preg_replace("/[^0-9]/", "", $array_xml['condicion_de_pago']);
                 if ($condiciones == 0 && $array_xml['condicion_de_pago'] == 'CONTADO') {
                     $condiciones = 0;
                 }
-                if(is_numeric($condiciones) ==  false)
-                {
+                if (is_numeric($condiciones) == false) {
                     $condiciones = 0;
                 }
             }
