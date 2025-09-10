@@ -133,6 +133,12 @@ class DocumentoService
 
             $condiciones = '';
             if ($array_xml != null) {
+                    $pos = strpos($array_xml['condicion_de_pago'], 'NETO');
+                    if(str_contains($array_xml['condicion_de_pago'], 'NETO'))
+                    {
+                   
+                    }
+                    dd($pos,$array_xml['condicion_de_pago']);
                 $condiciones = (int)preg_replace("/[^0-9]/", "", $array_xml['condicion_de_pago']);
                 if ($condiciones == 0 && $array_xml['condicion_de_pago'] == 'CONTADO') {
                     $condiciones = 0;
