@@ -95,7 +95,7 @@ class Factura extends Documento
             "Total" => $data["total"],
             "Retenciones" => $data["retencion"],
             "TasaIva" => (int) $data['tasa_iva'],
-            "OtrosImpuestos" => array_key_exists('otros',$data) ? $data["otros"] : 0,
+            "OtrosImpuestos" =>  $data['proveedor_bd']['importe_especial'] == 1 ? 0 : (array_key_exists('otros',$data) ? $data["otros"] : 0),
             "IdMoneda" => $data["id_moneda"],
             'Alias_Depto' => $usuario->departamento ? $usuario->departamento->departamento_abreviatura : '',
             'Departamento' => $usuario->departamento ? $usuario->departamento->departamento : '',
