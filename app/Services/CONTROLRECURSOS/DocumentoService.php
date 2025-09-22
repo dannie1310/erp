@@ -375,7 +375,6 @@ class DocumentoService
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
         ];
-        dd($header);
 
         $i = 0;
         $array[$i] = [
@@ -468,7 +467,7 @@ class DocumentoService
                 ],
             ]
         ];
-dd($array_fin);
+
         $a = new ArrayToXml($array_fin, "IN_MESSAGE");
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
