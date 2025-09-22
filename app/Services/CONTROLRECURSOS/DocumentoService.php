@@ -359,7 +359,7 @@ class DocumentoService
             'C05' => '',
             'C06' => '',
             'C07' => '',
-            'C08' => $documento->FolioDocto,
+            'C08' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text,
             'C09' => $documento->moneda->corto_ifs,
             'C10' => 0,
             'N00' => $documento->TC,
@@ -369,12 +369,13 @@ class DocumentoService
             'N03' => $documento->Retenciones,
             'C11' => 'FALSE',
             'D01' => $documento->Fecha . '-00.00.00',
-            'C12' => '',
-            'C13' => $concepto_text,
-            'C14' => $documento->FolioDocto,
+            'C12' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text,
+            'C13' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text,
+            'C14' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text . '.xml',
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
         ];
+        dd($header);
 
         $i = 0;
         $array[$i] = [
@@ -467,7 +468,7 @@ class DocumentoService
                 ],
             ]
         ];
-
+dd($array_fin);
         $a = new ArrayToXml($array_fin, "IN_MESSAGE");
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
