@@ -1048,7 +1048,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4.2, .4, utf8_decode('Subdirección Procura y Subcontratos'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4, .4, utf8_decode('Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4, .4, utf8_decode('Dirección Corporativa'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4.9, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
@@ -1078,7 +1078,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.1);
             $this->Cell(4.2, .4, utf8_decode('LIC. OSCAR BRÍGIDO ESPINOZA GARCÍA'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
-            $this->Cell(4, .4, utf8_decode('ING. DANIEL CANSANÇÃO OLIVEIRA'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4, .4, utf8_decode('ING. PIERO ARIENZO VOGEL'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
             $this->Cell(4.9, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(.1);
