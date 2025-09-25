@@ -344,9 +344,9 @@ class DocumentoService
         $array_xml = null;
         $array_fin = [];
         $array = [];
-        $concepto_text = $documento->solChequeDocto->solCheque->Concepto;
+        $concepto_text = Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto);
         if (strlen($concepto_text) > 120) {
-            $concepto_text = substr($documento->solChequeDocto->solCheque->Concepto, 0, 120);
+            $concepto_text = substr(Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto), 0, 120);
         }
 
         $header = [
@@ -492,8 +492,8 @@ class DocumentoService
         $documento = $this->show($id);
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
         $this->xml($id);
-        $archivo = $this->getBase64XML($documento->uuid);
-        event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+        $archivo = $this->getBase64XML($name);
+        event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $name . '.xml', $archivo));
     }
 
     private function getBase64XML($name)
