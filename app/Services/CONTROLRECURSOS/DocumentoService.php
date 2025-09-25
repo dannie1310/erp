@@ -492,8 +492,8 @@ class DocumentoService
         $documento = $this->show($id);
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
         $this->xml($id);
-        $archivo = $this->getBase64XML($documento->uuid);
-        event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $documento->uuid . '.xml', $archivo));
+        $archivo = $this->getBase64XML($name);
+        event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $name . '.xml', $archivo));
     }
 
     private function getBase64XML($name)
