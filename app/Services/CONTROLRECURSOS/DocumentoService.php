@@ -344,9 +344,9 @@ class DocumentoService
         $array_xml = null;
         $array_fin = [];
         $array = [];
-        $concepto_text = $documento->solChequeDocto->solCheque->Concepto;
+        $concepto_text = Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto);
         if (strlen($concepto_text) > 120) {
-            $concepto_text = substr($documento->solChequeDocto->solCheque->Concepto, 0, 120);
+            $concepto_text = substr(Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto), 0, 120);
         }
 
         $header = [
