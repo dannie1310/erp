@@ -398,14 +398,18 @@ class DocumentoService
         ];
         $x = 1;
         $i++;
-        $array[$i] = [
-            'NAME' => 'INVOICE_ITEM_TAX',
-            'N00' => $x,
-            'C00' => 'IVA16',
-            'N01' => $documento->TasaIVA,
-            'N02' => $documento->IVA
-        ];
-        $i++;
+
+        if($documento->TasaIVA != 0) {
+            $array[$i] = [
+                'NAME' => 'INVOICE_ITEM_TAX',
+                'N00' => $x,
+                'C00' => 'IVA' . $documento->TasaIVA,
+                'N01' => $documento->TasaIVA,
+                'N02' => $documento->IVA
+            ];
+            $i++;
+        }
+
         if ($documento->OtrosImpuestos != 0) {
             $array[$i] = [
                 'NAME' => 'INVOICE_ITEM_TAX',
