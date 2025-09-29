@@ -407,9 +407,16 @@ class DocumentoService
                 'N01' => $documento->TasaIVA,
                 'N02' => $documento->IVA
             ];
-            $i++;
+        }else{
+            $array[$i] = [
+                'NAME' => 'INVOICE_ITEM_TAX',
+                'N00' => $x,
+                'C00' => 'N',
+                'N01' => 0,
+                'N02' => 0
+            ];
         }
-
+        $i++;
         if ($documento->OtrosImpuestos != 0) {
             $array[$i] = [
                 'NAME' => 'INVOICE_ITEM_TAX',
