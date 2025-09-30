@@ -439,8 +439,11 @@ class DocumentoService
             $i++;
         }
 
+        $total = 0;
+        $index = $i;
         if (count($segmentos_negocio) > 0) {
             foreach ($segmentos_negocio as $key => $item) {
+                $total = round($item->importe_segmento, 2) + $total;
                 $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
                 if ($cuenta == null) {
                     abort(500, "La cuenta (" . $item->descripcion_cuenta . ") de control recursos no tiene registro de cuenta para IFS.\n \n Favor de contactar a soporte a aplicaciones.");
@@ -449,7 +452,7 @@ class DocumentoService
                 $array[$i] = [
                     'NAME' => 'INVOICE_ITEM_POSTING',
                     'N00' => $key + 1,
-                    'N01' => round($item->subtotal, 2),
+                    'N01' => round($item->importe_segmento, 2),
                     'C00' => Util::eliminaAcentos($item->segmento_negocio),
                     'C01' => '',
                     'C02' => $cuenta ? $cuenta->cuenta_ifs : '',
@@ -464,6 +467,11 @@ class DocumentoService
                     'N02' => '',
                 ];
                 $i++;
+            }
+            if ($total != $documento->Importe) {
+                $diferencia = $documento->Importe - $total;
+                $agregando_diferencia = $array[$index]['N01'] + $diferencia;
+                $array[$index]['N01'] = round($agregando_diferencia, 2);
             }
         }
 
