@@ -381,7 +381,7 @@ class DocumentoService
             'NAME' => 'INVOICE_ITEM',
             'N00' => 1,
             'N01' => $documento->Importe,
-            'N02' => $documento->OtrosImpuestos,
+            'N02' => $documento->IVA + $documento->OtrosImpuestos,
             'N03' => $documento->Retenciones,
             'C00' => '',
             'C01' => '',
