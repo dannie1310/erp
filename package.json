@@ -28,7 +28,7 @@
         "@progress/kendo-theme-default": "^4.6.0",
         "@progress/kendo-ui": "^2019.3.1106",
         "@riophae/vue-treeselect": "0.0.38",
-        "admin-lte": "^3.0.1",
+        "admin-lte": "^4.0.0-rc3",
         "basscss-background-colors": "^2.1.0",
         "bootstrap-pincode-input": "^1.6.1",
         "chart.js": "^2.7.3",
