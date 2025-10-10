@@ -348,6 +348,11 @@ class DocumentoService
         if (strlen($concepto_text) > 120) {
             $concepto_text = substr(Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto), 0, 120);
         }
+        $concepto_ifs = str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text;
+        if(strlen($concepto_ifs) > 40)
+        {
+            $concepto_ifs = substr($concepto_ifs,0,40);
+        }
 
         $header = [
             'NAME' => 'INVOICE_HEADER',
@@ -359,7 +364,7 @@ class DocumentoService
             'C05' => '',
             'C06' => '',
             'C07' => '',
-            'C08' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text,
+            'C08' => $concepto_ifs,
             'C09' => $documento->moneda->corto_ifs,
             'C10' => 0,
             'N00' => $documento->TC,
@@ -369,7 +374,7 @@ class DocumentoService
             'N03' => $documento->Retenciones,
             'C11' => 'FALSE',
             'D01' => $documento->Fecha . '-00.00.00',
-            'C12' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text,
+            'C12' => $concepto_ifs,
             'C13' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text,
             'C14' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text . '.xml',
             'C15' => auth()->user()->usuario,
