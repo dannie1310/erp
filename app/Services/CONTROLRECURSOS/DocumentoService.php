@@ -370,7 +370,7 @@ class DocumentoService
             'N00' => $documento->TC,
             'D00' => $documento->Fecha . '-00.00.00',
             'N01' => $documento->Importe,
-            'N02' => $documento->OtrosImpuestos,
+            'N02' => $documento->IVA + $documento->OtrosImpuestos,
             'N03' => $documento->Retenciones,
             'C11' => 'FALSE',
             'D01' => $documento->Fecha . '-00.00.00',
@@ -380,7 +380,7 @@ class DocumentoService
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
         ];
-
+        
         $i = 0;
         $array[$i] = [
             'NAME' => 'INVOICE_ITEM',
