@@ -671,6 +671,7 @@ export default {
         },
         destroy(index){
             this.partidas.splice(index, 1);
+            this.no_cfdi();
         },
         validate() {
             this.$validator.validate().then(result => {
