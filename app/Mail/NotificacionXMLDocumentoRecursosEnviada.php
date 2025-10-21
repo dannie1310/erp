@@ -19,8 +19,9 @@ class NotificacionXMLDocumentoRecursosEnviada extends Mailable
 
 
     /**
-     * @param $archivo
+     * @param Documento $documento
      * @param $xml
+     * @param $archivo
      */
     public function __construct(Documento $documento, $xml,$archivo)
     {
@@ -39,8 +40,9 @@ class NotificacionXMLDocumentoRecursosEnviada extends Mailable
     {
         $titulo = "IFS Factura";
         return $this
+            ->from('monitoreodb_hermes@grupohi.mx')
             ->subject($titulo)
-            ->view('emails.envio_xml_documento_recursos',["documento" => $this->documento])
+            ->view('emails.envio_xml_documento_recursos',["documento" => $this->documento, "usuario" => auth()->user()->nombre .' '. auth()->user()->apaterno])
             ->attach($this->archivo, ["as" => $this->xml]);
     }
 }
