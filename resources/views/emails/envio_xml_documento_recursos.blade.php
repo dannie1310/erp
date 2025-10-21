@@ -44,7 +44,7 @@
     </style>
 </head>
 <div id="app">
-    <span style="font-weight:bold; color: #000000">Se le notifica el envió del XML para migración a IFS.</span>
+    <span style="font-weight:bold; color: #000000">Se le notifica el envió del XML para migración a IFS enviada por {{$usuario}}.</span>
     <br>
     <i><strong>
             <span class="leyenda">
