@@ -87,6 +87,34 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                         </div>
                     </div>
+
+                    <div class="col-md-2">
+                      <div class="form-group error-content">
+                            <input type="checkbox" id="proveedor_extra" v-model="proveedor_extra">
+                            <label for="checkbox">Agregar otro proveedor</label>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6"  v-if="proveedor_extra">
+                        <div class="form-group error-content">
+                            <label for="id_proveedor">Proveedor original emitio factura:</label>
+                            <select
+                                class="form-control"
+                                :disabled="proveedores.length == 0 ? true : false"
+                                data-vv-as="Proveedor"
+                                id="id_proveedor_ex"
+                                name="id_proveedor_ex"
+                                :error="errors.has('id_proveedor_ex')"
+                                v-validate="{required: true}"
+                                v-model="id_proveedor_ex">
+                                 <option value v-if="!this.idserie">Seleccione la serie para cargar los proveedores</option>
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
+                            </select>
+                            <div v-else style="color:#5a6268;" class="form-control"><i class="fa fa-spinner fa-spin" /> Cargando Proveedores</div>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor_ex')">{{ errors.first('id_proveedor_ex') }}</div>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-2">
@@ -314,7 +342,9 @@ export default {
             retencion: 0,
             otros: 0,
             total: 0,
-            tasas: []
+            tasas: [],
+            proveedor_extra : false,
+            id_proveedor_ex : ''
         }
     },
     mounted() {
@@ -454,7 +484,7 @@ export default {
     },
     watch: {
         idserie(value)
-        {
+        {console.log(this.proveedor_extra)
             if(value)
             {
                 this.getProveedores();
@@ -504,6 +534,13 @@ export default {
                 cifra_formateada = value.toString().formatearkeyUp();
                 this.otros = cifra_formateada;
                 this.calcularTotal();
+            }
+        },
+        proveedor_extra(value)
+        {
+            if(value)
+            {
+                console.log("AQUI ", value)
             }
         }
     }
