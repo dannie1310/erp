@@ -152,12 +152,12 @@
                                      <div class="form-group error-content">
                                          <label for="moneda">Moneda:</label>
                                          <select class="form-control"
-                                                data-vv-as="Moneda"
-                                                id="id_moneda"
-                                                name="id_moneda"
-                                                :class="{'is-invalid': errors.has('id_moneda')}"
-                                                v-validate="{required: true}"
-                                                v-model="id_moneda">
+                                                 data-vv-as="Moneda"
+                                                 id="id_moneda"
+                                                 name="id_moneda"
+                                                 :class="{'is-invalid': errors.has('id_moneda')}"
+                                                 v-validate="{required: true}"
+                                                 v-model="id_moneda">
                                             <option value>-- Selecionar --</option>
                                             <option v-for="(m) in monedas" :value="m.id">{{m.moneda}}</option>
                                         </select>
@@ -544,7 +544,7 @@ export default {
             this.partidas.forEach(function (doc, i) {
                 if(doc.uuid != null)
                 {
-                   suma = parseInt(suma) + 1;
+                    suma = parseInt(suma) + 1;
                 }
             });
             this.no_cfd = suma;
@@ -665,7 +665,8 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
-                descuento: 0
+                descuento: 0,
+                descuento_IEPS: 0
             });
             this.no_cfdi();
         },
@@ -783,28 +784,8 @@ export default {
                     uuid: concepto.uuid,
                     xml: concepto.xml,
                     contenido_xml: concepto.contenido_xml,
-                    descuento: concepto.descuento
-                });
-
-                this.partidas.splice(this.partidas.length + 1, 0, {
-                    idtipo: 1,
-                    tipo_documento: 'Factura',
-                    tipo_comprobante: concepto.tipo_comprobante,
-                    idtipogasto: '',
-                    fecha: concepto.fecha_hora,
-                    folio: concepto.folio,
-                    concepto: "IEPS de " + concepto.conceptos[0].descripcion,
-                    importe: concepto.descuento_IEPS,
-                    IVA: 0,
-                    retenciones: 0,
-                    otros_imp: 0,
-                    total: concepto.descuento_IEPS,
-                    no_personas: 1,
-                    observaciones: '',
-                    uuid: null,
-                    xml: null,
-                    contenido_xml: null,
-                    descuento: 0
+                    descuento: concepto.descuento,
+                    descuento_IEPS: 0
                 });
             }else{
                 this.partidas.splice(this.partidas.length + 1, 0, {
@@ -825,8 +806,33 @@ export default {
                     uuid: concepto.uuid,
                     xml: concepto.xml,
                     contenido_xml: concepto.contenido_xml,
-                    descuento: concepto.descuento
-                    });
+                    descuento: concepto.descuento,
+                    descuento_IEPS: 0
+                });
+            }
+
+            if(concepto.descuento_IEPS != 0){
+                this.partidas.splice(this.partidas.length + 1, 0, {
+                    idtipo: 1,
+                    tipo_documento: 'Factura',
+                    tipo_comprobante: concepto.tipo_comprobante,
+                    idtipogasto: '',
+                    fecha: concepto.fecha_hora,
+                    folio: concepto.folio,
+                    concepto: "IEPS de " + concepto.conceptos[0].descripcion,
+                    importe: concepto.descuento_IEPS,
+                    IVA: 0,
+                    retenciones: 0,
+                    otros_imp: 0,
+                    total: concepto.descuento_IEPS,
+                    no_personas: 1,
+                    observaciones: '',
+                    uuid: null,
+                    xml: null,
+                    contenido_xml: null,
+                    descuento: 0,
+                    descuento_IEPS: 1
+                });
             }
             this.no_cfdi();
         },
