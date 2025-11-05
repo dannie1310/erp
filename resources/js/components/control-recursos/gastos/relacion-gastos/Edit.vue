@@ -704,7 +704,8 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
-                descuento: 0
+                descuento: 0,
+                descuento_IEPS: 0
             });
         },
         destroy(index){
@@ -784,7 +785,7 @@ export default {
                     folio: concepto.folio,
                     concepto: concepto.conceptos[0].descripcion,
                     importe: concepto.subtotal,
-                    IVA: concepto.importe_iva,
+                    iva: concepto.importe_iva,
                     retenciones: concepto.retenciones,
                     otros_imp: concepto.otros_imp,
                     total: concepto.total - concepto.descuento_IEPS,
@@ -793,30 +794,10 @@ export default {
                     uuid: concepto.uuid,
                     xml: concepto.xml,
                     contenido_xml: concepto.contenido_xml,
-                    descuento: concepto.descuento
+                    descuento: concepto.descuento,
+                    descuento_IEPS: 0
                 });
-
-                this.relacion.documentos.data.splice(this.relacion.documentos.data.length + 1, 0, {
-                    idtipo: 1,
-                    tipo_documento: 'Factura',
-                    tipo_comprobante: concepto.tipo_comprobante,
-                    idtipogasto: '',
-                    fecha: concepto.fecha_hora,
-                    folio: concepto.folio,
-                    concepto: "IEPS de " + concepto.conceptos[0].descripcion,
-                    importe: concepto.descuento_IEPS,
-                    IVA: 0,
-                    retenciones: 0,
-                    otros_imp: 0,
-                    total: concepto.descuento_IEPS,
-                    no_personas: 1,
-                    observaciones: '',
-                    uuid: null,
-                    xml: null,
-                    contenido_xml: null,
-                    descuento: 0
-                });
-            } else {
+            }else{
                 this.relacion.documentos.data.splice(this.relacion.documentos.data.length + 1, 0, {
                     idtipo: 1,
                     tipo_documento: 'Factura',
@@ -826,7 +807,7 @@ export default {
                     folio: concepto.folio,
                     concepto: concepto.conceptos[0].descripcion,
                     importe: concepto.subtotal,
-                    IVA: concepto.importe_iva,
+                    iva: concepto.importe_iva,
                     retenciones: concepto.retenciones,
                     otros_imp: concepto.otros_imp,
                     total: concepto.total,
@@ -835,10 +816,33 @@ export default {
                     uuid: concepto.uuid,
                     xml: concepto.xml,
                     contenido_xml: concepto.contenido_xml,
-                    descuento: concepto.descuento
+                    descuento: concepto.descuento,
+                    descuento_IEPS: 0
                 });
             }
-            this.no_cfdi();
+            if(concepto.descuento_IEPS != 0){
+                this.relacion.documentos.data.splice(this.relacion.documentos.data.length + 1, 0, {
+                    idtipo: 1,
+                    tipo_documento: 'Factura',
+                    tipo_comprobante: concepto.tipo_comprobante,
+                    idtipogasto: '',
+                    fecha: concepto.fecha_hora,
+                    folio: concepto.folio,
+                    concepto: "IEPS de " + concepto.conceptos[0].descripcion,
+                    importe: concepto.descuento_IEPS,
+                    iva: 0,
+                    retenciones: 0,
+                    otros_imp: 0,
+                    total: concepto.descuento_IEPS,
+                    no_personas: 1,
+                    observaciones: '',
+                    uuid: null,
+                    xml: null,
+                    contenido_xml: null,
+                    descuento: 0,
+                    descuento_IEPS: 1
+                });
+            }
         },
         cargarXML(){
             this.cargando = true;
