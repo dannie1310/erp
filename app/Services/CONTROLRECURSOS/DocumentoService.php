@@ -118,7 +118,7 @@ class DocumentoService
         if ($documento->uuid) {
             return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias);
         } else {
-            return $this->xml_sin_cfdi($documento, $segmentos_negocio, $sumatorias);
+            return $this->xml_sin_cfdi($documento, $segmentos_negocio);
         }
     }
 
@@ -312,6 +312,10 @@ class DocumentoService
                 }
                 if ($total != $importe_total) {
                     $diferencia = $importe_total - $total;
+                    if(!array_key_exists($index, $array))
+                    {
+                        $index = $index - 1;
+                    }
                     $agregando_diferencia = $array[$index]['N01'] + $diferencia;
                     $array[$index]['N01'] = round($agregando_diferencia, 2);
                 }
@@ -339,7 +343,7 @@ class DocumentoService
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
 
-    public function xml_sin_cfdi($documento, $segmentos_negocio, $sumatorias)
+    public function xml_sin_cfdi($documento, $segmentos_negocio)
     {
         $array_xml = null;
         $array_fin = [];
@@ -380,7 +384,7 @@ class DocumentoService
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
         ];
-        
+
         $i = 0;
         $array[$i] = [
             'NAME' => 'INVOICE_ITEM',
