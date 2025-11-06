@@ -189,7 +189,7 @@ class DocumentoService
                 $array[$i] = [
                     'NAME' => 'INVOICE_ITEM',
                     'N00' => $key + 1,
-                    'N01' => $concepto['importe'],
+                    'N01' => $concepto['importe'] - $concepto['descuento'],
                     'N02' => $total_traslados,
                     'N03' => $total_retenido,
                     'C00' => '',
