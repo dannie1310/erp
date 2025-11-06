@@ -167,7 +167,7 @@ class DocumentoService
             'N00' => $documento->TC,
             'D00' => $documento->Fecha . '-00.00.00',
             'N01' => $documento->Importe,
-            'N02' => $array_xml && $documento->proveedor->importe_especial == 0 ? $array_xml['total_impuestos_trasladados'] : $documento->OtrosImpuestos,
+            'N02' => $array_xml ? $array_xml['total_impuestos_trasladados'] : $documento->OtrosImpuestos,
             'N03' => $array_xml ? $array_xml['total_impuestos_retenidos'] : $documento->Retenciones,
             'C11' => 'FALSE',
             'D01' => $documento->Fecha . '-00.00.00',
@@ -198,7 +198,7 @@ class DocumentoService
                     'N04' => $concepto['cantidad'],
                     'C03' => $concepto['clave_prod_serv'],
                     'C04' => $concepto['descripcion'],
-                    'N05' => $concepto['valor_unitario'],
+                    'N05' => $concepto['descuento'] != 0 ? ($concepto['importe'] - $concepto['descuento']) / $concepto['cantidad'] : $concepto['valor_unitario'],
                     'C05' => 'FALSE',
                     'C06' => '',
                     'N06' => '',
@@ -312,10 +312,6 @@ class DocumentoService
                 }
                 if ($total != $importe_total) {
                     $diferencia = $importe_total - $total;
-                    if(!array_key_exists($index, $array))
-                    {
-                        $index = $index - 1;
-                    }
                     $agregando_diferencia = $array[$index]['N01'] + $diferencia;
                     $array[$index]['N01'] = round($agregando_diferencia, 2);
                 }
