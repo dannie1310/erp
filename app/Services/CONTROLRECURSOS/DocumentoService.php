@@ -118,7 +118,7 @@ class DocumentoService
         if ($documento->uuid) {
             return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias);
         } else {
-            return $this->xml_sin_cfdi($documento, $segmentos_negocio, $sumatorias);
+            return $this->xml_sin_cfdi($documento, $segmentos_negocio);
         }
     }
 
@@ -167,7 +167,7 @@ class DocumentoService
             'N00' => $documento->TC,
             'D00' => $documento->Fecha . '-00.00.00',
             'N01' => $documento->Importe,
-            'N02' => $array_xml && $documento->proveedor->importe_especial == 0 ? $array_xml['total_impuestos_trasladados'] : $documento->OtrosImpuestos,
+            'N02' => $array_xml ? $array_xml['total_impuestos_trasladados'] : $documento->OtrosImpuestos,
             'N03' => $array_xml ? $array_xml['total_impuestos_retenidos'] : $documento->Retenciones,
             'C11' => 'FALSE',
             'D01' => $documento->Fecha . '-00.00.00',
@@ -189,7 +189,7 @@ class DocumentoService
                 $array[$i] = [
                     'NAME' => 'INVOICE_ITEM',
                     'N00' => $key + 1,
-                    'N01' => $concepto['importe'],
+                    'N01' => $concepto['importe'] - $concepto['descuento'],
                     'N02' => $total_traslados,
                     'N03' => $total_retenido,
                     'C00' => '',
@@ -198,7 +198,7 @@ class DocumentoService
                     'N04' => $concepto['cantidad'],
                     'C03' => $concepto['clave_prod_serv'],
                     'C04' => $concepto['descripcion'],
-                    'N05' => $concepto['valor_unitario'],
+                    'N05' => $concepto['descuento'] != 0 ? ($concepto['importe'] - $concepto['descuento']) / $concepto['cantidad'] : $concepto['valor_unitario'],
                     'C05' => 'FALSE',
                     'C06' => '',
                     'N06' => '',
@@ -339,7 +339,7 @@ class DocumentoService
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
 
-    public function xml_sin_cfdi($documento, $segmentos_negocio, $sumatorias)
+    public function xml_sin_cfdi($documento, $segmentos_negocio)
     {
         $array_xml = null;
         $array_fin = [];
@@ -380,7 +380,7 @@ class DocumentoService
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
         ];
-        
+
         $i = 0;
         $array[$i] = [
             'NAME' => 'INVOICE_ITEM',

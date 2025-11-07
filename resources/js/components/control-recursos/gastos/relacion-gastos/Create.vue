@@ -152,12 +152,12 @@
                                      <div class="form-group error-content">
                                          <label for="moneda">Moneda:</label>
                                          <select class="form-control"
-                                                data-vv-as="Moneda"
-                                                id="id_moneda"
-                                                name="id_moneda"
-                                                :class="{'is-invalid': errors.has('id_moneda')}"
-                                                v-validate="{required: true}"
-                                                v-model="id_moneda">
+                                                 data-vv-as="Moneda"
+                                                 id="id_moneda"
+                                                 name="id_moneda"
+                                                 :class="{'is-invalid': errors.has('id_moneda')}"
+                                                 v-validate="{required: true}"
+                                                 v-model="id_moneda">
                                             <option value>-- Selecionar --</option>
                                             <option v-for="(m) in monedas" :value="m.id">{{m.moneda}}</option>
                                         </select>
@@ -204,7 +204,7 @@
                                              <tbody>
                                              <tr v-for="(partida, i) in partidas">
                                                  <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                 <td v-if="partida.uuid != null">
+                                                 <td v-if="partida.uuid != null || partida.descuento_IEPS != 0 ">
                                                      {{partida.tipo_documento}}
                                                  </td>
                                                  <td v-else>
@@ -220,7 +220,7 @@
                                                     </select>
                                                      <div style="display:block" class="invalid-feedback" v-show="errors.has(`tipo[${i}]`)">{{ errors.first(`tipo[${i}]`) }}</div>
                                                  </td>
-                                                 <td v-if="partida.uuid != null">
+                                                 <td v-if="partida.uuid != null || partida.descuento_IEPS != 0 ">
                                                      {{ partida.fecha }}
                                                  </td>
                                                  <td v-else>
@@ -235,7 +235,7 @@
                                                                  :class="{'is-invalid': errors.has(`fecha[${i}]`)}"/>
                                                      <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                  </td>
-                                                 <td v-if="partida.uuid != null">
+                                                 <td v-if="partida.uuid != null || partida.descuento_IEPS != 0 ">
                                                      {{ partida.folio }}
                                                  </td>
                                                  <td v-else>
@@ -263,11 +263,11 @@
                                                     </select>
                                                      <div style="display:block" class="invalid-feedback" v-show="errors.has(`idtipogasto[${i}]`)">{{ errors.first(`idtipogasto[${i}]`) }}</div>
                                                  </td>
-                                                 <td v-if="partida.uuid != null">
+                                                 <td v-if="partida.uuid != null || partida.descuento_IEPS != 0 ">
                                                      {{ partida.concepto }}
                                                  </td>
-                                                 <td v-else>-</td>
-                                                 <td style="text-align: right" v-if="partida.uuid != null">
+                                                 <td v-else> - </td>
+                                                 <td style="text-align: right" v-if="partida.uuid != null || partida.descuento_IEPS != 0 ">
                                                     {{ parseFloat(partida.importe).formatMoney(2) }}
                                                  </td>
                                                  <td v-else>
@@ -544,7 +544,7 @@ export default {
             this.partidas.forEach(function (doc, i) {
                 if(doc.uuid != null)
                 {
-                   suma = parseInt(suma) + 1;
+                    suma = parseInt(suma) + 1;
                 }
             });
             this.no_cfd = suma;
@@ -665,12 +665,14 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
-                descuento: 0
+                descuento: 0,
+                descuento_IEPS: 0
             });
             this.no_cfdi();
         },
         destroy(index){
             this.partidas.splice(index, 1);
+            this.no_cfdi();
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -756,29 +758,82 @@ export default {
                 {
                     _self.agregarCFDIPartida(concepto);
                 }
+                if(concepto.ieps == 1)
+                {
+                    _self.agregarCFDIPartida(concepto);
+                }
             })
         },
         agregarCFDIPartida(concepto) {
-            this.partidas.splice(this.partidas.length + 1, 0, {
-                idtipo: 1,
-                tipo_documento: 'Factura',
-                tipo_comprobante:concepto.tipo_comprobante,
-                idtipogasto: '',
-                fecha: concepto.fecha_hora,
-                folio : concepto.folio,
-                concepto : concepto.conceptos[0].descripcion,
-                importe : concepto.subtotal,
-                IVA : concepto.importe_iva,
-                retenciones : concepto.retenciones,
-                otros_imp : concepto.otros_imp,
-                total: concepto.total,
-                no_personas: 1,
-                observaciones: '',
-                uuid : concepto.uuid,
-                xml : concepto.xml,
-                contenido_xml : concepto.contenido_xml,
-                descuento : concepto.descuento - concepto.descuento_IEPS
-            });
+            if(concepto.proveedor_especial == 0) {
+                this.partidas.splice(this.partidas.length + 1, 0, {
+                    idtipo: 1,
+                    tipo_documento: 'Factura',
+                    tipo_comprobante: concepto.tipo_comprobante,
+                    idtipogasto: '',
+                    fecha: concepto.fecha_hora,
+                    folio: concepto.folio,
+                    concepto: concepto.conceptos[0].descripcion,
+                    importe: concepto.subtotal,
+                    IVA: concepto.importe_iva,
+                    retenciones: concepto.retenciones,
+                    otros_imp: concepto.otros_imp,
+                    total: concepto.total - concepto.descuento_IEPS,
+                    no_personas: 1,
+                    observaciones: '',
+                    uuid: concepto.uuid,
+                    xml: concepto.xml,
+                    contenido_xml: concepto.contenido_xml,
+                    descuento: concepto.descuento,
+                    descuento_IEPS: 0
+                });
+            }else{
+                this.partidas.splice(this.partidas.length + 1, 0, {
+                    idtipo: 1,
+                    tipo_documento: 'Factura',
+                    tipo_comprobante: concepto.tipo_comprobante,
+                    idtipogasto: '',
+                    fecha: concepto.fecha_hora,
+                    folio: concepto.folio,
+                    concepto: concepto.conceptos[0].descripcion,
+                    importe: concepto.subtotal,
+                    IVA: concepto.importe_iva,
+                    retenciones: concepto.retenciones,
+                    otros_imp: concepto.otros_imp,
+                    total: concepto.total,
+                    no_personas: 1,
+                    observaciones: '',
+                    uuid: concepto.uuid,
+                    xml: concepto.xml,
+                    contenido_xml: concepto.contenido_xml,
+                    descuento: concepto.descuento,
+                    descuento_IEPS: 0
+                });
+            }
+
+            if(concepto.descuento_IEPS != 0){
+                this.partidas.splice(this.partidas.length + 1, 0, {
+                    idtipo: 1,
+                    tipo_documento: 'Factura',
+                    tipo_comprobante: concepto.tipo_comprobante,
+                    idtipogasto: '',
+                    fecha: concepto.fecha_hora,
+                    folio: concepto.folio,
+                    concepto: "IEPS de " + concepto.conceptos[0].descripcion,
+                    importe: concepto.descuento_IEPS,
+                    IVA: 0,
+                    retenciones: 0,
+                    otros_imp: 0,
+                    total: concepto.descuento_IEPS,
+                    no_personas: 1,
+                    observaciones: '',
+                    uuid: null,
+                    xml: null,
+                    contenido_xml: null,
+                    descuento: 0,
+                    descuento_IEPS: 1
+                });
+            }
             this.no_cfdi();
         },
         cargarXML(){

@@ -2386,17 +2386,28 @@ class CFDSATService
                 $arreglo_cfd["otros_imp"] = $arreglo_cfd['descuento'];
             }
             /**
-             * Validación para el caso de facturas TELMEX
+             * Validación para el IEPS
              */
             $arreglo_cfd['descuento_IEPS'] = 0;
             if($arreglo_cfd['otros_imp'] == $arreglo_cfd['descuento'])
             {
                 foreach ($arreglo_cfd['traslados'] as  $x) {
                     if ($x['impuesto'] == '003') {
-                        $arreglo_cfd['descuento_IEPS'] =  $x['importe'] ;
+                        $arreglo_cfd['descuento_IEPS'] =  $x['importe'];
                     }
                 }
                 $arreglo_cfd['otros_imp'] =  0;
+            }
+            /**
+             * Validación para el caso de facturas TELMEX
+             */
+            if($arreglo_cfd['emisor']['rfc'] == 'PRB100802H20')
+            {
+                $arreglo_cfd['proveedor_especial'] = 1;
+                $arreglo_cfd['descuento'] =  $arreglo_cfd['descuento'] - $arreglo_cfd['descuento_IEPS'];
+                $arreglo_cfd['descuento_IEPS'] = 0;
+            }else{
+                $arreglo_cfd['proveedor_especial'] = 0;
             }
             $conceptos[$i] =  $arreglo_cfd;
             $i++;
