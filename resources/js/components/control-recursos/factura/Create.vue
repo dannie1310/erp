@@ -175,6 +175,20 @@
                     <div class="col-md-2">
                         <div class="form-group error-content float-right"> {{parseFloat(data.otros).formatMoney(2)}} </div>
                     </div>
+                    <div class="col-md-5" v-if="data.IEPS != 0"></div>
+                    <div class="col-md-5" v-if="data.IEPS != 0">
+                        <div class="form-group error-content float-right"> <label for="total">Subtotal c/Descuentos:</label></div>
+                    </div>
+                    <div class="col-md-2" v-if="data.IEPS != 0">
+                        <div class="form-group error-content float-right"> {{parseFloat((data.subtotal - data.IEPS)).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-5" v-if="data.IEPS != 0"></div>
+                     <div class="col-md-5" v-if="data.IEPS != 0">
+                        <div class="form-group error-content float-right"> <label for="total">IEPS:</label></div>
+                    </div>
+                    <div class="col-md-2" v-if="data.IEPS != 0">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.IEPS).formatMoney(2)}} </div>
+                    </div>
                     <div class="col-md-5"></div>
                     <div class="col-md-5">
                         <div class="form-group error-content float-right"> <label for="total">Total:</label></div>
@@ -227,6 +241,20 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group error-content float-right"> {{parseFloat(data.otros).formatMoney(2)}} </div>
+                    </div>
+                    <div class="col-md-5" v-if="data.IEPS != 0"></div>
+                    <div class="col-md-5" v-if="data.IEPS != 0">
+                        <div class="form-group error-content float-right"> <label for="total">Subtotal c/Descuentos:</label></div>
+                    </div>
+                    <div class="col-md-2" v-if="data.IEPS != 0">
+                        <div class="form-group error-content float-right"> {{parseFloat((data.subtotal - data.IEPS)).formatMoney(2)}} </div>
+                    </div>
+                     <div class="col-md-5" v-if="data.IEPS != 0"></div>
+                     <div class="col-md-5" v-if="data.IEPS != 0">
+                        <div class="form-group error-content float-right"> <label for="total">IEPS:</label></div>
+                    </div>
+                    <div class="col-md-2" v-if="data.IEPS != 0">
+                        <div class="form-group error-content float-right"> {{parseFloat(data.IEPS).formatMoney(2)}} </div>
                     </div>
                     <div class="col-md-5"></div>
                     <div class="col-md-5">

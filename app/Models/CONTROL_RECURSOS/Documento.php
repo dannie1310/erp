@@ -45,7 +45,8 @@ class Documento extends Model
         'registro_portal',
         'Descuento',
         'Descuento_CFDI',
-        'IdGenero'
+        'IdGenero',
+        'IEPS'
     ];
 
     protected static function boot()
@@ -362,7 +363,8 @@ class Documento extends Model
                 'Creo' => auth()->id(),
                 'Estatus' => $data['estado'],
                 'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
-                "registro_portal" => 1
+                "registro_portal" => 1,
+                'IEPS' => 0
             ]);
             DB::connection('controlrec')->commit();
             $documento->update([
@@ -500,5 +502,32 @@ class Documento extends Model
                     INNER JOIN controlrec.cuentascontables
 						ON cuentascontables.IdCuentaContable = tiposgasto.IdCuentaContable
                     WHERE documentos.IdDocto = " . $this->getKey() . " order by centroscosto.Descripcion"));
+    }
+
+    public function sumaConsultaXML()
+    {
+        return DB::connection('controlrec')->select(DB::raw("
+                   SELECT
+                        sum(ccdoctos.Importe) AS importe_segmento
+                        ,sum(ccdoctos.IVA) AS iva_segmento
+                        ,sum(ccdoctos.Total) AS total_segmento
+                    FROM controlrec.documentos
+                    INNER JOIN controlrec.solchequesdoctos
+                        ON documentos.IdDocto = solchequesdoctos.IdDocto
+                    INNER JOIN controlrec.solcheques
+                        ON solchequesdoctos.IdSolCheque = solcheques.IdSolCheques
+                    INNER JOIN controlrec.empresas
+                        ON solcheques.IdEmpresa = empresas.IdEmpresa
+                    INNER JOIN controlrec.ccdoctos
+                        ON documentos.IdDocto = ccdoctos.IdDocto
+                    INNER JOIN controlrec.centroscosto
+                        ON centroscosto.IdCC = ccdoctos.IdCC
+                    INNER JOIN controlrec.proveedores
+                        ON solcheques.IdProveedor = proveedores.IdProveedor
+                    INNER JOIN controlrec.tiposgasto
+                        ON ccdoctos.IdTipoGasto = tiposgasto.IdTipoGasto
+                    INNER JOIN controlrec.cuentascontables
+						ON cuentascontables.IdCuentaContable = tiposgasto.IdCuentaContable
+                    WHERE documentos.IdDocto = " . $this->getKey() ));
     }
 }

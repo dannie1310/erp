@@ -92,6 +92,7 @@ class CFD
             $this->arreglo_factura["tipo_comprobante"] = strtoupper(substr((string)$factura_xml["TipoDeComprobante"], 0, 1));
             $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
             $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
+            $this->arreglo_factura["condicion_de_pago"] = $factura_xml["CondicionesDePago"] ? (string)$factura_xml["CondicionesDePago"]: 0;
             $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["Fecha"]);
             $this->arreglo_factura["fecha_hora"] = $this->getFechaHora((string)$factura_xml["Fecha"]);
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];

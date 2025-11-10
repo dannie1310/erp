@@ -35,6 +35,8 @@ class RelacionGastoObserver
         if($relacionGasto->getOriginal('idserie') != $relacionGasto->idserie)
         {
             $serie = Serie::where('idseries', $relacionGasto->idserie)->pluck('Descripcion')->first();
+            $folio =  $relacionGasto->getNumeroFolio();
+            $relacionGasto->numero_folio = $folio;
             $relacionGasto->folio = $serie . "-" . $relacionGasto->numero_folio;
         }
 

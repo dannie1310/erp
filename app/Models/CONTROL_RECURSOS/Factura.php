@@ -90,12 +90,12 @@ class Factura extends Documento
             "Fecha" => $fecha->format('Y-m-d'),
             "Vencimiento" => $vencimiento->format('Y-m-d'),
             'Concepto' => $data["concepto"],
-            "Importe" => $data['proveedor_bd']['importe_especial'] == 1 ? ($data['subtotal'] - $data['descuento']) : $data["subtotal"],
+            "Importe" => $data['proveedor_bd']['importe_especial'] == 1 ? (($data['subtotal'] + (array_key_exists('otros',$data) ? $data["otros"] : 0)) - $data['descuento']) : $data["subtotal"],
             "IVA" => $data["impuesto"],
             "Total" => $data["total"],
             "Retenciones" => $data["retencion"],
             "TasaIva" => (int) $data['tasa_iva'],
-            "OtrosImpuestos" => array_key_exists('otros',$data) ? $data["otros"] : 0,
+            "OtrosImpuestos" =>  $data['proveedor_bd']['importe_especial'] == 1 ? 0 : (array_key_exists('otros',$data) ? $data["otros"] : 0),
             "IdMoneda" => $data["id_moneda"],
             'Alias_Depto' => $usuario->departamento ? $usuario->departamento->departamento_abreviatura : '',
             'Departamento' => $usuario->departamento ? $usuario->departamento->departamento : '',
@@ -108,7 +108,8 @@ class Factura extends Documento
             'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
             'registro_portal' => 1,
             'Descuento' => $data['proveedor_bd']['importe_especial'] == 1 ? 0 : $data['descuento'],
-            'Descuento_CFDI' => $data['descuento']
+            'Descuento_CFDI' => $data['descuento'],
+            'IEPS' => $data['IEPS']
         ]);
     }
 
