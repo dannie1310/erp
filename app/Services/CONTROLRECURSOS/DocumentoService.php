@@ -456,7 +456,7 @@ class DocumentoService
 
                 $array[$i] = [
                     'NAME' => 'INVOICE_ITEM_POSTING',
-                    'N00' => $key + 1,
+                    'N00' => 1,
                     'N01' => round($item->importe_segmento, 2),
                     'C00' => Util::eliminaAcentos($item->segmento_negocio),
                     'C01' => '',
