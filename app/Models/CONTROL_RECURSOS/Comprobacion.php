@@ -2,6 +2,7 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\IGH\Departamento;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -89,6 +90,11 @@ class Comprobacion extends Model
         return $this->hasMany(SolicitudComprobada::class, 'IdComprobacion', 'IdComprobacion');
     }
 
+    public function solicitudComprobada()
+    {
+        return $this->belongsTo(SolicitudComprobada::class, 'IdComprobacion', 'IdComprobacion');
+    }
+
     public function reembolsos()
     {
         return $this->hasMany(ComprobacionReembolsada::class, 'idcomprobacion', 'IdComprobacion');
@@ -97,6 +103,11 @@ class Comprobacion extends Model
     public function firmas()
     {
         return $this->hasMany(FirmaComprobaciones::class, 'idcomprobacion', 'IdComprobacion');
+    }
+
+    public function firmasOrdenadas()
+    {
+        return $this->hasMany(FirmaComprobaciones::class, 'idcomprobacion', 'IdComprobacion')->porOrden();
     }
 
     public function respaldo()
@@ -113,6 +124,22 @@ class Comprobacion extends Model
     {
         return $this->belongsTo(CtgMoneda::class,  'IdMoneda', 'id');
     }
+
+    public function documentosDeducibles()
+    {
+        return $this->hasMany(DoctoComp::class, 'IdComprobacion','IdComprobacion')->deducibles();
+    }
+
+    public function documentosNoDeducibles()
+    {
+        return $this->hasMany(DoctoComp::class, 'IdComprobacion','IdComprobacion')->noDeducibles();
+    }
+
+    public function departamentoIgh()
+    {
+        return $this->belongsTo(Departamento::class, 'IdDepartamento', 'iddepartamento');
+    }
+
     /**
      * Scopes
      */
@@ -199,6 +226,15 @@ class Comprobacion extends Model
     {
         try {
             return $this->empleado->usuario->departamento->departamento;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getDepartamentoIntranetAttribute()
+    {
+        try {
+            return $this->departamentoIgh->departamento;
         } catch (\Exception $e) {
             return null;
         }
@@ -294,6 +330,34 @@ class Comprobacion extends Model
         }
     }
 
+    public function getTotalDeduciblesAttribute()
+    {
+        try {
+            return $this->documentosDeducibles->sum('Total');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getTotalDeduciblesFormatAttribute()
+    {
+        return number_format(($this->total_deducibles),3,'.',',');
+    }
+
+    public function getTotalNoDeduciblesAttribute()
+    {
+        try {
+            return  $this->documentosNoDeducibles->sum('Total');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getTotalNoDeduciblesFormatAttribute()
+    {
+        return number_format(($this->total_no_deducibles),3,'.',',');
+    }
+
     public function getMonedaDescripcionAttribute()
     {
         try {
@@ -307,6 +371,25 @@ class Comprobacion extends Model
     {
         try {
             return  $this->documentos()->count('IdDoctoComp');
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+    public function getFolioValeAttribute()
+    {
+        if($this->SerieVD == '' || $this->FolioVD == 0)
+        {
+            return " - SIN VALE RELACIONADO - ";
+        }else{
+            return $this->SerieVD ." - ". $this->FolioVD;
+        }
+    }
+
+    public function getDuracionViajeAttribute()
+    {
+        try {
+            return  $this->documentos()->distinct("FechaDocto")->count('FechaDocto');
         } catch (\Exception $e) {
             return null;
         }
@@ -629,7 +712,7 @@ class Comprobacion extends Model
 
     private function validaEliminacion()
     {
-        if ($this->Estatus != 1 || $this->Estatus != 2 || $this->Estatus != 3)
+        if ($this->Estatus == 4 || $this->Estatus == 5 || $this->Estatus == 6 || $this->Estatus == 7)
         {
             abort(500, "La comprobación de gastos (" . $this->folio_format . ") su estado es: '". $this->estado_format ."' no puede eliminarse.");
         }
@@ -723,5 +806,21 @@ class Comprobacion extends Model
         {
             abort(500, "La comprobación de gastos (" . $this->folio_format . ") su estado es: '". $this->estado_format ."' no puede abrirse.");
         }
+    }
+
+    public function agruparDocumentos()
+    {
+        return DB::connection('controlrec')->select(DB::raw("
+            select distinct  Grupo.IdGrupoTipoGastoComp as Grupo  from doctoscomp as Doctos,
+            tiposgastocomp as Grupo where Doctos.Concepto=Grupo.IdTipoGastoComp
+            and Doctos.IdComprobacion = " . $this->getKey() . ";"));
+    }
+
+    public function sumaPorGrupo($grupo, $clasificacion)
+    {
+        return DB::connection('controlrec')->select(DB::raw("
+            select  sum(Doctos.Importe) as importe,  sum(Doctos.IVA) as iva,  sum(Doctos.ImpHosp) as imp,  sum(Doctos.Total) as total  from doctoscomp as Doctos,
+            tiposgastocomp as Grupo where Doctos.Concepto=Grupo.IdTipoGastoComp
+            and Doctos.IdComprobacion = " . $this->getKey() . " and Grupo.IdGrupoTipoGastoComp = ".$grupo." and Doctos.Clasificacion = ".$clasificacion.";"))[0];
     }
 }

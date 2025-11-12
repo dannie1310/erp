@@ -828,10 +828,12 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(3.92, .4, utf8_decode(''), 0, 0, 'C');
                 $this->Cell(3.92, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
                 $this->Cell(7.84, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
                 $this->Ln();
                 $this->Cell(3.92, .4, utf8_decode('Proveedor'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, 'Subdirector de compras y Subcontratos', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, utf8_decode('Control de Costos'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'Director de proyecto', 'TRLB', 0, 'C', 1);
@@ -842,10 +844,12 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
                 $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
                 $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
                 $this->Ln();
 
                 $this->Cell(3.92, .4, '', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'C.P. ROGELIO HERNANDEZ BELTRAN', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
@@ -888,29 +892,33 @@ class OrdenCompraFormato extends FPDI
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(180, 180, 180);
 
-                $this->CellFitScale(4.89, .4, utf8_decode('Proveedor'), 'TRLB', 0, 'C', 1);
-                $this->CellFitScale(4.89, .4, utf8_decode('Gerente de Procuración'), 'TRLB', 0, 'C', 1);
-                $this->CellFitScale(9.78, .4, utf8_decode('Facturar a:'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, utf8_decode('Proveedor'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, utf8_decode('Subdirector de compras y Subcontratos'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, utf8_decode('Gerente de Procuración'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(8, .4, utf8_decode('Facturar a:'), 'TRLB', 0, 'C', 1);
                 $this->Ln();
-                $this->CellFitScale(4.89, .4, utf8_decode($this->ordenCompra->empresa->razon_social), 'TRLB', 0, 'C', 1);
-                $this->CellFitScale(4.89, .4, '', 'TRLB', 0, 'C', 1);
-                $this->CellFitScale(9.78, .4, utf8_decode($this->ordenCompra->obra->facturar), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, utf8_decode($this->ordenCompra->empresa->razon_social), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, '', 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, '', 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(8, .4, utf8_decode($this->ordenCompra->obra->facturar), 'TRLB', 0, 'C', 1);
                 $this->Ln();
-                $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
-                $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
-                $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
-                $this->CellFitScale(4.89, 1.2, '', 'TRLB', 0, 'C');
+                $this->CellFitScale(4, 1.2, '', 'TRLB', 0, 'C');
+                $this->CellFitScale(4, 1.2, '', 'TRLB', 0, 'C');
+                $this->CellFitScale(4, 1.2, '', 'TRLB', 0, 'C');
+                $this->CellFitScale(4, 1.2, '', 'TRLB', 0, 'C');
+                $this->CellFitScale(4, 1.2, '', 'TRLB', 0, 'C');
                 $this->Ln();
-                $this->CellFitScale(4.89, .4, '', 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, '', 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'TRLB', 0, 'C', 1);
 
                 if ($this->con_fianza == 0)
-                    $this->CellFitScale(4.89, .4, utf8_decode(''), 'TRLB', 0, 'C', 1);
+                    $this->CellFitScale(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 1);
 
                 else
-                    $this->CellFitScale(4.89, .4, utf8_decode(''), 'TRLB', 0, 'C', 1);
+                    $this->CellFitScale(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 1);
 
-                $this->CellFitScale(4.89, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 1);
-                $this->CellFitScale(4.89, .4, utf8_decode('LIC. FERNANDO GONZÁLEZ ORTÍZ'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, utf8_decode('LIC. FERNANDO GONZÁLEZ ORTÍZ'), 'TRLB', 0, 'C', 1);
 
             }
             else if (Context::getDatabase() == "SAO1814_TERMINAL_NAICM")
@@ -923,8 +931,10 @@ class OrdenCompraFormato extends FPDI
                 $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0, 'C');
                 $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0, 'C');
                 $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0, 'C');
+                $this->CellFitScale(4, .4, ('Vo.Bo.'), 1, 0, 'C');
                 $this->Ln(.4);
                 $this->Cell(2);
+                $this->CellFitScale(4, .8, '', 1, 0, 'C');
                 $this->CellFitScale(4, .8, '', 1, 0, 'C');
                 $this->CellFitScale(4, .8, '', 1, 0, 'C');
                 $this->CellFitScale(4, .8, '', 1, 0, 'C');
@@ -933,6 +943,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(2);
                 $this->CellFitScale(4, .3, utf8_decode('Gerente / Director de Área Solicitante'), 1, 0, 'C');
                 $this->CellFitScale(4, .3, utf8_decode('Jefe de Compras'), 1, 0, 'C');
+                $this->CellFitScale(4, .3, utf8_decode('Gerente de Compras'), 1, 0, 'C');
                 $this->CellFitScale(4, .3, utf8_decode('Gerente / Director de Procuración'), 1, 0, 'C');
                 $this->CellFitScale(4, .3, ('Director General'), 1, 0, 'C');
 
@@ -942,14 +953,16 @@ class OrdenCompraFormato extends FPDI
                 $this->SetY(-2.7);
                 $this->Cell(4.5);
                 $this->SetFont('Arial', '', 6);
-                $this->CellFitScale(5, .5, utf8_decode('Jefe de Compras'), 1, 0, 'C');
-                $this->CellFitScale(5, .5, utf8_decode('Gerente Administrativo'), 1, 0, 'C');
-                $this->CellFitScale(5, .5, utf8_decode('Gerente de Proyecto'), 1, 0, 'C');
+                $this->CellFitScale(4.5, .5, utf8_decode('Jefe de Compras'), 1, 0, 'C');
+                $this->CellFitScale(4.5, .5, utf8_decode('Subdirector de compras y Subcontratos'), 1, 0, 'C');
+                $this->CellFitScale(4.5, .5, utf8_decode('Gerente Administrativo'), 1, 0, 'C');
+                $this->CellFitScale(4.5, .5, utf8_decode('Gerente de Proyecto'), 1, 0, 'C');
                 $this->Ln(.5);
                 $this->Cell(4.5);
-                $this->CellFitScale(5, 1.2, ' ', 1, 0, 'R');
-                $this->CellFitScale(5, 1.2, ' ', 1, 0, 'R');
-                $this->CellFitScale(5, 1.2, ' ', 1, 0, 'R');
+                $this->CellFitScale(4.5, 1.2, ' ', 1, 0, 'R');
+                $this->CellFitScale(4.5, 1.2, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 1, 0, 'R');
+                $this->CellFitScale(4.5, 1.2, ' ', 1, 0, 'R');
+                $this->CellFitScale(4.5, 1.2, ' ', 1, 0, 'R');
 
             }
             else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->ordenCompra->solicitud->id_area_compradora != 4)
@@ -958,22 +971,25 @@ class OrdenCompraFormato extends FPDI
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(255, 255, 255);
                 $this->Ln();
-                $this->Cell(5, .4, utf8_decode('Jefe de compras'), 'TRLB', 0, 'C', 0);
-                $this->Cell(5, .4, utf8_decode('VoBo Administración'), 'TRLB', 0, 'C', 0);
-                $this->Cell(5, .4, utf8_decode('VoBo Gerente de Construcción'), 'TRLB', 0, 'C', 0);
-                $this->Cell(5, .4, utf8_decode('Aprobó  Director de Proyectos'), 'TRLB', 0, 'C', 0);
+                $this->Cell(4, .4, utf8_decode('Jefe de compras'), 'TRLB', 0, 'C', 0);
+                $this->Cell(4.1, .4, utf8_decode('Subdirector de compras y Subcontratos'), 'TRLB', 0, 'C', 0);
+                $this->Cell(4.4, .4, utf8_decode('VoBo Administración'), 'TRLB', 0, 'C', 0);
+                $this->Cell(3.9, .4, utf8_decode('VoBo Gerente de Construcción'), 'TRLB', 0, 'C', 0);
+                $this->Cell(3.6, .4, utf8_decode('Aprobó  Director de Proyectos'), 'TRLB', 0, 'C', 0);
                 $this->Ln();
 
-                $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
-                $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
-                $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
-                $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(4, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(4.1, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(4.4, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.9, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.6, 1.2, '', 'TRLB', 0, 'C');
                 $this->Ln();
                 //$this->SetFillColor(180, 180, 180);
-                $this->Cell(5, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
-                $this->Cell(5, .4, utf8_decode('C.P. MARCO A. MALDONADO HERNANDEZ'), 'TRLB', 0, 'C', 1);
-                $this->Cell(5, .4, utf8_decode('ING. MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 1);
-                $this->Cell(5, .4, utf8_decode('ING. HORACIO POSADAS HUERTA'), 'TRLB', 0, 'C', 1);
+                $this->Cell(4, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(4.1, .4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'TRLB', 0, 'C', 1);
+                $this->Cell(4.4, .4, utf8_decode('C.P. MARCO A. MALDONADO HERNANDEZ'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.9, .4, utf8_decode('ING. MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.6, .4, utf8_decode('ING. HORACIO POSADAS HUERTA'), 'TRLB', 0, 'C', 1);
 
             }
             else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra()== 3 && $this->ordenCompra->solicitud->id_area_compradora == 4)
@@ -981,68 +997,85 @@ class OrdenCompraFormato extends FPDI
                 $this->SetY(-3.5);
                 $this->SetFont('Arial', '', 6);
                 $this->SetFillColor(255, 255, 255);
-                $this->Cell(3.92, .25, utf8_decode(''), 'TRL', 0, 'C', 1);
-                $this->Cell(3.92, .25, '', 'TRL', 0, 'C', 1);
-                $this->Cell(3.92, .25, 'VoBo', 'TRL', 0, 'C', 1);
-                $this->Cell(3.92, .25, 'Representante Legal ', 'TRL', 0, 'C', 1);
-                $this->Cell(3.92, .25,utf8_decode('Representante Legal '),'TRL', 0, 'C', 1);
+                $this->Cell(3, .25, utf8_decode(''), 'TRL', 0, 'C', 1);
+                $this->Cell(3, .25, '', 'TRL', 0, 'C', 1);
+                $this->Cell(3.3, .25, '', 'TRL', 0, 'C', 1);
+                $this->Cell(3.5, .25, 'VoBo', 'TRL', 0, 'C', 1);
+                $this->Cell(3.5, .25, 'Representante Legal ', 'TRL', 0, 'C', 1);
+                $this->Cell(3.3, .25,utf8_decode('Representante Legal '),'TRL', 0, 'C', 1);
                 $this->Ln();
 
-                $this->Cell(3.92, .4, utf8_decode('Jefe Compras'), 'RLB', 0, 'C', 1);
-                $this->Cell(3.92, .4, 'VoBo', 'RLB', 0, 'C', 1);
-                $this->Cell(3.92, .4, 'CALTIA CONCESIONES SA DE CV', 'RLB', 0, 'C', 1);
-                $this->Cell(3.92, .4, 'CALTIA CONCESIONES SA DE CV', 'RLB', 0, 'C', 1);
-                $this->CellFitScaleForce(3.92, .4,utf8_decode('LA PENINSULAR COMPAÑIA CONSTRUCTORA SA DE CV'),'RLB', 0, 'C', 1);
+                $this->Cell(3, .4, utf8_decode('Jefe Compras'), 'RLB', 0, 'C', 1);
+                $this->Cell(3,.4, 'VoBo', 'RLB', 0, 'C', 1);
+                $this->Cell(3.3, .4, 'Subdirector de compras y Subcontratos', 'RLB', 0, 'C', 1);
+                $this->Cell(3.5, .4, 'CALTIA CONCESIONES SA DE CV', 'RLB', 0, 'C', 1);
+                $this->Cell(3.5, .4, 'CALTIA CONCESIONES SA DE CV', 'RLB', 0, 'C', 1);
+                $this->CellFitScaleForce(3.3, .4,utf8_decode('LA PENINSULAR COMPAÑIA CONSTRUCTORA SA DE CV'),'RLB', 0, 'C', 1);
                 $this->Ln();
 
-                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
-                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
-                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
-                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
-                $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.3, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.5, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.5, 1.2, '', 'TRLB', 0, 'C');
+                $this->Cell(3.3, 1.2, '', 'TRLB', 0, 'C');
                 $this->Ln();
                 $this->SetFont('Arial', '', 5);
-                $this->Cell(3.92, .4, '', 'TRLB', 0, 'C', 1);
-                $this->Cell(3.92, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 1);
-                $this->Cell(3.92, .4, utf8_decode('LIC. MARIA LUCIA MARTINEZ BALADO'), 'TRLB', 0, 'C', 1);
-                $this->Cell(3.92, .4, utf8_decode('ING. MANUEL TOBAR VIDA'), 'TRLB', 0, 'C', 1);
-                $this->CellFitScaleForce(3.92, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3, .4, '', 'TRLB', 0, 'C', 1);
+                $this->Cell(3, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.3, .4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.5, .4, utf8_decode('LIC. MARIA LUCIA MARTINEZ BALADO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.5, .4, utf8_decode('ING. MANUEL TOBAR VIDA'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScaleForce(3.3, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 1);
             }
             else {
-
                 if ($this->conFirmaDAF) {
                     $this->SetFont('Arial', '', 6);
                     $this->SetY(-3.7);
                     $this->Cell(19, .5, utf8_decode("Orden de Compra no válida sin la firma de la Dirección de Administración y Finanzas."), 0, 1, "L");
                     $this->Ln(0.3);
                     $y_idaf = $this->GetY();
-                    $this->CellFitScale(4.9, .5, ('Proveedor'), 1, 0, 'C');
-                    $this->CellFitScale(4.9, .5, ('Jefe Compras'), 1, 0, 'C');
-                    $this->CellFitScale(4.9, .5, utf8_decode('Dirección de Administración y Finanzas'), 1, 0, 'C');
+                    $this->CellFitScale(4, .5, ('Proveedor'), 1, 0, 'C');
+                    $this->CellFitScale(4, .5, ('Jefe Compras'), 1, 0, 'C');
+                    $this->CellFitScale(4, .5, ('Subdirector de compras y Subcontratos'), 1, 0, 'C');
+                    $this->CellFitScale(4, .5, utf8_decode('Dirección de Administración y Finanzas'), 1, 0, 'C');
                     $this->Ln(.5);
-                    $this->CellFitScale(4.9, 1.2, ' ', 1, 0, 'R');
-                    $this->CellFitScale(4.9, 1.2, ' ', 1, 0, 'R');
-                    $this->CellFitScale(4.9, 1.2, ' ', 1, 0, 'R');
+                    $this->CellFitScale(4, 0.8, ' ', 'RL', 0, 'R');
+                    $this->CellFitScale(4, 0.8, ' ', 'RL', 0, 'R');
+                    $this->CellFitScale(4, 0.8, ' ', 'RL', 0, 'R');
+                    $this->CellFitScale(4, 0.8, ' ', 'RL', 0, 'R');
+                    $this->Ln(.8);
+                    $this->CellFitScale(4, 0.4, ' ', 'RLB', 0, 'R');
+                    $this->CellFitScale(4, 0.4, ' ', 'RLB', 0, 'R');
+                    $this->CellFitScale(4, 0.4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'RLB', 0, 'R');
+                    $this->CellFitScale(4, 0.4, ' ', 'RLB', 0, 'R');
                     $this->setY($y_idaf);
-                    $this->Cell(14.7);
-                    $this->CellFitScale(4.9, .5, utf8_decode('Aprobó'), 1, 0, 'C');
+                    $this->Cell(16);
+                    $this->CellFitScale(4, .5, utf8_decode('Aprobó'), 1, 0, 'C');
                     $this->Ln(.5);
-                    $this->Cell(14.7);
-                    $this->CellFitScale(4.9, 1.2, ' ', 1, 0, 'R');
+                    $this->Cell(16);
+                    $this->CellFitScale(4, 1.2, ' ', 1, 0, 'R');
                 } else {
                     $this->SetFont('Arial', '', 6);
                     $this->SetY(-2.7);
-                    $this->Cell(4.5);
-                    $this->CellFitScale(5, .5, utf8_decode('Proveedor'), 1, 0, 'C');
-                    $this->CellFitScale(5, .5, utf8_decode('Jefe Compras'), 1, 0, 'C');
-                    $this->CellFitScale(5, .5, utf8_decode('Aprobó'), 1, 0, 'C');
+                    $this->Cell(4);
+                    $this->CellFitScale(4, .5, utf8_decode('Proveedor'), 1, 0, 'C');
+                    $this->CellFitScale(4, .5, utf8_decode('Jefe Compras'), 1, 0, 'C');
+                    $this->CellFitScale(4, .5, utf8_decode('Subdirector de compras y Subcontratos'), 1, 0, 'C');
+                    $this->CellFitScale(4, .5, utf8_decode('Aprobó'), 1, 0, 'C');
                     $this->Ln(.5);
-                    $this->Cell(4.5);
-                    $this->CellFitScale(5, 1.2, ' ', 1, 0, 'R');
-                    $this->CellFitScale(5, 1.2, ' ', 1, 0, 'R');
-                    $this->CellFitScale(5, 1.2, ' ', 1, 0, 'R');
+                    $this->Cell(4);
+                    $this->CellFitScale(4, 0.8, ' ', 'RL', 0, 'R');
+                    $this->CellFitScale(4, 0.8, ' ', 'RL', 0, 'R');
+                    $this->CellFitScale(4, 0.8,  '', 'RL', 0, 'C');
+                    $this->CellFitScale(4, 0.8, '', 'RL', 0, 'C');
+                    $this->Ln(.8);
+                    $this->Cell(4);
+                    $this->CellFitScale(4, 0.5, ' ', 'RLB', 0, 'R');
+                    $this->CellFitScale(4, 0.5, ' ', 'RLB', 0, 'R');
+                    $this->CellFitScale(4, 0.5,  utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'RLB', 0, 'C');
+                    $this->CellFitScale(4, 0.5, ' ', 'RLB', 0, 'R');
                 }
-
             }
         }
         $this->SetY(-0.8);

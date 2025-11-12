@@ -1186,4 +1186,11 @@ class PresupuestoContratista extends Transaccion
 
         return $this->estado;
     }
+
+    public function ordenarPartidas()
+    {
+        return PresupuestoContratistaPartida::join('dbo.contratos', 'dbo.presupuestos.id_concepto','dbo.contratos.id_concepto')
+            ->where('dbo.presupuestos.id_transaccion','=', $this->getKey())
+            ->orderBy('dbo.contratos.nivel')->get();
+    }
 }

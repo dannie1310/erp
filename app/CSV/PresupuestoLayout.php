@@ -98,10 +98,9 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 }else{
                     $verificacion_cotizacion = $this->verifica->encripta($this->presupuesto->invitacion->base_datos."|".$this->presupuesto->invitacion->id_obra."|".$this->presupuesto->id_transaccion);
                 }
-
                 $event->sheet->setCellValue("A1", $verificacion_cotizacion);
                 $t_part = count($this->presupuesto->partidas);
-                foreach ($this->presupuesto->partidas as $cot){
+                foreach ($this->presupuesto->ordenarPartidas() as $cot){
                     $item = Contrato::where('id_transaccion', '=', $this->presupuesto->id_antecedente)->where('id_concepto', '=', $cot->id_concepto)->first();
                     $id_moneda = '';
                     switch ((int)$cot->IdMoneda){

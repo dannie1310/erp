@@ -18,7 +18,7 @@
                         <div class="col-md-12">
                             <encabezado v-bind:solicitud="solicitud" />
                             <tabla-datos v-bind:solicitud="solicitud" />
-                            <tabla-documentos v-bind:documentos="solicitud.comprobacion.documentos" />
+                            <tabla-documentos v-if="solicitud.comprobacion" v-bind:documentos="solicitud.comprobacion.documentos" />
                         </div>
                     </div>
                      <hr />

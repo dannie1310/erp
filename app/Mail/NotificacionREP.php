@@ -51,6 +51,7 @@ class NotificacionREP extends Mailable
         $pdf = new Comunicado($arr_comunicados);
 
         return $this
+            ->from('monitoreodb_hermes@grupohi.mx')
             ->subject($titulo)
             ->view('emails.notificacion_rep',["cuerpo_correo"=>$this->notificacion->cuerpo_correo])
             ->attachData($pdf->Output("S", 'Comunicado-'.$proveedor->rfc_proveedor.".pdf"), 'Comunicado-'.$proveedor->rfc_proveedor . '.pdf',['mime' => 'application/pdf']);

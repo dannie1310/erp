@@ -37,6 +37,10 @@
                             <input type="checkbox" autocomplete="off"
                                    v-model="no_localizados"> No Localizado
                         </label>
+                        <label class="btn btn-primary">
+                            <input type="checkbox" autocomplete="off"
+                                   v-model="boletinado"> Boletinados
+                        </label>
                     </div>
 
                 </div>
@@ -78,6 +82,7 @@ export default {
             efos_presuntos_hi: true,
             en_juicio : true,
             mala_experiencia : true,
+            boletinado: false
         }
     },
     mounted() {
@@ -98,6 +103,7 @@ export default {
             this.$data.query.efos_presuntos_hi = this.efos_presuntos_hi;
             this.$data.query.efos_definitivos_hi = this.efos_definitivos_hi;
             this.$data.query.no_localizados_hi = this.no_localizados_hi;
+            this.$data.query.boletinado = this.boletinado;
             return this.$store.dispatch('padronProveedores/empresa-boletinada/paginate', { params: this.query})
                 .then(data => {
                     this.$store.commit('padronProveedores/empresa-boletinada/SET_EMPRESAS', data.data);
@@ -144,6 +150,7 @@ export default {
             this.$data.query.efos_presuntos_hi = this.efos_presuntos_hi;
             this.$data.query.efos_definitivos_hi = this.efos_definitivos_hi;
             this.$data.query.no_localizados_hi = this.no_localizados_hi;
+            this.$data.query.boletinado = this.boletinado;
             this.query.offset = 0;
             this.paginate()
         },
@@ -157,6 +164,7 @@ export default {
             this.$data.query.efos_presuntos_hi = this.efos_presuntos_hi;
             this.$data.query.efos_definitivos_hi = this.efos_definitivos_hi;
             this.$data.query.no_localizados_hi = this.no_localizados_hi;
+            this.$data.query.boletinado = this.boletinado;
             this.query.offset = 0;
             this.paginate()
         },
@@ -170,6 +178,7 @@ export default {
             this.$data.query.efos_presuntos_hi = this.efos_presuntos_hi;
             this.$data.query.efos_definitivos_hi = this.efos_definitivos_hi;
             this.$data.query.no_localizados_hi = this.no_localizados_hi;
+            this.$data.query.boletinado = this.boletinado;
             this.query.offset = 0;
             this.paginate()
         },
@@ -183,6 +192,7 @@ export default {
             this.$data.query.efos_presuntos_hi = this.efos_presuntos_hi;
             this.$data.query.efos_definitivos_hi = this.efos_definitivos_hi;
             this.$data.query.no_localizados_hi = this.no_localizados_hi;
+            this.$data.query.boletinado = this.boletinado;
             this.query.offset = 0;
             this.paginate()
         },
@@ -196,6 +206,7 @@ export default {
             this.$data.query.efos_presuntos_hi = this.efos_presuntos_hi;
             this.$data.query.efos_definitivos_hi = this.efos_definitivos_hi;
             this.$data.query.no_localizados_hi = this.no_localizados_hi;
+            this.$data.query.boletinado = this.boletinado;
             this.query.offset = 0;
             this.paginate()
         },
@@ -209,6 +220,7 @@ export default {
             this.$data.query.efos_presuntos_hi = this.efos_presuntos_hi;
             this.$data.query.efos_definitivos_hi = this.efos_definitivos_hi;
             this.$data.query.no_localizados_hi = no_localizados_hi;
+            this.$data.query.boletinado = this.boletinado;
             this.query.offset = 0;
             this.paginate()
         },
@@ -222,6 +234,7 @@ export default {
             this.$data.query.efos_presuntos_hi = this.efos_presuntos_hi;
             this.$data.query.efos_definitivos_hi = efos_definitivos_hi;
             this.$data.query.no_localizados_hi = this.no_localizados_hi;
+            this.$data.query.boletinado = this.boletinado;
             this.query.offset = 0;
             this.paginate()
         },
@@ -235,6 +248,21 @@ export default {
             this.$data.query.efos_presuntos_hi = efos_presuntos_hi;
             this.$data.query.efos_definitivos_hi = this.efos_definitivos_hi;
             this.$data.query.no_localizados_hi = this.no_localizados_hi;
+            this.$data.query.boletinado = this.boletinado;
+            this.query.offset = 0;
+            this.paginate()
+        },
+
+        boletinado(boletinado) {
+            this.$data.query.mala_experiencia = this.mala_experiencia;
+            this.$data.query.en_juicio = this.en_juicio;
+            this.$data.query.efos_presuntos = this.efos_presuntos;
+            this.$data.query.efos_definitivos = this.efos_definitivos;
+            this.$data.query.no_localizados = no_localizados;
+            this.$data.query.efos_presuntos_hi = this.efos_presuntos_hi;
+            this.$data.query.efos_definitivos_hi = this.efos_definitivos_hi;
+            this.$data.query.no_localizados_hi = this.no_localizados_hi;
+            this.$data.query.boletinado = boletinado;
             this.query.offset = 0;
             this.paginate()
         },

@@ -45,7 +45,7 @@ class SolicitudCompraPartidaTransformer extends TransformerAbstract
          return [
              'id' => $model->getKey(),
              'unidad' => $model->unidad,
-             'cantidad' => $model->cantidad,
+             'cantidad' => $model->cantidad_decimal,
              'cantidad_format' => $model->cantidad_format,
              'solicitado_cantidad' => $model->solicitado_cantidad_format,
              'orden_compra_cantidad' => $model->cantidad_orden_compra ? $model->cantidad_orden_compra_format : '0.0',

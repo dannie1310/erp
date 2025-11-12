@@ -88,6 +88,11 @@ class SolChequeComprobacion extends SolCheque
         return '$' . number_format(($this->saldo),2);
     }
 
+    public function getImporteFormatAttribute()
+    {
+        return  number_format(($this->Importe),2);
+    }
+
     public function getEmpresaDescripcionAttribute()
     {
         try {

@@ -56,6 +56,15 @@ class DoctoComp extends Model
     /**
      * Scopes
      */
+    public function scopeDeducibles($query)
+    {
+        return $query->where('Clasificacion', '=', 1)->orderBy('FechaDocto');
+    }
+
+    public function scopeNoDeducibles($query)
+    {
+        return $query->where('Clasificacion', '=', 2)->orderBy('FechaDocto');
+    }
 
     /**
      * Atributos
@@ -88,6 +97,12 @@ class DoctoComp extends Model
     {
         $date = date_create($this->FechaDocto);
         return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaFormatoAttribute()
+    {
+        $date = date_create($this->FechaDocto);
+        return date_format($date,"d-m-Y");
     }
 
     public function getConceptoXmlAttribute()

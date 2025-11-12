@@ -194,9 +194,9 @@ class ItemSubcontrato extends Item
      */
     public function proveedorPartidasEstimadas($id_estimacion, $id_contrato, $contrato, $id_obra)
     {
-       $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
-           ->where('id_antecedente', $this->id_transaccion)
-           ->where('item_antecedente', $this->id_concepto)->first();
+        $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
+            ->where('id_antecedente', $this->id_transaccion)
+            ->where('item_antecedente', $this->id_concepto)->first();
 
         $precio_unitario = $estimacion ? $estimacion->precio_unitario : $this->precio_unitario;
         $cantidad_estimada_total = $this->cantidad_total_estimada ? $this->cantidad_total_estimada : 0;
@@ -242,7 +242,7 @@ class ItemSubcontrato extends Item
             ->where('item_antecedente', $this->id_concepto)->first();
 
         $acumulado_anterior = $this->acumulado_anterior->where('id_transaccion', '<', $id_estimacion);
-       // $contrato = $this->contrato()->where('id_transaccion', '=', $this->subcontrato->id_antecedente)->first();
+        // $contrato = $this->contrato()->where('id_transaccion', '=', $this->subcontrato->id_antecedente)->first();
 
         $cantidad_estimacion = $estimacion ? $estimacion->cantidad : 0;
         $importe_estimacion =  $estimacion ? $estimacion->importe : 0;
