@@ -46,7 +46,8 @@ class Documento extends Model
         'Descuento',
         'Descuento_CFDI',
         'IdGenero',
-        'IEPS'
+        'IEPS',
+        'IdProveedorEmisor'
     ];
 
     protected static function boot()
@@ -124,6 +125,11 @@ class Documento extends Model
     public function relacionXDocumento()
     {
         return $this->belongsTo(RelacionGastoXDocumento::class, 'IdDocto', 'iddocumento');
+    }
+
+    public function proveedorEmisor()
+    {
+        return $this->belongsTo(Proveedor::class, 'IdProveedorEmisor', 'IdProveedor');
     }
 
     /**
@@ -213,6 +219,16 @@ class Documento extends Model
     {
         try {
             return $this->proveedor->RazonSocial;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getProveedorEmisorDescripcionAttribute()
+    {
+        try {
+            return $this->proveedorEmisor->RazonSocial;
         }catch (\Exception $e)
         {
             return null;
@@ -363,8 +379,9 @@ class Documento extends Model
                 'Creo' => auth()->id(),
                 'Estatus' => $data['estado'],
                 'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
-                "registro_portal" => 1,
-                'IEPS' => 0
+                'registro_portal' => 1,
+                'IEPS' => 0,
+                'IdProveedorEmisor' => $data['id_proveedor_extra'] != '' ? $data['id_proveedor_extra'] : NULL
             ]);
             DB::connection('controlrec')->commit();
             $documento->update([
@@ -405,7 +422,7 @@ class Documento extends Model
                 'TC' => 0,
                 'Estatus' => $data["estado"],
                 'IdTipoDocto' => $data["id_tipo"],
-
+                'IdProveedorEmisor' => $data['id_proveedor_emisor'] != '' ? $data['id_proveedor_emisor'] : NULL
             ]);
             DB::connection('controlrec')->commit();
             $this->update([

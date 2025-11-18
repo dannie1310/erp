@@ -87,18 +87,19 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                         </div>
                     </div>
-
-                    <div class="col-md-2">
-                      <div class="form-group error-content">
-                            <input type="checkbox" id="proveedor_extra" v-model="proveedor_extra">
-                            <label for="checkbox">Agregar otro proveedor</label>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-check error-content">
+                            <input type="checkbox" id="proveedor_extra" v-model="proveedor_extra" class="form-check-input">
+                          <label class= "form-check-label" for="proveedor_extra"><b>Agregar proveedor emisor</b></label>
                       </div>
                     </div>
-
                     <div class="col-md-6"  v-if="proveedor_extra">
                         <div class="form-group error-content">
-                            <label for="id_proveedor">Proveedor original emitio factura:</label>
+                            <label for="id_proveedor_ex">Proveedor original emitió factura:</label>
                             <select
+                                v-if="!cargando_proveedores"
                                 class="form-control"
                                 :disabled="proveedores.length == 0 ? true : false"
                                 data-vv-as="Proveedor"
@@ -115,6 +116,7 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor_ex')">{{ errors.first('id_proveedor_ex') }}</div>
                         </div>
                     </div>
+                    <div class="col-md-6" v-else></div>
                 </div>
                 <div class="row">
                     <div class="col-md-2">
@@ -434,6 +436,7 @@ export default {
                     otros: parseFloat(this.otros.toString().replace(/,/g, '')),
                     total: parseFloat(this.total.toString().replace(/,/g, '')),
                     estado: this.idtipodocto == 1 ? 1 : 5,
+                    id_proveedor_extra : this.id_proveedor_ex == true ? this.id_proveedor_ex : NULL
                 })
                 .then(data => {
                     this.salir();
@@ -484,7 +487,7 @@ export default {
     },
     watch: {
         idserie(value)
-        {console.log(this.proveedor_extra)
+        {
             if(value)
             {
                 this.getProveedores();
@@ -536,13 +539,6 @@ export default {
                 this.calcularTotal();
             }
         },
-        proveedor_extra(value)
-        {
-            if(value)
-            {
-                console.log("AQUI ", value)
-            }
-        }
     }
 }
 </script>

@@ -160,7 +160,7 @@ class DocumentoService
             'C04' => '',
             'C05' => '',
             'C06' => '',
-            'C07' => $array_xml ? $array_xml['serie'] : $documento->CFDI->serie,
+            'C07' => $array_xml ? $array_xml['serie'] : $documento->CFDI ? $documento->CFDI->serie : '',
             'C08' => $documento->FolioDocto,
             'C09' => $array_xml ? $array_xml['moneda'] : '',
             'C10' => $condiciones,
@@ -176,6 +176,7 @@ class DocumentoService
             'C14' => $documento->uuid ? $documento->uuid . '.xml' : $documento->FolioDocto,
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
         ];
 
         if ($array_xml != null) {
@@ -379,8 +380,8 @@ class DocumentoService
             'C14' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text . '.xml',
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
         ];
-
         $i = 0;
         $array[$i] = [
             'NAME' => 'INVOICE_ITEM',
