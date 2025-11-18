@@ -160,7 +160,7 @@ class DocumentoService
             'C04' => '',
             'C05' => '',
             'C06' => '',
-            'C07' => $array_xml ? $array_xml['serie'] : $documento->CFDI->serie,
+            'C07' => $array_xml ? $array_xml['serie'] : ($documento->CFDI ? $documento->CFDI->serie : '' ),
             'C08' => $documento->FolioDocto,
             'C09' => $array_xml ? $array_xml['moneda'] : '',
             'C10' => $condiciones,
@@ -280,7 +280,7 @@ class DocumentoService
                         $total = round($importe, 2) + $total;
                         $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
                         if ($cuenta == null) {
-                            abort(500, "La cuenta (" . $item->descripcion_cuenta . ") de control recursos no tiene registro de cuenta para IFS.\n \n Favor de contactar a soporte a aplicaciones.");
+                            abort(500, "La cuenta (" . $item->descripcion_cuenta . ") y el tipo de gasto (" . $item->tipo_gasto . ") de control recursos no tiene registro de cuenta para IFS.\n \n Favor de contactar a soporte a aplicaciones.");
                         }
                         $array[$i] = [
                             'NAME' => 'INVOICE_ITEM_POSTING',
@@ -451,7 +451,7 @@ class DocumentoService
                 $total = round($item->importe_segmento, 2) + $total;
                 $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
                 if ($cuenta == null) {
-                    abort(500, "La cuenta (" . $item->descripcion_cuenta . ") de control recursos no tiene registro de cuenta para IFS.\n \n Favor de contactar a soporte a aplicaciones.");
+                    abort(500, "La cuenta (" . $item->descripcion_cuenta . ") y el tipo de gasto (" . $item->tipo_gasto . ") de control recursos no tiene registro de cuenta para IFS.\n \n Favor de contactar a soporte a aplicaciones.");
                 }
 
                 $array[$i] = [
