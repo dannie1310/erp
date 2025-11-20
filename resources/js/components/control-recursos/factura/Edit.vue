@@ -26,7 +26,7 @@
                         <h6>{{factura.folio}}</h6>
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <div class="form-group error-content">
                         <label for="idserie" class="col-form-label">Serie:</label>
                         <select class="form-control"
@@ -59,7 +59,7 @@
                         <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group error-content">
                         <h6><b>Empresa: </b></h6>
                         <h6>{{factura.empresa_descripcion}}</h6>
@@ -297,7 +297,7 @@ export default {
                 this.id_proveedor = "";
             }
             return this.$store.dispatch('controlRecursos/proveedor/index', {
-                params: {sort: 'RazonSocial', order: 'asc', scope:['porTipos:1,3','porSerie:'+this.idserie, 'porEstados:1']}
+                params: {sort: 'RazonSocial', order: 'asc', scope:['porTipos:1,3','porSerie:'+this.factura.id_serie, 'porEstados:1']}
             }).then(data => {
                 this.proveedores = data.data;
             }).finally(() => {

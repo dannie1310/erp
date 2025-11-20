@@ -27,13 +27,13 @@
                         </th>
                     </tr>
                     <tr>
-                        <th class="encabezado  c130">
+                        <th class="encabezado">
                            Tipo de Documento
                         </th>
-                        <th class="encabezado  c130">
+                        <th class="encabezado">
                             Fecha de Emisión
                         </th>
-                        <th class="encabezado  c130">
+                        <th class="encabezado">
                             Fecha de Vencimiento
                         </th>
                         <th class="encabezado">
@@ -124,13 +124,13 @@
                         <th class="encabezado">
                             UUID
                         </th>
-                        <th class="encabezado c150">
+                        <th class="encabezado">
                             Ubicación
                         </th>
-                        <th class="encabezado c150">
+                        <th class="encabezado">
                             Alias del Departamento
                         </th>
-                        <th class="encabezado c150">
+                        <th class="encabezado">
                             Departamento
                         </th>
 

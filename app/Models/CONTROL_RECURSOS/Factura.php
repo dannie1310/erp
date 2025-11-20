@@ -128,7 +128,7 @@ class Factura extends Documento
                 'Concepto' => $data["concepto"],
                 'IdSerie' => $data['id_serie'],
                 'Estatus' => $data['id_tipo'] == 1 ? 1 : 5,
-                'IdProveedorEmisor' => $data['id_proveedor_emisor'] != '' ? $data['id_proveedor_emisor'] : NULL
+                'IdProveedorEmisor' => $data['id_proveedor_emisor'] != null ? $data['id_proveedor_emisor'] : 'NULL'
             ]);
             DB::connection('controlrec')->commit();
             return $this;
