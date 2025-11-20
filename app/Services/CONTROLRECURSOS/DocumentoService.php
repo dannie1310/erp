@@ -124,6 +124,7 @@ class DocumentoService
 
     public function xml_con_cfdi($documento, $segmentos_negocio, $sumatorias)
     {
+        dd($this->firmas($documento));
         $array_xml = null;
         $array_fin = [];
         $array = [];
@@ -534,6 +535,30 @@ class DocumentoService
     {
         if(Storage::disk('ifs_solicitud_recurso')->exists($nombre)) {
             Storage::disk('ifs_solicitud_recurso')->delete($nombre);
+        }
+    }
+
+    private function firmas($documento)
+    {
+        $firmas = $documento->solChequeDocto->solCheque->firmasSolicitantes;
+
+        dd(count($firmas));
+        if($firmas > 0)
+        {// enviar las firmas
+
+        }else {
+            $sol = $documento->solChequeDocto->solCheque;
+            if ($sol->Serie != 'CDM' && $sol->Serie != 'PND' && $sol->Serie != 'CNC') {
+                $firmas_array = [
+                    'solicita' => '',
+                    'autoriza' => '',
+                    'direccion_adm_fin' => '',
+                    'dir_gen' => ''
+                ];
+            }elseif ($sol->Serie == 'PND') {
+
+            }
+
         }
     }
 }
