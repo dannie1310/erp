@@ -439,7 +439,7 @@ export default {
             this.data.idtipodocto = this.idtipodocto;
             this.data.archivo = this.file_carga;
             this.data.nombre_archivo = this.file_carga_name;
-            this.data.id_proveedor_extra = this.proveedor_extra == true ? this.id_proveedor_ex : 'NULL'
+            this.data.id_proveedor_extra = this.proveedor_extra == true ? this.id_proveedor_ex : ''
             return this.$store.dispatch('controlRecursos/factura/store', this.$data.data)
                 .then(data => {
                     this.salir();
