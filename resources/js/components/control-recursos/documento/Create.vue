@@ -436,7 +436,7 @@ export default {
                     otros: parseFloat(this.otros.toString().replace(/,/g, '')),
                     total: parseFloat(this.total.toString().replace(/,/g, '')),
                     estado: this.idtipodocto == 1 ? 1 : 5,
-                    id_proveedor_extra : this.id_proveedor_ex == true ? this.id_proveedor_ex : ''
+                    id_proveedor_extra : this.proveedor_extra == true ? this.id_proveedor_ex : ''
                 })
                 .then(data => {
                     this.salir();
