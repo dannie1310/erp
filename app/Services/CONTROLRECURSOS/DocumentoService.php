@@ -541,10 +541,18 @@ class DocumentoService
     private function firmas($documento)
     {
         $firmas = $documento->solChequeDocto->solCheque->firmasSolicitantes;
-
-        dd(count($firmas));
-        if($firmas > 0)
+        if(count($firmas) > 0)
         {// enviar las firmas
+            dd($firmas);
+            $firmas_array = [
+                'solicita' => '',
+                'autoriza' => '',
+                'revisa' => '',
+                'contraloria' => '',
+                'vobo' => '',
+                'direccion_adm_fin' => '', // true -false
+                'dir_gen' => '' // true-false
+            ];
 
         }else {
             $sol = $documento->solChequeDocto->solCheque;
@@ -552,6 +560,9 @@ class DocumentoService
                 $firmas_array = [
                     'solicita' => '',
                     'autoriza' => '',
+                    'revisa' => '',
+                    'contraloria' => '',
+                    'vobo' => '',
                     'direccion_adm_fin' => '',
                     'dir_gen' => ''
                 ];
