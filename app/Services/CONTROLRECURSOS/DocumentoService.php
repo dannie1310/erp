@@ -205,39 +205,53 @@ class DocumentoService
                     'N07' => '',
                     'C07' => ''
                 ];
+
                 $i++;
 
                 if (array_key_exists('traslados', $concepto)) {
                     foreach ($concepto['traslados'] as $traslado) {
-                        if (($documento->proveedor->importe_especial == 1 && $traslado['impuesto'] != '003') || $documento->proveedor->importe_especial == 0) {
-                            $total_traslados += $traslado['importe'];
-                            if ($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe']) {
-                                $array[$k]['N01'] = $traslado['base'];
-                                $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
-                                $array[$i] = [
-                                    'NAME' => 'INVOICE_ITEM_TAX',
-                                    'N00' => $key + 1,
-                                    'C00' => 'N',
-                                    'N01' => $traslado['tasa_o_cuota'] * 100,
-                                    'N02' => $traslado['importe']
-                                ];
+                        if ($documento->proveedor->importe_especial != 2) {
+                            if (($documento->proveedor->importe_especial == 1 && $traslado['impuesto'] != '003') || $documento->proveedor->importe_especial == 0) {
+                                $total_traslados += $traslado['importe'];
+                                if ($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe']) {
+                                    $array[$k]['N01'] = $traslado['base'];
+                                    $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
+                                    $array[$i] = [
+                                        'NAME' => 'INVOICE_ITEM_TAX',
+                                        'N00' => $key + 1,
+                                        'C00' => 'N',
+                                        'N01' => $traslado['tasa_o_cuota'] * 100,
+                                        'N02' => $traslado['importe']
+                                    ];
+                                } else {
+                                    $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
+                                    $array[$i] = [
+                                        'NAME' => 'INVOICE_ITEM_TAX',
+                                        'N00' => $key + 1,
+                                        'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
+                                        'N01' => $traslado['tasa_o_cuota'] * 100,
+                                        'N02' => $traslado['importe']
+                                    ];
+                                }
+                                $i++;
                             } else {
-                                $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
-                                $array[$i] = [
-                                    'NAME' => 'INVOICE_ITEM_TAX',
-                                    'N00' => $key + 1,
-                                    'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
-                                    'N01' => $traslado['tasa_o_cuota'] * 100,
-                                    'N02' => $traslado['importe']
-                                ];
+                                $array[$k]['N01'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
+                                $array[$k]['N05'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
                             }
+                        }else{
+                            $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
+                            $array[$i] = [
+                                'NAME' => 'INVOICE_ITEM_TAX',
+                                'N00' => $key + 1,
+                                'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
+                                'N01' => $traslado['tasa_o_cuota'] * 100,
+                                'N02' => $traslado['importe']
+                            ];
                             $i++;
-                        } else {
-                            $array[$k]['N01'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
-                            $array[$k]['N05'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
                         }
                     }
                 }
+
                 if (array_key_exists('retenciones', $concepto)) {
                     foreach ($concepto['retenciones'] as $retencion) {
                         $total_retenido += $retencion['importe'];
@@ -302,6 +316,7 @@ class DocumentoService
                         $i++;
                     }
                 }
+
                 $array[$k]['N02'] = $total_traslados;
                 $array[$k]['N03'] = $total_retenido;
 
@@ -317,7 +332,6 @@ class DocumentoService
                 }
             }
         }
-
         $array_fin = [
             'CLASS_ID' => 'INVHI',
             'RECEIVER' => 'IFS_APPLICATIONS',
