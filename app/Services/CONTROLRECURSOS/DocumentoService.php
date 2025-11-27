@@ -7,6 +7,7 @@ use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\CuentaContableIFS;
 use App\Models\CONTROL_RECURSOS\Documento;
 use App\Models\CONTROL_RECURSOS\Proveedor;
+use App\Models\CONTROL_RECURSOS\ProveedorServicioIFS;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\TipoDocto;
 use App\Models\SEGURIDAD_ERP\Finanzas\CodigoImpuesto;
@@ -535,5 +536,11 @@ class DocumentoService
         if(Storage::disk('ifs_solicitud_recurso')->exists($nombre)) {
             Storage::disk('ifs_solicitud_recurso')->delete($nombre);
         }
+    }
+
+    private function buscarProveedorIFS($rfc)
+    {
+        $proveedor = ProveedorServicioIFS::where('rfc', $rfc)->first();
+        dd($proveedor);
     }
 }
