@@ -5,29 +5,35 @@
             <div class="table-responsive">
                 <table class="table  table-sm">
                     <tr>
-                        <th class="encabezado" colspan="3">
+                        <th class="encabezado" colspan="2">
                             Empresa
                         </th>
-                        <th class="encabezado" colspan="3">
+                        <th class="encabezado" colspan="2">
                             Proveedor
                         </th>
+                        <th class="encabezado" colspan="2" v-if="factura.id_proveedor_emisor != NULL">
+                            Proveedor Emisor
+                        </th>
                     </tr>
                     <tr>
-                        <th class="encabezado" colspan="3">
+                        <th class="encabezado" colspan="2">
                             {{factura.empresa_descripcion}}
                         </th>
-                        <th class="encabezado" colspan="3">
+                        <th class="encabezado" colspan="2">
                             {{factura.proveedor_descripcion}}
+                        </th>
+                        <th class="encabezado" colspan="2" v-if="factura.id_proveedor_emisor != NULL">
+                            {{factura.proveedor_emisor_descripcion}}
                         </th>
                     </tr>
                     <tr>
-                        <th class="encabezado  c130">
+                        <th class="encabezado">
                            Tipo de Documento
                         </th>
-                        <th class="encabezado  c130">
+                        <th class="encabezado">
                             Fecha de Emisión
                         </th>
-                        <th class="encabezado  c130">
+                        <th class="encabezado">
                             Fecha de Vencimiento
                         </th>
                         <th class="encabezado">
@@ -118,13 +124,13 @@
                         <th class="encabezado">
                             UUID
                         </th>
-                        <th class="encabezado c150">
+                        <th class="encabezado">
                             Ubicación
                         </th>
-                        <th class="encabezado c150">
+                        <th class="encabezado">
                             Alias del Departamento
                         </th>
-                        <th class="encabezado c150">
+                        <th class="encabezado">
                             Departamento
                         </th>
 

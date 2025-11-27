@@ -177,6 +177,7 @@ class DocumentoService
             'C14' => $documento->uuid ? $documento->uuid . '.xml' : $documento->FolioDocto,
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
         ];
 
         if ($array_xml != null) {
@@ -380,8 +381,8 @@ class DocumentoService
             'C14' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text . '.xml',
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
         ];
-
         $i = 0;
         $array[$i] = [
             'NAME' => 'INVOICE_ITEM',

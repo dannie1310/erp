@@ -30,7 +30,7 @@
                 </div>
                 <hr />
                 <div class="row">
-                    <div class="col-md-1">
+                    <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="idserie" class="col-form-label">Serie:</label>
                             <select class="form-control"
@@ -79,7 +79,7 @@
                             <div class="invalid-feedback" v-show="errors.has('folio')">{{ errors.first('folio') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-6" v-if="data && data.empresa_bd">
+                    <div class="col-md-5" v-if="data && data.empresa_bd">
                         <div class="form-group error-content">
                             <h6><b>Empresa:</b></h6>
                             <h6>{{data.empresa_bd.razon_social}}</h6>
@@ -125,6 +125,37 @@
                             <h6>{{data.proveedor_bd.razon_social}}</h6>
                         </div>
                     </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                      <div class="form-check error-content">
+                            <input type="checkbox" id="proveedor_extra" v-model="proveedor_extra" class="form-check-input">
+                          <label class= "form-check-label" for="proveedor_extra"><b>Agregar proveedor emisor</b></label>
+                      </div>
+                    </div>
+                    <div class="col-md-6"  v-if="proveedor_extra">
+                        <div class="form-group error-content">
+                            <label for="id_proveedor_ex">Proveedor original emitió factura:</label>
+                            <select
+                                v-if="!cargando_proveedores"
+                                class="form-control"
+                                :disabled="proveedores.length == 0 ? true : false"
+                                data-vv-as="Proveedor"
+                                id="id_proveedor_ex"
+                                name="id_proveedor_ex"
+                                :error="errors.has('id_proveedor_ex')"
+                                v-validate="{required: true}"
+                                v-model="id_proveedor_ex">
+                                 <option value v-if="!this.idserie">Seleccione la serie para cargar los proveedores</option>
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
+                            </select>
+                            <div v-else style="color:#5a6268;" class="form-control"><i class="fa fa-spinner fa-spin" /> Cargando Proveedores</div>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor_ex')">{{ errors.first('id_proveedor_ex') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" v-else></div>
+                    <div class="col-md-2"></div>
                 </div>
                 <div class="row" v-if="data">
                     <div class="col-md-12">
@@ -314,6 +345,11 @@ export default {
             file_carga_name : null,
             data: null,
             fechasDeshabilitadas:{},
+            cargando_proveedores : false,
+            proveedores: [],
+            id_proveedor: '',
+            proveedor_extra : false,
+            id_proveedor_ex : ''
         }
     },
     mounted() {
@@ -403,6 +439,7 @@ export default {
             this.data.idtipodocto = this.idtipodocto;
             this.data.archivo = this.file_carga;
             this.data.nombre_archivo = this.file_carga_name;
+            this.data.id_proveedor_extra = this.proveedor_extra == true ? this.id_proveedor_ex : ''
             return this.$store.dispatch('controlRecursos/factura/store', this.$data.data)
                 .then(data => {
                     this.salir();
@@ -414,7 +451,27 @@ export default {
         {
             this.$router.push({name: 'documento'});
         },
+        getProveedores() {
+            this.cargando_proveedores = true;
+            this.id_proveedor = "";
+            return this.$store.dispatch('controlRecursos/proveedor/index', {
+                params: {sort: 'RazonSocial', order: 'asc', scope:['porTipos:1,3','porSerie:'+this.idserie, 'porEstados:1']}
+            }).then(data => {
+                this.proveedores = data.data;
+            }).finally(() => {
+                this.cargando_proveedores = false;
+            })
+        },
     },
+    watch: {
+        idserie(value)
+        {
+            if(value)
+            {
+                this.getProveedores();
+            }
+        }
+    }
 }
 </script>
 

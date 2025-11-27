@@ -89,6 +89,36 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-check error-content">
+                            <input type="checkbox" id="proveedor_extra" v-model="proveedor_extra" class="form-check-input">
+                          <label class= "form-check-label" for="proveedor_extra"><b>Agregar proveedor emisor</b></label>
+                      </div>
+                    </div>
+                    <div class="col-md-6"  v-if="proveedor_extra">
+                        <div class="form-group error-content">
+                            <label for="id_proveedor_ex">Proveedor original emitió factura:</label>
+                            <select
+                                v-if="!cargando_proveedores"
+                                class="form-control"
+                                :disabled="proveedores.length == 0 ? true : false"
+                                data-vv-as="Proveedor"
+                                id="id_proveedor_ex"
+                                name="id_proveedor_ex"
+                                :error="errors.has('id_proveedor_ex')"
+                                v-validate="{required: true}"
+                                v-model="id_proveedor_ex">
+                                 <option value v-if="!this.idserie">Seleccione la serie para cargar los proveedores</option>
+                                <option value>-- Selecionar --</option>
+                                <option v-for="(proveedor) in proveedores" :value="proveedor.id">{{ proveedor.razon_social }} - [ {{proveedor.rfc}} ]</option>
+                            </select>
+                            <div v-else style="color:#5a6268;" class="form-control"><i class="fa fa-spinner fa-spin" /> Cargando Proveedores</div>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor_ex')">{{ errors.first('id_proveedor_ex') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" v-else></div>
+                </div>
+                <div class="row">
                     <div class="col-md-2">
                         <div class="form-group error-content">
                             <label for="folio">Folio:</label>
@@ -314,7 +344,9 @@ export default {
             retencion: 0,
             otros: 0,
             total: 0,
-            tasas: []
+            tasas: [],
+            proveedor_extra : false,
+            id_proveedor_ex : ''
         }
     },
     mounted() {
@@ -404,6 +436,7 @@ export default {
                     otros: parseFloat(this.otros.toString().replace(/,/g, '')),
                     total: parseFloat(this.total.toString().replace(/,/g, '')),
                     estado: this.idtipodocto == 1 ? 1 : 5,
+                    id_proveedor_extra : this.proveedor_extra == true ? this.id_proveedor_ex : ''
                 })
                 .then(data => {
                     this.salir();
@@ -505,7 +538,7 @@ export default {
                 this.otros = cifra_formateada;
                 this.calcularTotal();
             }
-        }
+        },
     }
 }
 </script>

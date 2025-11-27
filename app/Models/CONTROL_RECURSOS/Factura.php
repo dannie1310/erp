@@ -109,7 +109,8 @@ class Factura extends Documento
             'registro_portal' => 1,
             'Descuento' => $data['proveedor_bd']['importe_especial'] == 1 ? 0 : $data['descuento'],
             'Descuento_CFDI' => $data['descuento'],
-            'IEPS' => $data['IEPS']
+            'IEPS' => $data['IEPS'],
+            'IdProveedorEmisor' => $data['id_proveedor_extra'] != '' ? $data['id_proveedor_extra'] : NULL
         ]);
     }
 
@@ -126,7 +127,8 @@ class Factura extends Documento
                 "Vencimiento" => $vencimiento->format('Y-m-d'),
                 'Concepto' => $data["concepto"],
                 'IdSerie' => $data['id_serie'],
-                'Estatus' => $data['id_tipo'] == 1 ? 1 : 5
+                'Estatus' => $data['id_tipo'] == 1 ? 1 : 5,
+                'IdProveedorEmisor' => $data['id_proveedor_emisor'] != null ? $data['id_proveedor_emisor'] : 'NULL'
             ]);
             DB::connection('controlrec')->commit();
             return $this;
