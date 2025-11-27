@@ -115,6 +115,8 @@ class DocumentoService
         $documento = $this->show($id);
         $segmentos_negocio = $documento->consultaXML();
         $sumatorias = $documento->sumaConsultaXML()[0];
+        $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
+        $this->buscarXML('archivo_ifs_' . $name . '.xml');
         if ($documento->uuid) {
             return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias);
         } else {
@@ -205,39 +207,54 @@ class DocumentoService
                     'N07' => '',
                     'C07' => ''
                 ];
+
                 $i++;
 
                 if (array_key_exists('traslados', $concepto)) {
                     foreach ($concepto['traslados'] as $traslado) {
-                        if (($documento->proveedor->importe_especial == 1 && $traslado['impuesto'] != '003') || $documento->proveedor->importe_especial == 0) {
-                            $total_traslados += $traslado['importe'];
-                            if ($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe']) {
-                                $array[$k]['N01'] = $traslado['base'];
-                                $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
-                                $array[$i] = [
-                                    'NAME' => 'INVOICE_ITEM_TAX',
-                                    'N00' => $key + 1,
-                                    'C00' => 'N',
-                                    'N01' => $traslado['tasa_o_cuota'] * 100,
-                                    'N02' => $traslado['importe']
-                                ];
+                        if ($documento->proveedor->importe_especial != 2) {
+                            if (($documento->proveedor->importe_especial == 1 && $traslado['impuesto'] != '003') || $documento->proveedor->importe_especial == 0) {
+                                $total_traslados += $traslado['importe'];
+                                if ($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe']) {
+                                    $array[$k]['N01'] = $traslado['base'];
+                                    $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
+                                    $array[$i] = [
+                                        'NAME' => 'INVOICE_ITEM_TAX',
+                                        'N00' => $key + 1,
+                                        'C00' => 'N',
+                                        'N01' => $traslado['tasa_o_cuota'] * 100,
+                                        'N02' => $traslado['importe']
+                                    ];
+                                } else {
+                                    $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
+                                    $array[$i] = [
+                                        'NAME' => 'INVOICE_ITEM_TAX',
+                                        'N00' => $key + 1,
+                                        'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
+                                        'N01' => $traslado['tasa_o_cuota'] * 100,
+                                        'N02' => $traslado['importe']
+                                    ];
+                                }
+                                $i++;
                             } else {
-                                $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
-                                $array[$i] = [
-                                    'NAME' => 'INVOICE_ITEM_TAX',
-                                    'N00' => $key + 1,
-                                    'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
-                                    'N01' => $traslado['tasa_o_cuota'] * 100,
-                                    'N02' => $traslado['importe']
-                                ];
+                                $array[$k]['N01'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
+                                $array[$k]['N05'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
                             }
+                        }else{
+                            $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
+                            $total_traslados += $traslado['importe'];
+                            $array[$i] = [
+                                'NAME' => 'INVOICE_ITEM_TAX',
+                                'N00' => $key + 1,
+                                'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
+                                'N01' => $traslado['tasa_o_cuota'] * 100,
+                                'N02' => $traslado['importe']
+                            ];
                             $i++;
-                        } else {
-                            $array[$k]['N01'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
-                            $array[$k]['N05'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
                         }
                     }
                 }
+
                 if (array_key_exists('retenciones', $concepto)) {
                     foreach ($concepto['retenciones'] as $retencion) {
                         $total_retenido += $retencion['importe'];
@@ -302,6 +319,7 @@ class DocumentoService
                         $i++;
                     }
                 }
+
                 $array[$k]['N02'] = $total_traslados;
                 $array[$k]['N03'] = $total_retenido;
 
@@ -317,7 +335,6 @@ class DocumentoService
                 }
             }
         }
-
         $array_fin = [
             'CLASS_ID' => 'INVHI',
             'RECEIVER' => 'IFS_APPLICATIONS',
@@ -334,15 +351,12 @@ class DocumentoService
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
-        $this->buscarXML('archivo_ifs_' . $name . '.xml');
         Storage::disk('ifs_solicitud_recurso')->put('archivo_ifs_' . $name . '.xml', $result);
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
 
     public function xml_sin_cfdi($documento, $segmentos_negocio)
     {
-        $array_xml = null;
-        $array_fin = [];
         $array = [];
         $concepto_text = Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto);
         if (strlen($concepto_text) > 120) {
@@ -496,7 +510,6 @@ class DocumentoService
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
         $name = $documento->folio_solicitud;
-        $this->buscarXML('archivo_ifs_' . $name . '.xml');
         Storage::disk('ifs_solicitud_recurso')->put('archivo_ifs_' . $name . '.xml', $result);
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
