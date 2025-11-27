@@ -115,6 +115,8 @@ class DocumentoService
         $documento = $this->show($id);
         $segmentos_negocio = $documento->consultaXML();
         $sumatorias = $documento->sumaConsultaXML()[0];
+        $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
+        $this->buscarXML('archivo_ifs_' . $name . '.xml');
         if ($documento->uuid) {
             return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias);
         } else {
@@ -240,6 +242,7 @@ class DocumentoService
                             }
                         }else{
                             $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
+                            $total_traslados += $traslado['importe'];
                             $array[$i] = [
                                 'NAME' => 'INVOICE_ITEM_TAX',
                                 'N00' => $key + 1,
@@ -348,15 +351,12 @@ class DocumentoService
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
-        $this->buscarXML('archivo_ifs_' . $name . '.xml');
         Storage::disk('ifs_solicitud_recurso')->put('archivo_ifs_' . $name . '.xml', $result);
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
 
     public function xml_sin_cfdi($documento, $segmentos_negocio)
     {
-        $array_xml = null;
-        $array_fin = [];
         $array = [];
         $concepto_text = Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto);
         if (strlen($concepto_text) > 120) {
@@ -510,7 +510,6 @@ class DocumentoService
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
         $name = $documento->folio_solicitud;
-        $this->buscarXML('archivo_ifs_' . $name . '.xml');
         Storage::disk('ifs_solicitud_recurso')->put('archivo_ifs_' . $name . '.xml', $result);
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
