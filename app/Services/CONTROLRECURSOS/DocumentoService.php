@@ -132,6 +132,11 @@ class DocumentoService
             $array_xml = $this->abrirXMLFactura($documento->uuid);
         }
 
+        if($documento->proveedorEmisor)
+        {
+            $this->buscarProveedorIFS($documento->proveedorEmisor->rfc_sin_guiones);
+        }
+
         $condiciones = '';
         if ($array_xml != null) {
             if (str_contains($array_xml['condicion_de_pago'], 'NETO')) {
@@ -346,6 +351,11 @@ class DocumentoService
         $array_xml = null;
         $array_fin = [];
         $array = [];
+        if($documento->proveedorEmisor)
+        {
+            $this->buscarProveedorIFS($documento->proveedorEmisor->rfc_sin_guiones);
+        }
+
         $concepto_text = Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto);
         if (strlen($concepto_text) > 120) {
             $concepto_text = substr(Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto), 0, 120);
@@ -355,7 +365,6 @@ class DocumentoService
         {
             $concepto_ifs = substr($concepto_ifs,0,40);
         }
-
         $header = [
             'NAME' => 'INVOICE_HEADER',
             'C00' => 'I',
@@ -542,6 +551,8 @@ class DocumentoService
     private function buscarProveedorIFS($rfc)
     {
         $proveedor = ProveedorServicioIFS::where('rfc', $rfc)->first();
-        dd($proveedor);
+        if ($proveedor == null) {
+            abort(500, "El RFC (" . $rfc . ") no tiene registro de este proveedor en IFS.\n \n Favor de contactar a soporte a aplicaciones.");
+        }
     }
 }
