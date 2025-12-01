@@ -381,7 +381,7 @@ class Documento extends Model
                 'Ubicacion' => $usuario->ubicacion ? $usuario->ubicacion->ubicacion : '',
                 'registro_portal' => 1,
                 'IEPS' => 0,
-                'IdProveedorEmisor' => $data['id_proveedor_extra'] != '' ? $data['id_proveedor_extra'] : NULL
+                'IdProveedorEmisor' => array_key_exists('id_proveedor_extra', $data) ? ($data['id_proveedor_extra'] != '' ? $data['id_proveedor_extra'] : NULL) : NULL
             ]);
             DB::connection('controlrec')->commit();
             $documento->update([
@@ -422,7 +422,7 @@ class Documento extends Model
                 'TC' => 0,
                 'Estatus' => $data["estado"],
                 'IdTipoDocto' => $data["id_tipo"],
-                'IdProveedorEmisor' => $data['id_proveedor_emisor'] != '' ? $data['id_proveedor_emisor'] : NULL
+                'IdProveedorEmisor' => array_key_exists('id_proveedor_extra', $data) ? ($data['id_proveedor_extra'] != '' ? $data['id_proveedor_extra'] : NULL) : NULL
             ]);
             DB::connection('controlrec')->commit();
             $this->update([
