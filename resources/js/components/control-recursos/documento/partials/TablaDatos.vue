@@ -5,35 +5,41 @@
             <div class="table-responsive">
                 <table class="table  table-sm">
                     <tr>
-                        <th class="encabezado" colspan="2">
+                        <th class="encabezado" :colspan="factura.id_proveedor_emisor == null ? 3 : 2">
                             Empresa
                         </th>
-                        <th class="encabezado" colspan="3">
+                        <th class="encabezado" :colspan="factura.id_proveedor_emisor == NULL ? 3 : 2">
                             Proveedor
                         </th>
+                        <th class="encabezado" colspan="2" v-if="factura.id_proveedor_emisor != NULL">
+                            Proveedor Emisor
+                        </th>
                     </tr>
                     <tr>
-                        <th class="encabezado" colspan="2">
+                        <th class="encabezado" :colspan="factura.id_proveedor_emisor == null ? 3 : 2">
                             {{factura.empresa_descripcion}}
                         </th>
-                        <th class="encabezado" colspan="3">
+                        <th class="encabezado" :colspan="factura.id_proveedor_emisor == NULL ? 3 : 2">
                             {{factura.proveedor_descripcion}}
+                        </th>
+                        <th class="encabezado" colspan="2" v-if="factura.id_proveedor_emisor != NULL">
+                            {{factura.proveedor_emisor_descripcion}}
                         </th>
                     </tr>
                     <tr>
-                        <th class="encabezado  c130">
+                        <th class="encabezado">
                            Tipo de Documento
                         </th>
-                        <th class="encabezado  c130">
+                        <th class="encabezado">
                             Fecha de Emisión
                         </th>
-                        <th class="encabezado  c130">
+                        <th class="encabezado" >
                             Fecha de Vencimiento
                         </th>
                         <th class="encabezado">
                             Serie
                         </th>
-                        <th class="encabezado">
+                        <th class="encabezado" :colspan="factura.id_proveedor_emisor == NULL ? 1 : 2">
                             Folio
                         </th>
 
@@ -51,20 +57,20 @@
                         <td>
                             {{factura.serie}}
                         </td>
-                        <td>
+                        <td :colspan="factura.id_proveedor_emisor == NULL ? 1 : 2">
                             {{factura.folio_format}}
                         </td>
                     </tr>
                     <tr>
-                        <th class="encabezado" colspan="5">Concepto</th>
+                        <th class="encabezado" :colspan="factura.id_proveedor_emisor == NULL ? 5 : 6">Concepto</th>
                     </tr>
                     <tr>
-                        <td colspan="5">
+                        <td :colspan="factura.id_proveedor_emisor == NULL ? 5 : 6">
                             {{ factura.concepto }}
                         </td>
                     </tr>
                     <tr>
-                        <th class="encabezado">
+                        <th class="encabezado" :colspan="factura.id_proveedor_emisor == NULL ? 1 : 2">
                             Subtotal
                         </th>
                         <th class="encabezado">
@@ -73,7 +79,7 @@
                         <th class="encabezado">
                             Tasa de IVA
                         </th>
-                        <th class="encabezado money">
+                        <th class="encabezado">
                             Retenciones
                         </th>
                         <th class="encabezado">
@@ -81,7 +87,7 @@
                         </th>
                     </tr>
                     <tr>
-                        <td class="money">
+                        <td class="money" :colspan="factura.id_proveedor_emisor == NULL ? 1 : 2">
                             {{ factura.importe_format}}
                         </td>
                         <td class="money">
@@ -99,23 +105,26 @@
                     </tr>
                     <tr>
                         <th class="encabezado">
+                            Ubicación
+                        </th>
+                        <th class="encabezado">
                             Moneda
                         </th>
                         <th class="encabezado money">
                             Tipo de Cambio
                         </th>
-                        <th class="encabezado c150">
-                            Ubicación
-                        </th>
-                        <th class="encabezado c150">
+                        <th class="encabezado">
                             Alias del Departamento
                         </th>
-                        <th class="encabezado c150">
+                        <th class="encabezado" :colspan="factura.id_proveedor_emisor == NULL ? 1 : 2">
                             Departamento
                         </th>
 
                     </tr>
                     <tr>
+                        <td >
+                            {{factura.ubicacion}}
+                        </td>
                         <td>
                             {{ factura.moneda }}
                         </td>
@@ -123,12 +132,9 @@
                             {{ factura.tc }}
                         </td>
                         <td >
-                            {{factura.ubicacion}}
-                        </td>
-                        <td >
                             {{factura.alias_dep}}
                         </td>
-                        <td >
+                        <td :colspan="factura.id_proveedor_emisor == NULL ? 1 : 2">
                             {{factura.departamento}}
                         </td>
                     </tr>
