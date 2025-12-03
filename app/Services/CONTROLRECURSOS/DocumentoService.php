@@ -7,6 +7,7 @@ use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\CuentaContableIFS;
 use App\Models\CONTROL_RECURSOS\Documento;
 use App\Models\CONTROL_RECURSOS\Proveedor;
+use App\Models\CONTROL_RECURSOS\ProveedorServicioIFS;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\TipoDocto;
 use App\Models\SEGURIDAD_ERP\Finanzas\CodigoImpuesto;
@@ -134,6 +135,11 @@ class DocumentoService
             $array_xml = $this->abrirXMLFactura($documento->uuid);
         }
 
+        if($documento->proveedorEmisor)
+        {
+            $this->buscarProveedorIFS($documento->proveedorEmisor->rfc_sin_guiones);
+        }
+
         $condiciones = '';
         if ($array_xml != null) {
             if (str_contains($array_xml['condicion_de_pago'], 'NETO')) {
@@ -179,6 +185,7 @@ class DocumentoService
             'C14' => $documento->uuid ? $documento->uuid . '.xml' : $documento->FolioDocto,
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
         ];
 
         if ($array_xml != null) {
@@ -359,6 +366,11 @@ class DocumentoService
     public function xml_sin_cfdi($documento, $segmentos_negocio)
     {
         $array = [];
+        if($documento->proveedorEmisor)
+        {
+            $this->buscarProveedorIFS($documento->proveedorEmisor->rfc_sin_guiones);
+        }
+
         $concepto_text = Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto);
         if (strlen($concepto_text) > 120) {
             $concepto_text = substr(Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto), 0, 120);
@@ -368,7 +380,6 @@ class DocumentoService
         {
             $concepto_ifs = substr($concepto_ifs,0,40);
         }
-
         $header = [
             'NAME' => 'INVOICE_HEADER',
             'C00' => 'I',
@@ -394,8 +405,8 @@ class DocumentoService
             'C14' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text . '.xml',
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
         ];
-
         $i = 0;
         $array[$i] = [
             'NAME' => 'INVOICE_ITEM',
@@ -548,6 +559,14 @@ class DocumentoService
     {
         if(Storage::disk('ifs_solicitud_recurso')->exists($nombre)) {
             Storage::disk('ifs_solicitud_recurso')->delete($nombre);
+        }
+    }
+
+    private function buscarProveedorIFS($rfc)
+    {
+        $proveedor = ProveedorServicioIFS::where('rfc', $rfc)->first();
+        if ($proveedor == null) {
+            abort(500, "El RFC (" . $rfc . ") no tiene registro de este proveedor en IFS.\n \n Favor de contactar a soporte a aplicaciones.");
         }
     }
 
