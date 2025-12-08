@@ -148,7 +148,7 @@ class CFD
 
             $i = 0;
             foreach ($traslados as $traslado) {
-                if ($traslado["Impuesto"] == "002") {
+                if ($traslado["Impuesto"] == "002" && $traslado['Importe'] != 0) {
                     $this->arreglo_factura["importe_iva"] = (float)$traslado["Importe"];
                     $this->arreglo_factura["tasa_iva"] = (float)$traslado["TasaOCuota"];
                 }
