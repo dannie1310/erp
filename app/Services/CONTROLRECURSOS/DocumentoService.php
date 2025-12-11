@@ -118,16 +118,16 @@ class DocumentoService
         $sumatorias = $documento->sumaConsultaXML()[0];
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
         $this->buscarXML('archivo_ifs_' . $name . '.xml');
+        $firmas = $this->firmas($documento);
         if ($documento->uuid) {
-            return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias);
+            return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias, $firmas);
         } else {
-            return $this->xml_sin_cfdi($documento, $segmentos_negocio);
+            return $this->xml_sin_cfdi($documento, $segmentos_negocio, $firmas);
         }
     }
 
-    public function xml_con_cfdi($documento, $segmentos_negocio, $sumatorias)
+    public function xml_con_cfdi($documento, $segmentos_negocio, $sumatorias, $firmas)
     {
-        dd($this->firmas($documento));
         $array_xml = null;
         $array_fin = [];
         $array = [];
@@ -185,9 +185,9 @@ class DocumentoService
             'C14' => $documento->uuid ? $documento->uuid . '.xml' : $documento->FolioDocto,
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
-            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : '',
         ];
-
+        $header = array_merge($header, $firmas);
         if ($array_xml != null) {
             $k = 0;
             $i = 0;
@@ -363,7 +363,7 @@ class DocumentoService
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
 
-    public function xml_sin_cfdi($documento, $segmentos_negocio)
+    public function xml_sin_cfdi($documento, $segmentos_negocio, $firmas)
     {
         $array = [];
         if($documento->proveedorEmisor)
@@ -407,6 +407,7 @@ class DocumentoService
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
             'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
         ];
+        $header = array_merge($header, $firmas);
         $i = 0;
         $array[$i] = [
             'NAME' => 'INVOICE_ITEM',
@@ -583,9 +584,8 @@ class DocumentoService
             'C24' => 'FALSE'
         ];
         if(count($firmas) > 0)
-        {// enviar las firmas
+        {
             foreach ($firmas as $firma) {
-
                 if($firma->encabezado->idfirmas_encabezados ==  1)
                 {
                    $firmas_array['C18'] = strtoupper($firma->firmante->usuario->usuario);
@@ -618,19 +618,20 @@ class DocumentoService
         }else {
             $sol = $documento->solChequeDocto->solCheque;
             if ($sol->Serie != 'CDM' && $sol->Serie != 'PND' && $sol->Serie != 'CNC') {
-                $firmas_array = [
-                    'solicita' => '',
-                    'autoriza' => '',
-                    'revisa' => '',
-                    'contraloria' => '',
-                    'vobo' => '',
-                    'direccion_adm_fin' => '',
-                    'dir_gen' => ''
-                ];
-            }elseif ($sol->Serie == 'PND') {
-
+                $firmas_array['C23'] = 'TRUE';
+                $firmas_array['C24'] = 'TRUE';
             }
-
+            elseif ($sol->Serie == 'PND') {
+                $firmas_array['C23'] = 'TRUE';
+                $firmas_array['C24'] = 'TRUE';
+            }
+            else{
+                if ($sol->Serie != 'CNC'){
+                    $firmas_array['C23'] = 'TRUE';
+                    $firmas_array['C24'] = 'TRUE';
+                }
+            }
         }
+        return $firmas_array;
     }
 }
