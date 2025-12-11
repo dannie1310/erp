@@ -573,19 +573,48 @@ class DocumentoService
     private function firmas($documento)
     {
         $firmas = $documento->solChequeDocto->solCheque->firmasSolicitantes;
+        $firmas_array = [
+            'C18' => '',
+            'C19' => '',
+            'C20' => '',
+            'C21' => '',
+            'C22' => '',
+            'C23' => 'FALSE',
+            'C24' => 'FALSE'
+        ];
         if(count($firmas) > 0)
         {// enviar las firmas
-            dd($firmas);
-            $firmas_array = [
-                'solicita' => '',
-                'autoriza' => '',
-                'revisa' => '',
-                'contraloria' => '',
-                'vobo' => '',
-                'direccion_adm_fin' => '', // true -false
-                'dir_gen' => '' // true-false
-            ];
+            foreach ($firmas as $firma) {
 
+                if($firma->encabezado->idfirmas_encabezados ==  1)
+                {
+                   $firmas_array['C18'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  2)
+                {
+                    $firmas_array['C19'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  11 || $firma->encabezado->idfirmas_encabezados ==  12)
+                {
+                    $firmas_array['C20'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  9)
+                {
+                    $firmas_array['C21'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  8)
+                {
+                    $firmas_array['C22'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  3)
+                {
+                    $firmas_array['C23'] = 'TRUE';
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  4)
+                {
+                    $firmas_array['C24'] = 'TRUE';
+                }
+            }
         }else {
             $sol = $documento->solChequeDocto->solCheque;
             if ($sol->Serie != 'CDM' && $sol->Serie != 'PND' && $sol->Serie != 'CNC') {
