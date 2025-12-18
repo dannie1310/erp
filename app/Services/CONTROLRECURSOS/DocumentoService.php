@@ -598,13 +598,18 @@ class DocumentoService
                 {
                     $firmas_array['C20'] = strtoupper($firma->firmante->usuario->usuario);
                 }
-                if($firma->encabezado->idfirmas_encabezados ==  9)
+                if($firma->encabezado->idfirmas_encabezados ==  9 || $firma->encabezado->idfirmas_encabezados == 16)
                 {
                     $firmas_array['C21'] = strtoupper($firma->firmante->usuario->usuario);
                 }
                 if($firma->encabezado->idfirmas_encabezados ==  8)
                 {
                     $firmas_array['C22'] = strtoupper($firma->firmante->usuario->usuario);
+                }else {
+                    if($documento->uuid == 'NULL')
+                    {
+                        $firmas_array['C22'] = 'PAYALA';
+                    }
                 }
                 if($firma->encabezado->idfirmas_encabezados ==  3)
                 {
