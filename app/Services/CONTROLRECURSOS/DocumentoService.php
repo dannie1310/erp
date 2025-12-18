@@ -605,8 +605,8 @@ class DocumentoService
                 if($firma->encabezado->idfirmas_encabezados ==  8)
                 {
                     $firmas_array['C22'] = strtoupper($firma->firmante->usuario->usuario);
-                }else {
-                    if($documento->uuid == 'NULL')
+                }else{
+                    if(is_null($documento->uuid))
                     {
                         $firmas_array['C22'] = 'PAYALA';
                     }
