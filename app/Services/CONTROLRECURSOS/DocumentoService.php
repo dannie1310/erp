@@ -118,14 +118,15 @@ class DocumentoService
         $sumatorias = $documento->sumaConsultaXML()[0];
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
         $this->buscarXML('archivo_ifs_' . $name . '.xml');
+        $firmas = $this->firmas($documento);
         if ($documento->uuid) {
-            return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias);
+            return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias, $firmas);
         } else {
-            return $this->xml_sin_cfdi($documento, $segmentos_negocio);
+            return $this->xml_sin_cfdi($documento, $segmentos_negocio, $firmas);
         }
     }
 
-    public function xml_con_cfdi($documento, $segmentos_negocio, $sumatorias)
+    public function xml_con_cfdi($documento, $segmentos_negocio, $sumatorias, $firmas)
     {
         $array_xml = null;
         $array_fin = [];
@@ -184,9 +185,9 @@ class DocumentoService
             'C14' => $documento->uuid ? $documento->uuid . '.xml' : $documento->FolioDocto,
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
-            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : '',
         ];
-
+        $header = array_merge($header, $firmas);
         if ($array_xml != null) {
             $k = 0;
             $i = 0;
@@ -362,7 +363,7 @@ class DocumentoService
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
 
-    public function xml_sin_cfdi($documento, $segmentos_negocio)
+    public function xml_sin_cfdi($documento, $segmentos_negocio, $firmas)
     {
         $array = [];
         if($documento->proveedorEmisor)
@@ -406,6 +407,7 @@ class DocumentoService
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
             'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
         ];
+        $header = array_merge($header, $firmas);
         $i = 0;
         $array[$i] = [
             'NAME' => 'INVOICE_ITEM',
@@ -567,5 +569,74 @@ class DocumentoService
         if ($proveedor == null) {
             abort(500, "El RFC (" . $rfc . ") no tiene registro de este proveedor en IFS.\n \n Favor de contactar a soporte a aplicaciones.");
         }
+    }
+
+    private function firmas($documento)
+    {
+        $firmas = $documento->solChequeDocto->solCheque->firmasSolicitantes;
+        $firmas_array = [
+            'C18' => '',
+            'C19' => '',
+            'C20' => '',
+            'C21' => '',
+            'C22' => '',
+            'C23' => 'FALSE',
+            'C24' => 'FALSE'
+        ];
+        if(count($firmas) > 0)
+        {
+            foreach ($firmas as $firma) {
+                if($firma->encabezado->idfirmas_encabezados ==  1)
+                {
+                   $firmas_array['C18'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  2)
+                {
+                    $firmas_array['C19'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  11 || $firma->encabezado->idfirmas_encabezados ==  12)
+                {
+                    $firmas_array['C20'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  9 || $firma->encabezado->idfirmas_encabezados == 16)
+                {
+                    $firmas_array['C21'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  8)
+                {
+                    $firmas_array['C22'] = strtoupper($firma->firmante->usuario->usuario);
+                }else{
+                    if(is_null($documento->uuid))
+                    {
+                        $firmas_array['C22'] = 'PAYALA';
+                    }
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  3)
+                {
+                    $firmas_array['C23'] = 'TRUE';
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  4)
+                {
+                    $firmas_array['C24'] = 'TRUE';
+                }
+            }
+        }else {
+            $sol = $documento->solChequeDocto->solCheque;
+            if ($sol->Serie != 'CDM' && $sol->Serie != 'PND' && $sol->Serie != 'CNC') {
+                $firmas_array['C23'] = 'TRUE';
+                $firmas_array['C24'] = 'TRUE';
+            }
+            elseif ($sol->Serie == 'PND') {
+                $firmas_array['C23'] = 'TRUE';
+                $firmas_array['C24'] = 'TRUE';
+            }
+            else{
+                if ($sol->Serie != 'CNC'){
+                    $firmas_array['C23'] = 'TRUE';
+                    $firmas_array['C24'] = 'TRUE';
+                }
+            }
+        }
+        return $firmas_array;
     }
 }
