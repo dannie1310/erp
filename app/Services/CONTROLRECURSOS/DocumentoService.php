@@ -540,11 +540,20 @@ class DocumentoService
     public function correo($id)
     {
         $documento = $this->show($id);
+        $this->revisarProveedor($documento);
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
         $this->xml($id);
         $archivo = $this->getBase64XML($name);
         event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $name . '.xml', $archivo));
     }
+
+    private function revisarProveedor($documento)
+    {
+        if($documento->IdProveedor == 960){
+            abort(500,  'El envío automático para el proveedor AMEX se encuentra en desarrollo. Por favor, realice el registro manual en IFS.');
+        }
+    }
+
 
     private function getBase64XML($name)
     {
