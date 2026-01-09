@@ -61,7 +61,9 @@ class FacturaTransformer extends TransformerAbstract
             'estado_color' => $model->color_estado,
             'solicitado' => $model->solicitado,
             'con_segmento' => $model->con_segmento,
-            'descuento' => $model->Descuento
+            'descuento' => $model->Descuento,
+            'id_proveedor_emisor' => $model->IdProveedorEmisor,
+            'proveedor_emisor_descripcion' => $model->proveedor_emisor_descripcion,
         ];
     }
 }
