@@ -61,13 +61,15 @@ class SolChequeComprobacion extends SolCheque
         return $query->whereRaw("IdTipoPago in (" . $tipo . ")");
     }
 
-    public function scopeDocumentosParaRegistrar($query, $idSerie)
+    public function scopeDocumentosParaRegistrar($query, $valores)
     {
-        $serie = Serie::where('idseries', $idSerie)->first();
+        $valores = explode(",", $valores);
+        $serie = Serie::where('idseries', $valores[0])->first();
         return $query->withoutGlobalScopes()->whereRaw("Importe>SaldoComprobado AND
                 estatus in(24,25,34,35) AND
                 IdTipoPago=4 AND
-                Serie ='" . $serie->Descripcion . "'");
+                Serie ='" . $serie->Descripcion . "' AND
+                IdProveedor = ". $valores[1]);
     }
 
     /**
@@ -125,7 +127,7 @@ class SolChequeComprobacion extends SolCheque
      public function getEstadoFormatAttribute()
     {
         try {
-            return $this->comprobacion != null ? 'COMPROBANDO' : 'POR COMPROBAR';
+            return $this->comprobacion != null ? (($this->comprobacion->estatus == 0 || $this->comprobacion->estatus == 1) ? 'COMPROBANDO' : 'POR COMPROBAR') : 'POR COMPROBAR';
         } catch (\Exception $e) {
             return null;
         }

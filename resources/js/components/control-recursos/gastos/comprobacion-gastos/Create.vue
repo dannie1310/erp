@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="(series == [] || solicitudes == [])">
+        <div class="card" v-if="cargando">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
@@ -18,6 +18,7 @@
                         <div class="col-md-4">
                             <label for="idserie" class="col-form-label">Serie:</label>
                             <select class="form-control"
+                                    :disabled="cargando"
                                     data-vv-as="Serie"
                                     id="idserie"
                                     name="idserie"
@@ -30,27 +31,97 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('idserie')">{{ errors.first('idserie') }}</div>
                         </div>
                         <div class="col-md-6" v-if="idserie">
-                            <label for="id_solicitud" class="col-form-label">Buscar Solicitud:</label>
+                            <label for="id_empleado" class="col-form-label">Buscar Empleado:</label>
                             <select class="form-control"
-                                    data-vv-as="Solicitud"
-                                    id="id_solicitud"
-                                    name="id_solicitud"
-                                    :class="{'is-invalid': errors.has('id_solicitud')}"
+                                    :disabled="cargando_empleados"
+                                    data-vv-as="Empleado"
+                                    id="id_empleado"
+                                    name="id_empleado"
+                                    :class="{'is-invalid': errors.has('id_empleado')}"
                                     v-validate="{required: true}"
-                                    v-model="id_solicitud">
+                                    v-model="idempleado">
                                 <option value>-- Selecionar --</option>
-                                <option v-for="(p) in solicitudes" :value="p.id" v-if="p.valido < 1">{{ p.folio_format }}-({{p.empleado_descripcion}})</option>
+                                <option v-for="(p) in empleados" :value="p.id">{{ p.razon_social }}</option>
                             </select>
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_empleado')">{{ errors.first('id_empleado') }}</div>
+                            <div v-if="cargando_empleados" class="spinner-border  spinner-border-sm text-primary ml-2" role="status"></div>
                         </div>
                     </div>
                     <hr />
-                    <div class="row" v-if="solicitudes != [] && solicitud != null">
+                    <div class="row" v-if="idempleado != ''">
+                       <div class="col-12 d-flex justify-content-end">
+                           <button type="button" class="btn btn-secondary btn-sm mb-2" :disabled="solicitudes.length == 0"
+                                @click="tablaOculta ? mostrarTabla() : ocultarTabla()">
+                                <i class="fa" :class="tablaOculta ? 'fa fa-exchange-alt': 'fa-eye-slash'"></i> {{ tablaOculta ? 'Cambiar Solicitud' : 'Ocultar Tabla' }}
+                            </button>
+                       </div>
+                    </div>
+                    <div class="row" v-if="idempleado != ''">
+                        <div  class="col-md-12 table-responsive-xl" v-if="!tablaOculta">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th class="index_corto encabezado">#</th>
+                                        <th class="c30 encabezado"></th>
+                                        <th class="c80 encabezado">Fecha</th>
+                                        <th class="c80 encabezado">Solicitud</th>
+                                        <th class="c100 encabezado">Estado</th>
+                                        <th class="c100 encabezado">Importe</th>
+                                        <th class="c100 encabezado">Comprobado</th>
+                                        <th class="c100 encabezado">Saldo</th>
+                                        <th class="c100 encabezado">Moneda</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr  v-if="cargando_solicitudes">
+                                        <th colspan="9"><div class="spinner-border  spinner-border-sm text-primary ml-2" role="status"></div></th>
+                                    </tr>
+                                    <tr v-else v-for="(partida, i) in solicitudes" :key="partida.id">
+                                        <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
+                                        <td style="text-align: center; vertical-align: inherit">
+                                            <input type="radio" :id="'solicitud_' + partida.id " :value="partida.id" v-model="id_solicitud" @change="ocultarTabla"/>
+                                        </td>
+                                        <td>
+                                            {{ partida.fecha_format }}
+                                        </td>
+                                        <td>
+                                            {{ partida.folio_format }}
+                                        </td>
+                                        <td>
+                                            {{ partida.estado_format }}
+                                        </td>
+                                        <td>
+                                            ${{ partida.importe_format }}
+                                        </td>
+                                        <td>
+                                            {{ partida.saldo_format }}
+                                        </td>
+                                         <td>
+                                            {{ partida.total_format }}
+                                        </td>
+                                        <td>
+                                            {{ partida.moneda }}
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" v-if="cargando_solicitud">
+                        <div class="col-md-12">
+                            <div class="spinner-border text-success" role="status">
+                               <span class="sr-only">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row"  v-if="!cargando_solicitud && solicitud != null">
                         <div class="col-md-12">
                             <encabezado  v-bind:solicitud="solicitud" />
                         </div>
                     </div>
-                    <div class="row" v-if="solicitudes != [] && solicitud != null">
+                    <div class="row" v-if="!cargando_solicitud && solicitud != null">
                         <div class="col-md-6">
                             <div class="form-group error-content">
                                 <label>Empresa a Facturar:</label>
@@ -70,7 +141,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" v-if="solicitudes != [] && solicitud != null">
+                    <div class="row" v-if="!cargando_solicitud && solicitud != null">
                         <div class="col-md-7">
                             <div class="form-group error-content">
                                 <label class="col-form-label">Nombre:</label>
@@ -94,7 +165,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" v-if="solicitudes != [] && solicitud != null">
+                    <div class="row" v-if="!cargando_solicitud && solicitud != null">
                         <div class="col-md-4">
                             <div class="form-group error-content">
                                 <label for="fecha_inicial">Del:</label>
@@ -135,9 +206,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer" v-if="solicitudes != [] && solicitud != null">
+                <div class="modal-footer" v-if="solicitudes.length > 0 && solicitud != null">
                     <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
-                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0"><i class="fa fa-save"></i> Guardar</button>
                 </div>
             </form>
         </div>
@@ -146,15 +217,17 @@
 
 <script>
 import Encabezado from "./partials/Encabezado";
-import TablaDatos from "./partials/TablaDatos";
 import Datepicker from 'vuejs-datepicker';
 import {es} from "vuejs-datepicker/dist/locale";
 export default {
     name: "comprobacion-create",
-    components: {Encabezado, TablaDatos, Datepicker, es},
+    components: {Encabezado, Datepicker, es},
     data() {
         return {
             cargando: false,
+            cargando_empleados: false,
+            cargando_solicitudes: false,
+            cargando_solicitud: false,
             solicitudes: [],
             id_solicitud: '',
             solicitud: null,
@@ -167,6 +240,9 @@ export default {
             proyectos: [],
             series: [],
             idserie: '',
+            empleados: [],
+            idempleado: '',
+            tablaOculta: false,
         }
     },
     mounted() {
@@ -183,7 +259,6 @@ export default {
     },
     methods: {
         getSeries() {
-            this.cargando = true;
             return this.$store.dispatch('controlRecursos/serie/index', {
                 params: {sort: 'descripcion', order: 'asc'}
             })
@@ -200,13 +275,25 @@ export default {
         },
         getSolicitudes()
         {
-            this.cargando = true;
+            this.cargando_solicitudes = true;
             return this.$store.dispatch('controlRecursos/solicitud-comprobacion/index', {
-                params: { sort: 'timestampRegistro', order: 'desc', include: ['comprobacion'], scope: ['documentosParaRegistrar:' + this.idserie]},
+                params: { sort: 'timestampRegistro', order: 'asc', include: ['comprobacion'], scope: ['documentosParaRegistrar:' + this.idserie + ','+ this.idempleado ]},
             }).then(data => {
                 this.solicitudes = data.data;
+
+            }).finally(() => {
+                this.cargando_solicitudes = false;
+            })
+        },
+        getEmpleados()
+        {
+            this.cargando_empleados = true;
+            return this.$store.dispatch('controlRecursos/proveedor/index', {
+                params: { sort: 'RazonSocial', order: 'asc', scope: ['proveedorDisponibleParaRegistrar:' + this.idserie]},
+            }).then(data => {
+                this.empleados = data.data;
             }).finally(()=>{
-                this.cargando = false;
+                this.cargando_empleados = false;
             })
         },
         init() {
@@ -221,12 +308,14 @@ export default {
             return moment(date).format('DD/MM/YYYY');
         },
         find() {
-            this.cargando = true;
+            this.cargando_solicitud = true;
             return this.$store.dispatch('controlRecursos/solicitud-comprobacion/find', {
                 id: this.id_solicitud,
                 params:{include: ['']}
             }).then(data => {
                 this.solicitud = data
+            }).finally(() => {
+                this.cargando_solicitud = false;
             })
         },
         salir() {
@@ -238,7 +327,7 @@ export default {
                 {
                     if(moment(this.fecha_final).format('YYYY/MM/DD') < moment(this.fecha_inicial).format('YYYY/MM/DD'))
                     {
-                        swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
+                        swal('¡Error!', 'La fecha de final no puede ser anterior a la fecha de inicial.', 'error')
                     }else {
                         this.store();
                     }
@@ -246,6 +335,7 @@ export default {
             });
         },
         getProyectos() {
+            this.cargando = true;
             return this.$store.dispatch('controlRecursos/ubicacion-relacion/index', {
                 params: { }
             }).then(data => {
@@ -264,6 +354,12 @@ export default {
                     this.salir();
                 });
         },
+        ocultarTabla() {
+            this.tablaOculta = true;
+        },
+        mostrarTabla() {
+            this.tablaOculta = false;
+        }
     },
     watch: {
         id_solicitud(value)
@@ -278,10 +374,26 @@ export default {
         {
             if(value !== '' && value !== null && value !== undefined)
             {
+                this.$validator.reset();
+                this.solicitud = null;
+                this.solicitudes = [];
+                this.id_solicitud = '';
+                this.solicitud = null;
+                this.empleados = [];
+                this.idempleado = '';
+                this.tablaOculta = false;
+                this.getEmpleados();
+            }
+        },
+        idempleado(value)
+        {
+            if(value !== '' && value !== null && value !== undefined)
+            {
                 this.$validator.reset()
                 this.solicitudes = [];
                 this.id_solicitud = '';
                 this.solicitud = null;
+                this.tablaOculta =  false;
                 this.getSolicitudes();
             }
         }

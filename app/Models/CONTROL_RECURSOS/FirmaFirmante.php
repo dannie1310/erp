@@ -2,6 +2,7 @@
 
 namespace App\Models\CONTROL_RECURSOS;
 
+use App\Models\IGH92\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
 class FirmaFirmante extends Model
@@ -17,6 +18,11 @@ class FirmaFirmante extends Model
     public function firmaSolicitante()
     {
         return $this->belongsTo(FirmaJuegoXSolicitante::class, 'idfirmas_firmantes','idsolicita');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(Usuario::class,  'iduser','idusuario');
     }
 
     /**

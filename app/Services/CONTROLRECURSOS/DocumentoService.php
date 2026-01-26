@@ -7,6 +7,7 @@ use App\Models\CONTROL_RECURSOS\CtgMoneda;
 use App\Models\CONTROL_RECURSOS\CuentaContableIFS;
 use App\Models\CONTROL_RECURSOS\Documento;
 use App\Models\CONTROL_RECURSOS\Proveedor;
+use App\Models\CONTROL_RECURSOS\ProveedorServicioIFS;
 use App\Models\CONTROL_RECURSOS\Serie;
 use App\Models\CONTROL_RECURSOS\TipoDocto;
 use App\Models\SEGURIDAD_ERP\Finanzas\CodigoImpuesto;
@@ -115,20 +116,28 @@ class DocumentoService
         $documento = $this->show($id);
         $segmentos_negocio = $documento->consultaXML();
         $sumatorias = $documento->sumaConsultaXML()[0];
+        $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
+        $this->buscarXML('archivo_ifs_' . $name . '.xml');
+        $firmas = $this->firmas($documento);
         if ($documento->uuid) {
-            return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias);
+            return $this->xml_con_cfdi($documento, $segmentos_negocio, $sumatorias, $firmas);
         } else {
-            return $this->xml_sin_cfdi($documento, $segmentos_negocio);
+            return $this->xml_sin_cfdi($documento, $segmentos_negocio, $firmas);
         }
     }
 
-    public function xml_con_cfdi($documento, $segmentos_negocio, $sumatorias)
+    public function xml_con_cfdi($documento, $segmentos_negocio, $sumatorias, $firmas)
     {
         $array_xml = null;
         $array_fin = [];
         $array = [];
         if ($documento->uuid) {
             $array_xml = $this->abrirXMLFactura($documento->uuid);
+        }
+
+        if($documento->proveedorEmisor)
+        {
+            $this->buscarProveedorIFS($documento->proveedorEmisor->rfc_sin_guiones);
         }
 
         $condiciones = '';
@@ -160,7 +169,7 @@ class DocumentoService
             'C04' => '',
             'C05' => '',
             'C06' => '',
-            'C07' => $array_xml ? $array_xml['serie'] : $documento->CFDI->serie,
+            'C07' => $array_xml ? $array_xml['serie'] : ($documento->CFDI ? $documento->CFDI->serie : '' ),
             'C08' => $documento->FolioDocto,
             'C09' => $array_xml ? $array_xml['moneda'] : '',
             'C10' => $condiciones,
@@ -176,8 +185,9 @@ class DocumentoService
             'C14' => $documento->uuid ? $documento->uuid . '.xml' : $documento->FolioDocto,
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : '',
         ];
-
+        $header = array_merge($header, $firmas);
         if ($array_xml != null) {
             $k = 0;
             $i = 0;
@@ -205,39 +215,54 @@ class DocumentoService
                     'N07' => '',
                     'C07' => ''
                 ];
+
                 $i++;
 
                 if (array_key_exists('traslados', $concepto)) {
                     foreach ($concepto['traslados'] as $traslado) {
-                        if (($documento->proveedor->importe_especial == 1 && $traslado['impuesto'] != '003') || $documento->proveedor->importe_especial == 0) {
-                            $total_traslados += $traslado['importe'];
-                            if ($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe']) {
-                                $array[$k]['N01'] = $traslado['base'];
-                                $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
-                                $array[$i] = [
-                                    'NAME' => 'INVOICE_ITEM_TAX',
-                                    'N00' => $key + 1,
-                                    'C00' => 'N',
-                                    'N01' => $traslado['tasa_o_cuota'] * 100,
-                                    'N02' => $traslado['importe']
-                                ];
+                        if ($documento->proveedor->importe_especial != 2) {
+                            if (($documento->proveedor->importe_especial == 1 && $traslado['impuesto'] != '003') || $documento->proveedor->importe_especial == 0) {
+                                $total_traslados += $traslado['importe'];
+                                if ($traslado['importe'] == 0 && $traslado['tasa_o_cuota'] == 0 && $traslado['base'] != $concepto['importe']) {
+                                    $array[$k]['N01'] = $traslado['base'];
+                                    $ieps = $ieps + ($concepto['importe'] - $traslado['base']);
+                                    $array[$i] = [
+                                        'NAME' => 'INVOICE_ITEM_TAX',
+                                        'N00' => $key + 1,
+                                        'C00' => 'N',
+                                        'N01' => $traslado['tasa_o_cuota'] * 100,
+                                        'N02' => $traslado['importe']
+                                    ];
+                                } else {
+                                    $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
+                                    $array[$i] = [
+                                        'NAME' => 'INVOICE_ITEM_TAX',
+                                        'N00' => $key + 1,
+                                        'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
+                                        'N01' => $traslado['tasa_o_cuota'] * 100,
+                                        'N02' => $traslado['importe']
+                                    ];
+                                }
+                                $i++;
                             } else {
-                                $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
-                                $array[$i] = [
-                                    'NAME' => 'INVOICE_ITEM_TAX',
-                                    'N00' => $key + 1,
-                                    'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
-                                    'N01' => $traslado['tasa_o_cuota'] * 100,
-                                    'N02' => $traslado['importe']
-                                ];
+                                $array[$k]['N01'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
+                                $array[$k]['N05'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
                             }
+                        }else{
+                            $codigo = CodigoImpuesto::where('codigo_sat', $traslado['impuesto'])->where('tipo_codigo', 'I')->first();
+                            $total_traslados += $traslado['importe'];
+                            $array[$i] = [
+                                'NAME' => 'INVOICE_ITEM_TAX',
+                                'N00' => $key + 1,
+                                'C00' => $codigo ? $codigo->codigo_ifs : $traslado['impuesto'],
+                                'N01' => $traslado['tasa_o_cuota'] * 100,
+                                'N02' => $traslado['importe']
+                            ];
                             $i++;
-                        } else {
-                            $array[$k]['N01'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
-                            $array[$k]['N05'] = ($concepto['importe'] - $concepto['descuento']) + $traslado['importe'];
                         }
                     }
                 }
+
                 if (array_key_exists('retenciones', $concepto)) {
                     foreach ($concepto['retenciones'] as $retencion) {
                         $total_retenido += $retencion['importe'];
@@ -280,7 +305,7 @@ class DocumentoService
                         $total = round($importe, 2) + $total;
                         $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
                         if ($cuenta == null) {
-                            abort(500, "La cuenta (" . $item->descripcion_cuenta . ") de control recursos no tiene registro de cuenta para IFS.\n \n Favor de contactar a soporte a aplicaciones.");
+                            abort(500, "La cuenta (" . $item->descripcion_cuenta . ") y el tipo de gasto (" . $item->tipo_gasto . ") de control recursos no tiene registro de cuenta para IFS.\n \n Favor de contactar a soporte a aplicaciones.");
                         }
                         $array[$i] = [
                             'NAME' => 'INVOICE_ITEM_POSTING',
@@ -302,6 +327,7 @@ class DocumentoService
                         $i++;
                     }
                 }
+
                 $array[$k]['N02'] = $total_traslados;
                 $array[$k]['N03'] = $total_retenido;
 
@@ -317,7 +343,6 @@ class DocumentoService
                 }
             }
         }
-
         $array_fin = [
             'CLASS_ID' => 'INVHI',
             'RECEIVER' => 'IFS_APPLICATIONS',
@@ -334,16 +359,18 @@ class DocumentoService
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
-        $this->buscarXML('archivo_ifs_' . $name . '.xml');
         Storage::disk('ifs_solicitud_recurso')->put('archivo_ifs_' . $name . '.xml', $result);
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
 
-    public function xml_sin_cfdi($documento, $segmentos_negocio)
+    public function xml_sin_cfdi($documento, $segmentos_negocio, $firmas)
     {
-        $array_xml = null;
-        $array_fin = [];
         $array = [];
+        if($documento->proveedorEmisor)
+        {
+            $this->buscarProveedorIFS($documento->proveedorEmisor->rfc_sin_guiones);
+        }
+
         $concepto_text = Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto);
         if (strlen($concepto_text) > 120) {
             $concepto_text = substr(Util::eliminaAcentos($documento->solChequeDocto->solCheque->Concepto), 0, 120);
@@ -353,7 +380,6 @@ class DocumentoService
         {
             $concepto_ifs = substr($concepto_ifs,0,40);
         }
-
         $header = [
             'NAME' => 'INVOICE_HEADER',
             'C00' => 'I',
@@ -379,8 +405,9 @@ class DocumentoService
             'C14' => str_replace('-', ' ', $documento->folio_solicitud) . " " . $concepto_text . '.xml',
             'C15' => auth()->user()->usuario,
             'C16' => str_replace('-', ' ', $documento->folio_solicitud),
+            'C17' => $documento->proveedorEmisor ? $documento->proveedorEmisor->rfc_sin_guiones : ''
         ];
-
+        $header = array_merge($header, $firmas);
         $i = 0;
         $array[$i] = [
             'NAME' => 'INVOICE_ITEM',
@@ -451,12 +478,12 @@ class DocumentoService
                 $total = round($item->importe_segmento, 2) + $total;
                 $cuenta = CuentaContableIFS::where('id_tipo_gasto', $item->id_tipo_gasto)->first();
                 if ($cuenta == null) {
-                    abort(500, "La cuenta (" . $item->descripcion_cuenta . ") de control recursos no tiene registro de cuenta para IFS.\n \n Favor de contactar a soporte a aplicaciones.");
+                    abort(500, "La cuenta (" . $item->descripcion_cuenta . ") y el tipo de gasto (" . $item->tipo_gasto . ") de control recursos no tiene registro de cuenta para IFS.\n \n Favor de contactar a soporte a aplicaciones.");
                 }
 
                 $array[$i] = [
                     'NAME' => 'INVOICE_ITEM_POSTING',
-                    'N00' => $key + 1,
+                    'N00' => 1,
                     'N01' => round($item->importe_segmento, 2),
                     'C00' => Util::eliminaAcentos($item->segmento_negocio),
                     'C01' => '',
@@ -496,7 +523,6 @@ class DocumentoService
         $a->setDomProperties(['formatOutput' => true]);
         $result = $a->toXml();
         $name = $documento->folio_solicitud;
-        $this->buscarXML('archivo_ifs_' . $name . '.xml');
         Storage::disk('ifs_solicitud_recurso')->put('archivo_ifs_' . $name . '.xml', $result);
         return Storage::disk('ifs_solicitud_recurso')->download('archivo_ifs_' . $name . '.xml');
     }
@@ -514,11 +540,20 @@ class DocumentoService
     public function correo($id)
     {
         $documento = $this->show($id);
+        $this->revisarProveedor($documento);
         $name = $documento->uuid ? $documento->uuid : $documento->folio_solicitud;
         $this->xml($id);
         $archivo = $this->getBase64XML($name);
         event(new EnvioXMLDocumentoRecursos($documento, config('app.env_variables.EMAIL_IFS'), 'archivo_ifs' . $name . '.xml', $archivo));
     }
+
+    private function revisarProveedor($documento)
+    {
+        if($documento->IdProveedor == 960){
+            abort(500,  'El envío automático para el proveedor AMEX se encuentra en desarrollo. Por favor, realice el registro manual en IFS.');
+        }
+    }
+
 
     private function getBase64XML($name)
     {
@@ -535,5 +570,82 @@ class DocumentoService
         if(Storage::disk('ifs_solicitud_recurso')->exists($nombre)) {
             Storage::disk('ifs_solicitud_recurso')->delete($nombre);
         }
+    }
+
+    private function buscarProveedorIFS($rfc)
+    {
+        $proveedor = ProveedorServicioIFS::where('rfc', $rfc)->first();
+        if ($proveedor == null) {
+            abort(500, "El RFC (" . $rfc . ") no tiene registro de este proveedor en IFS.\n \n Favor de contactar a soporte a aplicaciones.");
+        }
+    }
+
+    private function firmas($documento)
+    {
+        $firmas = $documento->solChequeDocto->solCheque->firmasSolicitantes;
+        $firmas_array = [
+            'C18' => '',
+            'C19' => '',
+            'C20' => '',
+            'C21' => '',
+            'C22' => '',
+            'C23' => 'FALSE',
+            'C24' => 'FALSE'
+        ];
+        if(count($firmas) > 0)
+        {
+            foreach ($firmas as $firma) {
+                if($firma->encabezado->idfirmas_encabezados ==  1)
+                {
+                   $firmas_array['C18'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  2)
+                {
+                    $firmas_array['C19'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  11 || $firma->encabezado->idfirmas_encabezados ==  12)
+                {
+                    $firmas_array['C20'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  9 || $firma->encabezado->idfirmas_encabezados == 16)
+                {
+                    $firmas_array['C21'] = strtoupper($firma->firmante->usuario->usuario);
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  8)
+                {
+                    $firmas_array['C22'] = strtoupper($firma->firmante->usuario->usuario);
+                }else{
+                    if(is_null($documento->uuid))
+                    {
+                        $firmas_array['C22'] = 'PAYALA';
+                    }
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  3)
+                {
+                    $firmas_array['C23'] = 'TRUE';
+                }
+                if($firma->encabezado->idfirmas_encabezados ==  4)
+                {
+                    $firmas_array['C24'] = 'TRUE';
+                }
+            }
+        }else {
+            $sol = $documento->solChequeDocto->solCheque;
+            if ($sol->Serie != 'CDM' && $sol->Serie != 'PND' && $sol->Serie != 'CNC') {
+                $firmas_array['C23'] = 'TRUE';
+                $firmas_array['C24'] = 'TRUE';
+            }
+            elseif ($sol->Serie == 'PND') {
+                $firmas_array['C23'] = 'TRUE';
+                $firmas_array['C24'] = 'TRUE';
+            }
+            else{
+                if ($sol->Serie != 'CNC'){
+                    $firmas_array['C23'] = 'TRUE';
+                    $firmas_array['C24'] = 'TRUE';
+                }
+            }
+        }
+        return $firmas_array;
     }
 }
