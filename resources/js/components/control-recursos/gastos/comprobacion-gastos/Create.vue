@@ -64,8 +64,8 @@
                                     <tr>
                                         <th class="index_corto encabezado">#</th>
                                         <th class="c30 encabezado"></th>
-                                        <th class="c80 encabezado">Fecha</th>
                                         <th class="c80 encabezado">Solicitud</th>
+                                        <th class="c80 encabezado">Fecha</th>
                                         <th class="c100 encabezado">Estado</th>
                                         <th class="c100 encabezado">Importe</th>
                                         <th class="c100 encabezado">Comprobado</th>
@@ -77,33 +77,28 @@
                                     <tr  v-if="cargando_solicitudes">
                                         <th colspan="9"><div class="spinner-border  spinner-border-sm text-primary ml-2" role="status"></div></th>
                                     </tr>
-                                    <tr v-else v-for="(partida, i) in solicitudes" :key="partida.id">
-                                        <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                        <td style="text-align: center; vertical-align: inherit">
-                                            <input type="radio" :id="'solicitud_' + partida.id " :value="partida.id" v-model="id_solicitud" @change="ocultarTabla"/>
-                                        </td>
-                                        <td>
-                                            {{ partida.fecha_format }}
-                                        </td>
-                                        <td>
-                                            {{ partida.folio_format }}
-                                        </td>
-                                        <td>
-                                            {{ partida.estado_format }}
-                                        </td>
-                                        <td>
-                                            ${{ partida.importe_format }}
-                                        </td>
-                                        <td>
-                                            {{ partida.saldo_format }}
-                                        </td>
-                                         <td>
-                                            {{ partida.total_format }}
-                                        </td>
-                                        <td>
-                                            {{ partida.moneda }}
-                                        </td>
-                                    </tr>
+                                    <template v-for="(grupo, empresa) in solicitudesAgrupadas">
+                                        <tr class="empresa-row" @click="empresasAbiertas[empresa] = !empresasAbiertas[empresa]">
+                                            <td colspan="9" class="font-weight-bold">
+                                                <i class="fa mr-2" :class="empresasAbiertas[empresa] ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+                                                <i class="fa fa-building mr-1"></i> {{ empresa }}
+                                                <span class="text-muted ml-2">({{ grupo.length }})</span>
+                                            </td>
+                                        </tr>
+                                        <tr v-for="(partida, i) in grupo" :key="partida.id" v-show="empresasAbiertas[empresa]">
+                                            <td class="text-center">{{ i + 1 }}</td>
+                                            <td class="text-center">
+                                                <input type="radio" :value="partida.id" v-model="id_solicitud" @change="ocultarTabla" :disabled="partida.valido < 1 ? false : true"/>
+                                            </td>
+                                            <td>{{ partida.folio_format }}</td>
+                                            <td>{{ partida.fecha_format }}</td>
+                                            <td>{{ partida.estado_format }}</td>
+                                            <td>${{ partida.importe_format }}</td>
+                                            <td>{{ partida.comprobado_format }}</td>
+                                            <td>{{ partida.saldo_format }}</td>
+                                            <td>{{ partida.moneda }}</td>
+                                        </tr>
+                                    </template>
                                     </tbody>
                                 </table>
                             </div>
@@ -243,6 +238,7 @@ export default {
             empleados: [],
             idempleado: '',
             tablaOculta: false,
+            empresasAbiertas : {}
         }
     },
     mounted() {
@@ -256,6 +252,20 @@ export default {
         this.solicitudes = [];
         this.id_solicitud = '';
         this.solicitud = null;
+    },
+    computed: {
+        solicitudesAgrupadas() {
+            return this.solicitudes.reduce((acc, item) => {
+                const empresa = item.empresa_descripcion || 'Sin empresa';
+
+                if (!acc[empresa]) {
+                    acc[empresa] = [];
+                }
+
+                acc[empresa].push(item);
+                return acc;
+            }, {});
+        }
     },
     methods: {
         getSeries() {
@@ -280,7 +290,10 @@ export default {
                 params: { sort: 'timestampRegistro', order: 'asc', include: ['comprobacion'], scope: ['documentosParaRegistrar:' + this.idserie + ','+ this.idempleado ]},
             }).then(data => {
                 this.solicitudes = data.data;
-
+                this.empresasAbiertas = {};
+                this.solicitudes.forEach(s => {
+                    this.$set(this.empresasAbiertas, s.empresa_descripcion, false);
+                });
             }).finally(() => {
                 this.cargando_solicitudes = false;
             })
