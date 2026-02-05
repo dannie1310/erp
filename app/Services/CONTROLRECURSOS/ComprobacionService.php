@@ -293,15 +293,16 @@ class ComprobacionService
                                 Emisor: " . $comprobacion->comprobacion->proveedor_descripcion . "
                                 RFC Emisor: " .  $comprobacion->comprobacion->rfc_proveedor);
             }
+
             if ($relacion && $repositorio_factura->id_doc_relacion_gastos_cr != null) {
                 abort(500, "CFDI utilizado previamente:
                                 Registró: " . $repositorio_factura->usuario->nombre_completo . "
-                                Serie: " . $relacion->relacion->serie_descripcion . "
-                                Folio: " . $relacion->folio . "
+                                Serie: " . $relacion->relacion_sin_global_scopes->serie_descripcion . "
+                                Folio: " . $relacion->relacion_sin_global_scopes->numero_folio . "
                                 Fecha Registro: " . $relacion->fecha_format . "
                                 UUID: " . $uuid . "
-                                Emisor: " . $relacion->relacion->proveedor_descripcion . "
-                                RFC Emisor: " . $relacion->relacion->rfc_proveedor);
+                                Emisor: " . $relacion->relacion_sin_global_scopes->empleado_descripcion . "
+                                RFC Emisor: " . $relacion->relacion_sin_global_scopes->rfc_empleado);
             }
 
             if ($factura && $repositorio_factura->id_documento_cr != null) {

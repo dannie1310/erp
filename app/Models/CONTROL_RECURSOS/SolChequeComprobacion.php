@@ -115,7 +115,7 @@ class SolChequeComprobacion extends SolCheque
 
     public function getFechaFormatAttribute()
     {
-        $date = date_create($this->fecha);
+        $date = date_create($this->Fecha);
         return date_format($date,"d/m/Y");
     }
 
