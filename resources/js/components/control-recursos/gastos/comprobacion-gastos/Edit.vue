@@ -113,13 +113,13 @@
                    <div class="col-md-2">
                        <div class="form-group error-content">
                            <label class="col-form-label">Comprobado:</label>
-                           <h6>{{parseFloat(sumaMontos).formatMoney(2)}} </h6>
+                           <h6>{{ sumaMontos.importe.formatMoney(2) }}</h6>
                        </div>
                    </div>
                    <div class="col-md-2">
                        <div class="form-group error-content">
                            <label class="col-form-label">Saldo:</label>
-                           <h6>{{parseFloat(sumaTotal).formatMoney(2)}} </h6>
+                           <h6>{{ sumaTotal.formatMoney(2) }}</h6>
                        </div>
                    </div>
                </div>
@@ -198,7 +198,7 @@
                                                style="width: 100%"
                                                placeholder="Folio"
                                                :name="`folio[${i}]`"
-                                               id="folio"
+                                               :id="`folio[${i}]`"
                                                data-vv-as="Folio"
                                                v-validate="{required: true}"
                                                v-model="partida.folio_docto"
@@ -208,7 +208,7 @@
                                     <td>
                                         <select class="form-control"
                                                 data-vv-as="Tipo Gasto"
-                                                id="idtipogasto"
+                                                :id="`idtipogasto[${i}]`"
                                                 :name="`idtipogasto[${i}]`"
                                                 :class="{'is-invalid': errors.has(`idtipogasto[${i}]`)}"
                                                 v-validate="{required: true}"
@@ -234,7 +234,7 @@
                                                style="text-align: right"
                                                v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
                                                :class="{'is-invalid': errors.has(`importe[${i}]`)}"
-                                               id="importe">
+                                               :id="`importe[${i}]`">
                                         <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                     </td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
@@ -254,7 +254,7 @@
                                                style="width: 100%"
                                                placeholder="Observaciones"
                                                :name="`observaciones[${i}]`"
-                                               id="observaciones"
+                                               :id="`observaciones[${i}]`"
                                                data-vv-as="Observaciones"
                                                v-validate="{required: true}"
                                                v-model="partida.observaciones"
@@ -417,27 +417,27 @@ export default {
         this.getTiposGasto();
     },
     computed: {
-        sumaMontos()
-        {
+        sumaMontos() {
             let iva = 0;
             let result = 0;
-            this.documentos.forEach(function (doc, i) {
-                result += parseFloat(doc.importe);
-                if(doc.uuid != null)
-                {
-                    iva += parseFloat(doc.iva);
+
+            this.documentos.forEach(doc => {
+                result += parseFloat(doc.importe || 0);
+                if (doc.uuid) {
+                    iva += parseFloat(doc.iva || 0);
                 }
-            })
-            this.importe = result;
-            this.iva = iva;
-            return result
+            });
+
+            return { importe: result, iva };
         },
         sumaTotal() {
-            let total = 0;
-            total = ((parseFloat(this.comprobacion.importe) + parseFloat(this.iva)) - parseFloat(this.importe));
-            this.total = total
-            return this.total
-        },
+            if (!this.comprobacion) return 0;
+            return (
+                parseFloat(this.comprobacion.importe || 0) +
+                this.sumaMontos.iva -
+                this.sumaMontos.importe
+            );
+        }
     },
     methods: {
         formatoFecha(date){
@@ -478,24 +478,32 @@ export default {
             })
         },
         validate() {
+            const importeAutorizado = parseFloat(this.comprobacion.importe || 0);
+            const importeCapturado = parseFloat(this.sumaMontos.importe || 0);
             this.$validator.validate().then(result => {
                 if (result) {
                     if(moment(this.comprobacion.al_editar).format('YYYY/MM/DD') < moment(this.comprobacion.del_editar).format('YYYY/MM/DD'))
                     {
-                        swal('¡Error!', 'La fecha de final no puede ser posterior a la fecha de inicial.', 'error')
+                        swal('¡Error!', 'La fecha final no puede ser anterior a la fecha inicial.', 'error')
                     }
                     else if (this.documentos.length == 0) {
                         swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
-                    } else{
+                    }
+                    else if (importeCapturado > importeAutorizado) {
+                        swal('¡Error!', `El importe comprobado (${importeCapturado.formatMoney(2)})
+                 no puede ser mayor al importe autorizado (${importeAutorizado.formatMoney(2)}).`, 'error');
+                        return;
+                    }
+                    else{
                         this.update()
                     }
                 }
             });
         },
         update() {
-            this.comprobacion.importe_calculado = this.importe;
-           // this.comprobacion.iva = this.iva;
-            this.comprobacion.total_calculado = this.total;
+            this.comprobacion.importe_calculado = this.sumaMontos.importe;
+           // this.comprobacion.iva = this.sumaMontos.iva;
+            this.comprobacion.total_calculado = this.sumaTotal;
             this.comprobacion.documentos = this.documentos;
             return this.$store.dispatch('controlRecursos/comprobacion/update', {
                 id: this.id,
@@ -514,7 +522,7 @@ export default {
             })
         },
         addPartidas(){
-            this.documentos.splice(this.documentos.length + 1, 0, {
+            this.documentos.push({
                 tipo_docto_comp: "",
                 tipo_documento: "",
                 tipo_gasto: '',
@@ -687,14 +695,6 @@ export default {
                 descripcion: estado
             }
         },
-    },
-    watch: {
-        id_empleado(value){
-            if(value)
-            {
-                this.buscarEmpleado();
-            }
-        }
     }
 }
 </script>

@@ -52,6 +52,11 @@ class RelacionGasto extends Model
         return $this->belongsTo(Serie::class, 'idserie', 'idseries');
     }
 
+    public function serie_sin_global_scopes()
+    {
+        return $this->belongsTo(Serie::class, 'idserie', 'idseries')->withoutGlobalScopes();
+    }
+
     public function documentos()
     {
         return $this->hasMany(RelacionGastoDocumento::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
@@ -128,7 +133,7 @@ class RelacionGasto extends Model
     public function getSerieDescripcionAttribute()
     {
         try {
-            return $this->serie->Descripcion;
+            return $this->serie_sin_global_scopes->Descripcion;
         } catch (\Exception $e) {
             return null;
         }
