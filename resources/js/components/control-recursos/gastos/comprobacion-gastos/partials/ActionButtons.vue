@@ -18,7 +18,7 @@
         <router-link :to="{ name: 'comprobacion-gasto-delete', params: {id: value.id_solicitud}}" v-if="value.delete && value.id_solicitud != 0" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
             <i class="fa fa-trash"></i>
         </router-link>
-        <PDF v-bind:id="value.id" />
+        <PDF v-if="value.pdf" v-bind:id="value.id" />
     </div>
 </template>
 

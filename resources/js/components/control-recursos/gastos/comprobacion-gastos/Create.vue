@@ -172,7 +172,6 @@
                                             :bootstrap-styling = "true"
                                             class = "form-control"
                                             v-validate="{required: true}"
-                                            :disabled-dates="fechasDeshabilitadas"
                                             :class="{'is-invalid': errors.has('fecha_inicial')}"/>
                                 <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                             </div>
@@ -188,7 +187,6 @@
                                             :bootstrap-styling = "true"
                                             class = "form-control"
                                             v-validate="{required: true}"
-                                            :disabled-dates="fechasDeshabilitadas"
                                             :class="{'is-invalid': errors.has('fecha_final')}"/>
                                 <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
                             </div>
@@ -227,7 +225,6 @@ export default {
             id_solicitud: '',
             solicitud: null,
             es : es,
-            fechasDeshabilitadas : {},
             fecha_hoy : '',
             fecha_inicial: '',
             fecha_final: '',
@@ -248,7 +245,6 @@ export default {
         this.fecha_hoy = new Date();
         this.fecha_inicial = new Date();
         this.fecha_final = new Date();
-        this.fechasDeshabilitadas.from = new Date();
         this.solicitudes = [];
         this.id_solicitud = '';
         this.solicitud = null;

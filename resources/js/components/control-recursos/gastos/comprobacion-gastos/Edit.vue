@@ -489,11 +489,6 @@ export default {
                     else if (this.documentos.length == 0) {
                         swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
                     }
-                    else if (importeCapturado > importeAutorizado) {
-                        swal('¡Error!', `El importe comprobado (${importeCapturado.formatMoney(2)})
-                 no puede ser mayor al importe autorizado (${importeAutorizado.formatMoney(2)}).`, 'error');
-                        return;
-                    }
                     else{
                         this.update()
                     }
