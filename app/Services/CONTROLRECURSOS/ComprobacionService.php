@@ -117,6 +117,10 @@ class ComprobacionService
             $documentos = $comprobacion->documentos->pluck('IdDoctoComp')->toArray();
 
             foreach ($data['documentos'] as $partida) {
+                if ($partida['uuid'] != null) {
+                    $arreglo_cfd = $this->getArregloCFD($partida['xml']);
+                    $this->validaCFDI($partida['uuid']);
+                }
                 if(array_key_exists('fecha_editar', $partida)) {
                     $fecha = new DateTime($partida['fecha_editar']);
                 }else{
@@ -161,12 +165,8 @@ class ComprobacionService
                     {
                         unset($documentos[$key]);
                     }
-                }else {
-                    /**
-                     * $partida['IVA'] = $partida['iva'];
-                    $partida['otro_imp'] = $partida['otros_imp'];
-                     * */
-
+                }
+                else {
                     if ($partida['uuid'] != null) {
                         $arreglo_cfd = $this->getArregloCFD($partida['xml']);
                         $this->validaCFDI($partida['uuid']);

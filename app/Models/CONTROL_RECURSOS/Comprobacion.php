@@ -472,7 +472,8 @@ class Comprobacion extends Model
     {
         try {
             DB::connection('controlrec')->beginTransaction();
-
+            $serieVD='';
+            $folioVD=0;
             if($data['tipo_docto_comp'] == 1 | $data['tipo_docto_comp'] == 2){
                 $clasificacion = 1;
                 $serieVD='';
@@ -485,11 +486,13 @@ class Comprobacion extends Model
                         'SerieVD' => 'VDE',
                         'FolioVD' => $this->getFolioVD()
                     ]);
+                    $serieVD = 'VDE';
+                    $folioVD = $this->getFolioVD();
+                }else {
+                    $serieVD = $this->SerieVD;
+                    $folioVD = $this->FolioVD;
                 }
-                $serieVD = $this->SerieVD;
-                $folioVD = $this->FolioVD;
             }
-
 
             $documento = DoctoComp::create([
                 'IdComprobacion' => $this->getKey(),
