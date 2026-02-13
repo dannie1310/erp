@@ -906,6 +906,51 @@ class AsignacionFormato extends Rotation
             $this->Cell(.05);
             $this->Cell(4, .4, utf8_decode('ING. GASPAR GUERREIRO GONZÁLEZ'), 'TRLB', 0, 'C', 0);
         }
+        else if(Context::getDatabase() == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 11 && $this->asignacion->solicitud->id_area_compradora == 4){  //PLATAFOR- AEREO
+            $this->Cell(2.5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(3.8, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(2.5, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(4.2, .4, utf8_decode('Subdirección Procura y Subcontratos'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(4, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Admon. y Finanzas'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(4, .4, utf8_decode('Autoriza Dir. General'), 'TRLB', 0, 'C', 0);
+
+            $this->Ln();
+            $this->Cell(2.5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.1);
+            $this->Cell(3.8, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.1);
+            $this->Cell(2.5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.1);
+            $this->Cell(4.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.1);
+            $this->Cell(4, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.1);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.1);
+            $this->Cell(4, 1.2, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->Cell(2.5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(3.8, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(2.5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(4.2, .4, utf8_decode('LIC. OSCAR BRÍGIDO ESPINOZA GARCÍA'), 'RLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(4, .4, utf8_decode('ING. HUGO LARA'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(5, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNÁNDEZ'), 'RLB', 0, 'C', 0);
+            $this->Cell(.1);
+            $this->Cell(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
+        }
         else if (Context::getDatabase() == "SAO1814_MUSEO_BARROCO" && (Context::getIdObra() == 2 || Context::getIdObra() == 4) && $this->asignacion->solicitud->id_area_compradora == 4){ //MUBASA  , OPERADORA MIB
             $this->Cell(2.5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
             $this->Cell(.05);
