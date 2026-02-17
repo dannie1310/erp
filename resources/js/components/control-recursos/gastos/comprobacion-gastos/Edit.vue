@@ -381,7 +381,6 @@ export default {
             tipos:[],
             tipo_gastos: [],
             total_documentos: 0,
-            no_cfd: 0,
             documentos: [],
             empresas: [],
             id_proveedor: '',
@@ -410,7 +409,6 @@ export default {
 
     mounted() {
         this.fecha_hoy = new Date();
-        this.fechasDeshabilitadas.from = new Date();
         this.comprobacion = null
         this.find();
         this.getTipos();
@@ -437,6 +435,9 @@ export default {
                 this.sumaMontos.iva -
                 this.sumaMontos.importe
             );
+        },
+        no_cfd() {
+            return this.documentos.filter(doc => doc.uuid != null).length;
         }
     },
     methods: {
@@ -451,14 +452,7 @@ export default {
             }).then(data => {
                 this.comprobacion = data
                 if(data.documentos != undefined) {
-                    this.documentos = data.documentos.data
-                    let suma = 0;
-                    this.documentos.forEach(function (doc, i) {
-                        if(doc.uuid != null) {
-                            suma = parseInt(suma) + 1;
-                        }
-                    })
-                    this.no_cfd = suma;
+                    this.documentos = data.documentos.data;
                 }else {
                     this.addPartidas();
                 }
@@ -545,7 +539,7 @@ export default {
                     _self.names.splice(indice, 1);
                     _self.files.splice(indice, 1);
                 });
-                this.no_cfd = this.no_cfd - 1;
+           //     this.no_cfd = this.no_cfd - 1;
             }else{
                 this.total_documentos = this.total_documentos - 1;
             }
@@ -588,16 +582,14 @@ export default {
         },
         agregaPartidasConConceptos(conceptos) {
             let _self = this;
-            let suma = 0;
-            conceptos.forEach(function (concepto, i) {
+
+            conceptos.forEach(function (concepto) {
                 var busqueda = _self.documentos.find(x=>x.uuid === concepto.uuid);
                 if(busqueda == undefined)
                 {
                     _self.agregarCFDIPartida(concepto);
-                    suma = parseInt(suma) + 1;
                 }
-            })
-            this.no_cfd = suma;
+            });
         },
         agregarCFDIPartida(concepto) {
             this.documentos.splice(this.documentos.length + 1, 0, {
@@ -619,7 +611,6 @@ export default {
                 contenido_xml : concepto.contenido_xml,
                 descuento : concepto.descuento - concepto.descuento_IEPS
             });
-            this.no_cfd = this.no_cfd + 1;
         },
         cargarXML(){
             this.cargando = true;
