@@ -112,6 +112,7 @@ class ComprobacionService
 
         try {
             DB::connection('controlrec')->beginTransaction();
+            DB::connection('seguridad')->beginTransaction();
 
             $comprobacion = $this->repository->show($id);
             $documentos = $comprobacion->documentos->pluck('IdDoctoComp')->toArray();
@@ -168,8 +169,6 @@ class ComprobacionService
                 }
                 else {
                     if ($partida['uuid'] != null) {
-                        $arreglo_cfd = $this->getArregloCFD($partida['xml']);
-                        $this->validaCFDI($partida['uuid']);
                         $this->validaReceptor($this->repository->getBuscarEmpresa($comprobacion->EmpresaFacturar), $arreglo_cfd);
                         $documento = $comprobacion->registrarDocumento($partida);
                         $factura_repositorio = $this->registrarCFDRepositorio($documento, $arreglo_cfd, $partida['xml']);
@@ -208,9 +207,11 @@ class ComprobacionService
               // 'Version'
             ]);
             DB::connection('controlrec')->commit();
+            DB::connection('seguridad')->commit();
             return $comprobacion;
         } catch (\Exception $e) {
             DB::connection('controlrec')->rollBack();
+            DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
         }
     }
@@ -363,13 +364,8 @@ class ComprobacionService
     {
         $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
-            if($factura_repositorio->id_transaccion == null && $factura_repositorio->id_documento_cr == null && $factura_repositorio->id_doc_relacion_gastos_cr == null && $factura_repositorio->id_doc_comprobacion_gastos_cr == null)
-            {
-                $factura_repositorio->id_doc_comprobacion_gastos_cr = $comprobacion->getKey();
-                $factura_repositorio->save();
-            }else{
-                abort(500, "El CFDI fue utilizado anteriormente.");
-            }
+             $factura_repositorio->id_doc_comprobacion_gastos_cr = $comprobacion->IdComprobacion;
+             $factura_repositorio->save();
         }
         else{
             if($data){
@@ -380,7 +376,7 @@ class ComprobacionService
                     'rfc_emisor' => $data['emisor']['rfc'],
                     'rfc_receptor' => $data['receptor']['rfc'],
                     'tipo_comprobante' => $data['tipo_comprobante'],
-                    'id_doc_comprobacion_gastos_cr' => $comprobacion->getKey(),
+                    'id_doc_comprobacion_gastos_cr' => $comprobacion->IdComprobacion,
 
                 ]);
                 if (!$factura_repositorio) {
