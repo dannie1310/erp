@@ -575,139 +575,94 @@ class Comprobacion extends Model
     {
         try {
             DB::connection('controlrec')->beginTransaction();
+            DB::connection('seguridad')->beginTransaction();
 
             $this->validaEliminacion();
-        $esrelacion = 0;
-        $escomprobacion = 0;
-        $estareembolsadadocumento= 0;
-        $estareembolsadoSolicitud = 0;
-        $hayreembolsadadocumento= 0;
-        $estaGenerada = 0;
-        $estaAbierta = 0;
-        $estaCerrada = 0;
-        $nuevoEstatusRelacion = 0;
-
-        if($this->solicitudesComprobadas->count() > 0)
-        {
             $esrelacion = 0;
-            $escomprobacion = 1;
-        }else{
-            $esrelacion = 1;
             $escomprobacion = 0;
-        }
-        if($escomprobacion == 1)
-        {
-            $this->solicitudesComprobadas()->delete();
-        }
-
-        if($this->reembolsos->count() > 0)
-        {
-            $estareembolsadadocumento= 1;
-            if($this->reembolsos->solDoctos->count() > 0)
-            {
-                $estareembolsadoSolicitud = 1;
-            }else{
-                $estareembolsadoSolicitud = 0;
-            }
-        }else{
             $estareembolsadadocumento = 0;
-            $hayreembolsadadocumento= 0;
-        }
+            $estareembolsadoSolicitud = 0;
+            $hayreembolsadadocumento = 0;
+            $estaGenerada = 0;
+            $estaAbierta = 0;
+            $estaCerrada = 0;
+            $nuevoEstatusRelacion = 0;
 
-
-        if ($this->Estatus == 0 || $this->Estatus == 5) {
-            $estaGenerada = 1;
-        } else {
-            if ($this->Estatus == 1 || $this->Estatus == 6) {
-                $estaAbierta = 1;
+            if ($this->solicitudesComprobadas->count() > 0) {
+                $esrelacion = 0;
+                $escomprobacion = 1;
             } else {
-                if ($this->Estatus == 2 || $this->Estatus == 7) {
-                    $estaCerrada = 1;
+                $esrelacion = 1;
+                $escomprobacion = 0;
+            }
+            if ($escomprobacion == 1) {
+                $this->solicitudesComprobadas()->delete();
+            }
+
+            if ($this->reembolsos->count() > 0) {
+                $estareembolsadadocumento = 1;
+                if ($this->reembolsos->solDoctos->count() > 0) {
+                    $estareembolsadoSolicitud = 1;
+                } else {
+                    $estareembolsadoSolicitud = 0;
+                }
+            } else {
+                $estareembolsadadocumento = 0;
+                $hayreembolsadadocumento = 0;
+            }
+
+
+            if ($this->Estatus == 0 || $this->Estatus == 5) {
+                $estaGenerada = 1;
+            } else {
+                if ($this->Estatus == 1 || $this->Estatus == 6) {
+                    $estaAbierta = 1;
+                } else {
+                    if ($this->Estatus == 2 || $this->Estatus == 7) {
+                        $estaCerrada = 1;
+                    }
                 }
             }
-        }
 
-        if ($estaCerrada == 1) {
-            if ($this->Estatus == 2) {
-                $nuevoEstatusRelacion = 1;
+            if ($estaCerrada == 1) {
+                if ($this->Estatus == 2) {
+                    $nuevoEstatusRelacion = 1;
+                }
+                if ($this->Estatus == 7) {
+                    $nuevoEstatusRelacion = 6;
+                }
+                $this->update([
+                    'Estatus' => $nuevoEstatusRelacion
+                ]);
             }
-            if ($this->Estatus == 7) {
-                $nuevoEstatusRelacion = 6;
-            }
-            $this->update([
-                'Estatus' => $nuevoEstatusRelacion
-            ]);
-        }
-        $id= $this->getKey();
-        if($hayreembolsadadocumento == 0)
-        {
-            $this->documentos()->delete();
-            $this->firmas()->delete();
-            $this->delete();
-            $this->refresh();
-            $comprobacion_eliminada = ComprobacionBorrada::where('IdComprobacion', $id)->first();
-            $comprobacion_eliminada->usuario_elimina = auth()->id();
-            $comprobacion_eliminada->motivo_eliminacion = $motivo;
-            $comprobacion_eliminada->fecha_eliminacion = date('Y-m-d H:i:s');
-            $comprobacion_eliminada->save();
-        }else{
-            if($estareembolsadadocumento == 1 && $estareembolsadoSolicitud == 0)
-            {
-                /**
-                 * DELETE FROM cajas_chicas_reembolsos WHERE iddocto=IdDocumento1;
+            $id = $this->getKey();
+            if ($hayreembolsadadocumento == 0) {
+                foreach ($this->documentos as $documento) {
+                    $documento->eliminar();
+                }
 
-                DELETE FROM comprobaciones_reembolsadas WHERE idcomprobacion=idRelacion;
-
-                DELETE FROM documentos where IdDocto=IdDocumento1;
-                 */
-
-                abort(500, "La comprobación no puede ser eliminada .");
-
-                /**
-                 *
-                DELETE FROM doctoscomp where IdComprobacion=idRelacion;
-
-                DELETE FROM firmas_comprobaciones where idcomprobacion=idRelacion;
-
-                DELETE FROM comprobaciones where IdComprobacion=idRelacion;
-
-                UPDATE comprobacionesborradas set Elimino=ejecuta, Fecha_Hora_Elimino=CURRENT_TIMESTAMP WHERE IdComprobacion=idRelacion;
-
-                 */
-
-            }else{
-                if($estareembolsadadocumento == 1 && $estareembolsadoSolicitud == 1) {
-
-                    /**
-                    DELETE FROM cajas_chicas_reembolsos WHERE iddocto = IdDocumento1;
-
-        DELETE FROM comprobaciones_reembolsadas WHERE idcomprobacion = idRelacion;
-
-        CALL scr_sp_elimina_solicitud(IdSolicitud1, 1, CONCAT(ejecuta, 'Al eliminar Relacion: ', idRelacion));
-
-        DELETE FROM documentos where IdDocto = IdDocumento1;
-                     * */
+                $this->firmas()->delete();
+                $this->delete();
+                $this->refresh();
+                $comprobacion_eliminada = ComprobacionBorrada::where('IdComprobacion', $id)->first();
+                $comprobacion_eliminada->usuario_elimina = auth()->id();
+                $comprobacion_eliminada->motivo_eliminacion = $motivo;
+                $comprobacion_eliminada->fecha_eliminacion = date('Y-m-d H:i:s');
+                $comprobacion_eliminada->save();
+            } else {
+                if ($estareembolsadadocumento == 1 && $estareembolsadoSolicitud == 0) {
                     abort(500, "La comprobación no puede ser eliminada .");
-
-/*
-                    DELETE FROM doctoscomp where IdComprobacion=idRelacion;
-
-		DELETE FROM firmas_comprobaciones where idcomprobacion=idRelacion;
-
-        DELETE FROM comprobaciones where IdComprobacion=idRelacion;
-
-		UPDATE comprobacionesborradas set Elimino=ejecuta, Fecha_Hora_Elimino=CURRENT_TIMESTAMP WHERE IdComprobacion=idRelacion;
-*/
-                 }
-
+                } else {
+                    if ($estareembolsadadocumento == 1 && $estareembolsadoSolicitud == 1) {
+                        abort(500, "La comprobación no puede ser eliminada .");
+                    }
+                }
             }
-        }
-
-
-
             DB::connection('controlrec')->commit();
+            DB::connection('seguridad')->commit();
         } catch (\Exception $e) {
             DB::connection('controlrec')->rollBack();
+            DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
         }
