@@ -410,21 +410,27 @@ class ComprobacionGastosFormato extends Rotation
             $this->SetTextColor(0, 0, 0);
             $this->SetFillColor(204, 204, 204);
             $leyenda = '';
-            if ($this->comprobacion->solicitudComprobada->ImportePorComprobar == 0) {
-                $favor = "SALDO";
-                $saldo = '';
-            } else {
-                if ($this->comprobacion->solicitudComprobada->ImportePorComprobar > 0) {
-                    $favor = "DE LA EMPRESA*";
-                    $saldo = 'SALDO A FAVOR';
-                    $leyenda = ("*FAVOR DE ANEXAR EN ÉSTA COMPROBACIÓN COPIA FOTOSTÓTICA DEL DEPÓSITO REALIZADO Y ENTREGAR EL ORIGINAL A TESORERÍA");
 
+            if ($this->comprobacion->solicitudComprobada) {
+                if ($this->comprobacion->solicitudComprobada->ImportePorComprobar == 0) {
+                    $favor = "SALDO";
+                    $saldo = '';
                 } else {
-                    if ($this->comprobacion->solicitudComprobada->ImportePorComprobar < 0) {
-                        $favor = "DEL EMPLEADO";
+                    if ($this->comprobacion->solicitudComprobada->ImportePorComprobar > 0) {
+                        $favor = "DE LA EMPRESA*";
                         $saldo = 'SALDO A FAVOR';
+                        $leyenda = ("*FAVOR DE ANEXAR EN ÉSTA COMPROBACIÓN COPIA FOTOSTÓTICA DEL DEPÓSITO REALIZADO Y ENTREGAR EL ORIGINAL A TESORERÍA");
+
+                    } else {
+                        if ($this->comprobacion->solicitudComprobada->ImportePorComprobar < 0) {
+                            $favor = "DEL EMPLEADO";
+                            $saldo = 'SALDO A FAVOR';
+                        }
                     }
                 }
+            } else {
+                $favor = 'SALDO';
+                $saldo = '';
             }
 
             $this->Cell(2.5, .4, '', 'T L R', 0, 'C', 1);
@@ -459,31 +465,32 @@ class ComprobacionGastosFormato extends Rotation
             $this->SetFillColor(204, 204, 204);
             $this->SetTextColor(0, 0, 0);
             $this->SetDrawColor(0, 0, 0);
-
-            $this->SetFont('Arial', '', 8);
-            $this->Cell(2.5, .4, $this->comprobacion->solicitud->folio_formato, 1, 0, 'C');
-            $this->Cell(2, .4, $this->comprobacion->solicitud->partidaPago ? substr($this->comprobacion->solicitud->partidaPago->pago->formaPago->Nombre,0,2) .'-'. $this->comprobacion->solicitud->partidaPago->pago->Numero : ' - ', 1, 0, 'C'); //$Resumen["TCHT"].$Resumen["CHT"]
-            $this->Cell(2, .4, $this->comprobacion->solicitud->partidaPago ? $this->comprobacion->solicitud->partidaPago->pago->FechaPago : '', 1, 0, 'C');
-            $this->Cell(2.5, .4, $this->comprobacion->solicitud->importe_format, 1, 0, 'R');
-            $this->Cell(2.5, .4, number_format($this->comprobacion->solicitudComprobada->ImporteComprobadoAnterior, 2, ".", ","), 1, 0, 'R');
-            $this->Cell(2.5, .4, number_format($this->comprobacion->solicitudComprobada->ImporteComprobadoActual, 2, ".", ","), 1, 0, 'R');
-            $this->Cell(2.5, .4, number_format($this->comprobacion->solicitudComprobada->ImporteComprobadoAnterior + $this->comprobacion->solicitudComprobada->ImporteComprobadoActual, 2, ".", ","), 1, 0, 'R');
-            $this->SetFont('Arial', 'B', 8);
-            $this->SetFillColor(0, 0, 0);
-            $this->SetTextColor(255, 255, 255);
-            $this->SetDrawColor(255, 255, 255);
-            $this->Cell(4, .4, number_format(abs($this->comprobacion->solicitudComprobada->ImportePorComprobar), 2, ".", ","), 1, 1, 'R', 1);
-
-            $this->SetDrawColor(0, 0, 0);
-            $this->SetTextColor(0, 0, 0);
-            $this->Cell(19.5, 0.5, "", 0, 1, 'L');
-            if ($leyenda != "") {
+            if ($this->comprobacion->solicitudComprobada) {
+                $this->SetFont('Arial', '', 8);
+                $this->Cell(2.5, .4, $this->comprobacion->solicitud->folio_formato, 1, 0, 'C');
+                $this->Cell(2, .4, $this->comprobacion->solicitud->partidaPago ? substr($this->comprobacion->solicitud->partidaPago->pago->formaPago->Nombre, 0, 2) . '-' . $this->comprobacion->solicitud->partidaPago->pago->Numero : ' - ', 1, 0, 'C'); //$Resumen["TCHT"].$Resumen["CHT"]
+                $this->Cell(2, .4, $this->comprobacion->solicitud->partidaPago ? $this->comprobacion->solicitud->partidaPago->pago->FechaPago : '', 1, 0, 'C');
+                $this->Cell(2.5, .4, $this->comprobacion->solicitud->importe_format, 1, 0, 'R');
+                $this->Cell(2.5, .4, number_format($this->comprobacion->solicitudComprobada->ImporteComprobadoAnterior, 2, ".", ","), 1, 0, 'R');
+                $this->Cell(2.5, .4, number_format($this->comprobacion->solicitudComprobada->ImporteComprobadoActual, 2, ".", ","), 1, 0, 'R');
+                $this->Cell(2.5, .4, number_format($this->comprobacion->solicitudComprobada->ImporteComprobadoAnterior + $this->comprobacion->solicitudComprobada->ImporteComprobadoActual, 2, ".", ","), 1, 0, 'R');
+                $this->SetFont('Arial', 'B', 8);
                 $this->SetFillColor(0, 0, 0);
                 $this->SetTextColor(255, 255, 255);
-                $this->Cell(19.5, 0.5, "I  M  P  O  R  T  A  N  T  E", 'L R B T', 1, 'C', 1);
+                $this->SetDrawColor(255, 255, 255);
+                $this->Cell(4, .4, number_format(abs($this->comprobacion->solicitudComprobada->ImportePorComprobar), 2, ".", ","), 1, 1, 'R', 1);
+
+                $this->SetDrawColor(0, 0, 0);
                 $this->SetTextColor(0, 0, 0);
-                $this->Cell(19.5, 1, $leyenda, 'L R', 1, 'L');
-                $this->cuentas();
+                $this->Cell(19.5, 0.5, "", 0, 1, 'L');
+                if ($leyenda != "") {
+                    $this->SetFillColor(0, 0, 0);
+                    $this->SetTextColor(255, 255, 255);
+                    $this->Cell(19.5, 0.5, "I  M  P  O  R  T  A  N  T  E", 'L R B T', 1, 'C', 1);
+                    $this->SetTextColor(0, 0, 0);
+                    $this->Cell(19.5, 1, $leyenda, 'L R', 1, 'L');
+                    $this->cuentas();
+                }
             }
         }
     }
