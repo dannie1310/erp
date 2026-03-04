@@ -448,13 +448,13 @@ class Comprobacion extends Model
 
     public function getNumeroFolio()
     {
-        $folio = self::where('serie', 'REL')->orderBy('Folio', 'desc')->pluck('Folio')->first();
+        $folio = self::where('serie', 'REL')->withoutGlobalScopes()->orderBy('Folio', 'desc')->pluck('Folio')->first();
         return $folio+1;
     }
 
     public function getFolioVD()
     {
-        $folio = self::orderBy('FolioVD', 'desc')->pluck('FolioVD')->first();
+        $folio = self::orderBy('FolioVD', 'desc')->withoutGlobalScopes()->pluck('FolioVD')->first();
         return $folio+1;
     }
 
@@ -640,7 +640,9 @@ class Comprobacion extends Model
                 foreach ($this->documentos as $documento) {
                     $documento->eliminar();
                 }
-
+                $this->solicitud->update([
+                    'Estatus' =>35
+                ]);
                 $this->firmas()->delete();
                 $this->delete();
                 $this->refresh();
