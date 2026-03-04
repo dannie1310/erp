@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class CuentaEmpresa extends Model
 {
     protected $connection = 'controlrec';
-    protected $table = 'vw_cuentas_bancarias_empresa';
+    protected $table = 'vwcuentasbancariasempresa';
 
 
     /**

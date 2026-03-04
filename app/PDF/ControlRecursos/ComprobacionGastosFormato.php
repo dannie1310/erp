@@ -387,7 +387,7 @@ class ComprobacionGastosFormato extends Rotation
         }
 
         $this->SetFont('Arial','B',8);
-
+//dd($porcentaje_deducible, $total, $this->duracion);
         $this->Cell(4.5,.4,' ',0,0,'R');
         $this->Cell(2.5,.4,number_format($im_deducible,2,'.',','),1,0,'R');
         $this->Cell(2.5,.4,number_format($iva_deducible,2,'.',','),1,0,'R');
@@ -486,9 +486,9 @@ class ComprobacionGastosFormato extends Rotation
                 if ($leyenda != "") {
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
-                    $this->Cell(19.5, 0.5, "I  M  P  O  R  T  A  N  T  E", 'L R B T', 1, 'C', 1);
+                    $this->Cell(20.5, 0.5, "I  M  P  O  R  T  A  N  T  E", 'L R B T', 1, 'C', 1);
                     $this->SetTextColor(0, 0, 0);
-                    $this->Cell(19.5, 1, $leyenda, 'L R', 1, 'L');
+                    $this->Cell(20.5, 1, utf8_decode($leyenda), 'L R', 1, 'L');
                     $this->cuentas();
                 }
             }
@@ -690,9 +690,9 @@ class ComprobacionGastosFormato extends Rotation
 
     function cuentas()
     {
-        $cuenta = CuentaEmpresa::where('IdEmpresa', $this->comprobacion->EmpresaFacturar)->where('DepositosDevolucion', 1)->first();
+        $cuenta = CuentaEmpresa::where('IdEmpresa', $this->comprobacion->EmpresaFacturar)->where('depositosDevolucion', 1)->first();
 
-        $leyendacb_1=("El importe a favor de la empresa deber� depositarse en ");
+        $leyendacb_1=("El importe a favor de la empresa debería depositarse en ");
         $leyendacb_3="a nombre de ".$this->comprobacion->empresa->RazonSocial." ";
         $leyendacb_2='';
         if($cuenta->cuenta->banco->Banco != null && $cuenta->cuenta->Cuenta != null)
@@ -704,6 +704,6 @@ class ComprobacionGastosFormato extends Rotation
         $leyendacb_2=substr($leyendacb_2,0,strlen($leyendacb_2)-5);
         $leyendacb=$leyendacb_1.$leyendacb_2.$leyendacb_3;
         $this->SetFont('Arial','B',8);
-        $this->MultiCell(19.5,.5,$leyendacb,'L R B','L');
+        $this->MultiCell(20.5,.5, utf8_decode($leyendacb),'L R B','L');
     }
 }
