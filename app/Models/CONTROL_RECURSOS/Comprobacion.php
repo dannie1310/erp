@@ -286,7 +286,11 @@ class Comprobacion extends Model
     public function getEstadoFormatAttribute()
     {
         try {
-            return  $this->estado->descripcion;
+            if($this->IdEstatus == 1) {
+                return 'Abrierta sin documentos';
+            }else {
+                return $this->estado->descripcion;
+            }
         } catch (\Exception $e) {
             return null;
         }
