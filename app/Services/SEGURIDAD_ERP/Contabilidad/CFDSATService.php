@@ -2362,6 +2362,7 @@ class CFDSATService
         foreach ($archivos_xml as $archivo_xml){
             $cfd = new CFD($archivo_xml);
             $arreglo_cfd = $cfd->getArregloFactura();
+            $this->validaCFDI($arreglo_cfd['uuid']);
             $this->validaReceptorSinContexto($arreglo_cfd, $nombres_archivo[$i]);
             $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
             $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
@@ -2466,5 +2467,16 @@ class CFDSATService
             $suma = $suma + $retencion['importe'];
         }
         return $suma;
+    }
+
+    public function validaCFDI($uuid)
+    {
+        $cfdi = CFDSAT::where('uuid', $uuid)->first();
+        $factura = FacturaRepositorio::where('uuid', $uuid)->first();
+        if ($factura && $cfdi) {
+            if ($factura->id_transaccion != null || $factura->id_documento_cr != null || $factura->id_doc_relacion_gastos_cr != null || $factura->id_doc_comprobacion_gastos_cr != null) {
+                abort(500, "El CFDI " . $uuid . " fue utilizado anteriormente.");
+            }
+        }
     }
 }
