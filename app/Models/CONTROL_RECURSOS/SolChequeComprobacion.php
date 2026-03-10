@@ -127,7 +127,7 @@ class SolChequeComprobacion extends SolCheque
      public function getEstadoFormatAttribute()
     {
         try {
-            return $this->comprobacion != null ? (($this->comprobacion->estatus == 0 || $this->comprobacion->estatus == 1) ? 'COMPROBANDO' : 'POR COMPROBAR') : 'POR COMPROBAR';
+            return $this->comprobacion != null ? (($this->comprobacion->Estatus == 0 || $this->comprobacion->Estatus == 1) ? 'COMPROBANDO' : 'POR COMPROBAR') : 'POR COMPROBAR';
         } catch (\Exception $e) {
             return null;
         }
