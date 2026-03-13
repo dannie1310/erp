@@ -617,6 +617,7 @@ export default {
             var formData = new FormData();
             formData.append('xmls',  JSON.stringify(this.files));
             formData.append('nombres_archivo',  JSON.stringify(this.names));
+            formData.append('id_comprobacion',  JSON.stringify(this.id));
             return this.$store.dispatch('finanzas/cfdi-sat/cargarXMLComprobacionRecursos',
                 {
                     data: formData,

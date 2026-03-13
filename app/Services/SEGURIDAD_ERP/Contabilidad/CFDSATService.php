@@ -2357,12 +2357,17 @@ class CFDSATService
     {
         $archivos_xml = json_decode($data["xmls"]);
         $nombres_archivo = json_decode($data["nombres_archivo"]);
+        $id_comprobacion = json_decode($data["id_comprobacion"]);
         $conceptos = null;
         $i = 0;
         foreach ($archivos_xml as $archivo_xml){
             $cfd = new CFD($archivo_xml);
             $arreglo_cfd = $cfd->getArregloFactura();
+            if(!array_key_exists('uuid', $arreglo_cfd)) {
+                abort(500, 'El archivo: '.$nombres_archivo[$i].' no cuenta con un UUID favor de validarlo.');
+            }
             $this->validaCFDI($arreglo_cfd['uuid']);
+            $this->repository->validaReceptorComprobacion($id_comprobacion, $arreglo_cfd);
             $this->validaReceptorSinContexto($arreglo_cfd, $nombres_archivo[$i]);
             $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
             $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
