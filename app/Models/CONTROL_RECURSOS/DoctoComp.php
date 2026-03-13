@@ -50,7 +50,7 @@ class DoctoComp extends Model
 
     public function cfd()
     {
-        return $this->belongsTo(FacturaRepositorio::class, 'IdComprobacion','id_doc_comprobacion_gastos_cr');
+        return $this->belongsTo(FacturaRepositorio::class, 'IdDoctoComp','id_doc_comprobacion_gastos_cr');
     }
 
     /**

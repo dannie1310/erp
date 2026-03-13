@@ -219,7 +219,7 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`idtipogasto[${i}]`)">{{ errors.first(`idtipogasto[${i}]`) }}</div>
                                     </td>
                                     <td v-if="partida.uuid != null">
-                                       {{ partida.concepto }}
+                                       {{ partida.concepto_xml }}
                                     </td>
                                     <td v-else>-</td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
@@ -380,7 +380,6 @@ export default {
             comprobacion : null,
             tipos:[],
             tipo_gastos: [],
-            total_documentos: 0,
             documentos: [],
             empresas: [],
             id_proveedor: '',
@@ -438,6 +437,9 @@ export default {
         },
         no_cfd() {
             return this.documentos.filter(doc => doc.uuid != null).length;
+        },
+        total_documentos() {
+            return this.documentos.length;
         }
     },
     methods: {
@@ -456,7 +458,7 @@ export default {
                 }else {
                     this.addPartidas();
                 }
-                this.total_documentos = this.documentos.length
+              //  this.total_documentos = this.documentos.length
             }).finally(()=> {
                 this.cargando = false;
             })
@@ -527,7 +529,7 @@ export default {
                 contenido_xml: '',
                 descuento: ''
             });
-            this.total_documentos = this.total_documentos + 1;
+           // this.total_documentos = this.total_documentos + 1;
         },
         destroy(index){
             let _self = this;
@@ -540,8 +542,6 @@ export default {
                     _self.files.splice(indice, 1);
                 });
            //     this.no_cfd = this.no_cfd - 1;
-            }else{
-                this.total_documentos = this.total_documentos - 1;
             }
             this.documentos.splice(index, 1);
         },

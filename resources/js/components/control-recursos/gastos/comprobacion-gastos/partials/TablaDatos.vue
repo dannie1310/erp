@@ -69,14 +69,12 @@
                         <td>
                             {{ solicitud.fecha_format }}
                         </td>
-                        <td v-if="solicitud.comprobacion">
-                            {{ solicitud.comprobacion.del_format }}
+                        <td>
+                            {{ solicitud.del_format }}
                         </td>
-                        <td v-else></td>
-                        <td v-if="solicitud.comprobacion">
-                            {{ solicitud.comprobacion.al_format }}
+                        <td>
+                            {{ solicitud.al_format }}
                         </td>
-                        <td v-else></td>
                     </tr>
                     <tr>
                         <th class="encabezado">Importe</th>
@@ -85,8 +83,8 @@
                     </tr>
                     <tr>
                         <td style="text-align: right; font-size: 15px">{{ solicitud.importe_format }}</td>
-                        <td style="text-align: right; font-size: 15px"><b>{{ solicitud.comprobado_format }}</b></td>
-                        <td style="text-align: right; font-size: 15px"><b>{{ solicitud.saldo_format }}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ solicitud.solicitud.comprobado_format }}</b></td>
+                        <td style="text-align: right; font-size: 15px"><b>{{ solicitud.solicitud.saldo_format }}</b></td>
                     </tr>
                 </table>
             </div>
