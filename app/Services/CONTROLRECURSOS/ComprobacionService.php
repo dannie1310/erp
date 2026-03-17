@@ -118,10 +118,6 @@ class ComprobacionService
             $documentos = $comprobacion->documentos->pluck('IdDoctoComp')->toArray();
 
             foreach ($data['documentos'] as $partida) {
-                if ($partida['uuid'] != null) {
-                    $arreglo_cfd = $this->getArregloCFD($partida['xml']);
-                    $this->validaCFDI($partida['uuid']);
-                }
                 if(array_key_exists('fecha_editar', $partida)) {
                     $fecha = new DateTime($partida['fecha_editar']);
                 }else{
@@ -130,45 +126,30 @@ class ComprobacionService
                 $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
                 $partida['fecha'] = $fecha->format("Y-m-d");
 
-                if(array_key_exists('id', $partida))
-                {
+                if(array_key_exists('id', $partida)) {
                     $documento = DoctoComp::find($partida['id']);
 
-                    if($partida['uuid'] != null){
-                        $documento->update([
-                            'FechaDocto' => $partida['fecha'],
-                            'TipoDoctoComp' => $partida['tipo_docto_comp'],
-                            'FolioDocto' => $partida['folio_docto'],
-                            'Concepto' => $partida['tipo_gasto'],
-                            'Importe' => $partida['importe'],
-                            'IVA' => $partida['iva'],
-                            // 'ImpHosp',
-                            'Total' => $partida['total'],
-                            'Observaciones' => $partida['observaciones'],
-                        ]);
-                    }
-                    else {
-                        $documento->update([
-                            'FechaDocto' => $partida['fecha'],
-                            'TipoDoctoComp' => $partida['tipo_docto_comp'],
-                            'FolioDocto' => $partida['folio_docto'],
-                            'Concepto' => $partida['tipo_gasto'],
-                            'Importe' => $partida['importe'],
-                            'IVA' => $partida['iva'],
-                            // 'ImpHosp',
-                            'Total' => $partida['total'],
-                            'Observaciones' => $partida['observaciones'],
-                        ]);
-                    }
+                    $documento->update([
+                        'FechaDocto' => $partida['fecha'],
+                        'TipoDoctoComp' => $partida['tipo_docto_comp'],
+                        'FolioDocto' => $partida['folio_docto'],
+                        'Concepto' => $partida['tipo_gasto'],
+                        'Importe' => $partida['importe'],
+                        'IVA' => $partida['iva'],
+                        'Total' => $partida['total'],
+                        'Observaciones' => $partida['observaciones'],
+                    ]);
 
-                    $key = array_search($partida['id'],$documentos, true);
-                    if($key !== false)
-                    {
+                    $key = array_search($partida['id'], $documentos, true);
+                    if ($key !== false) {
                         unset($documentos[$key]);
                     }
                 }
                 else {
-                    if ($partida['uuid'] != null) {
+                    if (array_key_exists('uuid', $partida) && $partida['uuid'] != null)
+                    {
+                        $arreglo_cfd = $this->getArregloCFD($partida['xml']);
+                        $this->validaCFDI($partida['uuid']);
                         $this->validaReceptor($this->repository->getBuscarEmpresa($comprobacion->EmpresaFacturar), $arreglo_cfd);
                         $documento = $comprobacion->registrarDocumento($partida);
                         $factura_repositorio = $this->registrarCFDRepositorio($documento, $arreglo_cfd, $partida['xml']);
@@ -195,16 +176,9 @@ class ComprobacionService
             $comprobacion->actualizaSaldoPendienteSolicitud();
 
             $comprobacion->update([
-               // 'IdDepartamento' => $data['id_departamento'],
                 'Del' => $fecha_inicial->format("Y-m-d H:i:s"),
                 'Al' => $fecha_final->format("Y-m-d H:i:s"),
-                'Motivo' => $data['motivo'],
-               // 'iddepartamento' => $data['id_departamento'],
-                //'idproyecto' => $data['id_proyecto'],
-                'motivo' => $data['motivo']
-                //'ImpSol',
-             //  'SaldoComp',
-              // 'Version'
+                'Motivo' => $data['motivo']
             ]);
             DB::connection('controlrec')->commit();
             DB::connection('seguridad')->commit();
@@ -360,11 +334,11 @@ class ComprobacionService
         }
     }
 
-    private function registrarCFDRepositorio($comprobacion, $data, $xml)
+    private function registrarCFDRepositorio($documento, $data, $xml)
     {
         $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
-             $factura_repositorio->id_doc_comprobacion_gastos_cr = $comprobacion->IdComprobacion;
+             $factura_repositorio->id_doc_comprobacion_gastos_cr = $documento->IdDoctoComp;
              $factura_repositorio->save();
         }
         else{
@@ -376,7 +350,7 @@ class ComprobacionService
                     'rfc_emisor' => $data['emisor']['rfc'],
                     'rfc_receptor' => $data['receptor']['rfc'],
                     'tipo_comprobante' => $data['tipo_comprobante'],
-                    'id_doc_comprobacion_gastos_cr' => $comprobacion->IdComprobacion,
+                    'id_doc_comprobacion_gastos_cr' => $documento->IdDoctoComp,
 
                 ]);
                 if (!$factura_repositorio) {
