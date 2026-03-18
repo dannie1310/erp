@@ -756,7 +756,7 @@ class AsignacionFormato extends Rotation
             $this->CellFitScale(3.35, .4, 'ING. ALEJANDRO JIMENEZ VAZQUEZ', 'TRLB', 0, 'C', 1);
             $this->CellFitScale(3.35, .4, 'ING. CARLOS R. DE LA MORA RODRIGUEZ', 'TRLB', 0, 'C', 1);
             $this->CellFitScale(3.35, .4, 'ING. JULIO CESAR ROSIQUE ROSIQUE', 'TRLB', 0, 'C', 1);
-            $this->CellFitScale(3.35, .4, 'ING. LUIS HORCASITAS MANJARREZ', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, '', 'TRLB', 0, 'C', 1);
         }
         else {
 
