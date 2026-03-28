@@ -29,6 +29,14 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_comprobacion_gastos',true)">
+                        <router-link :to="{name: 'comprobacion-gasto'}" class="nav-link" :class="{active: this.$route.name == 'comprobacion-gasto'}">
+                            &nbsp;<i class="fa fa-money-check nav-icon"></i>
+                            <p>Comprobación de Gastos</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_relacion_gastos_recursos',true)">
                         <router-link :to="{name: 'relacion-gasto'}" class="nav-link" :class="{active: this.$route.name == 'relacion-gasto'}">
                             &nbsp;<i class="fa fa-money-check nav-icon"></i>

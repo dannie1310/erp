@@ -18,6 +18,7 @@ use App\Informes\Fiscal\PendientesREPEmpresa;
 use App\Informes\Fiscal\PendientesREPEmpresaProveedor;
 use App\Informes\Fiscal\PendientesREPProveedorEmpresa;
 use App\Models\CADECO\Obra;
+use App\Models\CONTROL_RECURSOS\Comprobacion;
 use App\Models\CONTROL_RECURSOS\Empresa;
 use App\Models\CONTROL_RECURSOS\Proveedor;
 use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
@@ -332,5 +333,14 @@ class CFDSATRepository extends Repository implements RepositoryInterface
             ];
         }
         return $salida;
+    }
+
+    public function validaReceptorComprobacion($idcomprobacion, $arreglo)
+    {
+        $comprobacion = Comprobacion::where('IdComprobacion', $idcomprobacion)->first();
+        if($comprobacion->empresa->RFC != $arreglo['rfc_receptor'])
+        {
+            abort(500, "El receptor (".$arreglo["rfc_receptor"].") del comprobante (".$arreglo["uuid"].") no es la misma empresa (".$comprobacion->empresa->RFC.") seleccionada para esta comprobación de gastos; la factura no puede ser registrada.");
+        }
     }
 }

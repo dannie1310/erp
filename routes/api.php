@@ -2066,6 +2066,17 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\CentroCostoController@index');
         });
 
+        $api->group(['prefix' => 'comprobacion'], function ($api) {
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/close', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@close')->where(['id' => '[0-9]+']);
+            $api->get('{id}/open', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@open')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@paginate');
+            $api->get('{id}/formato', 'App\Http\Controllers\v1\CONTROLRECURSOS\ComprobacionController@pdf')->where(['id' => '[0-9]+']);
+        });
+
         $api->group(['prefix' => 'documento'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\DocumentoController@show')->where(['id' => '[0-9]+']);
@@ -2166,6 +2177,12 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@index');
             $api->get('{id}/descarga', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@descarga')->where(['id' => '[0-9]+']);
             $api->get('{id}/formato-reembolso', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudChequeController@pdfReembolso')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'solicitud-comprobacion'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudComprobacionController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudComprobacionController@show')->where(['id' => '[0-9]+']);
+            $api->get('/', 'App\Http\Controllers\v1\CONTROLRECURSOS\SolicitudComprobacionController@index');
         });
 
         $api->group(['prefix' => 'semana-anio'], function ($api) {

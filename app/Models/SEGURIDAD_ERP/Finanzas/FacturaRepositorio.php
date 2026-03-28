@@ -43,7 +43,8 @@ class FacturaRepositorio extends Model
         'tipo_comprobante',
         'tipo_transaccion',
         'id_documento_cr',
-        'id_doc_relacion_gastos_cr'
+        'id_doc_relacion_gastos_cr',
+        'id_doc_comprobacion_gastos_cr'
     ];
 
     public function proyecto()

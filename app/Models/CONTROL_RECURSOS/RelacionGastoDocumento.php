@@ -45,6 +45,12 @@ class RelacionGastoDocumento extends Model
         return $this->belongsTo(RelacionGasto::class, 'idrelaciones_gastos', 'idrelaciones_gastos');
     }
 
+    public function relacion_sin_global_scopes()
+    {
+        return $this->belongsTo(RelacionGasto::class, 'idrelaciones_gastos', 'idrelaciones_gastos')->withoutGlobalScopes();
+    }
+
+
     public function tipoDocumento()
     {
         return $this->belongsTo(TipoDoctoComp::class, 'idtipo_docto_comp','IdTipoDoctoComp');

@@ -70,6 +70,16 @@ class Proveedor extends Model
         return $query->whereHas('proveedoresParaReembolso');
     }
 
+    public function scopeProveedorDisponibleParaRegistrar($query, $idSerie)
+    {
+        $serie = Serie::where('idseries', $idSerie)->first();
+        $idproveedores = SolChequeComprobacion::withoutGlobalScopes()->whereRaw("Importe>SaldoComprobado AND
+                estatus in(24,25,34,35) AND
+                IdTipoPago=4 AND
+                Serie ='" . $serie->Descripcion . "'")->selectRaw('distinct IdProveedor')->pluck('IdProveedor');
+        return $query->whereIn('IdProveedor',$idproveedores);
+    }
+
     /**
      * Atributos
      */

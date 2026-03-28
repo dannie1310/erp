@@ -117,7 +117,7 @@ class RelacionGastoService
         $cfdi = CFDSAT::where('uuid', $uuid)->first();
         $factura = FacturaRepositorio::where('uuid', $uuid)->first();
         if ($factura && $cfdi) {
-            if ($factura->id_transaccion != null || $factura->id_documento_cr != null || $factura->id_doc_relacion_gastos_cr != null) {
+            if ($factura->id_transaccion != null || $factura->id_documento_cr != null || $factura->id_doc_relacion_gastos_cr != null || $factura->id_doc_comprobacion_gastos_cr != null) {
                 abort(500, "El CFDI " . $uuid . " fue utilizado anteriormente.");
             }
         }
@@ -200,6 +200,7 @@ class RelacionGastoService
         if ($repositorio_factura) {
             $documento = $this->repository->buscarDocumentoUuid($uuid);
             $relacion = $this->repository->buscarRelacionGastosUuid($uuid);
+            $comprobacion = $this->repository->buscarComprobacionUuid($uuid);
             if ($relacion && $repositorio_factura->id_doc_relacion_gastos_cr != null) {
                 abort(500, "CFDI utilizado previamente:
                                 Registró: " . $repositorio_factura->usuario->nombre_completo . "
@@ -209,6 +210,16 @@ class RelacionGastoService
                                 UUID: " . $uuid . "
                                 Emisor: " . $relacion->relacion->proveedor_descripcion . "
                                 RFC Emisor: " . $relacion->relacion->rfc_proveedor);
+            }
+
+            if ($comprobacion && $repositorio_factura->id_doc_comprobacion_gastos_cr != null) {
+                abort(500, "CFDI utilizado previamente:
+                                Registró: " . $repositorio_factura->usuario->nombre_completo . "
+                                Folio: " . $comprobacion->comprobacion->folio_format . "
+                                Fecha Registro: " . $comprobacion->fecha_format . "
+                                UUID: " . $uuid . "
+                                Emisor: " . $comprobacion->comprobacion->proveedor_descripcion . "
+                                RFC Emisor: " .  $comprobacion->comprobacion->rfc_proveedor);
             }
 
             if ($documento && $repositorio_factura->id_documento_cr != null) {
@@ -298,7 +309,7 @@ class RelacionGastoService
     {
         $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
-            if($factura_repositorio->id_transaccion == null && $factura_repositorio->id_documento_cr == null && $factura_repositorio->id_doc_relacion_gastos_cr == null)
+            if($factura_repositorio->id_transaccion == null && $factura_repositorio->id_documento_cr == null && $factura_repositorio->id_doc_relacion_gastos_cr == null && $factura_repositorio->id_doc_comprobacion_gastos_cr == null)
             {
                 $factura_repositorio->id_doc_relacion_gastos_cr = $relacion->getKey();
                 $factura_repositorio->save();

@@ -4424,6 +4424,76 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'comprobacion-gasto',
+                        component: require('./components/control-recursos/gastos/comprobacion-gastos/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'comprobacion-gasto',
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/Index').default,
+                                meta: {
+                                    title: 'Comprobación de Gastos',
+                                    breadcrumb: {parent: 'gasto-personal', name: 'COMPROBACIONES DE GASTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_comprobacion_gastos',
+                                    general: true,
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'comprobacion-gasto-create',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/Create').default,
+                                meta: {
+                                    title: 'Registrar Comprobación de Gastos',
+                                    breadcrumb: {parent: 'comprobacion-gasto', name: 'REGISTRAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'registrar_comprobacion_gastos',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id/edit',
+                                name: 'comprobacion-gasto-edit',
+                                props: true,
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/Edit').default,
+                                meta: {
+                                    title: 'Editar Comprobación de Gastos',
+                                    breadcrumb: {parent: 'comprobacion-gasto', name: 'EDITAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'editar_comprobacion_gastos',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'comprobacion-gasto-show',
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Comprobación de Gastos',
+                                    breadcrumb: { parent: 'comprobacion-gasto', name: 'VER'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_comprobacion_gastos',
+                                    general: true
+                                }
+                            },
+                            {
+                                path: ':id/delete',
+                                name: 'comprobacion-gasto-delete',
+                                component: require('./components/control-recursos/gastos/comprobacion-gastos/Delete').default,
+                                props: true,
+                                meta: {
+                                    title: 'Eliminar Comprobación de Gastos',
+                                    breadcrumb: { parent: 'comprobacion-gasto', name: 'ELIMINAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'eliminar_comprobacion_gastos',
+                                    general: true
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'relacion-gasto',
                         component: require('./components/control-recursos/gastos/relacion-gastos/Layout').default,
                         children: [

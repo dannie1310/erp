@@ -146,6 +146,10 @@ return [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_CONTROL_RECURSOS_RELACION_GASTOS')),
         ],
+        'xml_control_recursos_comprobacion_gastos' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_XML_CONTROL_RECURSOS_COMPROBACION_GASTOS')),
+        ],
         'pdf_emitidos' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_PDF_EMITIDOS')),
