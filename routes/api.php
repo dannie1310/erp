@@ -1719,7 +1719,8 @@ $api->version('v1', function ($api) {
             $api->get('descargaLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaLayout');
             $api->post('cargar-xml-comprobacion', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@cargaXMLComprobacion');
             $api->get('cfdi-rep-pendiente-xls', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaCFDIREPPendienteXLS');
-            $api->post('cargar-xml-comprobacion-recursos', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@cargaXMLRecursos');
+            $api->post('cargar-xml-comprobacion-recursos', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@cargaXMLComprobacionRecursos');
+            $api->post('cargar-xml-relacion-recursos', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@cargaXMLRelacionRecursos');
         });
     });
 

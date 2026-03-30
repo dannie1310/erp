@@ -563,6 +563,19 @@ export default {
                     })
             });
         },
+        cargarXMLRelacionRecursos(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'cargar-xml-relacion-recursos', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         cargarXMLComprobacionRecursos(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

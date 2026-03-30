@@ -38,7 +38,7 @@ class CFDSATController extends Controller
     public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
         $this->middleware( 'auth:api');
-        $this->middleware('context')->except('cargaXMLRecursos');
+        $this->middleware('context')->except(['cargaXMLRelacionRecursos','cargaXMLComprobacionRecursos']);
         $this->middleware('permiso:consultar_cfdi')->only(['paginate','descargar','pdfCFDI']);
 
         $this->fractal = $fractal;
@@ -75,7 +75,13 @@ class CFDSATController extends Controller
         return $this->service->descargaExcelCFDIRepPendiente($request->all());
     }
 
-    public function cargaXMLRecursos(Request $request)
+    public function cargaXMLRelacionRecursos(Request $request)
+    {
+        $conceptos = $this->service->cargaXMLRelacionRecursos($request->all());
+        return response()->json($conceptos, 200);
+    }
+
+    public function cargaXMLComprobacionRecursos(Request $request)
     {
         $conceptos = $this->service->cargaXMLComprobacionRecursos($request->all());
         return response()->json($conceptos, 200);
