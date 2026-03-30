@@ -2421,6 +2421,73 @@ class CFDSATService
         return $conceptos;
     }
 
+
+    public function cargaXMLRelacionRecursos(array $data)
+    {
+        $archivos_xml = json_decode($data["xmls"]);
+        $nombres_archivo = json_decode($data["nombres_archivo"]);
+        $conceptos = null;
+        $i = 0;
+        foreach ($archivos_xml as $archivo_xml){
+            $cfd = new CFD($archivo_xml);
+            $arreglo_cfd = $cfd->getArregloFactura();
+            if(!array_key_exists('uuid', $arreglo_cfd)) {
+                abort(500, 'El archivo: '.$nombres_archivo[$i].' no cuenta con un UUID favor de validarlo.');
+            }
+            $this->validaCFDI($arreglo_cfd['uuid']);
+            $this->validaReceptorSinContexto($arreglo_cfd, $nombres_archivo[$i]);
+            $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
+            $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
+            $arreglo_cfd["id_proveedor_sat"] = $proveedor["id_proveedor"];
+            $arreglo_cfd["id_empresa_recursos"] = $this->repository->getEmpresaRecursos($arreglo_cfd["receptor"])['id'];
+            $arreglo_cfd["id_proveedor_recursos"] = $this->repository->getProveedorRecursos($arreglo_cfd["emisor"])['id'];
+            $exp = explode("base64,", $archivo_xml);
+            $contenido_xml = base64_decode($exp[1]);
+            $arreglo_cfd["contenido_xml"] = $contenido_xml;
+            $this->validaTipo($arreglo_cfd['tipo_comprobante']);
+            if(array_key_exists('retenciones', $arreglo_cfd)) {
+                $arreglo_cfd["retenciones"] = $this->sumarRetencionesEsp($arreglo_cfd['retenciones']);
+            }else if(array_key_exists('retencionesLocales', $arreglo_cfd)) {
+                $arreglo_cfd["retenciones"] = $this->sumarRetenciones($arreglo_cfd['retencionesLocales']);
+            }else{
+                $arreglo_cfd["retenciones"] = 0;
+            }
+
+            if(array_key_exists('trasladosLocales', $arreglo_cfd)) {
+                $arreglo_cfd["otros_imp"] = $this->sumarTraslados($arreglo_cfd['trasladosLocales']);
+            }else {
+                $arreglo_cfd["otros_imp"] = $arreglo_cfd['descuento'];
+            }
+            /**
+             * Validación para el IEPS
+             */
+            $arreglo_cfd['descuento_IEPS'] = 0;
+            if($arreglo_cfd['otros_imp'] == $arreglo_cfd['descuento'])
+            {
+                foreach ($arreglo_cfd['traslados'] as  $x) {
+                    if ($x['impuesto'] == '003') {
+                        $arreglo_cfd['descuento_IEPS'] =  $x['importe'];
+                    }
+                }
+                $arreglo_cfd['otros_imp'] =  0;
+            }
+            /**
+             * Validación para el caso de facturas TELMEX
+             */
+            if($arreglo_cfd['emisor']['rfc'] == 'PRB100802H20')
+            {
+                $arreglo_cfd['proveedor_especial'] = 1;
+                $arreglo_cfd['descuento'] =  $arreglo_cfd['descuento'] - $arreglo_cfd['descuento_IEPS'];
+                $arreglo_cfd['descuento_IEPS'] = 0;
+            }else{
+                $arreglo_cfd['proveedor_especial'] = 0;
+            }
+            $conceptos[$i] =  $arreglo_cfd;
+            $i++;
+        }
+        return $conceptos;
+    }
+
     private function validaReceptorSinContexto($arreglo_cfd, $nombre = null)
     {
         $empresa = $this->repository->getEmpresaRecursos($arreglo_cfd['receptor']);

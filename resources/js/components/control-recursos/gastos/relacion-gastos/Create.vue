@@ -841,7 +841,7 @@ export default {
             var formData = new FormData();
             formData.append('xmls',  JSON.stringify(this.files));
             formData.append('nombres_archivo',  JSON.stringify(this.names));
-            return this.$store.dispatch('finanzas/cfdi-sat/cargarXMLComprobacionRecursos',
+            return this.$store.dispatch('finanzas/cfdi-sat/cargarXMLRelacionRecursos',
                 {
                     data: formData,
                     config: {
