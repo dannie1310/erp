@@ -849,7 +849,7 @@ class OrdenCompraFormato extends FPDI
 
                 $this->Cell(3.92, .4, '', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
-                $this->Cell(3.92, .4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, '', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'C.P. ROGELIO HERNANDEZ BELTRAN', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
@@ -909,7 +909,7 @@ class OrdenCompraFormato extends FPDI
                 $this->CellFitScale(4, 1.2, '', 'TRLB', 0, 'C');
                 $this->Ln();
                 $this->CellFitScale(4, .4, '', 'TRLB', 0, 'C', 1);
-                $this->CellFitScale(4, .4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'TRLB', 0, 'C', 1);
+                $this->CellFitScale(4, .4, '', 'TRLB', 0, 'C', 1);
 
                 if ($this->con_fianza == 0)
                     $this->CellFitScale(4, .4, utf8_decode(''), 'TRLB', 0, 'C', 1);
@@ -960,7 +960,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Ln(.5);
                 $this->Cell(4.5);
                 $this->CellFitScale(4.5, 1.2, ' ', 1, 0, 'R');
-                $this->CellFitScale(4.5, 1.2, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 1, 0, 'R');
+                $this->CellFitScale(4.5, 1.2, '', 1, 0, 'R');
                 $this->CellFitScale(4.5, 1.2, ' ', 1, 0, 'R');
                 $this->CellFitScale(4.5, 1.2, ' ', 1, 0, 'R');
 
@@ -986,7 +986,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Ln();
                 //$this->SetFillColor(180, 180, 180);
                 $this->Cell(4, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
-                $this->Cell(4.1, .4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'TRLB', 0, 'C', 1);
+                $this->Cell(4.1, .4, '', 'TRLB', 0, 'C', 1);
                 $this->Cell(4.4, .4, utf8_decode('C.P. MARCO A. MALDONADO HERNANDEZ'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.9, .4, utf8_decode('ING. MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.6, .4, utf8_decode('ING. HORACIO POSADAS HUERTA'), 'TRLB', 0, 'C', 1);
@@ -1023,7 +1023,7 @@ class OrdenCompraFormato extends FPDI
                 $this->SetFont('Arial', '', 5);
                 $this->Cell(3, .4, '', 'TRLB', 0, 'C', 1);
                 $this->Cell(3, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 1);
-                $this->Cell(3.3, .4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.3, .4, '', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.5, .4, utf8_decode('LIC. MARIA LUCIA MARTINEZ BALADO'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.5, .4, utf8_decode('ING. MANUEL TOBAR VIDA'), 'TRLB', 0, 'C', 1);
                 $this->CellFitScaleForce(3.3, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 1);
@@ -1047,7 +1047,7 @@ class OrdenCompraFormato extends FPDI
                     $this->Ln(.8);
                     $this->CellFitScale(4, 0.4, ' ', 'RLB', 0, 'R');
                     $this->CellFitScale(4, 0.4, ' ', 'RLB', 0, 'R');
-                    $this->CellFitScale(4, 0.4, utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'RLB', 0, 'R');
+                    $this->CellFitScale(4, 0.4, '', 'RLB', 0, 'R');
                     $this->CellFitScale(4, 0.4, ' ', 'RLB', 0, 'R');
                     $this->setY($y_idaf);
                     $this->Cell(16);
@@ -1073,7 +1073,7 @@ class OrdenCompraFormato extends FPDI
                     $this->Cell(4);
                     $this->CellFitScale(4, 0.5, ' ', 'RLB', 0, 'R');
                     $this->CellFitScale(4, 0.5, ' ', 'RLB', 0, 'R');
-                    $this->CellFitScale(4, 0.5,  utf8_decode('ÓSCAR BRIGIDO ESPINOZA GARCÍA'), 'RLB', 0, 'C');
+                    $this->CellFitScale(4, 0.5,  '', 'RLB', 0, 'C');
                     $this->CellFitScale(4, 0.5, ' ', 'RLB', 0, 'R');
                 }
             }
