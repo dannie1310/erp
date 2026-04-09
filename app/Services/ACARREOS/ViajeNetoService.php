@@ -392,7 +392,14 @@ class ViajeNetoService
             foreach ($imagenes as $key_i => $value_i) {
                 $id_viaje_neto_i = $this->repository->getIdViajeNeto($value_i['CodeImagen']);
                 if($id_viaje_neto_i > 0){
-
+                    $totalImagenesViaje = ViajeNetoImagen::where('idviaje_neto', $id_viaje_neto_i)->count();
+                    if($totalImagenesViaje >= 2){
+                        $imagenes_registradas[$ir] = $value_i["idImagen"];
+                        $ir++;
+                        $this->repository->crearLogPrueba($id_viaje_neto_i." num.im: ". $value_i["idImagen"]."cantidad: ".$totalImagenesViaje, $data['idusuario']);
+                        continue;
+                    }
+                    $this->repository->crearLogPrueba("PASO: ".$id_viaje_neto_i." num.im: ". $value_i["idImagen"], $data['idusuario']);
                     try {
                         $vn_imagen = ViajeNetoImagen::create([
                             'idviaje_neto' => $id_viaje_neto_i,

@@ -10,6 +10,7 @@ use App\Models\ACARREOS\ConsultaErronea;
 use App\Models\ACARREOS\DeductivaMotivo;
 use App\Models\ACARREOS\InicioCamion;
 use App\Models\ACARREOS\Json;
+use App\Models\ACARREOS\LogPrueba;
 use App\Models\ACARREOS\Material;
 use App\Models\ACARREOS\Origen;
 use App\Models\ACARREOS\Ruta;
@@ -168,6 +169,19 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function crearLogError($log, $usuario)
     {
         ConsultaErronea::create([
+            'consulta' => $log,
+            'registro' => $usuario
+        ]);
+    }
+
+    /**
+     * Crear el log cada que presente una prueba
+     * @param $log
+     * @param $usuario
+     */
+    public function crearLogPrueba($log, $usuario)
+    {
+        LogPrueba::create([
             'consulta' => $log,
             'registro' => $usuario
         ]);
