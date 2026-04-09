@@ -376,7 +376,7 @@ class ViajeNetoService
          * Se realiza conexión con la base de datos de acarreos.
          */
         $this->conexionAcarreos($data['bd']);
-
+ 
         $json_imagenes = $data["Imagenes"];
         $imagenes = json_decode(utf8_encode($json_imagenes), TRUE);
         $cantidad_imagenes_a_registrar = count($imagenes);
@@ -391,27 +391,27 @@ class ViajeNetoService
             $inr = 0;
             foreach ($imagenes as $key_i => $value_i) {
                 $id_viaje_neto_i = $this->repository->getIdViajeNeto($value_i['CodeImagen']);
+               
+                $this->repository->crearLogPrueba("INICIO". $key_i ." : ". $id_viaje_neto_i, $data['usuario']);
+
                 if($id_viaje_neto_i > 0){
                     $totalImagenesViaje = ViajeNetoImagen::where('idviaje_neto', $id_viaje_neto_i)->count();
-                    if($totalImagenesViaje >= 2){
-                        $imagenes_registradas[$ir] = $value_i["idImagen"];
-                        $ir++;
-                        $this->repository->crearLogPrueba($id_viaje_neto_i." num.im: ". $value_i["idImagen"]."cantidad: ".$totalImagenesViaje, $data['idusuario']);
-                        continue;
-                    }
-                    $this->repository->crearLogPrueba("PASO: ".$id_viaje_neto_i." num.im: ". $value_i["idImagen"], $data['idusuario']);
+                    
                     try {
-                        $vn_imagen = ViajeNetoImagen::create([
-                            'idviaje_neto' => $id_viaje_neto_i,
-                            'idtipo_imagen' => $value_i['idtipo_imagen'],
-                            'imagen' => str_replace('\\','',$value_i['imagen']),
-                        ]);
+                        if($totalImagenesViaje < 2){
+                            $vn_imagen = ViajeNetoImagen::create([
+                                'idviaje_neto' => $id_viaje_neto_i,
+                                'idtipo_imagen' => $value_i['idtipo_imagen'],
+                                'imagen' => str_replace('\\','',$value_i['imagen']),
+                            ]);
+                             $this->repository->crearLogPrueba("registrado:". $id_viaje_neto_i, $data['usuario']);
+                        }
                         $cantidad_imagenes++;;
                         $imagenes_registradas[$ir] = $value_i["idImagen"];
                         $ir++;
                     } catch (\Exception $e) {
                         $imagenes_no_registradas[$inr] = $value_i["idImagen"];
-                        $this->repository->crearLogError($e->getMessage(), $data['idusuario']);
+                        $this->repository->crearLogError($e->getMessage(), $data['usuario']);
                         $inr++;
                     }
                 }else{
