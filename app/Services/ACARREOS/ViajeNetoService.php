@@ -401,7 +401,7 @@ class ViajeNetoService
                         if($totalImagenesViaje < 2){
                             $vn_imagen = ViajeNetoImagen::create([
                                 'idviaje_neto' => $id_viaje_neto_i,
-                                'idtipo_imagen' => $value_i['idtipo_imagen'],
+                                'idtipo_imagen' => $value_i['idtipo_imagen'] == 'NULL' ? 1 : $value_i['idtipo_imagen'] ,
                                 'imagen' => str_replace('\\','',$value_i['imagen']),
                             ]);
                              $this->repository->crearLogPrueba("registrado:". $id_viaje_neto_i, $data['usuario']);
