@@ -138,6 +138,7 @@ class ComprobacionService
                         'IVA' => $partida['iva'],
                         'Total' => $partida['total'],
                         'Observaciones' => $partida['observaciones'],
+                        'retencion' => $partida['retencion']
                     ]);
 
                     $key = array_search($partida['id'], $documentos, true);
@@ -338,8 +339,9 @@ class ComprobacionService
     {
         $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
-             $factura_repositorio->id_doc_comprobacion_gastos_cr = $documento->IdDoctoComp;
-             $factura_repositorio->save();
+            $factura_repositorio->update([
+                'id_doc_comprobacion_gastos_cr' => $documento->IdDoctoComp
+            ]);
         }
         else{
             if($data){

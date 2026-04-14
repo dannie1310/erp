@@ -27,7 +27,8 @@ class DoctoComp extends Model
         'FolioVD',
         'Registro',
         'uuid',
-        'descuento_cfdi'
+        'descuento_cfdi',
+        'retencion'
     ];
 
     /**
@@ -112,6 +113,11 @@ class DoctoComp extends Model
         } catch (\Exception $e) {
             return null;
         }
+    }
+
+    public function getRetencionFormatAttribute()
+    {
+        return '$' . number_format(($this->retencion),2);
     }
 
     /**

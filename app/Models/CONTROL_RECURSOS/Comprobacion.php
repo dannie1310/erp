@@ -514,7 +514,8 @@ class Comprobacion extends Model
                 'FolioVD' => $folioVD,
                 'Registro' => auth()->id(),
                 'uuid' => array_key_exists('uuid', $data) ? $data['uuid'] : null,
-                'descuento_cfdi' =>  array_key_exists('descuento_cfdi', $data) ? $data['descuento_cfdi'] : '0.00'
+                'descuento_cfdi' =>  array_key_exists('descuento_cfdi', $data) ? $data['descuento_cfdi'] : '0.00',
+                'retencion' => $data['retencion']
             ]);
 
             DB::connection('controlrec')->commit();

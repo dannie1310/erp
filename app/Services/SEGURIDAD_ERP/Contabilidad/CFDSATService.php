@@ -2385,7 +2385,7 @@ class CFDSATService
             }else{
                 $arreglo_cfd["retenciones"] = 0;
             }
-
+            $arreglo_cfd["retencion"] = $arreglo_cfd["retenciones"];
             if(array_key_exists('trasladosLocales', $arreglo_cfd)) {
                 $arreglo_cfd["otros_imp"] = $this->sumarTraslados($arreglo_cfd['trasladosLocales']);
             }else {
