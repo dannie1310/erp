@@ -113,7 +113,7 @@
                    <div class="col-md-2">
                        <div class="form-group error-content">
                            <label class="col-form-label">Comprobado:</label>
-                           <h6>{{ sumaMontos.importe.formatMoney(2) }}</h6>
+                           <h6>{{ sumaMontos.total_doc.formatMoney(2) }}</h6>
                        </div>
                    </div>
                    <div class="col-md-2">
@@ -147,6 +147,7 @@
                                     <th class="c100 encabezado">Importe</th>
                                     <th class="c100 encabezado">IVA</th>
                                     <th class="c100 encabezado">2% H</th>
+                                    <th class="c100 encabezado">Retención</th>
                                     <th class="c100 encabezado">Total</th>
                                     <th class="c100 encabezado">Observaciones</th>
                                     <th class="c100 encabezado">Uuid</th>
@@ -245,6 +246,12 @@
                                     </td>
                                     <td style="text-align: right">
                                         $
+                                    </td>
+                                     <td style="text-align: right" v-if="partida.uuid != null">
+                                         {{ parseFloat(partida.retencion).formatMoney(2)}}
+                                    </td>
+                                    <td style="text-align: right" v-else>
+                                       $ 0.00
                                     </td>
                                     <td style="text-align: right">
                                         $ {{ parseFloat(partida.total).formatMoney(2) }}
@@ -417,22 +424,23 @@ export default {
         sumaMontos() {
             let iva = 0;
             let result = 0;
+            let total_doc = 0;
 
             this.documentos.forEach(doc => {
                 result += parseFloat(doc.importe || 0);
+                total_doc += parseFloat(doc.total || 0);
                 if (doc.uuid) {
                     iva += parseFloat(doc.iva || 0);
                 }
             });
 
-            return { importe: result, iva };
+            return { importe: result, iva, total_doc };
         },
         sumaTotal() {
             if (!this.comprobacion) return 0;
             return (
-                parseFloat(this.comprobacion.importe || 0) +
-                this.sumaMontos.iva -
-                this.sumaMontos.importe
+                parseFloat(this.comprobacion.importe || 0)  -
+                this.sumaMontos.total_doc
             );
         },
         no_cfd() {
@@ -493,7 +501,7 @@ export default {
         },
         update() {
             this.comprobacion.importe_calculado = this.sumaMontos.importe;
-           // this.comprobacion.iva = this.sumaMontos.iva;
+            this.comprobacion.total_comprobado = this.sumaMontos.total_doc;
             this.comprobacion.total_calculado = this.sumaTotal;
             this.comprobacion.documentos = this.documentos;
             return this.$store.dispatch('controlRecursos/comprobacion/update', {
@@ -527,7 +535,8 @@ export default {
                 uuid : null,
                 xml : '',
                 contenido_xml: '',
-                descuento: ''
+                descuento: '',
+                retencion: 0
             });
            // this.total_documentos = this.total_documentos + 1;
         },
@@ -603,6 +612,7 @@ export default {
                 importe : concepto.subtotal,
                 iva : concepto.importe_iva,
                 retenciones : concepto.retenciones,
+                retencion : concepto.retencion,
                 otros_imp : concepto.otros_imp,
                 total: concepto.total,
                 observaciones: '',
