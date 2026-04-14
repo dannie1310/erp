@@ -14,6 +14,8 @@ class ProcessBusquedaDiferenciasPolizas implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+
+
     protected $busqueda;
 
     /**
@@ -33,11 +35,15 @@ class ProcessBusquedaDiferenciasPolizas implements ShouldQueue
      */
     public function handle()
     {
+         \Log::info('Entró al Job', ['id' => $this->busqueda->id]);
         $this->busqueda->procesarBusquedaDiferencias();
     }
 
     public function failed($exception)
     {
+        \Log::error('Job falló', [
+        'error' => $exception->getMessage()
+    ]);
         $exception->getMessage();
     }
 }

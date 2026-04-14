@@ -355,12 +355,13 @@ class Empresa extends Model
             $diferencias = $this->getDiferenciasInformePorTipo($sin_solicitud_relacionada, $solo_diferencias_activas, $tipo->id);
             $informe["informe"][$i]["cantidad"]=count($diferencias);
             $jc = 0;
+            
             foreach($diferencias as $diferencia){
                 $informe["informe"][$i]["informe"][$jc]["id_diferencia"]=$diferencia->id;
-                $informe["informe"][$i]["informe"][$jc]["ejercicio"]=$diferencia->poliza->Ejercicio;
-                $informe["informe"][$i]["informe"][$jc]["periodo"]=$diferencia->poliza->Periodo;
-                $informe["informe"][$i]["informe"][$jc]["tipo"]=$diferencia->poliza->tipo;
-                $informe["informe"][$i]["informe"][$jc]["numero_folio_poliza"]=$diferencia->poliza->Folio;
+                $informe["informe"][$i]["informe"][$jc]["ejercicio"]=$diferencia->ejercicio;
+                $informe["informe"][$i]["informe"][$jc]["periodo"]=$diferencia->periodo;
+                $informe["informe"][$i]["informe"][$jc]["tipo"]=$diferencia->tipo_poliza;
+                $informe["informe"][$i]["informe"][$jc]["numero_folio_poliza"]=$diferencia->folio_poliza;
                 $informe["informe"][$i]["informe"][$jc]["numero_movimiento"]=$diferencia->numero_movimiento;
                 $informe["informe"][$i]["informe"][$jc]["codigo_cuenta"]=$diferencia->codigo_cuenta;
                 $informe["informe"][$i]["informe"][$jc]["base_datos_revisada"]=$diferencia->base_datos_revisada;
