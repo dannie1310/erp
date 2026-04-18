@@ -135,7 +135,7 @@ class CtgEfos extends Model
                             'fecha_desvirtuado' =>$efo['fecha_desvirtuado'],
                             'fecha_sentencia_favorable' =>$efo['fecha_sentencia_favorable'],
                             'fecha_presunto_dof' => $efo['fecha_presunto_dof'],
-                            'fecha_definitivo_dof' =>$efo['fecha_definitivo_dof'],
+                            'fecha_definitivo_dof' => $this->validarRFC($efo['rfc'], $efo['fecha_definitivo_dof']),
                             'fecha_desvirtuado_dof' =>$efo['fecha_desvirtuado_dof'],
                             'fecha_sentencia_favorable_dof' =>$efo['fecha_sentencia_favorable_dof'],
                             'estado' => $estado
@@ -158,6 +158,17 @@ class CtgEfos extends Model
             DB::connection('seguridad')->rollBack();
             $this->log[] = ["descripcion"=>$e->getMessage(),"tipo"=>1];
             return $this->log;
+        }
+    }
+
+    private function validarRFC($rfc, $fecha)
+    {
+        
+        if ($fecha == '0206-03-13')
+        {
+            return '2026-03-13';
+        } else{
+            return $fecha;
         }
     }
 
