@@ -2415,6 +2415,12 @@ class CFDSATService
             }else{
                 $arreglo_cfd['proveedor_especial'] = 0;
             }
+
+            if($arreglo_cfd['folio'] == '')
+            {
+                $arreglo_cfd['folio'] = substr($arreglo_cfd['uuid'], -4);
+            }
+
             $conceptos[$i] =  $arreglo_cfd;
             $i++;
         }
@@ -2481,6 +2487,11 @@ class CFDSATService
                 $arreglo_cfd['descuento_IEPS'] = 0;
             }else{
                 $arreglo_cfd['proveedor_especial'] = 0;
+            }
+
+            if($arreglo_cfd['folio'] == '')
+            {
+                $arreglo_cfd['folio'] = substr($arreglo_cfd['uuid'], -4);
             }
             $conceptos[$i] =  $arreglo_cfd;
             $i++;
