@@ -515,7 +515,8 @@ class Comprobacion extends Model
                 'Registro' => auth()->id(),
                 'uuid' => array_key_exists('uuid', $data) ? $data['uuid'] : null,
                 'descuento_cfdi' =>  array_key_exists('descuento_cfdi', $data) ? $data['descuento_cfdi'] : '0.00',
-                'retencion' => $data['retencion']
+                'retencion' => $data['retencion'],
+                'trasladados' => array_key_exists('otros_imp', $data) ?  $data['otros_imp'] : '0.00'
             ]);
 
             DB::connection('controlrec')->commit();

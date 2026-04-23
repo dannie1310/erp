@@ -148,6 +148,7 @@
                                     <th class="c100 encabezado">IVA</th>
                                     <th class="c100 encabezado">2% H</th>
                                     <th class="c100 encabezado">Retención</th>
+                                    <th class="c100 encabezado">Otros Imp</th>
                                     <th class="c100 encabezado">Total</th>
                                     <th class="c100 encabezado">Observaciones</th>
                                     <th class="c100 encabezado">Uuid</th>
@@ -224,7 +225,7 @@
                                     </td>
                                     <td v-else>-</td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
-                                         {{ parseFloat(partida.importe).formatMoney(2) }}
+                                       $ {{ parseFloat(partida.importe).formatMoney(2) }}
                                     </td>
                                     <td v-else>
                                         <input type="text" class="form-control" aria-describedby="inputGroup-sizing-sm"
@@ -245,10 +246,16 @@
                                        $ 0.00
                                     </td>
                                     <td style="text-align: right">
-                                        $
+                                        -
                                     </td>
                                      <td style="text-align: right" v-if="partida.uuid != null">
-                                         {{ parseFloat(partida.retencion).formatMoney(2)}}
+                                        $ {{ parseFloat(partida.retencion).formatMoney(2)}}
+                                    </td>
+                                    <td style="text-align: right" v-else>
+                                       $ 0.00
+                                    </td>
+                                    <td style="text-align: right" v-if="partida.uuid != null">
+                                        $ {{ parseFloat(partida.otros_imp).formatMoney(2)}}
                                     </td>
                                     <td style="text-align: right" v-else>
                                        $ 0.00
@@ -426,7 +433,7 @@ export default {
             let result = 0;
             let total_doc = 0;
 
-            this.documentos.forEach(doc => {
+            this.documentos.forEach(doc => { console.log(doc)
                 result += parseFloat(doc.importe || 0);
                 total_doc += parseFloat(doc.total || 0);
                 if (doc.uuid) {
@@ -536,7 +543,8 @@ export default {
                 xml : '',
                 contenido_xml: '',
                 descuento: '',
-                retencion: 0
+                retencion: 0,
+                otros_imp : 0
             });
            // this.total_documentos = this.total_documentos + 1;
         },

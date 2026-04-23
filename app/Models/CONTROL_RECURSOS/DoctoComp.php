@@ -28,7 +28,8 @@ class DoctoComp extends Model
         'Registro',
         'uuid',
         'descuento_cfdi',
-        'retencion'
+        'retencion',
+        'trasladados'
     ];
 
     /**
@@ -118,6 +119,11 @@ class DoctoComp extends Model
     public function getRetencionFormatAttribute()
     {
         return '$' . number_format(($this->retencion),2);
+    }
+
+    public function getTrasladadoFormatAttribute()
+    {
+        return '$' . number_format(($this->trasladados),2);
     }
 
     /**
