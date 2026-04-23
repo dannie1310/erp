@@ -138,7 +138,8 @@ class ComprobacionService
                         'IVA' => $partida['iva'],
                         'Total' => $partida['total'],
                         'Observaciones' => $partida['observaciones'],
-                        'retencion' => $partida['retencion']
+                        'retencion' => $partida['retencion'],
+                        'trasladados' =>  array_key_exists('otros_imp', $partida) ?  $partida['otros_imp'] : $partida['trasladado']
                     ]);
 
                     $key = array_search($partida['id'], $documentos, true);

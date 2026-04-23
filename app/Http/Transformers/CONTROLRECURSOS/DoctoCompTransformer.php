@@ -48,7 +48,9 @@ class DoctoCompTransformer extends TransformerAbstract
             'tipo_gasto_descripcion' => $model->tipo_gasto_descripcion,
             'concepto_xml' => $model->concepto_xml,
             'retencion' => $model->retencion,
-            'retencion_format' => $model->retencion_format
+            'retencion_format' => $model->retencion_format,
+            'trasladado' => $model->trasladados,
+            'trasladado_format' => $model->rasladado_format
         ];
     }
 }
