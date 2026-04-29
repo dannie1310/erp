@@ -221,7 +221,7 @@
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`idtipogasto[${i}]`)">{{ errors.first(`idtipogasto[${i}]`) }}</div>
                                     </td>
                                     <td v-if="partida.uuid != null">
-                                       {{ partida.concepto_xml }}
+                                       {{ partida.contenido_xml }}
                                     </td>
                                     <td v-else>-</td>
                                     <td style="text-align: right" v-if="partida.uuid != null">
