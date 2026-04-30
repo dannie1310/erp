@@ -184,7 +184,10 @@ class CFD
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
             $ic = 1;
+            $concepto_txt = '';
+
             foreach ($conceptos as $concepto) {
+                $concepto_txt .= (string) $concepto['Descripcion'] . ' ';
                 $this->arreglo_factura["conceptos"][$i]["clave_prod_serv"] = (string)$concepto["ClaveProdServ"];
                 $this->arreglo_factura["conceptos"][$i]["no_identificacion"] = (string)$concepto["NoIdentificacion"];
                 $this->arreglo_factura["conceptos"][$i]["cantidad"] = (float)$concepto["Cantidad"];
@@ -219,6 +222,8 @@ class CFD
                 $i++;
                 $ic++;
             }
+
+            $this->arreglo_factura["contenido_xml"] =  $concepto_txt;
 
         } catch (\Exception $e) {
             $this->log["archivos_no_cargados_error_app"] += 1;
@@ -461,7 +466,9 @@ class CFD
 
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
+            $concepto_txt = '';
             foreach ($conceptos as $concepto) {
+                $concepto_txt .= (string) $concepto['Descripcion'] . ' ';
                 $this->arreglo_factura["conceptos"][$i]["clave_prod_serv"] = (string)$concepto["ClaveProdServ"];
                 $this->arreglo_factura["conceptos"][$i]["cantidad"] = (float)$concepto["cantidad"];
                 $this->arreglo_factura["conceptos"][$i]["descripcion"] = (string)$concepto["descripcion"];
@@ -476,6 +483,7 @@ class CFD
                 }
                 $i++;
             }
+            $this->arreglo_factura["contenido_xml"] =  $concepto_txt;
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer la ruta de impuestos o conceptos: " . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;

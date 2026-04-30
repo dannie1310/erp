@@ -104,7 +104,7 @@ class ComprobacionGastosFormato extends Rotation
 
         $this->SetFont('Arial','B',12);
 
-        $this->Cell(20.5,.3,' ',0,1,'C');
+        $this->Cell(19.5,.3,' ',0,1,'C');
 
         $this->SetFillColor(0,0,0);
         $this->SetTextColor(255,255,255);
@@ -114,7 +114,7 @@ class ComprobacionGastosFormato extends Rotation
 
         $this->SetFont('Arial','B',11);
 
-        $this->Cell(20.5,.5,' ',0,1,'C');
+        $this->Cell(19.5,.5,' ',0,1,'C');
 
         $this->SetFillColor(0,0,0);
         $this->SetTextColor(255,255,255);
@@ -123,7 +123,7 @@ class ComprobacionGastosFormato extends Rotation
         $this->SetTextColor(0,0,0);
         $this->Cell(11.5,.5,number_format($this->comprobacion->total_comprobante,2,'.',',')." ".$this->comprobacion->moneda_descripcion,1,1,'C',1);
         $this->SetFont('Arial','',8);
-        $this->Cell(20.5,.3,' ',0,1,'C');
+        $this->Cell(19.5,.3,' ',0,1,'C');
         $this->Cell(4,.4,'SOLICITA: ',0,0,'L');
         $this->SetFont('Arial','B',8);
         $this->Cell(16.5,.4, $this->comprobacion->empleado_descripcion ,0,1,'L');
@@ -157,7 +157,7 @@ class ComprobacionGastosFormato extends Rotation
          **/
         $encabezadofiscal=0;
         $this->SetFont('Arial','B',10);
-        $this->Cell(20.5,.5,' ',0,1,'C');
+        $this->Cell(19.5,.5,' ',0,1,'C');
         if(count($this->comprobacion->documentosDeducibles)>0)
         {
             //$PD=number_format((($encabezadofiscal*100)/$TotalDoctos),0,',','.');
@@ -188,19 +188,19 @@ class ComprobacionGastosFormato extends Rotation
             $importe = 0;
             $iva = 0;
             $hos = 0;
-            $this->SetFont('Arial','',7);
+            $this->SetFont('Arial','',6);
             /*DETALLES DE LOS DOCTOS*/
             foreach ($this->comprobacion->documentosDeducibles as $documento)
             {
-                $this->Cell(1.5,.4,$documento->fecha_formato,1,0,'L');
-                $this->Cell(1.7,.4,$documento->tipo_docto_descripcion,1,0,'L');
-                $this->Cell(2.5,.4,$documento->FolioDocto,1,0,'L');
-                $this->Cell(3,.4,$documento->tipo_gasto_descripcion,1,0,'L');
-                $this->Cell(1.5,.4,number_format($documento->Importe,2,'.',','),1,0,'R');
-                $this->Cell(1.5,.4,number_format($documento->IVA,2,'.',','),1,0,'R');
-                $this->Cell(1.3,.4,number_format($documento->ImpHosp,2,'.',','),1,0,'R');
-                $this->Cell(1.5,.4,number_format($documento->Total,2,'.',','),1,0,'R');
-                $this->Cell(6,.4,$documento->Observaciones,1,1,'L');
+                $this->Cell(1.5,.3,$documento->fecha_formato,1,0,'L');
+                $this->Cell(1.7,.3,$documento->tipo_docto_descripcion,1,0,'L');
+                $this->Cell(2.5,.3,$documento->FolioDocto,1,0,'L');
+                $this->Cell(3,.3,$documento->tipo_gasto_descripcion,1,0,'L');
+                $this->Cell(1.5,.3,number_format($documento->Importe,2,'.',','),1,0,'R');
+                $this->Cell(1.5,.3,number_format($documento->IVA,2,'.',','),1,0,'R');
+                $this->Cell(1.3,.3,number_format($documento->ImpHosp,2,'.',','),1,0,'R');
+                $this->Cell(1.5,.3,number_format($documento->Total,2,'.',','),1,0,'R');
+                $this->Cell(6,.3,$documento->Observaciones,1,1,'L');
                 $importe = $importe + $documento->Importe;
                 $iva = $iva + $documento->IVA;
                 $hos = $hos + $documento->ImpHosp;
@@ -224,12 +224,12 @@ class ComprobacionGastosFormato extends Rotation
          * DOCUMENTOS NO DEDUCIBLES
          **/
         $this->SetFont('Arial','B',10);
-        $this->Cell(20.5,.3,' ',0,1,'C');
+        $this->Cell(19.5,.3,' ',0,1,'C');
 
         if(count($this->comprobacion->documentosNoDeducibles)>0)
         {
             //Espacio
-            $this->Cell(20.5,.3,' ',0,1,'C');
+            $this->Cell(19.5,.3,' ',0,1,'C');
 
             //Encabezado de Vale Definitivo
             $this->SetFillColor(0,0,0);
@@ -400,13 +400,13 @@ class ComprobacionGastosFormato extends Rotation
 
 
             $this->Cell(20.5, .5, ' ', 0, 1, 'C');
-            $this->SetFont('Arial', 'B', 10);
+            $this->SetFont('Arial', 'B', 9);
             $this->SetTextColor(255, 255, 255);
             $this->SetFillColor(0, 0, 0);
 
             $this->Cell(20.5, .5, 'RESUMEN DE SALDOS DE LAS SOLICITUDES COMPROBADAS ', 0, 1, 'L', 1);
 
-            $this->SetFont('Arial', 'B', 8);
+            $this->SetFont('Arial', 'B', 7);
             $this->SetTextColor(0, 0, 0);
             $this->SetFillColor(204, 204, 204);
             $leyenda = '';
@@ -486,9 +486,9 @@ class ComprobacionGastosFormato extends Rotation
                 if ($leyenda != "") {
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
-                    $this->Cell(20.5, 0.5, "I  M  P  O  R  T  A  N  T  E", 'L R B T', 1, 'C', 1);
+                    $this->Cell(19.5, 0.5, "I  M  P  O  R  T  A  N  T  E", 'L R B T', 1, 'C', 1);
                     $this->SetTextColor(0, 0, 0);
-                    $this->Cell(20.5, 1, utf8_decode($leyenda), 'L R', 1, 'L');
+                    $this->Cell(19.5, 1, utf8_decode($leyenda), 'L R', 1, 'L');
                     $this->cuentas();
                 }
             }
@@ -695,7 +695,7 @@ class ComprobacionGastosFormato extends Rotation
         $leyendacb_1=("El importe a favor de la empresa debería depositarse en ");
         $leyendacb_3="a nombre de ".$this->comprobacion->empresa->RazonSocial." ";
         $leyendacb_2='';
-        if($cuenta->cuenta->banco->Banco != null && $cuenta->cuenta->Cuenta != null)
+        if($cuenta != null && $cuenta->cuenta->banco->Banco != null && $cuenta->cuenta->Cuenta != null)
         {
 
             $leyendacb_2=$leyendacb_2."".$cuenta->cuenta->banco->Banco." a la cuenta bancaria ".$cuenta->cuenta->Cuenta." o en ";
@@ -704,6 +704,6 @@ class ComprobacionGastosFormato extends Rotation
         $leyendacb_2=substr($leyendacb_2,0,strlen($leyendacb_2)-5);
         $leyendacb=$leyendacb_1.$leyendacb_2.$leyendacb_3;
         $this->SetFont('Arial','B',8);
-        $this->MultiCell(20.5,.5, utf8_decode($leyendacb),'L R B','L');
+        $this->MultiCell(19.5,.5, utf8_decode($leyendacb),'L R B','L');
     }
 }
